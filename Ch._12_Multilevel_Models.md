@@ -90,9 +90,9 @@ waic(b12.1, b12.2)
 
 ```
 ##                 WAIC   SE
-## b12.1         202.06 9.40
-## b12.2         201.25 7.33
-## b12.1 - b12.2   0.81 4.43
+## b12.1         201.25 9.42
+## b12.2         200.61 7.21
+## b12.1 - b12.2   0.64 4.55
 ```
 
 ```r
@@ -101,9 +101,9 @@ loo(b12.1, b12.2)
 
 ```
 ##                LOOIC    SE
-## b12.1         233.64 10.57
-## b12.2         228.66  8.70
-## b12.1 - b12.2   4.98  5.91
+## b12.1         230.55 10.43
+## b12.2         227.58  8.33
+## b12.1 - b12.2   2.97  6.11
 ```
 
 
@@ -213,7 +213,7 @@ rnorm(1, mean = post[, 1], sd = post[, 2]) %>%
 ```
 
 ```
-## [1] 0.9192972
+## [1] 0.8392762
 ```
 
 First, we took one random draw from a normal distribution with a mean of the first row in `post[, 1]` and a standard deviation of the value from the first row in `post[, 2]`, and passed it through the `invlogit()` function. By replacing the `1` `nrow(post)`, we do this `nrow(post)` times (i.e., 12,000). So our orange density is the summary of that process.
@@ -251,11 +251,11 @@ print(b12.2.e)
 ## Group-Level Effects: 
 ## ~tank (Number of levels: 48) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     1.61      0.21     1.25     2.08       1391 1.00
+## sd(Intercept)     1.61      0.21     1.24     2.07       1398 1.00
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     1.31      0.25     0.83     1.81        982 1.00
+## Intercept     1.29      0.24     0.81     1.78       1064 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -344,8 +344,8 @@ b12.3 <-
 ## 
 ## SAMPLING FOR MODEL 'binomial brms-model' NOW (CHAIN 1).
 ## 
-## Gradient evaluation took 6.8e-05 seconds
-## 1000 transitions using 10 leapfrog steps per transition would take 0.68 seconds.
+## Gradient evaluation took 5.1e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.51 seconds.
 ## Adjust your expectations accordingly!
 ## 
 ## 
@@ -362,9 +362,9 @@ b12.3 <-
 ## Iteration: 9000 / 10000 [ 90%]  (Sampling)
 ## Iteration: 10000 / 10000 [100%]  (Sampling)
 ## 
-##  Elapsed Time: 0.834708 seconds (Warm-up)
-##                5.73263 seconds (Sampling)
-##                6.56734 seconds (Total)
+##  Elapsed Time: 0.826817 seconds (Warm-up)
+##                5.54324 seconds (Sampling)
+##                6.37006 seconds (Total)
 ```
 
 ```r
@@ -735,13 +735,13 @@ post %>%
 ## # A tibble: 7 x 2
 ##   key                    mean
 ##   <chr>                 <dbl>
-## 1 r_actor[1,Intercept] -0.710
-## 2 r_actor[2,Intercept]  4.61 
+## 1 r_actor[1,Intercept] -0.720
+## 2 r_actor[2,Intercept]  4.63 
 ## 3 r_actor[3,Intercept] -1.02 
 ## 4 r_actor[4,Intercept] -1.02 
 ## 5 r_actor[5,Intercept] -0.720
-## 6 r_actor[6,Intercept]  0.220
-## 7 r_actor[7,Intercept]  1.75
+## 6 r_actor[6,Intercept]  0.230
+## 7 r_actor[7,Intercept]  1.76
 ```
 
 Here's another way to get at the same information, this time using `coef()` and a little formatting help from the `tidyverse::str_c()` function. Just for kicks, we'll throw in the 95% intervals, too.
@@ -762,13 +762,13 @@ coef(b12.4)$actor[ , c(1, 3:4), 1] %>%
 ## # A tibble: 7 x 3
 ##   actor      mean `95% CIs`     
 ##   <chr>     <dbl> <chr>         
-## 1 chimp #1 -0.710 [-1.24, -0.2] 
-## 2 chimp #2  4.61  [2.52, 8.56]  
+## 1 chimp #1 -0.720 [-1.25, -0.2] 
+## 2 chimp #2  4.63  [2.55, 8.69]  
 ## 3 chimp #3 -1.02  [-1.58, -0.48]
 ## 4 chimp #4 -1.02  [-1.58, -0.48]
-## 5 chimp #5 -0.720 [-1.25, -0.2] 
-## 6 chimp #6  0.220 [-0.3, 0.75]  
-## 7 chimp #7  1.75  [1.04, 2.57]
+## 5 chimp #5 -0.720 [-1.26, -0.2] 
+## 6 chimp #6  0.230 [-0.3, 0.76]  
+## 7 chimp #7  1.76  [1.08, 2.56]
 ```
 
 If you prefer the posterior median to the mean, just add a `robust = T` argument inside the `coef()` function.
@@ -801,25 +801,25 @@ tidy(b12.5) %>%
 
 ```
 ##                       term estimate std.error    lower    upper r_hat
-## 1              b_Intercept    0.452     0.977   -1.014    2.063 1.000
-## 2            b_prosoc_left    0.830     0.261    0.409    1.266 1.000
-## 3  b_prosoc_left:condition   -0.140     0.297   -0.624    0.350 1.000
-## 4      sd_actor__Intercept    2.281     0.942    1.241    4.023 1.000
-## 5      sd_block__Intercept    0.216     0.176    0.018    0.544 1.000
-## 6     r_actor[1,Intercept]   -1.173     0.990   -2.812    0.312 1.000
-## 7     r_actor[2,Intercept]    4.193     1.652    2.116    7.131 1.000
-## 8     r_actor[3,Intercept]   -1.473     0.993   -3.109    0.013 1.000
-## 9     r_actor[4,Intercept]   -1.478     0.992   -3.114    0.002 1.000
-## 10    r_actor[5,Intercept]   -1.170     0.989   -2.808    0.305 1.000
-## 11    r_actor[6,Intercept]   -0.220     0.988   -1.846    1.275 1.000
-## 12    r_actor[7,Intercept]    1.320     1.014   -0.347    2.884 1.000
-## 13    r_block[1,Intercept]   -0.173     0.224   -0.603    0.080 1.000
-## 14    r_block[2,Intercept]    0.037     0.186   -0.238    0.359 1.000
-## 15    r_block[3,Intercept]    0.053     0.186   -0.216    0.391 1.000
-## 16    r_block[4,Intercept]    0.005     0.184   -0.294    0.310 1.000
-## 17    r_block[5,Intercept]   -0.031     0.185   -0.355    0.253 1.000
-## 18    r_block[6,Intercept]    0.111     0.201   -0.137    0.494 1.000
-## 19                    lp__ -292.898     3.708 -299.459 -287.369 1.001
+## 1              b_Intercept    0.434     0.986   -1.050    2.017 1.001
+## 2            b_prosoc_left    0.826     0.261    0.397    1.261 1.001
+## 3  b_prosoc_left:condition   -0.138     0.300   -0.632    0.348 1.000
+## 4      sd_actor__Intercept    2.292     0.995    1.229    4.071 1.001
+## 5      sd_block__Intercept    0.221     0.181    0.020    0.553 1.000
+## 6     r_actor[1,Intercept]   -1.150     0.999   -2.756    0.342 1.001
+## 7     r_actor[2,Intercept]    4.226     1.748    2.123    7.264 1.000
+## 8     r_actor[3,Intercept]   -1.453     1.001   -3.071    0.058 1.001
+## 9     r_actor[4,Intercept]   -1.458     0.998   -3.078    0.024 1.001
+## 10    r_actor[5,Intercept]   -1.150     0.995   -2.757    0.330 1.001
+## 11    r_actor[6,Intercept]   -0.204     0.996   -1.806    1.294 1.001
+## 12    r_actor[7,Intercept]    1.339     1.019   -0.288    2.886 1.001
+## 13    r_block[1,Intercept]   -0.179     0.228   -0.612    0.075 1.001
+## 14    r_block[2,Intercept]    0.039     0.186   -0.240    0.364 1.000
+## 15    r_block[3,Intercept]    0.052     0.188   -0.225    0.386 1.001
+## 16    r_block[4,Intercept]    0.006     0.184   -0.287    0.316 1.001
+## 17    r_block[5,Intercept]   -0.034     0.187   -0.358    0.249 1.000
+## 18    r_block[6,Intercept]    0.113     0.203   -0.140    0.498 1.000
+## 19                    lp__ -292.817     3.733 -299.448 -287.246 1.000
 ```
 
 We might make the coefficient plot in Figure 12.4.a. like this:
@@ -867,9 +867,9 @@ loo(b12.4, b12.5)
 
 ```
 ##                LOOIC    SE
-## b12.4         531.63 19.48
-## b12.5         532.59 19.70
-## b12.4 - b12.5  -0.96  1.70
+## b12.4         531.42 19.52
+## b12.5         532.53 19.67
+## b12.4 - b12.5  -1.11  1.74
 ```
 
 The two models yield nearly-equivalent information criteria values. Yet recall what McElreath wrote: “There is nothing to gain here by selecting either model. The comparison of the two models tells a richer story” (p. 367).
@@ -897,13 +897,13 @@ print(b12.4)
 ## Group-Level Effects: 
 ## ~actor (Number of levels: 7) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     2.27      0.97     1.13     4.77       3685 1.00
+## sd(Intercept)     2.27      0.94     1.13     4.69       3714 1.00
 ## 
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                 0.42      0.98    -1.42     2.47       3268 1.00
-## prosoc_left               0.82      0.26     0.31     1.34       9215 1.00
-## prosoc_left:condition    -0.13      0.30    -0.73     0.46       8811 1.00
+## Intercept                 0.47      0.98    -1.37     2.58       3676 1.00
+## prosoc_left               0.82      0.26     0.32     1.34       8656 1.00
+## prosoc_left:condition    -0.13      0.30    -0.71     0.45       8984 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -937,10 +937,10 @@ postAverageActor
 ## # A tibble: 4 x 5
 ##   key       M    LL    UL Condition
 ##   <chr> <dbl> <dbl> <dbl>     <dbl>
-## 1 C00   0.587 0.336 0.833      1.00
-## 2 C10   0.742 0.534 0.920      2.00
-## 3 C01   0.587 0.336 0.833      3.00
-## 4 C11   0.720 0.499 0.909      4.00
+## 1 C00   0.595 0.348 0.835      1.00
+## 2 C10   0.749 0.545 0.922      2.00
+## 3 C01   0.595 0.348 0.835      3.00
+## 4 C11   0.726 0.511 0.912      4.00
 ```
 
 Figure 12.5.a.
@@ -1040,7 +1040,7 @@ ran_and_fix_ef %>%
 
 ![](Ch._12_Multilevel_Models_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
-###1 2.4.3. Focus and multilevel prediction.
+### 12.4.3. Focus and multilevel prediction.
 
 First, let's get that `Kline` data.
 
@@ -1106,14 +1106,14 @@ p12.6 %>%
 ```
 ## Observations: 60
 ## Variables: 10
-## $ Estimate   <dbl> 19.74889, 31.20844, 36.52856, 40.30622, 43.44589, 4...
-## $ Est.Error  <dbl> 10.10435, 13.99823, 16.68815, 18.31889, 20.08987, 2...
-## $ `1.5%ile`  <dbl> 5, 10, 12, 14, 15, 15, 16, 17, 17, 17, 18, 18, 19, ...
-## $ `5.5%ile`  <dbl> 8, 15, 17, 19, 21, 22, 23, 24, 25, 25, 26, 26, 27, ...
-## $ `16.5%ile` <dbl> 11, 20, 23, 26, 27, 29, 31, 32, 33, 34, 35, 36, 36,...
-## $ `83.5%ile` <dbl> 27, 42, 48, 53, 57, 60, 63, 66, 69, 71, 72, 75, 77,...
-## $ `94.5%ile` <dbl> 36.000, 53.000, 62.000, 68.000, 74.000, 79.000, 83....
-## $ `98.5%ile` <dbl> 48.000, 71.000, 83.015, 92.000, 99.000, 105.000, 11...
+## $ Estimate   <dbl> 19.75967, 31.14378, 36.37478, 40.17533, 43.20511, 4...
+## $ Est.Error  <dbl> 9.999429, 13.732138, 15.821860, 17.565907, 19.03404...
+## $ `1.5%ile`  <dbl> 5.000, 10.000, 12.000, 13.000, 14.000, 14.985, 16.0...
+## $ `5.5%ile`  <dbl> 8, 14, 17, 19, 21, 22, 23, 24, 24, 25, 25, 26, 27, ...
+## $ `16.5%ile` <dbl> 11, 20, 24, 26, 28, 29, 31, 32, 33, 34, 35, 36, 37,...
+## $ `83.5%ile` <dbl> 27, 41, 48, 53, 57, 60, 63, 65, 68, 70, 71, 74, 76,...
+## $ `94.5%ile` <dbl> 35, 53, 61, 68, 73, 76, 81, 85, 88, 90, 93, 96, 99,...
+## $ `98.5%ile` <dbl> 47.000, 70.000, 81.000, 93.000, 99.000, 104.000, 11...
 ## $ population <dbl> 1000, 6000, 11000, 16000, 21000, 26000, 31000, 3600...
 ## $ culture    <chr> "My_island", "My_island", "My_island", "My_island",...
 ```
