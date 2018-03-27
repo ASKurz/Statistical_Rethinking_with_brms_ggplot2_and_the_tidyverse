@@ -22,7 +22,7 @@ In this document, we'll use the [tidyverse](https://www.tidyverse.org) for data 
 library(tidyverse)
 ```
 
-If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a really great introduction to plotting with ggplot2.
+If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
 
 All that said, here's a way to do the simulation necessary for the plot in the top panel of Figure 4.2.
 
@@ -55,7 +55,7 @@ ggplot(data = pos,
   theme(legend.position = "none")
 ```
 
-I apologize for starting off with such a complicated plot. But what can you do? McElreath started off the chapter in a full plot sprint. If you're new to [ggplot2](http://ggplot2.org), don’t fret. Many of the upcoming plots are simpler.
+I apologize for starting off with such a complicated plot. But what can you do? McElreath started off the chapter in a full plot sprint. If you're new to ggplot2, don’t fret. Many of the upcoming plots are simpler.
 
 Here's the code for the bottom three plots of Figure 4.2.
 
@@ -155,7 +155,7 @@ data(Howell1)
 d <- Howell1
 ```
 
-Here we open our main statistical package, Bürkner's [brms](https://cran.r-project.org/web/packages/brms/index.html). But before we do, we'll need to detach the rethinking package. R will not allow users to use a function from one package that shares the same name as a different function from another package if both packages are open at the same time. The rethinking and brms packages are designed for similar purposes and, unsurprisingly, overlap in the names of their functions. To prevent problems, we will always make sure rethinking is detached before using brms. To learn more on the topic, see [this R-bloggers blog](https://www.r-bloggers.com/r-and-package-masking-a-real-life-example/).
+Here we open our main statistical package, Bürkner's [brms](https://github.com/paul-buerkner/brms). But before we do, we'll need to detach the rethinking package. R will not allow users to use a function from one package that shares the same name as a different function from another package if both packages are open at the same time. The rethinking and brms packages are designed for similar purposes and, unsurprisingly, overlap in the names of their functions. To prevent problems, we will always make sure rethinking is detached before using brms. To learn more on the topic, see [this R-bloggers blog](https://www.r-bloggers.com/r-and-package-masking-a-real-life-example/).
 
 ```{r, message = FALSE}
 rm(Howell1)
@@ -208,7 +208,7 @@ tibble(x = seq(from = -10, to = 60, by = 1)) %>%
   theme(panel.grid = element_blank())
 ```
 
-Here we simulate from those two priors to get a prior probability distribution of heights.
+Here we simulate from those two priors to get a prior probability distribution of `heights`.
 
 ```{r, fig.width = 3, fig.height = 2.5}
 sample_mu <- rnorm(1e4, 178, 20)
@@ -333,7 +333,7 @@ With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we'
 head(post)
 ```
 
-Notice how our data frame, post, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
+Notice how our data frame, `post`, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package.
 
@@ -376,7 +376,7 @@ See? HMC handled the mild skew just fine.
 
 ## 4.4. Adding a predictor
 
-Here's our scatter plot of weight and height.
+Here's our scatter plot of `weight` and `height`.
 
 ```{r, fig.width = 3, fig.height = 2.8}
 ggplot(data = d2, 
@@ -602,7 +602,7 @@ p352 <-
   theme(panel.grid = element_blank())
 ```
 
-Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our d2 data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
+Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our `d2` data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
 
 Anyway, we saved each of these plots as objects. With a little help of the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) we are going to arrange those plot objects into a grid in order to reproduce Figure 4.5. 
 
@@ -654,7 +654,7 @@ multiplot(p10, p150, p50, p352, cols = 2)
 
 #### 4.4.3.4. Plotting regression intervals and contours
 
-Remember, if you want to plot McElreath's mu_at_50 with ggplot2, you'll need to save it as a data frame or a tibble.
+Remember, if you want to plot McElreath's `mu_at_50` with ggplot2, you'll need to save it as a data frame or a tibble.
 
 ```{r}
 mu_at_50 <- 
@@ -720,7 +720,7 @@ mu <-
 str(mu)
 ```
 
-Anticipating ggplot2, we just went ahead and put this in a data frame. But we might do a little more data processing with the aid of the `gather()` function. With `gather()`, we'll convert the data from the wide format to the long format.
+Anticipating ggplot2, we just went ahead and put this in a data frame. But we might do a little more data processing with the aid of the `gather()` function. With `gather()`, we'll convert the data from the wide format to the long format. If you're new to the distinction between wide and long data, you can learn more [here](https://stanford.edu/~ejdemyr/r-tutorials/wide-and-long/) or [here](http://www.theanalysisfactor.com/wide-and-long-data/).
 
 ```{r}
 mu <- 
@@ -795,7 +795,7 @@ And if you wanted to use intervals other than the defaullt 95% ones, you'd enter
 
 Much as `brms::fitted()` was our anologue to `rethinking::link()`, `brms::predict()` is our anologue to `rethinking::sim()`. 
 
-We can reuse our weight.seq data from before. But in case you forgot, here's that code again.
+We can reuse our `weight.seq` data from before. But in case you forgot, here's that code again.
 
 ```{r}
 weight.seq <- tibble(weight = seq(from = 25, to = 70, by = 1))
@@ -1012,8 +1012,8 @@ ggplot(data = d,
 Note. The analyses in this document were done with:
 
 * R           3.4.3
-* RStudio     1.1.364
-* rmarkdown   1.8
+* RStudio     1.1.442
+* rmarkdown   1.9
 * tidyverse   1.2.1 
 * rethinking  1.59
 * brms        2.1.2

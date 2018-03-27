@@ -1,7 +1,7 @@
 ---
 title: "Ch. 4 Linear Models"
 author: "A Solomon Kurz"
-date: "2018-03-25"
+date: "2018-03-27"
 output:
   html_document:
     code_folding: show
@@ -21,7 +21,7 @@ In this document, we'll use the [tidyverse](https://www.tidyverse.org) for data 
 library(tidyverse)
 ```
 
-If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a really great introduction to plotting with ggplot2.
+If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
 
 All that said, here's a way to do the simulation necessary for the plot in the top panel of Figure 4.2.
 
@@ -58,7 +58,7 @@ ggplot(data = pos,
 
 ![](Ch._4_Linear_Models_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
-I apologize for starting off with such a complicated plot. But what can you do? McElreath started off the chapter in a full plot sprint. If you're new to [ggplot2](http://ggplot2.org), don’t fret. Many of the upcoming plots are simpler.
+I apologize for starting off with such a complicated plot. But what can you do? McElreath started off the chapter in a full plot sprint. If you're new to ggplot2, don’t fret. Many of the upcoming plots are simpler.
 
 Here's the code for the bottom three plots of Figure 4.2.
 
@@ -197,7 +197,7 @@ data(Howell1)
 d <- Howell1
 ```
 
-Here we open our main statistical package, Bürkner's [brms](https://cran.r-project.org/web/packages/brms/index.html). But before we do, we'll need to detach the rethinking package. R will not allow users to use a function from one package that shares the same name as a different function from another package if both packages are open at the same time. The rethinking and brms packages are designed for similar purposes and, unsurprisingly, overlap in the names of their functions. To prevent problems, we will always make sure rethinking is detached before using brms. To learn more on the topic, see [this R-bloggers blog](https://www.r-bloggers.com/r-and-package-masking-a-real-life-example/).
+Here we open our main statistical package, Bürkner's [brms](https://github.com/paul-buerkner/brms). But before we do, we'll need to detach the rethinking package. R will not allow users to use a function from one package that shares the same name as a different function from another package if both packages are open at the same time. The rethinking and brms packages are designed for similar purposes and, unsurprisingly, overlap in the names of their functions. To prevent problems, we will always make sure rethinking is detached before using brms. To learn more on the topic, see [this R-bloggers blog](https://www.r-bloggers.com/r-and-package-masking-a-real-life-example/).
 
 
 ```r
@@ -278,7 +278,7 @@ tibble(x = seq(from = -10, to = 60, by = 1)) %>%
 
 ![](Ch._4_Linear_Models_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
-Here we simulate from those two priors to get a prior probability distribution of heights.
+Here we simulate from those two priors to get a prior probability distribution of `heights`.
 
 
 ```r
@@ -365,11 +365,11 @@ print(b4.1halfCaucy)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.60      0.42   153.80   155.42       3152 1.00
+## Intercept   154.59      0.42   153.80   155.41       3232 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     7.75      0.29     7.21     8.34       3515 1.00
+## sigma     7.75      0.30     7.21     8.37       3391 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -391,11 +391,11 @@ b4.1halfCaucy$fit
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5% n_eff Rhat
-## b_Intercept   154.60    0.01 0.42   153.80   154.32   154.60   154.88   155.42  3152    1
-## sigma           7.75    0.00 0.29     7.21     7.56     7.74     7.94     8.34  3515    1
-## lp__        -1227.52    0.02 1.03 -1230.24 -1227.88 -1227.20 -1226.80 -1226.54  1807    1
+## b_Intercept   154.59    0.01 0.42   153.80   154.31   154.59   154.88   155.41  3232    1
+## sigma           7.75    0.01 0.30     7.21     7.54     7.73     7.95     8.37  3391    1
+## lp__        -1227.55    0.02 1.01 -1230.25 -1227.93 -1227.25 -1226.83 -1226.54  1864    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Sun Mar 25 11:59:31 2018.
+## Samples were drawn using NUTS(diag_e) at Tue Mar 27 05:48:22 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -419,11 +419,11 @@ summary(b4.1halfCaucy, prob = .89)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## Intercept   154.60      0.42   153.94   155.27       3152 1.00
+## Intercept   154.59      0.42   153.93   155.27       3232 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## sigma     7.75      0.29     7.30     8.24       3515 1.00
+## sigma     7.75      0.30     7.30     8.23       3391 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -461,11 +461,11 @@ print(b4.2)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   177.86      0.10   177.67   178.07       3186 1.00
+## Intercept   177.86      0.10   177.67   178.06       4000 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    24.63      0.98    22.75    26.66       1660 1.00
+## sigma    24.63      0.95    22.82    26.51       1685 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -485,7 +485,7 @@ vcov(b4.1halfCaucy)
 
 ```
 ##           Intercept
-## Intercept 0.1752047
+## Intercept 0.1769241
 ```
 
 This only returns the first element in the matrix it did for rethinking. 
@@ -499,9 +499,9 @@ cov(post[, 1:2])
 ```
 
 ```
-##              b_Intercept        sigma
-## b_Intercept  0.175204669 -0.001885884
-## sigma       -0.001885884  0.084109719
+##             b_Intercept       sigma
+## b_Intercept 0.176924111 0.001420698
+## sigma       0.001420698 0.087467608
 ```
 
 That was "(1) a vector of variances for the parameters and (2) a correlation matrix" for them (p. 90). Here are just the variances (i.e., the diagonal elements) and the correlation matrix.
@@ -515,7 +515,7 @@ post[, 1:2] %>%
 
 ```
 ## b_Intercept       sigma 
-##  0.17520467  0.08410972
+##  0.17692411  0.08746761
 ```
 
 ```r
@@ -525,9 +525,9 @@ select(b_Intercept, sigma) %>%
 ```
 
 ```
-##             b_Intercept       sigma
-## b_Intercept  1.00000000 -0.01553528
-## sigma       -0.01553528  1.00000000
+##             b_Intercept      sigma
+## b_Intercept  1.00000000 0.01142049
+## sigma        0.01142049 1.00000000
 ```
 
 With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()`. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
@@ -539,15 +539,15 @@ head(post)
 
 ```
 ##   b_Intercept    sigma      lp__
-## 1    154.4222 7.699708 -1226.621
-## 2    154.6414 7.716519 -1226.520
-## 3    154.5937 7.467468 -1226.919
-## 4    155.1162 7.675189 -1227.305
-## 5    154.3749 7.309703 -1227.789
-## 6    154.5462 7.706430 -1226.529
+## 1    153.9825 6.821956 -1233.864
+## 2    155.2264 7.478577 -1228.093
+## 3    154.9862 7.270921 -1228.323
+## 4    155.1198 7.517387 -1227.594
+## 5    154.1235 7.975937 -1227.531
+## 6    154.4913 7.753666 -1226.563
 ```
 
-Notice how our data frame, post, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
+Notice how our data frame, `post`, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package.
 
@@ -558,12 +558,12 @@ summary(post[, 1:2])
 
 ```
 ##   b_Intercept        sigma      
-##  Min.   :152.9   Min.   :6.823  
-##  1st Qu.:154.3   1st Qu.:7.555  
-##  Median :154.6   Median :7.739  
-##  Mean   :154.6   Mean   :7.752  
-##  3rd Qu.:154.9   3rd Qu.:7.943  
-##  Max.   :156.4   Max.   :8.848
+##  Min.   :153.3   Min.   :6.808  
+##  1st Qu.:154.3   1st Qu.:7.536  
+##  Median :154.6   Median :7.735  
+##  Mean   :154.6   Mean   :7.748  
+##  3rd Qu.:154.9   3rd Qu.:7.946  
+##  Max.   :156.1   Max.   :8.817
 ```
 
 Here's one option using the transpose of a `quantile()` call nested within `apply()`, which is a very general function you can learn more about [here](https://www.datacamp.com/community/tutorials/r-tutorial-apply-family#gs.f7fyw2s) or [here](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/).
@@ -575,8 +575,8 @@ t(apply(post[, 1:2], 2, quantile, probs = c(.5, .025, .75)))
 
 ```
 ##                    50%       2.5%        75%
-## b_Intercept 154.599518 153.802379 154.883044
-## sigma         7.739094   7.206648   7.942795
+## b_Intercept 154.594670 153.795473 154.884233
+## sigma         7.734902   7.213258   7.946283
 ```
 
 The base R code is compact, but somewhat opaque. Here's how to do something similar with more explicit tidyverse code.
@@ -599,7 +599,7 @@ post %>%
 ##   parameter     mean    SD `2.5_percentile` `97.5_percentile`
 ##   <chr>        <dbl> <dbl>            <dbl>             <dbl>
 ## 1 b_Intercept 155    0.420           154               155   
-## 2 sigma         7.75 0.290             7.21              8.34
+## 2 sigma         7.75 0.300             7.21              8.37
 ```
 
 With respect to McElreath's "Overthinking: Getting $\sigma$ right.", there's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
@@ -620,7 +620,7 @@ See? HMC handled the mild skew just fine.
 
 ## 4.4. Adding a predictor
 
-Here's our scatter plot of weight and height.
+Here's our scatter plot of `weight` and `height`.
 
 
 ```r
@@ -665,12 +665,12 @@ print(b4.3)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   113.94      1.89   110.33   117.65        718 1.01
-## weight        0.90      0.04     0.82     0.98        704 1.01
+## Intercept   113.93      1.91   110.20   117.63        865 1.01
+## weight        0.90      0.04     0.82     0.99        850 1.01
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.10      0.20     4.73     5.50       2471 1.00
+## sigma     5.11      0.19     4.75     5.50       2601 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -691,9 +691,9 @@ posterior_samples(b4.3) %>%
 
 ```
 ##             b_Intercept b_weight sigma
-## b_Intercept        1.00    -0.99  0.03
-## b_weight          -0.99     1.00 -0.02
-## sigma              0.03    -0.02  1.00
+## b_Intercept        1.00    -0.99  0.01
+## b_weight          -0.99     1.00 -0.01
+## sigma              0.01    -0.01  1.00
 ```
 
 With centering, we can reduce the correlations among the parameters.
@@ -739,12 +739,12 @@ print(b4.4)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.60      0.27   154.07   155.12       4000 1.00
-## weight.c      0.90      0.04     0.81     0.99        927 1.00
+## Intercept   154.60      0.28   154.06   155.14       4000 1.00
+## weight.c      0.91      0.04     0.82     0.99        834 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.11      0.20     4.73     5.53       2449 1.00
+## sigma     5.10      0.20     4.71     5.51       2875 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -763,9 +763,9 @@ posterior_samples(b4.4) %>%
 
 ```
 ##             b_Intercept b_weight.c sigma
-## b_Intercept        1.00       0.00  0.03
-## b_weight.c         0.00       1.00 -0.01
-## sigma              0.03      -0.01  1.00
+## b_Intercept        1.00      -0.01 -0.02
+## b_weight.c        -0.01       1.00 -0.03
+## sigma             -0.02      -0.03  1.00
 ```
 
 See? Now all the correlations are quite low. Also, if you prefer a visual approach, you might do `pairs(b4.4)`.
@@ -799,11 +799,11 @@ post %>%
 ## # A tibble: 5 x 4
 ##   b_Intercept b_weight sigma  lp__
 ##         <dbl>    <dbl> <dbl> <dbl>
-## 1         114    0.890  5.10 -1082
-## 2         109    1.01   4.84 -1087
-## 3         109    0.999  5.20 -1085
-## 4         110    0.999  5.22 -1085
-## 5         110    0.998  5.21 -1085
+## 1         113    0.917  4.93 -1083
+## 2         113    0.922  4.87 -1083
+## 3         112    0.938  5.45 -1085
+## 4         112    0.938  5.44 -1085
+## 5         113    0.939  5.44 -1085
 ```
 
 Here are the four models leading up to McElreaths Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
@@ -943,7 +943,7 @@ p352 <-
   theme(panel.grid = element_blank())
 ```
 
-Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our d2 data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
+Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our `d2` data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
 
 Anyway, we saved each of these plots as objects. With a little help of the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) we are going to arrange those plot objects into a grid in order to reproduce Figure 4.5. 
 
@@ -999,7 +999,7 @@ multiplot(p10, p150, p50, p352, cols = 2)
 
 #### 4.4.3.4. Plotting regression intervals and contours
 
-Remember, if you want to plot McElreath's mu_at_50 with ggplot2, you'll need to save it as a data frame or a tibble.
+Remember, if you want to plot McElreath's `mu_at_50` with ggplot2, you'll need to save it as a data frame or a tibble.
 
 
 ```r
@@ -1032,8 +1032,8 @@ hdi(mu_at_50[,1], credMass = .89)
 
 ```
 ##       mu_at_50
-## lower 158.5898
-## upper 159.6804
+## lower 158.5843
+## upper 159.6550
 ## attr(,"credMass")
 ## [1] 0.89
 ```
@@ -1044,8 +1044,8 @@ hdi(mu_at_50[,1], credMass = .95)
 
 ```
 ##       mu_at_50
-## lower 158.4588
-## upper 159.8171
+## lower 158.4682
+## upper 159.7874
 ## attr(,"credMass")
 ## [1] 0.95
 ```
@@ -1076,7 +1076,7 @@ str(mu)
 ```
 
 ```
-##  num [1:4000, 1:352] 157 158 157 157 157 ...
+##  num [1:4000, 1:352] 157 157 157 157 158 ...
 ```
 
 When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and *n* = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
@@ -1098,7 +1098,7 @@ mu <-
 str(mu)
 ```
 
-Anticipating ggplot2, we just went ahead and put this in a data frame. But we might do a little more data processing with the aid of the `gather()` function. With `gather()`, we'll convert the data from the wide format to the long format.
+Anticipating ggplot2, we just went ahead and put this in a data frame. But we might do a little more data processing with the aid of the `gather()` function. With `gather()`, we'll convert the data from the wide format to the long format. If you're new to the distinction between wide and long data, you can learn more [here](https://stanford.edu/~ejdemyr/r-tutorials/wide-and-long/) or [here](http://www.theanalysisfactor.com/wide-and-long-data/).
 
 
 ```r
@@ -1166,12 +1166,12 @@ head(muSummary)
 ## # A tibble: 6 x 5
 ##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
 ##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      137     0.874       135        138   25.0
-## 2      137     0.834       136        139   26.0
-## 3      138     0.795       137        140   27.0
-## 4      139     0.756       138        141   28.0
-## 5      140     0.717       139        142   29.0
-## 6      141     0.679       140        142   30.0
+## 1      137     0.883       135        138   25.0
+## 2      137     0.843       136        139   26.0
+## 3      138     0.804       137        140   27.0
+## 4      139     0.764       138        141   28.0
+## 5      140     0.725       139        142   29.0
+## 6      141     0.687       140        142   30.0
 ```
 
 Here it is, our analogue to Figure 4.7.b:
@@ -1197,7 +1197,7 @@ And if you wanted to use intervals other than the defaullt 95% ones, you'd enter
 
 Much as `brms::fitted()` was our anologue to `rethinking::link()`, `brms::predict()` is our anologue to `rethinking::sim()`. 
 
-We can reuse our weight.seq data from before. But in case you forgot, here's that code again.
+We can reuse our `weight.seq` data from before. But in case you forgot, here's that code again.
 
 
 ```r
@@ -1222,12 +1222,12 @@ pred.height %>%
 ## # A tibble: 6 x 5
 ##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
 ##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      136      5.18       127        147   25.0
+## 1      136      5.17       127        147   25.0
 ## 2      137      5.21       127        147   26.0
 ## 3      138      5.18       128        148   27.0
-## 4      139      5.11       129        149   28.0
-## 5      140      5.17       130        150   29.0
-## 6      141      5.24       131        151   30.0
+## 4      139      5.12       129        149   28.0
+## 5      140      5.19       130        150   29.0
+## 6      141      5.23       131        151   30.0
 ```
 
 This time the summary information in our data frame is for, as McElreath puts is, "simulated heights, not distributions of plausible average height, $\mu$" (p. 108). Another way of saying that is that these simulations are the joint consequence of both $\mu$ and $\sigma$, unlike the results of `fitted()`, which only reflect $\mu$. Our plot for Figure 4.8:
@@ -1310,13 +1310,13 @@ print(b4.5)
 ##  
 ## Population-Level Effects: 
 ##             Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     146.67      0.38   145.93   147.42       3292 1.00
-## weight.s       21.40      0.29    20.82    21.98       3459 1.00
-## Iweight.sE2    -8.41      0.28    -8.96    -7.86       3624 1.00
+## Intercept     146.66      0.38   145.90   147.38       3684 1.00
+## weight.s       21.40      0.29    20.84    21.95       3527 1.00
+## Iweight.sE2    -8.41      0.28    -8.96    -7.85       3452 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.77      0.18     5.44     6.13       3620 1.00
+## sigma     5.77      0.17     5.44     6.12       4000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1487,8 +1487,8 @@ ggplot(data = d,
 Note. The analyses in this document were done with:
 
 * R           3.4.3
-* RStudio     1.1.364
-* rmarkdown   1.8
+* RStudio     1.1.442
+* rmarkdown   1.9
 * tidyverse   1.2.1 
 * rethinking  1.59
 * brms        2.1.2
