@@ -23,7 +23,7 @@ library(tidyverse)
 
 If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
 
-All that said, here's a way to do the simulation necessary for the plot in the top panel of Figure 4.2.
+Moving forward, here's a way to do the simulation necessary for the plot in the top panel of Figure 4.2.
 
 
 ```r
@@ -365,11 +365,11 @@ print(b4.1halfCaucy)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.59      0.42   153.80   155.41       3232 1.00
+## Intercept   154.60      0.40   153.82   155.37       3795 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     7.75      0.30     7.21     8.37       3391 1.00
+## sigma     7.75      0.29     7.22     8.36       4000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -391,11 +391,11 @@ b4.1halfCaucy$fit
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5% n_eff Rhat
-## b_Intercept   154.59    0.01 0.42   153.80   154.31   154.59   154.88   155.41  3232    1
-## sigma           7.75    0.01 0.30     7.21     7.54     7.73     7.95     8.37  3391    1
-## lp__        -1227.55    0.02 1.01 -1230.25 -1227.93 -1227.25 -1226.83 -1226.54  1864    1
+## b_Intercept   154.60    0.01 0.40   153.82   154.34   154.61   154.87   155.37  3795    1
+## sigma           7.75    0.00 0.29     7.22     7.55     7.74     7.95     8.36  4000    1
+## lp__        -1227.49    0.02 0.95 -1230.03 -1227.86 -1227.20 -1226.80 -1226.54  1880    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue Mar 27 05:48:22 2018.
+## Samples were drawn using NUTS(diag_e) at Tue Mar 27 06:24:05 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -419,11 +419,11 @@ summary(b4.1halfCaucy, prob = .89)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## Intercept   154.59      0.42   153.93   155.27       3232 1.00
+## Intercept   154.60      0.40   153.95   155.24       3795 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## sigma     7.75      0.30     7.30     8.23       3391 1.00
+## sigma     7.75      0.29     7.31     8.22       4000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -461,11 +461,11 @@ print(b4.2)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   177.86      0.10   177.67   178.06       4000 1.00
+## Intercept   177.86      0.10   177.68   178.05       3479 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    24.63      0.95    22.82    26.51       1685 1.00
+## sigma    24.61      0.93    22.85    26.51       2963 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -485,7 +485,7 @@ vcov(b4.1halfCaucy)
 
 ```
 ##           Intercept
-## Intercept 0.1769241
+## Intercept 0.1626443
 ```
 
 This only returns the first element in the matrix it did for rethinking. 
@@ -500,8 +500,8 @@ cov(post[, 1:2])
 
 ```
 ##             b_Intercept       sigma
-## b_Intercept 0.176924111 0.001420698
-## sigma       0.001420698 0.087467608
+## b_Intercept 0.162644289 0.002231319
+## sigma       0.002231319 0.084591752
 ```
 
 That was "(1) a vector of variances for the parameters and (2) a correlation matrix" for them (p. 90). Here are just the variances (i.e., the diagonal elements) and the correlation matrix.
@@ -515,7 +515,7 @@ post[, 1:2] %>%
 
 ```
 ## b_Intercept       sigma 
-##  0.17692411  0.08746761
+##  0.16264429  0.08459175
 ```
 
 ```r
@@ -526,8 +526,8 @@ select(b_Intercept, sigma) %>%
 
 ```
 ##             b_Intercept      sigma
-## b_Intercept  1.00000000 0.01142049
-## sigma        0.01142049 1.00000000
+## b_Intercept  1.00000000 0.01902297
+## sigma        0.01902297 1.00000000
 ```
 
 With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()`. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
@@ -539,12 +539,12 @@ head(post)
 
 ```
 ##   b_Intercept    sigma      lp__
-## 1    153.9825 6.821956 -1233.864
-## 2    155.2264 7.478577 -1228.093
-## 3    154.9862 7.270921 -1228.323
-## 4    155.1198 7.517387 -1227.594
-## 5    154.1235 7.975937 -1227.531
-## 6    154.4913 7.753666 -1226.563
+## 1    154.4026 7.775686 -1226.656
+## 2    154.5634 7.884039 -1226.675
+## 3    154.4471 7.566917 -1226.740
+## 4    154.7562 7.844768 -1226.669
+## 5    154.6642 7.550848 -1226.705
+## 6    153.7646 7.606061 -1228.755
 ```
 
 Notice how our data frame, `post`, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
@@ -558,12 +558,12 @@ summary(post[, 1:2])
 
 ```
 ##   b_Intercept        sigma      
-##  Min.   :153.3   Min.   :6.808  
-##  1st Qu.:154.3   1st Qu.:7.536  
-##  Median :154.6   Median :7.735  
-##  Mean   :154.6   Mean   :7.748  
-##  3rd Qu.:154.9   3rd Qu.:7.946  
-##  Max.   :156.1   Max.   :8.817
+##  Min.   :152.9   Min.   :6.789  
+##  1st Qu.:154.3   1st Qu.:7.552  
+##  Median :154.6   Median :7.743  
+##  Mean   :154.6   Mean   :7.755  
+##  3rd Qu.:154.9   3rd Qu.:7.949  
+##  Max.   :156.1   Max.   :8.873
 ```
 
 Here's one option using the transpose of a `quantile()` call nested within `apply()`, which is a very general function you can learn more about [here](https://www.datacamp.com/community/tutorials/r-tutorial-apply-family#gs.f7fyw2s) or [here](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/).
@@ -575,8 +575,8 @@ t(apply(post[, 1:2], 2, quantile, probs = c(.5, .025, .75)))
 
 ```
 ##                    50%       2.5%        75%
-## b_Intercept 154.594670 153.795473 154.884233
-## sigma         7.734902   7.213258   7.946283
+## b_Intercept 154.607466 153.815083 154.874049
+## sigma         7.743284   7.217449   7.949387
 ```
 
 The base R code is compact, but somewhat opaque. Here's how to do something similar with more explicit tidyverse code.
@@ -598,8 +598,8 @@ post %>%
 ## # A tibble: 2 x 5
 ##   parameter     mean    SD `2.5_percentile` `97.5_percentile`
 ##   <chr>        <dbl> <dbl>            <dbl>             <dbl>
-## 1 b_Intercept 155    0.420           154               155   
-## 2 sigma         7.75 0.300             7.21              8.37
+## 1 b_Intercept 155    0.400           154               155   
+## 2 sigma         7.75 0.290             7.22              8.36
 ```
 
 With respect to McElreath's "Overthinking: Getting $\sigma$ right.", there's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
@@ -665,12 +665,12 @@ print(b4.3)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   113.93      1.91   110.20   117.63        865 1.01
-## weight        0.90      0.04     0.82     0.99        850 1.01
+## Intercept   113.98      4.01   104.60   124.16        794 1.00
+## weight        0.90      0.09     0.68     1.11        753 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.11      0.19     4.75     5.50       2601 1.00
+## sigma     9.46      7.61     4.76    22.54          2 8.76
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -691,9 +691,9 @@ posterior_samples(b4.3) %>%
 
 ```
 ##             b_Intercept b_weight sigma
-## b_Intercept        1.00    -0.99  0.01
-## b_weight          -0.99     1.00 -0.01
-## sigma              0.01    -0.01  1.00
+## b_Intercept        1.00    -0.99  0.06
+## b_weight          -0.99     1.00 -0.06
+## sigma              0.06    -0.06  1.00
 ```
 
 With centering, we can reduce the correlations among the parameters.
@@ -739,12 +739,12 @@ print(b4.4)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.60      0.28   154.06   155.14       4000 1.00
-## weight.c      0.91      0.04     0.82     0.99        834 1.00
+## Intercept   154.59      0.27   154.07   155.11       4000 1.00
+## weight.c      0.90      0.04     0.81     0.99        583 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.10      0.20     4.71     5.51       2875 1.00
+## sigma     5.10      0.19     4.73     5.50       2233 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -763,9 +763,9 @@ posterior_samples(b4.4) %>%
 
 ```
 ##             b_Intercept b_weight.c sigma
-## b_Intercept        1.00      -0.01 -0.02
-## b_weight.c        -0.01       1.00 -0.03
-## sigma             -0.02      -0.03  1.00
+## b_Intercept        1.00       0.02  0.01
+## b_weight.c         0.02       1.00 -0.01
+## sigma              0.01      -0.01  1.00
 ```
 
 See? Now all the correlations are quite low. Also, if you prefer a visual approach, you might do `pairs(b4.4)`.
@@ -799,11 +799,11 @@ post %>%
 ## # A tibble: 5 x 4
 ##   b_Intercept b_weight sigma  lp__
 ##         <dbl>    <dbl> <dbl> <dbl>
-## 1         113    0.917  4.93 -1083
-## 2         113    0.922  4.87 -1083
-## 3         112    0.938  5.45 -1085
-## 4         112    0.938  5.44 -1085
-## 5         113    0.939  5.44 -1085
+## 1         114    0.892  5.39 -1083
+## 2         116    0.850  4.86 -1084
+## 3         115    0.881  5.32 -1083
+## 4         115    0.881  5.35 -1083
+## 5         114    0.902  4.98 -1082
 ```
 
 Here are the four models leading up to McElreaths Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
@@ -1032,8 +1032,8 @@ hdi(mu_at_50[,1], credMass = .89)
 
 ```
 ##       mu_at_50
-## lower 158.5843
-## upper 159.6550
+## lower 158.1599
+## upper 160.2434
 ## attr(,"credMass")
 ## [1] 0.89
 ```
@@ -1044,8 +1044,8 @@ hdi(mu_at_50[,1], credMass = .95)
 
 ```
 ##       mu_at_50
-## lower 158.4682
-## upper 159.7874
+## lower 157.4947
+## upper 160.9573
 ## attr(,"credMass")
 ## [1] 0.95
 ```
@@ -1076,7 +1076,7 @@ str(mu)
 ```
 
 ```
-##  num [1:4000, 1:352] 157 157 157 157 158 ...
+##  num [1:4000, 1:352] 157 157 157 157 157 ...
 ```
 
 When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and *n* = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
@@ -1166,12 +1166,12 @@ head(muSummary)
 ## # A tibble: 6 x 5
 ##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
 ##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      137     0.883       135        138   25.0
-## 2      137     0.843       136        139   26.0
-## 3      138     0.804       137        140   27.0
-## 4      139     0.764       138        141   28.0
-## 5      140     0.725       139        142   29.0
-## 6      141     0.687       140        142   30.0
+## 1      137      1.86       132        141   25.0
+## 2      137      1.78       134        142   26.0
+## 3      138      1.70       135        143   27.0
+## 4      139      1.61       136        143   28.0
+## 5      140      1.53       137        144   29.0
+## 6      141      1.45       138        145   30.0
 ```
 
 Here it is, our analogue to Figure 4.7.b:
@@ -1222,12 +1222,12 @@ pred.height %>%
 ## # A tibble: 6 x 5
 ##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
 ##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      136      5.17       127        147   25.0
-## 2      137      5.21       127        147   26.0
-## 3      138      5.18       128        148   27.0
-## 4      139      5.12       129        149   28.0
-## 5      140      5.19       130        150   29.0
-## 6      141      5.23       131        151   30.0
+## 1      136      12.3       108        166   25.0
+## 2      138      12.5       109        168   26.0
+## 3      138      12.3       109        168   27.0
+## 4      139      12.1       111        169   28.0
+## 5      140      12.4       113        169   29.0
+## 6      141      12.4       113        171   30.0
 ```
 
 This time the summary information in our data frame is for, as McElreath puts is, "simulated heights, not distributions of plausible average height, $\mu$" (p. 108). Another way of saying that is that these simulations are the joint consequence of both $\mu$ and $\sigma$, unlike the results of `fitted()`, which only reflect $\mu$. Our plot for Figure 4.8:
@@ -1310,9 +1310,9 @@ print(b4.5)
 ##  
 ## Population-Level Effects: 
 ##             Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     146.66      0.38   145.90   147.38       3684 1.00
-## weight.s       21.40      0.29    20.84    21.95       3527 1.00
-## Iweight.sE2    -8.41      0.28    -8.96    -7.85       3452 1.00
+## Intercept     146.67      0.37   145.96   147.41       3594 1.00
+## weight.s       21.40      0.28    20.85    21.95       3075 1.00
+## Iweight.sE2    -8.42      0.27    -8.95    -7.88       3471 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
