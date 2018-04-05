@@ -1,7 +1,7 @@
 ---
 title: "Ch. 8 Markov Chain Monte Carlo"
 author: "A Solomon Kurz"
-date: "2018-03-27"
+date: "2018-04-05"
 output:
   html_document:
     code_folding: show
@@ -206,10 +206,10 @@ print(b8.1_4chains_4cores)
 ##  
 ## Population-Level Effects: 
 ##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              9.22      0.14     8.95     9.50       2943 1.00
-## rugged                -0.20      0.08    -0.36    -0.05       2800 1.00
-## cont_africa           -1.95      0.23    -2.39    -1.49       2263 1.00
-## rugged:cont_africa     0.39      0.13     0.12     0.66       2309 1.00
+## Intercept              9.22      0.14     8.95     9.49       3097 1.00
+## rugged                -0.20      0.08    -0.35    -0.05       2884 1.00
+## cont_africa           -1.95      0.23    -2.39    -1.50       2445 1.00
+## rugged:cont_africa     0.39      0.13     0.13     0.65       2262 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
@@ -605,26 +605,190 @@ post %>%
 
 ### 8.4.4. Non-identifiable parameters.
 
-I couldn't figure out how to specify this one in brms. For example, the code below didn't quite work. If you've got it, hit a brother up.
+It appears that the [only way](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/3) to get a brms version of McElreath's `m8.4` and `m8.5` is to augment the data. In addition to the Gaussian `y` vector, we'll add two constants to the data, `intercept1 = 1` and `intercept2 = 1`. 
 
 
 ```r
+set.seed(8.4)
 y <- rnorm(100, mean = 0, sd = 1)
+```
 
+
+```r
 b8.4 <-
-  brm(data = list(y = y), 
+  brm(data = list(y = y,
+                  intercept1 = 1,
+                  intercept2 = 1), 
       family = gaussian,
-      y ~ 1 + 1,
-      prior = c(set_prior("uniform(-1e10, 1e10)", class = "Intercept"),
+      y ~ 0 + intercept1 + intercept2,
+      prior = c(set_prior("uniform(-1e10, 1e10)", class = "b"),
                 set_prior("cauchy(0, 1)", class = "sigma")),
-      inits = list(list(Intercept = 0, sigma = 1),
-                   list(Intercept = 0, sigma = 1)),
-      chains = 2, iter = 4000, warmup = 1000)
+      inits = list(list(intercept1 = 0, intercept2 = 0, sigma = 1),
+                   list(intercept1 = 0, intercept2 = 0, sigma = 1)),
+      chains = 2, iter = 4000, warmup = 1000,
+      seed = 8.4)
+```
 
+Our model results don't perfectly mirror McElreath's, but they're identical in spirit.
+
+
+```r
 print(b8.4)
 ```
 
-But anyways, the central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Dan Simpson's post on Gelman's blog](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/) and their [corresponding paper with Michael Betancourt](https://arxiv.org/abs/1708.07487).
+```
+## Warning: The model has not converged (some Rhats are > 1.1). Do not analyse the results! 
+## We recommend running more iterations and/or setting stronger priors.
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: y ~ 0 + intercept1 + intercept2 
+##    Data: list(y = y, intercept1 = 1, intercept2 = 1) (Number of observations: 100) 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 6000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## intercept1  1116.48    944.73  -762.62  2439.62          2 2.50
+## intercept2 -1116.57    944.74 -2439.65   762.38          2 2.50
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## sigma     1.06      0.08     0.91     1.22          5 1.16
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+Note the frightening warning message.
+
+
+```r
+b8.5 <-
+  brm(data = list(y = y,
+                  intercept1 = 1,
+                  intercept2 = 1), 
+      family = gaussian,
+      y ~ 0 + intercept1 + intercept2,
+      prior = c(set_prior("normal(0, 10)", class = "b"),
+                set_prior("cauchy(0, 1)", class = "sigma")),
+      inits = list(list(intercept1 = 0, intercept2 = 0, sigma = 1),
+                   list(intercept1 = 0, intercept2 = 0, sigma = 1)),
+      chains = 2, iter = 4000, warmup = 1000)
+```
+
+
+```r
+print(b8.5)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: y ~ 0 + intercept1 + intercept2 
+##    Data: list(y = y, intercept1 = 1, intercept2 = 1) (Number of observations: 100) 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 6000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## intercept1     0.20      7.11   -14.03    14.12       1192 1.00
+## intercept2    -0.29      7.11   -14.22    13.96       1191 1.00
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## sigma     1.09      0.08     0.95     1.25       2116 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+Now we'll do the preparatory work for Figure 8.7. Instead of showing the plots, here, we'll save them as objects, `left_column` and `right_column`, in order to combine them below. 
+
+
+```r
+post <- posterior_samples(b8.4, add_chain = T)
+
+left_column <-
+  mcmc_trace(post[, c(1:3, 5)],
+           size = .25,
+           facet_args = c(ncol = 1)) +
+  scale_color_ipsum() +
+  theme_ipsum() +
+  theme(legend.position = c(.85, 1.5),
+        legend.direction = "horizontal")
+
+post <- posterior_samples(b8.5, add_chain = T)
+
+right_column <-
+  mcmc_trace(post[, c(1:3, 5)],
+           size = .25,
+           facet_args = c(ncol = 1)) +
+  scale_color_ipsum() +
+  theme_ipsum() +
+  theme(legend.position = c(.85, 1.5),
+        legend.direction = "horizontal")
+```
+
+With a little help of the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) we can slap our two plot objects together. 
+
+Behold the code for the `multiplot()` function:
+
+
+```r
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+We're finally ready to use `multiplot()` to make our version of Figure 8.7. 
+
+
+```r
+multiplot(left_column, right_column, cols = 2)
+```
+
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+
+The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Dan Simpson's post on Gelman's blog](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/) and their [corresponding paper with Michael Betancourt](https://arxiv.org/abs/1708.07487).
 
 
 
