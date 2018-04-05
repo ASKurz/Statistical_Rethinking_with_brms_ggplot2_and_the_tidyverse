@@ -8,6 +8,10 @@ output:
     keep_md: TRUE
 ---
 
+```{r set-options, echo = FALSE, cache = FALSE}
+options(width = 100)
+```
+
 For our plots in this document, we'll use a custom theme. The color palette will come from the pearl_earring palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
 
 ```{r, fig.width = 6.5, fig.height = 2}
@@ -168,15 +172,11 @@ ggplot(data = R_1, aes(x = V2)) +
                color = "transparent", fill = "#FCF9F0", alpha = 2/3) +
   geom_density(data = R_4,
                color = "transparent", fill = "#394165", alpha = 2/3) +
-  annotate("text", label = "eta = 1", 
-           x = .83, y = .54, 
-           color = "#A65141", family = "Courier") +
-  annotate("text", label = "eta = 2", 
-           x = .62, y = .74, 
-           color = "#A65141", family = "Courier") +
-  annotate("text", label = "eta = 4", 
-           x = .46, y = 1, 
-           color = "#A65141", family = "Courier") +
+  geom_text(data = tibble(x = c(.83, .62, .46),
+                          y = c(.54, .74, 1),
+                          label = c("eta = 1", "eta = 2", "eta = 4")),
+            aes(x = x, y = y, label = label),
+            color = "#A65141", family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(x = "correlation") +
   theme_pearl_earring
@@ -260,7 +260,7 @@ params <-
   bind_rows(partially_pooled_params, un_pooled_params) %>%
   mutate(pooled = rep(c("partially", "not"), each = nrow(.)/2))  # indexing whether the estimates are pooled
 
-# Here's what we've been working for
+# Here's a glimpse at what we've been working for
 params %>%
   slice(c(1:5, 36:40))
 ```
@@ -319,7 +319,7 @@ The code for Figure 13.5.b.
 
 ```{r, fig.width = 4.7, fig.height = 3}
 ggplot(data = estimates, aes(x = morning, y = afternoon)) +
-  # Nesting stat_ellipse() with mapply() is a less redundant way to produce the ten layered semitransparent
+  # Nesting stat_ellipse() with mapply() is a less redundant way to produce the ten-layered semitransparent
   # ellipses we did with ten lines of stat_ellipse() functions in the previous plot
   mapply(function(level) {
     stat_ellipse(geom = "polygon", type = "norm",
@@ -341,7 +341,7 @@ ggplot(data = estimates, aes(x = morning, y = afternoon)) +
 
 ## 13.2. Example: Admission decisions and gender
 
-Let's revisit those sweet UCB admissions data.
+Let's revisit the infamous UCB admissions data.
 
 ```{r, warning = F, message = F}
 library(rethinking)
@@ -377,14 +377,85 @@ b13.2 <-
       control = list(adapt_delta = 0.99))
 ```
 
-The parameters, which you could also get with `b13.2$fit`:
+Since we don't have a `depth = 2` argument in `brms::summary()`, we'll have to get creative. One way to look at the parameters is with `b13.2$fit`:
+
+```{r}
+b13.2$fit
+```
+
+However, notice that the group-specific parameters don't match up with those in the text. Though our `r_dept_id[1,Intercept]` had a posterior mean of 1.27, the number for `a_dept[1]` in the text is 0.67. This is because the brms package presented the random effects in the **non-centered** metric. The rethinking package, in contrast, presents the random effects in the **centered** metric. On page 399, McElreath wrote:
+
+>Remember, the values above are the $\alpha_{DEPT}$ estimates, and so they are deviations from the global mean $\alpha$, which in this case has posterior mean -0.58. So department A, "[1]" in the table, has the highest average admission rate. Department F, "[6]" in the table, has the lowest.
+
+Here's another fun fact:
+
+```{r}
+# Numbers taken from the mean column on page 399 in the text
+c(0.67, 0.63, -0.59, -0.62, -1.06, -2.61) %>% mean()
+```
+
+The average of the rethinking-based **centered** random effects is within rounding error of the global mean, -0.58. If you want the random effects in the **centered** metric from brms, you can use the `coef()` function:
+
+```{r}
+coef(b13.2)
+```
+
+And just to confirm, the average of the posterior means of the `Intercept` random effects with `brms::coef()` is also the global mean within rounding error:
+
+```{r}
+mean(coef(b13.2)$dept_id[, "Estimate", "Intercept"])
+```
+
+Note how `coef()` returned a three-dimensional list.
+
+```{r}
+coef(b13.2) %>% str()
+```
+
+If you just want the parameter summaries for the random intercepts, you have to use three-dimensional indexing. 
+
+```{r}
+coef(b13.2)$dept_id[, , "Intercept"]  # this also works: coef(b13.2)$dept_id[, , 1]
+```
+
+So to get our brms summaries in a similar format to those in the text, we'll have to combine `coef()` with `fixef()` and `VarCorr()`. 
+
+```{r} 
+coef(b13.2)$dept_id[, , "Intercept"] %>%
+  as_tibble() %>% 
+  bind_rows(fixef(b13.2) %>% 
+              as_tibble()) %>% 
+  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
+              as_tibble())
+```
+
+And a little more data wrangling will make the summaries easier to read:
+
+```{r} 
+coef(b13.2)$dept_id[, , "Intercept"] %>%
+  as_tibble() %>% 
+  bind_rows(fixef(b13.2) %>% 
+              as_tibble()) %>% 
+  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
+              as_tibble()) %>% 
+  mutate(parameter = c(paste("Intercept [", 1:6, "]", sep = ""), 
+                       "Intercept", "male", "sigma")) %>% 
+  select(parameter, everything()) %>% 
+  mutate_if(is_double, round, digits = 2)
+```
+
+I’m not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you’re fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
+
+One last thing. The [broom package](https://cran.r-project.org/web/packages/broom/index.html) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
 
 ```{r}
 library(broom)
 
 tidy(b13.2) %>%
-  mutate_if(is.numeric, round, digits = 2)
+  mutate_if(is.numeric, round, digits = 2)  # This line just rounds the output
 ```
+
+But note how, just as with `b13.2$fit`, this approach summarizes the posterior with the **non-centered** parameterization. Which is a fine parameterization. It's just a little different from what you'll get when using `precis( m13.2 , depth=2 )`, as in the text.
 
 ### 13.2.2. Varying effects of being `male`.
 
@@ -403,130 +474,46 @@ b13.3 <-
                      max_treedepth = 12))
 ```
 
-The parameters:
+The random effects in the **centered** metric:
 
 ```{r}
-tidy(b13.3) %>%
-  mutate_if(is.numeric, round, digits = 2)
+coef(b13.3)
 ```
 
-We could use `brms::stanplot()` to make a quick coefficient plot or `bayesplot::mcmc_areas()` to make density curves. But it's also good to know how to build these from the ground up. In order to do so, we'll borrow David Robinson's code for the [`geom_flat_violin()` function](https://gist.github.com/dgrtwo/eb7750e74997891d7c20). 
+It just takes a little data wrangling to put the brms-based **centered** random effects into a tidy tibble with which we might make a coefficient plot, like McElreath did on page 401.
 
-```{r}
-# somewhat hackish solution to:
-# https://twitter.com/EamonCaddigan/status/646759751242620928
-# based mostly on copy/pasting from ggplot2 geom_violin source:
-# https://github.com/hadley/ggplot2/blob/master/R/geom-violin.r
+```{r, fig.width = 6.5, fig.height = 2.5}
+# As far as I can tell, because coef() yields a list, you have to take out the two random effects one at a time, convert them into tibbles, and then reassemble them with bind_rows()
+coef(b13.3)$dept_id[, , 1] %>% 
+  as_tibble() %>% 
+  bind_rows(coef(b13.3)$dept_id[, , 2] %>% 
+              as_tibble()) %>% 
+  mutate(param = c(paste("Intercept", 1:6),
+                   paste("male", 1:6)),
+         reorder = c(6:1, 12:7)) %>% 
 
-"%||%" <- function(a, b) {
-  if (!is.null(a)) a else b
-}
-
-geom_flat_violin <- function(mapping = NULL, data = NULL, stat = "ydensity",
-                        position = "dodge", trim = TRUE, scale = "area",
-                        show.legend = NA, inherit.aes = TRUE, ...) {
-  layer(
-    data = data,
-    mapping = mapping,
-    stat = stat,
-    geom = GeomFlatViolin,
-    position = position,
-    show.legend = show.legend,
-    inherit.aes = inherit.aes,
-    params = list(
-      trim = trim,
-      scale = scale,
-      ...
-    )
-  )
-}
-
-#' @rdname ggplot2-ggproto
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomFlatViolin <-
-  ggproto("GeomFlatViolin", Geom,
-          setup_data = function(data, params) {
-            data$width <- data$width %||%
-              params$width %||% (resolution(data$x, FALSE) * 0.9)
-            
-            # ymin, ymax, xmin, and xmax define the bounding rectangle for each group
-            data %>%
-              group_by(group) %>%
-              mutate(ymin = min(y),
-                     ymax = max(y),
-                     xmin = x,
-                     xmax = x + width / 2)
-            # ) This parenthesis is a mistake in the code and should be omitted
-          },
-          
-          draw_group = function(data, panel_scales, coord) {
-            # Find the points for the line to go all the way around
-            data <- transform(data, xminv = x,
-                              xmaxv = x + violinwidth * (xmax - x))
-            
-            # Make sure it's sorted properly to draw the outline
-            newdata <- rbind(plyr::arrange(transform(data, x = xminv), y),
-                             plyr::arrange(transform(data, x = xmaxv), -y))
-            
-            # Close the polygon: set first and last point the same
-            # Needed for coord_polar and such
-            newdata <- rbind(newdata, newdata[1,])
-            
-            ggplot2:::ggname("geom_flat_violin", GeomPolygon$draw_panel(newdata, panel_scales, coord))
-          },
-          
-          draw_key = draw_key_polygon,
-          
-          default_aes = aes(weight = 1, colour = "grey20", fill = "white", size = 0.5,
-                            alpha = NA, linetype = "solid"),
-          
-          required_aes = c("x", "y")
-)
-```
-
-It'll just take a few lines of data wrangling code before we can construct our hand-made plot.
-
-```{r, warning = F, message = F, fig.width = 6.4, fig.height = 3}
-post <- posterior_samples(b13.3)
-
-post %>%
-  select(`r_dept_id[1,Intercept]`:`r_dept_id[6,male]`) %>%
-  gather() %>%
-  mutate(intercept = ifelse(str_detect(key, "Intercept"), 1, 0)) %>%
-  mutate(key = fct_reorder(key, desc(intercept))) %>% 
-  
-  ggplot(aes(x = key, y = value, group = key)) +
-  geom_flat_violin(color = "#394165", fill = "#394165", 
-                   size = 1/10, scale = "width") +
-  stat_summary(geom = "linerange",
-               fun.ymin = function(x) {quantile(x, .025)},
-               fun.ymax = function(x) {quantile(x, .975)},
-               size = 2/3, color = "#B1934A") +
-  stat_summary(geom = "linerange",
-               fun.ymin = function(x) {quantile(x, .25)},
-               fun.ymax = function(x) {quantile(x, .75)},
-               size = 1, color = "#EEDA9D") +
-  stat_summary(geom = "point",
-               fun.y = median,
-               color = "#A65141") +
-  coord_flip(ylim = -4:4) +
+  # The plot
+  ggplot(aes(x = reorder(param, reorder))) +
+  geom_hline(yintercept = 0, linetype = 3, color = "#E8DCCF") +
+             geom_linerange(aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+                 color = "#E7CDC2") +
+  geom_point(aes(y = Estimate),
+             color = "#A65141") +
   xlab(NULL) +
+  coord_flip() +
   theme_pearl_earring +
-  theme(axis.ticks.y = element_blank())
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_text(hjust = 0))
 ```
-
-This is a combination of a coefficient plot and a density plot. We used `stat_summary()` three times to compute the golden 95% intervals, the yellow 50% intervals, and the red posterior medians. Robinson's `geom_flat_violin()` allowed us to stack the blue densities atop of the intervals.
-
-It's unclear, to me, why our varying intercepts are so much wider than McElreath's.
 
 ### 13.2.3. Shrinkage.
 
 Figure 13.6.a., the correlation between the full UCB model's varying intercepts and slopes.
 
 ```{r, fig.width = 3, fig.height = 3}
-post %>%
+post <- posterior_samples(b13.3)
+
+post %>% 
   ggplot(aes(x = cor_dept_id__Intercept__male)) +
   geom_density(color = "transparent", fill = "#8B9DAF") +
   geom_vline(xintercept = median(post$cor_dept_id__Intercept__male), color = "#394165") +
@@ -578,7 +565,7 @@ params <-
 params
 ```
 
-Our version of Figure 13.6.b., depicting two-dimensional shrinkage for the partially-pooled multilevel estimates (posterior means) relative to the unpooled coefficients, calculated from the data. The [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html) and its `geom_text_repel()` function will help us with the in-plot labels.
+Here's our version of Figure 13.6.b., depicting two-dimensional shrinkage for the partially-pooled multilevel estimates (posterior means) relative to the unpooled coefficients, calculated from the data. The [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html) and its `geom_text_repel()` function will help us with the in-plot labels.
 
 ```{r, fig.width = 5, fig.height = 3}
 library(ggrepel)
@@ -622,7 +609,9 @@ b13.4 <-
 waic(b13.2, b13.3, b13.4)
 ```
 
-## 13.3. Example: Cross-classified chimpanzees with varying slopes
+## 13.3. Example: Cross-classified `chimpanzees` with varying slopes
+
+Retrieve the `chimpanzees` data.
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -641,7 +630,7 @@ d <-
   mutate(block_id = block)
 ```
 
-Our cross-classified model. For you SEM lovers, this reminds me of a factor model with a method effect (e.g., a bifactor model). 
+Here's our cross-classified model. For you SEM lovers, this reminds me of a factor model with a method effect (e.g., a bifactor model). 
 
 ```{r, message = F, warning = F, results = "hide"}
 b13.6 <- 
@@ -689,7 +678,7 @@ neff %>%
   theme_pearl_earring
 ```
 
-The bayesplot package contains a sweet of [handy diagnostic features](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#effective-sample-size). `mcmc_neff()`, for example, makes it easy to examine the ratio of n.eff and the fill number of post-warm-up iterations, N. Ideally, that ratio is closer to 1 than not.
+The bayesplot package contains a sweet of [handy diagnostic features](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#effective-sample-size). `mcmc_neff()`, for example, makes it easy to examine the ratio of n.eff and the fill number of post-warm-up iterations, *N*. Ideally, that ratio is closer to 1 than not.
 
 ```{r, warning = F, message = F, fig.height = 3.5}
 library(bayesplot)
@@ -769,19 +758,6 @@ Dmat %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-
-```{r, message = F, warning = F}
-data(chimpanzees)
-d <- chimpanzees
-
-rm(chimpanzees)
-
-d <-
-  d %>%
-  select(-recipient) %>%
-  mutate(block_id = block)
-```
-
 Figure 13.8., the "shape of the function relating distance to the covariance **K**$_{ij}$."
 
 ```{r, fig.width = 3.25, fig.height = 3}
@@ -812,13 +788,15 @@ d <-
 d %>% glimpse()
 ```
 
-Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. If you know the appropriate code to fit McElreath's `m13.7` in brms, please share.
+Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. 
+
+On [Issues #8 in my GitHub page for his project](), [Bürkner](https://paul-buerkner.github.io) suggested `brm(total_tools ~ gp(x) + logpop, ...)`, where "`x` is the position variable from which `Dmat` was constructed. Not sure if this is really equivalent, but it might be a start." I haven't gotten around to playing with this, yet. Stay tuned or, even better, play with it yourself and share your results.
 
 ##### Bonus: Another Berkley-admissions-data-like example. 
 
-[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of him teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://www.youtube.com/watch?v=rSQ1XMwO_9A&t), he discussed a paper from [van der Lee and Ellemers (2015) published an article in PNAS]( http://www.pnas.org/content/112/40/12349.abstract). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi$^2^ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi$^2^ (1) = 4.01, *P* = 0.045. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](http://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video. 
+[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of him teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://www.youtube.com/watch?v=rSQ1XMwO_9A&t), he discussed a paper from [van der Lee and Ellemers (2015) published an article in PNAS]( http://www.pnas.org/content/112/40/12349.abstract). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi^2$ (1) = 4.01, *P* = 0.045. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](http://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video. 
 
-Their data follows the same structure as the Berkley admissions data. In his lecture, McElreath suggested their $\chi$^2^ test is an example of Simpson’s paradox, just as with the Berkley data. He isn't the first person to raise this criticism (see [Volker and SteenBeek’s critique](http://www.pnas.org/content/112/51/E7036.full), which McElreath also pointed to in the lecture).
+Their data follows the same structure as the Berkley admissions data. In his lecture, McElreath suggested their $\chi^2$ test is an example of Simpson’s paradox, just as with the Berkley data. He isn't the first person to raise this criticism (see [Volker and SteenBeek’s critique](http://www.pnas.org/content/112/51/E7036.full), which McElreath also pointed to in the lecture).
 
 Here are the data:
 
@@ -845,7 +823,7 @@ funding
 
 Let’s fit a few models.
 
-First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi$^2^ test. Since we’re Bayesian modelers, we’ll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
+First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we’ll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
 ```{r, message = F}
 detach(package:rethinking, unload = T)
@@ -968,7 +946,7 @@ Note. The analyses in this document were done with:
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
 ```{r, echo = F, results = "hide", warning = F, message = F}
-rm(d, Rho, Sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, Mu, N_cafes, N_visits, neff, ratios_cp, rho, R_1, R_2, R_4, sigma, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, `%||%`, geom_flat_violin, GeomFlatViolin, partially_pooled_params, un_pooled_params, params, nd, partially_pooled_estimates, un_pooled_estimates, estimates, Dmat, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2)
+rm(d, Rho, Sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, Mu, N_cafes, N_visits, neff, ratios_cp, rho, R_1, R_2, R_4, sigma, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, Dmat, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2)
 ```
 
 

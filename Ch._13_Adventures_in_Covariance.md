@@ -1,7 +1,7 @@
 ---
 title: "Ch. 13 Adventures in Covariance"
 author: "A Solomon Kurz"
-date: "2018-03-25"
+date: "2018-04-05"
 output:
   html_document:
     code_folding: show
@@ -205,15 +205,11 @@ ggplot(data = R_1, aes(x = V2)) +
                color = "transparent", fill = "#FCF9F0", alpha = 2/3) +
   geom_density(data = R_4,
                color = "transparent", fill = "#394165", alpha = 2/3) +
-  annotate("text", label = "eta = 1", 
-           x = .83, y = .54, 
-           color = "#A65141", family = "Courier") +
-  annotate("text", label = "eta = 2", 
-           x = .62, y = .74, 
-           color = "#A65141", family = "Courier") +
-  annotate("text", label = "eta = 4", 
-           x = .46, y = 1, 
-           color = "#A65141", family = "Courier") +
+  geom_text(data = tibble(x = c(.83, .62, .46),
+                          y = c(.54, .74, 1),
+                          label = c("eta = 1", "eta = 2", "eta = 4")),
+            aes(x = x, y = y, label = label),
+            color = "#A65141", family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(x = "correlation") +
   theme_pearl_earring
@@ -277,50 +273,50 @@ coef(b13.1)
 ## , , Intercept
 ## 
 ##    Estimate Est.Error  2.5%ile 97.5%ile
-## 1  4.079158 0.2062799 3.676447 4.486203
-## 2  1.928676 0.2041425 1.525824 2.336423
-## 3  4.823044 0.2097358 4.414946 5.236664
-## 4  3.476152 0.2025280 3.076081 3.869889
-## 5  1.775193 0.2141464 1.358780 2.187121
-## 6  4.389533 0.2033005 3.990372 4.785164
-## 7  3.249596 0.2076766 2.836969 3.653664
-## 8  4.014130 0.2073560 3.625717 4.428309
-## 9  4.235613 0.2054257 3.827959 4.639822
-## 10 3.707628 0.2041490 3.314796 4.104536
-## 11 2.164666 0.2116530 1.752041 2.578008
-## 12 4.033783 0.2073615 3.620570 4.442859
-## 13 4.091486 0.2108233 3.684535 4.508900
-## 14 3.595554 0.2111674 3.182347 4.005011
-## 15 4.265146 0.2078595 3.853648 4.668780
-## 16 3.486670 0.2081012 3.078191 3.886694
-## 17 4.030095 0.2115623 3.612960 4.445962
-## 18 5.842980 0.2088524 5.435441 6.247722
-## 19 3.772813 0.2061581 3.370198 4.182579
-## 20 3.854218 0.2096438 3.448802 4.270094
+## 1  4.073352 0.2048543 3.671889 4.473134
+## 2  1.930753 0.2070414 1.523242 2.343093
+## 3  4.823600 0.2101443 4.406742 5.233474
+## 4  3.476495 0.2088389 3.066082 3.900891
+## 5  1.771516 0.2108093 1.354675 2.186843
+## 6  4.388640 0.2014375 3.993861 4.788692
+## 7  3.247357 0.2076626 2.842378 3.652057
+## 8  4.011307 0.2117056 3.595492 4.428183
+## 9  4.244639 0.2036538 3.854347 4.647960
+## 10 3.706305 0.2065057 3.294928 4.105019
+## 11 2.160949 0.2165894 1.734274 2.576872
+## 12 4.033970 0.2059616 3.635531 4.440158
+## 13 4.085902 0.2067812 3.676111 4.494135
+## 14 3.598932 0.2071543 3.194617 3.995352
+## 15 4.263103 0.2078604 3.858035 4.670339
+## 16 3.484183 0.2064896 3.074771 3.886627
+## 17 4.037423 0.2069901 3.627032 4.435351
+## 18 5.843193 0.2085295 5.433520 6.256226
+## 19 3.775992 0.2069196 3.369462 4.175021
+## 20 3.855821 0.2011516 3.454780 4.240218
 ## 
 ## , , afternoon
 ## 
 ##      Estimate Est.Error   2.5%ile    97.5%ile
-## 1  -1.4060677 0.2602255 -1.936476 -0.89451663
-## 2  -0.9530278 0.2666280 -1.464053 -0.43134152
-## 3  -1.8961019 0.2724211 -2.433681 -1.38664091
-## 4  -1.2019297 0.2542359 -1.698489 -0.70711291
-## 5  -0.5800736 0.2769882 -1.127066 -0.01886097
-## 6  -1.4953182 0.2543078 -2.000292 -0.99377916
-## 7  -1.0558000 0.2583100 -1.550127 -0.54006829
-## 8  -1.7291822 0.2741968 -2.277868 -1.19313238
-## 9  -1.5700018 0.2633593 -2.081218 -1.06082517
-## 10 -1.0264646 0.2601500 -1.527835 -0.49307752
-## 11 -0.4848983 0.2816252 -1.032311  0.06982215
-## 12 -1.2652608 0.2622750 -1.772894 -0.75574280
-## 13 -1.8160134 0.2760729 -2.376624 -1.30559567
-## 14 -1.6325729 0.2707305 -2.170506 -1.11726742
-## 15 -1.6797936 0.2683250 -2.204018 -1.16548276
-## 16 -0.9655571 0.2634363 -1.469701 -0.45160112
-## 17 -0.6757120 0.2888661 -1.235125 -0.10333645
-## 18 -1.5473581 0.2737069 -2.081002 -1.00884576
-## 19 -0.9128136 0.2647371 -1.417403 -0.37586947
-## 20 -0.9464534 0.2680731 -1.462681 -0.40860923
+## 1  -1.4012349 0.2634323 -1.912918 -0.89066258
+## 2  -0.9529583 0.2690773 -1.484715 -0.43259103
+## 3  -1.8961869 0.2698510 -2.421251 -1.37613629
+## 4  -1.2029087 0.2638471 -1.717318 -0.69334339
+## 5  -0.5795899 0.2763090 -1.105607 -0.03482191
+## 6  -1.4978116 0.2551614 -2.004005 -1.00200711
+## 7  -1.0525960 0.2574086 -1.548089 -0.53829434
+## 8  -1.7287012 0.2742541 -2.285522 -1.20604363
+## 9  -1.5717800 0.2623306 -2.083063 -1.07118290
+## 10 -1.0267059 0.2635431 -1.536336 -0.50930311
+## 11 -0.4791191 0.2814797 -1.021003  0.07147783
+## 12 -1.2700844 0.2574595 -1.774658 -0.75365961
+## 13 -1.8123027 0.2704954 -2.354609 -1.29307618
+## 14 -1.6381293 0.2700656 -2.183864 -1.11292500
+## 15 -1.6795837 0.2649035 -2.217099 -1.17667137
+## 16 -0.9570437 0.2601023 -1.474810 -0.44218815
+## 17 -0.6832356 0.2785556 -1.229976 -0.12140521
+## 18 -1.5482478 0.2732372 -2.085494 -1.01178220
+## 19 -0.9192454 0.2671748 -1.441489 -0.38431502
+## 20 -0.9437515 0.2573507 -1.429376 -0.43122143
 ```
 
 Here's the code to extract the relevant elements from the `coef()` list, convert them to a tibble, and add the `cafe` index.
@@ -357,7 +353,7 @@ params <-
   bind_rows(partially_pooled_params, un_pooled_params) %>%
   mutate(pooled = rep(c("partially", "not"), each = nrow(.)/2))  # indexing whether the estimates are pooled
 
-# Here's what we've been working for
+# Here's a glimpse at what we've been working for
 params %>%
   slice(c(1:5, 36:40))
 ```
@@ -366,11 +362,11 @@ params %>%
 ## # A tibble: 10 x 4
 ##     cafe Intercept  Slope pooled   
 ##    <int>     <dbl>  <dbl> <chr>    
-##  1     1      4.08 -1.41  partially
+##  1     1      4.07 -1.40  partially
 ##  2     2      1.93 -0.953 partially
 ##  3     3      4.82 -1.90  partially
 ##  4     4      3.48 -1.20  partially
-##  5     5      1.78 -0.580 partially
+##  5     5      1.77 -0.580 partially
 ##  6    16      3.42 -0.836 not      
 ##  7    17      3.91 -0.348 not      
 ##  8    18      5.89 -1.50  not      
@@ -437,7 +433,7 @@ The code for Figure 13.5.b.
 
 ```r
 ggplot(data = estimates, aes(x = morning, y = afternoon)) +
-  # Nesting stat_ellipse() with mapply() is a less redundant way to produce the ten layered semitransparent
+  # Nesting stat_ellipse() with mapply() is a less redundant way to produce the ten-layered semitransparent
   # ellipses we did with ten lines of stat_ellipse() functions in the previous plot
   mapply(function(level) {
     stat_ellipse(geom = "polygon", type = "norm",
@@ -461,7 +457,7 @@ ggplot(data = estimates, aes(x = morning, y = afternoon)) +
 
 ## 13.2. Example: Admission decisions and gender
 
-Let's revisit those sweet UCB admissions data.
+Let's revisit the infamous UCB admissions data.
 
 
 ```r
@@ -500,29 +496,222 @@ b13.2 <-
       control = list(adapt_delta = 0.99))
 ```
 
-The parameters, which you could also get with `b13.2$fit`:
+Since we don't have a `depth = 2` argument in `brms::summary()`, we'll have to get creative. One way to look at the parameters is with `b13.2$fit`:
+
+
+```r
+b13.2$fit
+```
+
+```
+## Inference for Stan model: binomial brms-model.
+## 3 chains, each with iter=4500; warmup=500; thin=1; 
+## post-warmup draws per chain=4000, total post-warmup draws=12000.
+## 
+##                          mean se_mean   sd   2.5%    25%    50%    75%
+## b_Intercept             -0.58    0.02 0.65  -1.89  -0.94  -0.58  -0.20
+## b_male                  -0.10    0.00 0.08  -0.26  -0.15  -0.10  -0.04
+## sd_dept_id__Intercept    1.46    0.01 0.55   0.76   1.09   1.34   1.69
+## r_dept_id[1,Intercept]   1.26    0.02 0.65  -0.04   0.88   1.25   1.62
+## r_dept_id[2,Intercept]   1.22    0.02 0.65  -0.07   0.83   1.21   1.57
+## r_dept_id[3,Intercept]   0.00    0.02 0.65  -1.31  -0.38   0.00   0.36
+## r_dept_id[4,Intercept]  -0.03    0.02 0.65  -1.33  -0.41  -0.03   0.33
+## r_dept_id[5,Intercept]  -0.47    0.02 0.65  -1.76  -0.86  -0.48  -0.11
+## r_dept_id[6,Intercept]  -2.02    0.02 0.66  -3.35  -2.40  -2.02  -1.65
+## lp__                   -61.96    0.05 2.62 -68.11 -63.42 -61.58 -60.09
+##                         97.5% n_eff Rhat
+## b_Intercept              0.71  1706    1
+## b_male                   0.07  5281    1
+## sd_dept_id__Intercept    2.91  1984    1
+## r_dept_id[1,Intercept]   2.56  1686    1
+## r_dept_id[2,Intercept]   2.53  1688    1
+## r_dept_id[3,Intercept]   1.31  1677    1
+## r_dept_id[4,Intercept]   1.28  1678    1
+## r_dept_id[5,Intercept]   0.85  1733    1
+## r_dept_id[6,Intercept]  -0.72  1724    1
+## lp__                   -57.90  2351    1
+## 
+## Samples were drawn using NUTS(diag_e) at Thu Apr  5 12:11:28 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).
+```
+
+However, notice that the group-specific parameters don't match up with those in the text. Though our `r_dept_id[1,Intercept]` had a posterior mean of 1.27, the number for `a_dept[1]` in the text is 0.67. This is because the brms package presented the random effects in the **non-centered** metric. The rethinking package, in contrast, presents the random effects in the **centered** metric. On page 399, McElreath wrote:
+
+>Remember, the values above are the $\alpha_{DEPT}$ estimates, and so they are deviations from the global mean $\alpha$, which in this case has posterior mean -0.58. So department A, "[1]" in the table, has the highest average admission rate. Department F, "[6]" in the table, has the lowest.
+
+Here's another fun fact:
+
+
+```r
+# Numbers taken from the mean column on page 399 in the text
+c(0.67, 0.63, -0.59, -0.62, -1.06, -2.61) %>% mean()
+```
+
+```
+## [1] -0.5966667
+```
+
+The average of the rethinking-based **centered** random effects is within rounding error of the global mean, -0.58. If you want the random effects in the **centered** metric from brms, you can use the `coef()` function:
+
+
+```r
+coef(b13.2)
+```
+
+```
+## $dept_id
+## , , Intercept
+## 
+##     Estimate  Est.Error    2.5%ile   97.5%ile
+## 1  0.6755552 0.10042081  0.4806926  0.8718832
+## 2  0.6305958 0.11716294  0.3973254  0.8620831
+## 3 -0.5826204 0.07604597 -0.7312332 -0.4304359
+## 4 -0.6162015 0.08600027 -0.7832934 -0.4489865
+## 5 -1.0575477 0.09962859 -1.2579984 -0.8624124
+## 6 -2.6076713 0.15546862 -2.9167375 -2.3111568
+## 
+## , , male
+## 
+##      Estimate Est.Error    2.5%ile   97.5%ile
+## 1 -0.09673845 0.0822732 -0.2557497 0.06671579
+## 2 -0.09673845 0.0822732 -0.2557497 0.06671579
+## 3 -0.09673845 0.0822732 -0.2557497 0.06671579
+## 4 -0.09673845 0.0822732 -0.2557497 0.06671579
+## 5 -0.09673845 0.0822732 -0.2557497 0.06671579
+## 6 -0.09673845 0.0822732 -0.2557497 0.06671579
+```
+
+And just to confirm, the average of the posterior means of the `Intercept` random effects with `brms::coef()` is also the global mean within rounding error:
+
+
+```r
+mean(coef(b13.2)$dept_id[, "Estimate", "Intercept"])
+```
+
+```
+## [1] -0.5929817
+```
+
+Note how `coef()` returned a three-dimensional list.
+
+
+```r
+coef(b13.2) %>% str()
+```
+
+```
+## List of 1
+##  $ dept_id: num [1:6, 1:4, 1:2] 0.676 0.631 -0.583 -0.616 -1.058 ...
+##   ..- attr(*, "dimnames")=List of 3
+##   .. ..$ : chr [1:6] "1" "2" "3" "4" ...
+##   .. ..$ : chr [1:4] "Estimate" "Est.Error" "2.5%ile" "97.5%ile"
+##   .. ..$ : chr [1:2] "Intercept" "male"
+```
+
+If you just want the parameter summaries for the random intercepts, you have to use three-dimensional indexing. 
+
+
+```r
+coef(b13.2)$dept_id[, , "Intercept"]  # this also works: coef(b13.2)$dept_id[, , 1]
+```
+
+```
+##     Estimate  Est.Error    2.5%ile   97.5%ile
+## 1  0.6755552 0.10042081  0.4806926  0.8718832
+## 2  0.6305958 0.11716294  0.3973254  0.8620831
+## 3 -0.5826204 0.07604597 -0.7312332 -0.4304359
+## 4 -0.6162015 0.08600027 -0.7832934 -0.4489865
+## 5 -1.0575477 0.09962859 -1.2579984 -0.8624124
+## 6 -2.6076713 0.15546862 -2.9167375 -2.3111568
+```
+
+So to get our brms summaries in a similar format to those in the text, we'll have to combine `coef()` with `fixef()` and `VarCorr()`. 
+
+
+```r
+coef(b13.2)$dept_id[, , "Intercept"] %>%
+  as_tibble() %>% 
+  bind_rows(fixef(b13.2) %>% 
+              as_tibble()) %>% 
+  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
+              as_tibble())
+```
+
+```
+## # A tibble: 9 x 4
+##   Estimate Est.Error `2.5%ile` `97.5%ile`
+##      <dbl>     <dbl>     <dbl>      <dbl>
+## 1   0.676     0.100      0.481     0.872 
+## 2   0.631     0.117      0.397     0.862 
+## 3  -0.583     0.0760    -0.731    -0.430 
+## 4  -0.616     0.0860    -0.783    -0.449 
+## 5  -1.06      0.0996    -1.26     -0.862 
+## 6  -2.61      0.155     -2.92     -2.31  
+## 7  -0.584     0.647     -1.89      0.713 
+## 8  -0.0967    0.0823    -0.256     0.0667
+## 9   1.46      0.553      0.764     2.91
+```
+
+And a little more data wrangling will make the summaries easier to read:
+
+
+```r
+coef(b13.2)$dept_id[, , "Intercept"] %>%
+  as_tibble() %>% 
+  bind_rows(fixef(b13.2) %>% 
+              as_tibble()) %>% 
+  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
+              as_tibble()) %>% 
+  mutate(parameter = c(paste("Intercept [", 1:6, "]", sep = ""), 
+                       "Intercept", "male", "sigma")) %>% 
+  select(parameter, everything()) %>% 
+  mutate_if(is_double, round, digits = 2)
+```
+
+```
+## # A tibble: 9 x 5
+##   parameter     Estimate Est.Error `2.5%ile` `97.5%ile`
+##   <chr>            <dbl>     <dbl>     <dbl>      <dbl>
+## 1 Intercept [1]    0.680    0.100      0.480     0.870 
+## 2 Intercept [2]    0.630    0.120      0.400     0.860 
+## 3 Intercept [3]   -0.580    0.0800    -0.730    -0.430 
+## 4 Intercept [4]   -0.620    0.0900    -0.780    -0.450 
+## 5 Intercept [5]   -1.06     0.100     -1.26     -0.860 
+## 6 Intercept [6]   -2.61     0.160     -2.92     -2.31  
+## 7 Intercept       -0.580    0.650     -1.89      0.710 
+## 8 male            -0.100    0.0800    -0.260     0.0700
+## 9 sigma            1.46     0.550      0.760     2.91
+```
+
+I’m not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you’re fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
+
+One last thing. The [broom package](https://cran.r-project.org/web/packages/broom/index.html) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
 
 
 ```r
 library(broom)
 
 tidy(b13.2) %>%
-  mutate_if(is.numeric, round, digits = 2)
+  mutate_if(is.numeric, round, digits = 2)  # This line just rounds the output
 ```
 
 ```
 ##                      term estimate std.error  lower  upper
-## 1             b_Intercept    -0.62      0.64  -1.65   0.39
-## 2                  b_male    -0.09      0.08  -0.22   0.04
-## 3   sd_dept_id__Intercept     1.45      0.58   0.83   2.51
-## 4  r_dept_id[1,Intercept]     1.29      0.64   0.29   2.33
-## 5  r_dept_id[2,Intercept]     1.25      0.64   0.24   2.29
-## 6  r_dept_id[3,Intercept]     0.04      0.64  -0.97   1.07
-## 7  r_dept_id[4,Intercept]     0.00      0.64  -1.01   1.05
-## 8  r_dept_id[5,Intercept]    -0.44      0.64  -1.46   0.59
-## 9  r_dept_id[6,Intercept]    -1.99      0.65  -3.01  -0.95
-## 10                   lp__   -61.99      2.59 -66.75 -58.38
+## 1             b_Intercept    -0.58      0.65  -1.62   0.43
+## 2                  b_male    -0.10      0.08  -0.23   0.04
+## 3   sd_dept_id__Intercept     1.46      0.55   0.82   2.51
+## 4  r_dept_id[1,Intercept]     1.26      0.65   0.23   2.30
+## 5  r_dept_id[2,Intercept]     1.22      0.65   0.18   2.26
+## 6  r_dept_id[3,Intercept]     0.00      0.65  -1.02   1.04
+## 7  r_dept_id[4,Intercept]    -0.03      0.65  -1.05   1.02
+## 8  r_dept_id[5,Intercept]    -0.47      0.65  -1.49   0.58
+## 9  r_dept_id[6,Intercept]    -2.02      0.66  -3.07  -0.98
+## 10                   lp__   -61.96      2.62 -66.77 -58.36
 ```
+
+But note how, just as with `b13.2$fit`, this approach summarizes the posterior with the **non-centered** parameterization. Which is a fine parameterization. It's just a little different from what you'll get when using `precis( m13.2 , depth=2 )`, as in the text.
 
 ### 13.2.2. Varying effects of being `male`.
 
@@ -542,150 +731,64 @@ b13.3 <-
                      max_treedepth = 12))
 ```
 
-The parameters:
+The random effects in the **centered** metric:
 
 
 ```r
-tidy(b13.3) %>%
-  mutate_if(is.numeric, round, digits = 2)
+coef(b13.3)
 ```
 
 ```
-##                            term estimate std.error  lower  upper
-## 1                   b_Intercept    -0.50      0.74  -1.69   0.67
-## 2                        b_male    -0.16      0.24  -0.54   0.22
-## 3         sd_dept_id__Intercept     1.69      0.66   0.96   2.88
-## 4              sd_dept_id__male     0.50      0.26   0.20   0.97
-## 5  cor_dept_id__Intercept__male    -0.32      0.35  -0.82   0.33
-## 6        r_dept_id[1,Intercept]     1.81      0.77   0.61   3.07
-## 7        r_dept_id[2,Intercept]     1.24      0.79   0.02   2.51
-## 8        r_dept_id[3,Intercept]    -0.15      0.74  -1.32   1.06
-## 9        r_dept_id[4,Intercept]    -0.12      0.74  -1.29   1.09
-## 10       r_dept_id[5,Intercept]    -0.63      0.74  -1.81   0.57
-## 11       r_dept_id[6,Intercept]    -2.10      0.76  -3.29  -0.89
-## 12            r_dept_id[1,male]    -0.64      0.33  -1.20  -0.15
-## 13            r_dept_id[2,male]    -0.05      0.35  -0.62   0.52
-## 14            r_dept_id[3,male]     0.24      0.26  -0.16   0.67
-## 15            r_dept_id[4,male]     0.06      0.26  -0.35   0.48
-## 16            r_dept_id[5,male]     0.28      0.28  -0.14   0.76
-## 17            r_dept_id[6,male]     0.03      0.32  -0.51   0.55
-## 18                         lp__   -65.24      3.79 -72.07 -59.71
+## $dept_id
+## , , Intercept
+## 
+##     Estimate  Est.Error    2.5%ile   97.5%ile
+## 1  1.3056204 0.25506859  0.8138653  1.8190851
+## 2  0.7444135 0.32548834  0.1194053  1.4049231
+## 3 -0.6474318 0.08637996 -0.8145377 -0.4799312
+## 4 -0.6174365 0.10466815 -0.8241510 -0.4139319
+## 5 -1.1319566 0.11320892 -1.3571082 -0.9150872
+## 6 -2.6035394 0.20251645 -3.0153532 -2.2156893
+## 
+## , , male
+## 
+##      Estimate Est.Error    2.5%ile   97.5%ile
+## 1 -0.79362853 0.2686068 -1.3304344 -0.2753400
+## 2 -0.21492548 0.3281351 -0.8745124  0.4206929
+## 3  0.08054499 0.1395825 -0.1860989  0.3601138
+## 4 -0.09279442 0.1415786 -0.3713503  0.1857831
+## 5  0.11925717 0.1845587 -0.2305366  0.4837667
+## 6 -0.12076874 0.2717636 -0.6645634  0.4097235
 ```
 
-We could use `brms::stanplot()` to make a quick coefficient plot or `bayesplot::mcmc_areas()` to make density curves. But it's also good to know how to build these from the ground up. In order to do so, we'll borrow David Robinson's code for the [`geom_flat_violin()` function](https://gist.github.com/dgrtwo/eb7750e74997891d7c20). 
+It just takes a little data wrangling to put the brms-based **centered** random effects into a tidy tibble with which we might make a coefficient plot, like McElreath did on page 401.
 
 
 ```r
-# somewhat hackish solution to:
-# https://twitter.com/EamonCaddigan/status/646759751242620928
-# based mostly on copy/pasting from ggplot2 geom_violin source:
-# https://github.com/hadley/ggplot2/blob/master/R/geom-violin.r
+# As far as I can tell, because coef() yields a list, you have to take out the two random effects one at a time, convert them into tibbles, and then reassemble them with bind_rows()
+coef(b13.3)$dept_id[, , 1] %>% 
+  as_tibble() %>% 
+  bind_rows(coef(b13.3)$dept_id[, , 2] %>% 
+              as_tibble()) %>% 
+  mutate(param = c(paste("Intercept", 1:6),
+                   paste("male", 1:6)),
+         reorder = c(6:1, 12:7)) %>% 
 
-"%||%" <- function(a, b) {
-  if (!is.null(a)) a else b
-}
-
-geom_flat_violin <- function(mapping = NULL, data = NULL, stat = "ydensity",
-                        position = "dodge", trim = TRUE, scale = "area",
-                        show.legend = NA, inherit.aes = TRUE, ...) {
-  layer(
-    data = data,
-    mapping = mapping,
-    stat = stat,
-    geom = GeomFlatViolin,
-    position = position,
-    show.legend = show.legend,
-    inherit.aes = inherit.aes,
-    params = list(
-      trim = trim,
-      scale = scale,
-      ...
-    )
-  )
-}
-
-#' @rdname ggplot2-ggproto
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomFlatViolin <-
-  ggproto("GeomFlatViolin", Geom,
-          setup_data = function(data, params) {
-            data$width <- data$width %||%
-              params$width %||% (resolution(data$x, FALSE) * 0.9)
-            
-            # ymin, ymax, xmin, and xmax define the bounding rectangle for each group
-            data %>%
-              group_by(group) %>%
-              mutate(ymin = min(y),
-                     ymax = max(y),
-                     xmin = x,
-                     xmax = x + width / 2)
-            # ) This parenthesis is a mistake in the code and should be omitted
-          },
-          
-          draw_group = function(data, panel_scales, coord) {
-            # Find the points for the line to go all the way around
-            data <- transform(data, xminv = x,
-                              xmaxv = x + violinwidth * (xmax - x))
-            
-            # Make sure it's sorted properly to draw the outline
-            newdata <- rbind(plyr::arrange(transform(data, x = xminv), y),
-                             plyr::arrange(transform(data, x = xmaxv), -y))
-            
-            # Close the polygon: set first and last point the same
-            # Needed for coord_polar and such
-            newdata <- rbind(newdata, newdata[1,])
-            
-            ggplot2:::ggname("geom_flat_violin", GeomPolygon$draw_panel(newdata, panel_scales, coord))
-          },
-          
-          draw_key = draw_key_polygon,
-          
-          default_aes = aes(weight = 1, colour = "grey20", fill = "white", size = 0.5,
-                            alpha = NA, linetype = "solid"),
-          
-          required_aes = c("x", "y")
-)
-```
-
-It'll just take a few lines of data wrangling code before we can construct our hand-made plot.
-
-
-```r
-post <- posterior_samples(b13.3)
-
-post %>%
-  select(`r_dept_id[1,Intercept]`:`r_dept_id[6,male]`) %>%
-  gather() %>%
-  mutate(intercept = ifelse(str_detect(key, "Intercept"), 1, 0)) %>%
-  mutate(key = fct_reorder(key, desc(intercept))) %>% 
-  
-  ggplot(aes(x = key, y = value, group = key)) +
-  geom_flat_violin(color = "#394165", fill = "#394165", 
-                   size = 1/10, scale = "width") +
-  stat_summary(geom = "linerange",
-               fun.ymin = function(x) {quantile(x, .025)},
-               fun.ymax = function(x) {quantile(x, .975)},
-               size = 2/3, color = "#B1934A") +
-  stat_summary(geom = "linerange",
-               fun.ymin = function(x) {quantile(x, .25)},
-               fun.ymax = function(x) {quantile(x, .75)},
-               size = 1, color = "#EEDA9D") +
-  stat_summary(geom = "point",
-               fun.y = median,
-               color = "#A65141") +
-  coord_flip(ylim = -4:4) +
+  # The plot
+  ggplot(aes(x = reorder(param, reorder))) +
+  geom_hline(yintercept = 0, linetype = 3, color = "#E8DCCF") +
+             geom_linerange(aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+                 color = "#E7CDC2") +
+  geom_point(aes(y = Estimate),
+             color = "#A65141") +
   xlab(NULL) +
+  coord_flip() +
   theme_pearl_earring +
-  theme(axis.ticks.y = element_blank())
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
-
-This is a combination of a coefficient plot and a density plot. We used `stat_summary()` three times to compute the golden 95% intervals, the yellow 50% intervals, and the red posterior medians. Robinson's `geom_flat_violin()` allowed us to stack the blue densities atop of the intervals.
-
-It's unclear, to me, why our varying intercepts are so much wider than McElreath's.
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 ### 13.2.3. Shrinkage.
 
@@ -693,7 +796,9 @@ Figure 13.6.a., the correlation between the full UCB model's varying intercepts 
 
 
 ```r
-post %>%
+post <- posterior_samples(b13.3)
+
+post %>% 
   ggplot(aes(x = cor_dept_id__Intercept__male)) +
   geom_density(color = "transparent", fill = "#8B9DAF") +
   geom_vline(xintercept = median(post$cor_dept_id__Intercept__male), color = "#394165") +
@@ -706,7 +811,7 @@ post %>%
   theme_pearl_earring
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 Much like for Figure 13.5.b., above, it'll take a little data processing before we're ready to reproduce Figure 13.6.b. 
 
@@ -752,12 +857,12 @@ params
 ## # A tibble: 12 x 5
 ##     dept intercept   slope pooled    dept_letter
 ##    <int>     <dbl>   <dbl> <chr>     <chr>      
-##  1     1     1.31  -0.792  partially A          
-##  2     2     0.738 -0.208  partially B          
-##  3     3    -0.647  0.0816 partially C          
-##  4     4    -0.616 -0.0935 partially D          
-##  5     5    -1.14   0.125  partially E          
-##  6     6    -2.60  -0.126  partially F          
+##  1     1     1.31  -0.794  partially A          
+##  2     2     0.744 -0.215  partially B          
+##  3     3    -0.647  0.0805 partially C          
+##  4     4    -0.617 -0.0928 partially D          
+##  5     5    -1.13   0.119  partially E          
+##  6     6    -2.60  -0.121  partially F          
 ##  7     1     1.54  -1.05   not       A          
 ##  8     2     0.754 -0.220  not       B          
 ##  9     3    -0.660  0.125  not       C          
@@ -766,7 +871,7 @@ params
 ## 12     6    -2.58  -0.189  not       F
 ```
 
-Our version of Figure 13.6.b., depicting two-dimensional shrinkage for the partially-pooled multilevel estimates (posterior means) relative to the unpooled coefficients, calculated from the data. The [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html) and its `geom_text_repel()` function will help us with the in-plot labels.
+Here's our version of Figure 13.6.b., depicting two-dimensional shrinkage for the partially-pooled multilevel estimates (posterior means) relative to the unpooled coefficients, calculated from the data. The [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html) and its `geom_text_repel()` function will help us with the in-plot labels.
 
 
 ```r
@@ -792,7 +897,7 @@ ggplot(data = params, aes(x = intercept, y = slope)) +
   theme_pearl_earring
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
 ### 13.2.4. Model comparison.
 
@@ -817,15 +922,17 @@ waic(b13.2, b13.3, b13.4)
 
 ```
 ##                 WAIC    SE
-## b13.2         108.68 16.62
-## b13.3          90.72  4.70
-## b13.4         105.20 18.02
-## b13.2 - b13.3  17.96 13.42
-## b13.2 - b13.4   3.48  3.46
-## b13.3 - b13.4 -14.48 15.04
+## b13.2         109.06 16.56
+## b13.3          90.92  4.67
+## b13.4         105.07 17.99
+## b13.2 - b13.3  18.14 13.45
+## b13.2 - b13.4   3.99  3.71
+## b13.3 - b13.4 -14.15 15.15
 ```
 
-## 13.3. Example: Cross-classified chimpanzees with varying slopes
+## 13.3. Example: Cross-classified `chimpanzees` with varying slopes
+
+Retrieve the `chimpanzees` data.
 
 
 ```r
@@ -846,7 +953,7 @@ d <-
   mutate(block_id = block)
 ```
 
-Our cross-classified model. For you SEM lovers, this reminds me of a factor model with a method effect (e.g., a bifactor model). 
+Here's our cross-classified model. For you SEM lovers, this reminds me of a factor model with a method effect (e.g., a bifactor model). 
 
 
 ```r
@@ -881,12 +988,12 @@ head(neff)
 ## # A tibble: 6 x 2
 ##   neff_ratio  neff
 ##        <dbl> <dbl>
-## 1      0.280  3361
-## 2      0.667  8005
-## 3      0.686  8233
-## 4      0.379  4549
-## 5      0.593  7120
-## 6      0.516  6198
+## 1      0.284  3404
+## 2      0.585  7019
+## 3      0.616  7387
+## 4      0.299  3592
+## 5      0.509  6103
+## 6      0.249  2994
 ```
 
 Our variant of Figure 13.7. The handy [ggbeeswarm package](https://cran.r-project.org/web/packages/ggbeeswarm/index.html) and it's `geom_quasirandom()` function will give a better sense of the distribution.
@@ -909,9 +1016,9 @@ neff %>%
   theme_pearl_earring
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 
-The bayesplot package contains a sweet of [handy diagnostic features](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#effective-sample-size). `mcmc_neff()`, for example, makes it easy to examine the ratio of n.eff and the fill number of post-warm-up iterations, N. Ideally, that ratio is closer to 1 than not.
+The bayesplot package contains a sweet of [handy diagnostic features](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#effective-sample-size). `mcmc_neff()`, for example, makes it easy to examine the ratio of n.eff and the fill number of post-warm-up iterations, *N*. Ideally, that ratio is closer to 1 than not.
 
 
 ```r
@@ -923,7 +1030,7 @@ mcmc_neff(ratios_cp, size = 2) +
   theme_pearl_earring
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 Here are our standard deviation parameters.
 
@@ -936,12 +1043,12 @@ tidy(b13.6) %>%
 
 ```
 ##                                 term estimate std.error lower upper
-## 1                sd_actor__Intercept     2.35      0.91  1.30  4.01
-## 2              sd_actor__prosoc_left     0.46      0.37  0.04  1.17
-## 3    sd_actor__prosoc_left:condition     0.51      0.47  0.04  1.41
-## 4             sd_block_id__Intercept     0.22      0.20  0.01  0.60
-## 5           sd_block_id__prosoc_left     0.57      0.40  0.07  1.32
-## 6 sd_block_id__prosoc_left:condition     0.51      0.43  0.04  1.30
+## 1                sd_actor__Intercept     2.35      0.92  1.31  4.08
+## 2              sd_actor__prosoc_left     0.45      0.37  0.03  1.13
+## 3    sd_actor__prosoc_left:condition     0.52      0.58  0.04  1.40
+## 4             sd_block_id__Intercept     0.23      0.21  0.02  0.63
+## 5           sd_block_id__prosoc_left     0.57      0.41  0.06  1.31
+## 6 sd_block_id__prosoc_left:condition     0.52      0.41  0.04  1.30
 ```
 
 Here we refit the simpler model from way back in chapter 12.
@@ -968,9 +1075,9 @@ waic(b13.6, b12.5)
 
 ```
 ##                 WAIC    SE
-## b13.6         534.72 19.90
-## b12.5         532.53 19.67
-## b13.6 - b12.5   2.19  4.12
+## b13.6         534.72 19.93
+## b12.5         532.70 19.68
+## b13.6 - b12.5   2.02  4.05
 ```
 
 ## 13.4. Continuous categories and the Gaussian process
@@ -1030,21 +1137,7 @@ Dmat %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
-
-
-
-```r
-data(chimpanzees)
-d <- chimpanzees
-
-rm(chimpanzees)
-
-d <-
-  d %>%
-  select(-recipient) %>%
-  mutate(block_id = block)
-```
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 Figure 13.8., the "shape of the function relating distance to the covariance **K**$_{ij}$."
 
@@ -1067,7 +1160,7 @@ tibble(
   theme_pearl_earring
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 
 ```r
@@ -1095,13 +1188,15 @@ d %>% glimpse()
 ## $ society     <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 ```
 
-Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. If you know the appropriate code to fit McElreath's `m13.7` in brms, please share.
+Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. 
+
+On [Issues #8 in my GitHub page for his project](), [Bürkner](https://paul-buerkner.github.io) suggested `brm(total_tools ~ gp(x) + logpop, ...)`, where "`x` is the position variable from which `Dmat` was constructed. Not sure if this is really equivalent, but it might be a start." I haven't gotten around to playing with this, yet. Stay tuned or, even better, play with it yourself and share your results.
 
 ##### Bonus: Another Berkley-admissions-data-like example. 
 
-[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of him teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://www.youtube.com/watch?v=rSQ1XMwO_9A&t), he discussed a paper from [van der Lee and Ellemers (2015) published an article in PNAS]( http://www.pnas.org/content/112/40/12349.abstract). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi$^2^ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi$^2^ (1) = 4.01, *P* = 0.045. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](http://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video. 
+[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of him teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://www.youtube.com/watch?v=rSQ1XMwO_9A&t), he discussed a paper from [van der Lee and Ellemers (2015) published an article in PNAS]( http://www.pnas.org/content/112/40/12349.abstract). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi^2$ (1) = 4.01, *P* = 0.045. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](http://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video. 
 
-Their data follows the same structure as the Berkley admissions data. In his lecture, McElreath suggested their $\chi$^2^ test is an example of Simpson’s paradox, just as with the Berkley data. He isn't the first person to raise this criticism (see [Volker and SteenBeek’s critique](http://www.pnas.org/content/112/51/E7036.full), which McElreath also pointed to in the lecture).
+Their data follows the same structure as the Berkley admissions data. In his lecture, McElreath suggested their $\chi^2$ test is an example of Simpson’s paradox, just as with the Berkley data. He isn't the first person to raise this criticism (see [Volker and SteenBeek’s critique](http://www.pnas.org/content/112/51/E7036.full), which McElreath also pointed to in the lecture).
 
 Here are the data:
 
@@ -1153,7 +1248,7 @@ funding
 
 Let’s fit a few models.
 
-First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi$^2^ test. Since we’re Bayesian modelers, we’ll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
+First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we’ll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
 
 ```r
@@ -1181,7 +1276,7 @@ tidy(b13.bonus_0) %>%
 ```
 ##          term estimate std.error lower upper
 ## 1 b_Intercept    -1.74      0.08 -1.88 -1.61
-## 2      b_male     0.21      0.10  0.04  0.38
+## 2      b_male     0.21      0.11  0.03  0.38
 ```
 
 Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian *p*-value, you might do something like:
@@ -1194,7 +1289,7 @@ posterior_samples(b13.bonus_0) %>%
 
 ```
 ##   One_sided_Bayesian_p_value
-## 1                   0.021625
+## 1                  0.0229375
 ```
 
 Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications. 
@@ -1232,12 +1327,12 @@ waic(b13.bonus_0, b13.bonus_1, b13.bonus_2)
 
 ```
 ##                             WAIC   SE
-## b13.bonus_0               129.71 8.91
-## b13.bonus_1               125.41 7.36
-## b13.bonus_2               116.51 5.57
-## b13.bonus_0 - b13.bonus_1   4.31 6.32
-## b13.bonus_0 - b13.bonus_2  13.21 5.54
-## b13.bonus_1 - b13.bonus_2   8.90 2.89
+## b13.bonus_0               129.84 8.95
+## b13.bonus_1               125.72 7.33
+## b13.bonus_2               116.68 5.57
+## b13.bonus_0 - b13.bonus_1   4.12 6.26
+## b13.bonus_0 - b13.bonus_2  13.16 5.57
+## b13.bonus_1 - b13.bonus_2   9.03 2.78
 ```
 
 The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here's what the random intercepts look like in a coefficient plot.
@@ -1266,7 +1361,7 @@ coef(b13.bonus_2)$discipline[, , 2] %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
 
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects:
 
@@ -1293,7 +1388,7 @@ posterior_samples(b13.bonus_2) %>%
 
 ```
 ##   One_sided_Bayesian_p_value
-## 1                    0.17175
+## 1                   0.174375
 ```
 
 So, the estimate of the gender bias is small and consistent with the null hypothesis. Which is good! We want gender equality for things like funding success.
