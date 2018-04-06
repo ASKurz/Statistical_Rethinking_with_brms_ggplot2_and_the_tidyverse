@@ -743,7 +743,9 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-The beta-binomial distribution is [not implimented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, one can do something similar with a multilevel binomial model (foreshadow chapter 12!). Here are the `UCBadmit` data.
+The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, the current developmental version of brms (i.e., version 2.1.9) allows users to specify custom distributions. Bürkner is currently working on a [vignette to showcase these new functions](https://github.com/paul-buerkner/brms/blob/master/vignettes/brms_customfamilies.Rmd). Happily and coincidentally, the vignette he's working on uses the beta-binomial distribution as an exemplar.
+
+Before we get carried away, let's load the data.
 
 ```{r, warning = F, message = F}
 library(rethinking)
@@ -759,95 +761,145 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-Now we fit our off-label model, `b11.5ish`.
+I’m not going to go into great detail explaining the ins and outs of making custom distributions for `brm()`. Bürkner's still working on the vignette, himself. For our purposes, we need two preparatory steps. First, we need to use the `custom_family()` function to define the name and parameters of the beta-binomial distribution for use in `brm()`. Second, we have to define some relevant Stan functions.
+
+```{r}
+beta_binomial2 <- 
+  custom_family(
+    "beta_binomial2", dpars = c("mu", "phi"),
+    links = c("logit", "log"), lb = c(NA, 0),
+    type = "int", vars = "trials[n]"
+  )
+
+stan_funs <- "
+  real beta_binomial2_lpmf(int y, real mu, real phi, int T) {
+    return beta_binomial_lpmf(y | T, mu * phi, (1 - mu) * phi);
+  }
+  int beta_binomial2_rng(real mu, real phi, int T) {
+    return beta_binomial_rng(T, mu * phi, (1 - mu) * phi);
+  }
+"
+```
+
+With that out of the way, we’re ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. It’s the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
 
 ```{r, warning = F, message = F}
-b11.5ish <-
-  brm(data = d, family = binomial(),
-      admit | trials(applications) ~ 1 + (1 | dept),
-      prior = c(set_prior("normal(0, 10)", class = "Intercept"),
-                set_prior("cauchy(0, 1)", class = "sd")),
+b11.5 <-
+  brm(data = d, 
+      family = beta_binomial2,  # Here's our custom likelihood
+      admit | trials(applications) ~ 1,
+      prior = c(set_prior("normal(0, 2)", class = "Intercept"),
+                set_prior("exponential(1)", class = "phi")),
       iter = 4000, warmup = 1000, cores = 2, chains = 2,
-      control = list(adapt_delta = 0.95))
+      stan_funs = stan_funs)
 ```
 
-Here's our alternative model.
+Success, our results look a lot like those in the text!
 
 ```{r}
-print(b11.5ish)
+print(b11.5)
 ```
 
-We'll use the old `invlogit()` function to convert the model intercept, which is on the log-odds scale, into a probability.
+Here's what the corresponding `posterior_samples()` data object looks like.
 
 ```{r}
-b11.5ish %>% fixef() %>% 
-  invlogit()
+post <- posterior_samples(b11.5)
+
+head(post)
 ```
 
-Given the output of `b11.5ish`, I'm not really sure how to create our analogue of Figure 11.5.a. If we stay in the logit scale, I suppose you could do:
+With our `post` object in hand, here's our Figure 11.5.a.
 
-```{r, fig.width = 3.5, fig.height = 3}
-post <- posterior_samples(b11.5ish)
-
-# post %>%
-#   head()
-
-tibble(x = seq(from = -6, to = 6, by = .1)) %>%
-  
+```{r, fig.width = 4, fig.height = 3.5}
+tibble(x = 0:1) %>%
   ggplot(aes(x = x)) + 
-  mapply(function(mean, sd) {
-    stat_function(fun = dnorm,
-                  args = list(mean = mean, sd = sd),
-                  alpha = 1/4, size = 1/4,
-                  color = canva_pal("Green fields")(4)[1]
-                  )
-  },
-  # Enter means and standard deviations here
-  mean = post[1:100, 1],
-  sd   = post[1:100, 2]) +
-  geom_line(aes(y = dnorm(x,
-                          mean = fixef(b11.5ish)[1],
-                          sd = VarCorr(b11.5ish)$dept$sd[1])),
-            color = canva_pal("Green fields")(4)[4], size = 1.1) +
+  stat_function(fun = rethinking::dbeta2,
+                args = list(prob = mean(invlogit(post[, 1])),
+                            theta = mean(post[, 2])),
+                color = canva_pal("Green fields")(4)[4],
+                size = 1.5) +
+  mapply(function(prob, theta) {
+    stat_function(fun = rethinking::dbeta2, 
+                  args = list(prob = prob, theta = theta), 
+                  alpha = .2, 
+                  color = canva_pal("Green fields")(4)[4])
+  }, 
+  # Enter prob and theta, here
+  prob = invlogit(post[1:100, 1]),
+  theta = post[1:100, 2]) +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = -5:5) +
+  coord_cartesian(ylim = 0:3) +
+  labs(x = "probability admit") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+  theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-But that's probably not very satisfying. If you can figure out a slick way to convert the lines to the probability scale, share your code!
+I got the idea to nest `stat_function()` within `mapply()` from [shadow's answer to this Stack Overflow question](http://stackoverflow.com/questions/27009641/plot-multiple-normal-curves-in-same-plot).
 
-We can, however, do our version of Figure 11.5.b.
+Before we can do our variant of Figure 11.5.b., we'll need to specify a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarily, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
+
+```{r, results = 'hide', warning = F, message = F}
+expose_functions(b11.5, vectorize = TRUE)
+
+# Required to use `predict()`
+log_lik_beta_binomial2 <- 
+  function(i, draws) {
+    mu  <- draws$dpars$mu[, i]
+    phi <- draws$dpars$phi
+    N   <- draws$data$trials[i]
+    y   <- draws$data$Y[i]
+    beta_binomial2_lpmf(y, mu, phi, N)
+  }
+
+predict_beta_binomial2 <- 
+  function(i, draws, ...) {
+    mu  <- draws$dpars$mu[, i]
+    phi <- draws$dpars$phi
+    N   <- draws$data$trials[i]
+    beta_binomial2_rng(mu, phi, N)
+  }
+
+# Required to use `fitted()`
+fitted_beta_binomial2 <- 
+  function(draws) {
+    mu     <- draws$dpars$mu
+    trials <- draws$data$trials
+    trials <- matrix(trials, nrow = nrow(mu), ncol = ncol(mu), byrow = TRUE)
+    mu * trials
+  }
+```
+
+With those intermediary steps out of the way, we're ready to make Figure 11.5.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 # The prediction intervals
-predict(b11.5ish) %>%
+predict(b11.5) %>%
   as_tibble() %>% 
   rename(LL = `2.5%ile`,
          UL = `97.5%ile`) %>%
   select(LL:UL) %>% 
   # The fitted intervals
   bind_cols(
-    fitted(b11.5ish) %>%
+    fitted(b11.5) %>%
   as_tibble()
   ) %>% 
   # The original data used to fit the model
-  bind_cols(b11.5ish$data) %>% 
+  bind_cols(b11.5$data) %>% 
   mutate(case = 1:12) %>% 
   
   ggplot(aes(x = case)) +
   geom_linerange(aes(ymin = LL/applications, 
                      ymax = UL/applications),
                  color = canva_pal("Green fields")(4)[1], 
-                 size = 2.25, alpha = 1/3) +
+                 size = 2.5, alpha = 1/4) +
   geom_pointrange(aes(ymin = `2.5%ile`/applications, 
                       ymax = `97.5%ile`/applications, 
                       y = Estimate/applications),
                   color = canva_pal("Green fields")(4)[4],
-                  size = 1/3, shape = 1) +
+                  size = 1/2, shape = 1) +
   geom_point(aes(y = admit/applications),
-             color = canva_pal("Green fields")(4)[2]) +
+             color = canva_pal("Green fields")(4)[2],
+             size = 2) +
   scale_x_continuous(breaks = 1:12) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(ylim = 0:1) +
@@ -859,9 +911,11 @@ predict(b11.5ish) %>%
         legend.position = "none")
 ```
 
-Our multilevel model did way better than the actual beta-binomial model in the text. See the next two chapters to understand why.
+As in the text, the raw data are consistent with the prediction intervals. But those intervals are so incredibly wide, they're hardly an endorsement of the model.
 
 ### 11.3.2. Negative-binomial or gamma-Poisson.
+
+Here's a look at the $\gamma$ distribution. 
 
 ```{r, fig.width = 3.5, fig.height = 3}
 mu <- 3
@@ -883,7 +937,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-**Bonus**
+##### Bonus
 
 McElreath didn't give an example of negative-binomial regression in the text. Here's one with the `UCBadmit` data.
 
@@ -921,5 +975,5 @@ Note. The analyses in this document were done with:
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
 ```{r, echo = F, eval = F}
-rm(d, logit, d_plot, Inits, InitsList, b11.1, invlogit, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, N, drink, y, b11.4, pbar, theta, b11.5ish, post, mu)
+rm(d, logit, d_plot, Inits, InitsList, b11.1, invlogit, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, N, drink, y, b11.4, pbar, theta, beta_binomial2, stan_funs, b11.5, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
 ```
