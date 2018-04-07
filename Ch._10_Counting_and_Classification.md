@@ -1,7 +1,7 @@
 ---
 title: "Ch. 10 Counting and Classification"
 author: "A Solomon Kurz"
-date: "2018-03-25"
+date: "2018-04-07"
 output:
   html_document:
     code_folding: show
@@ -48,7 +48,7 @@ fixef(b10.1) %>%
 
 ```
 ##           Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept     0.32      0.09    0.15      0.5
+## Intercept     0.32      0.09    0.14     0.49
 ```
 
 On page 81, [Gelman and Hill (2007)](http://www.stat.columbia.edu/~gelman/arm/) give the formula for `invlogit()`, which is our alternative to the `logistic()` function in rethinking.
@@ -76,8 +76,8 @@ fixef(b10.1) %>%
 ```
 
 ```
-##           Estimate Est.Error   2.5%ile  97.5%ile
-## Intercept 0.578636 0.5223847 0.5361979 0.6231177
+##            Estimate Est.Error   2.5%ile  97.5%ile
+## Intercept 0.5789845 0.5221092 0.5351383 0.6198472
 ```
 
 The next two chimp models add predictors.
@@ -110,12 +110,12 @@ compare_ic(w_b10.1, w_b10.2, w_b10.3)
 
 ```
 ##                 WAIC   SE
-## b10.1         687.92 7.05
-## b10.2         680.57 9.34
-## b10.3         682.32 9.43
-## b10.1 - b10.2   7.35 6.19
-## b10.1 - b10.3   5.59 6.23
-## b10.2 - b10.3  -1.76 0.84
+## b10.1         687.87 7.08
+## b10.2         680.58 9.36
+## b10.3         682.51 9.49
+## b10.1 - b10.2   7.29 6.18
+## b10.1 - b10.3   5.35 6.33
+## b10.2 - b10.3  -1.93 0.84
 ```
 
 For this manuscript, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s *Moonrise2* palette.
@@ -193,9 +193,9 @@ print(b10.3)
 ##  
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                 0.05      0.13    -0.19     0.30       3326 1.00
-## prosoc_left               0.61      0.23     0.17     1.06       2313 1.00
-## prosoc_left:condition    -0.11      0.26    -0.62     0.40       2585 1.00
+## Intercept                 0.05      0.13    -0.21     0.29       4000 1.00
+## prosoc_left               0.62      0.23     0.19     1.07       2625 1.00
+## prosoc_left:condition    -0.11      0.27    -0.63     0.42       2515 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -211,7 +211,7 @@ fixef(b10.3)[2] %>%
 ```
 
 ```
-## [1] 1.844177
+## [1] 1.861573
 ```
 
 Given an estimated value of 4, the probability of a pull, all else equal, would be:
@@ -234,7 +234,7 @@ Adding the coefficient, `fixef(b10.3)[2]`, would yield:
 ```
 
 ```
-## [1] 0.9901661
+## [1] 0.9902571
 ```
 
 For our variant of Figure 10.2., we use `brms::pp_average()` in place of `rethinking::ensemble()`.
@@ -347,11 +347,6 @@ print(b10.4)
 ```
 
 ```
-## Warning: There were 1 divergent transitions after warmup. Increasing adapt_delta above 0.9 may help.
-## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-```
-
-```
 ##  Family: binomial 
 ##   Links: mu = logit 
 ## Formula: pulled_left ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left 
@@ -362,15 +357,15 @@ print(b10.4)
 ##  
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## factoractor1             -0.74      0.27    -1.29    -0.22       4000 1.00
-## factoractor2             10.99      5.40     3.84    24.03       1735 1.00
-## factoractor3             -1.05      0.28    -1.65    -0.51       4000 1.00
-## factoractor4             -1.05      0.28    -1.61    -0.50       4000 1.00
-## factoractor5             -0.74      0.27    -1.28    -0.21       4000 1.00
-## factoractor6              0.22      0.27    -0.31     0.74       3325 1.00
-## factoractor7              1.81      0.39     1.09     2.63       4000 1.00
-## prosoc_left               0.85      0.26     0.34     1.35       2343 1.00
-## prosoc_left:condition    -0.14      0.30    -0.72     0.44       2855 1.00
+## factoractor1             -0.74      0.27    -1.27    -0.22       4000 1.00
+## factoractor2             11.13      5.72     3.86    25.41       1299 1.00
+## factoractor3             -1.05      0.29    -1.63    -0.50       4000 1.00
+## factoractor4             -1.06      0.29    -1.63    -0.52       4000 1.00
+## factoractor5             -0.74      0.27    -1.27    -0.22       4000 1.00
+## factoractor6              0.21      0.27    -0.31     0.74       4000 1.00
+## factoractor7              1.81      0.39     1.09     2.61       4000 1.00
+## prosoc_left               0.85      0.26     0.34     1.40       2568 1.00
+## prosoc_left:condition    -0.14      0.30    -0.73     0.43       4000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -390,16 +385,16 @@ post %>%
 ```
 ## Observations: 4,000
 ## Variables: 10
-## $ b_factoractor1            <dbl> -0.80183689, -0.85532037, -0.3749136...
-## $ b_factoractor2            <dbl> 6.015481, 6.148818, 13.010139, 16.00...
-## $ b_factoractor3            <dbl> -1.1397157, -1.2021467, -0.6395925, ...
-## $ b_factoractor4            <dbl> -1.0715983, -0.7091974, -1.3559402, ...
-## $ b_factoractor5            <dbl> -0.7652073, -0.5071621, -0.6602597, ...
-## $ b_factoractor6            <dbl> 0.31380344, 0.24025029, 0.49960963, ...
-## $ b_factoractor7            <dbl> 1.5860216, 0.9914712, 2.5453636, 1.7...
-## $ b_prosoc_left             <dbl> 1.1786218, 0.7777363, 0.5076364, 0.7...
-## $ `b_prosoc_left:condition` <dbl> -0.293106573, -0.233733529, 0.178310...
-## $ lp__                      <dbl> -287.4712, -290.2587, -291.8345, -29...
+## $ b_factoractor1            <dbl> -1.2374488, -0.5405287, -0.2819127, ...
+## $ b_factoractor2            <dbl> 15.912565, 7.539782, 9.052346, 15.52...
+## $ b_factoractor3            <dbl> -0.6233515, -1.8421955, -1.3425271, ...
+## $ b_factoractor4            <dbl> -1.7777777, -0.7134760, -0.8349342, ...
+## $ b_factoractor5            <dbl> -0.64824672, -1.19338272, -0.6294780...
+## $ b_factoractor6            <dbl> 0.001212395, 0.074386262, 0.58251807...
+## $ b_factoractor7            <dbl> 1.659491, 1.637989, 1.837373, 2.1294...
+## $ b_prosoc_left             <dbl> 1.1485826, 1.1491435, 0.4938766, 0.6...
+## $ `b_prosoc_left:condition` <dbl> -0.22269274, -0.21297878, -0.0208560...
+## $ lp__                      <dbl> -294.3169, -293.3790, -289.7862, -28...
 ```
 
 Our variant of Figure 10.3.
@@ -518,9 +513,9 @@ fixef(b10.3) %>% round(digits = 2)
 
 ```
 ##                       Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept                 0.05      0.13   -0.19     0.30
-## prosoc_left               0.61      0.23    0.17     1.06
-## prosoc_left:condition    -0.11      0.26   -0.62     0.40
+## Intercept                 0.05      0.13   -0.21     0.29
+## prosoc_left               0.62      0.23    0.19     1.07
+## prosoc_left:condition    -0.11      0.27   -0.63     0.42
 ```
 
 ```r
@@ -529,9 +524,9 @@ fixef(b10.5) %>% round(digits = 2)
 
 ```
 ##                       Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept                 0.05      0.13   -0.21     0.29
-## prosoc_left               0.61      0.22    0.19     1.04
-## prosoc_left:condition    -0.11      0.26   -0.62     0.39
+## Intercept                 0.05      0.13   -0.20     0.30
+## prosoc_left               0.61      0.23    0.17     1.07
+## prosoc_left:condition    -0.10      0.27   -0.62     0.41
 ```
 
 Close within rounding error.
@@ -606,9 +601,9 @@ waic(b10.6, b10.7)
 
 ```
 ##                  WAIC     SE
-## b10.6          991.72 328.38
-## b10.7         1049.98 329.32
-## b10.6 - b10.7  -58.26 168.67
+## b10.6          983.39 323.37
+## b10.7         1051.86 329.77
+## b10.6 - b10.7  -68.46 164.90
 ```
 
 If you use the LOO to compare the models instead of the WAIC, you'll run into warnings that multiple observations have "a pareto_k > 0.7." You might take this as an indication that these observations are unduly influential on the model parameters, something like what you'd get with a Cook's $D_{i}$ analysis. This suggests the model isn't a great fit for the data. For more on the topic, see [this discussion on stackoverflow.com in which several members of the Stan team weigh in](https://stackoverflow.com/questions/39578834/linear-model-diagnostics-for-bayesian-models-using-rstan/39595436), [this paper](https://arxiv.org/abs/1507.04544), the [loo reference manual](https://cran.r-project.org/web/packages/loo/loo.pdf), and [this presentation by Vehtari himself](https://www.youtube.com/watch?v=FUROJM3u5HQ&feature=youtu.be&a=).
@@ -631,8 +626,8 @@ print(b10.6)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.83      0.05    -0.93    -0.73       1864 1.00
-## male          0.61      0.06     0.48     0.73       1921 1.00
+## Intercept    -0.83      0.05    -0.93    -0.73       2168 1.00
+## male          0.61      0.06     0.48     0.73       2266 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -666,8 +661,8 @@ post %>%
 ```
 
 ```
-##        2.5%      50%     97.5%
-## 1 0.1125688 0.141838 0.1692189
+##        2.5%     50%  97.5%
+## 1 0.1128736 0.14143 0.1694
 ```
 
 Here's our version of Figure 10.5.
@@ -739,16 +734,16 @@ waic(b10.6, b10.7, b10.8, b10.9)
 
 ```
 ##                  WAIC     SE
-## b10.6          991.72 328.38
-## b10.7         1049.98 329.32
-## b10.8          105.02  17.89
-## b10.9          108.58  16.40
-## b10.6 - b10.7  -58.26 168.67
-## b10.6 - b10.8  886.70 325.36
-## b10.6 - b10.9  883.15 327.17
-## b10.7 - b10.8  944.97 326.97
-## b10.7 - b10.9  941.41 328.81
-## b10.8 - b10.9   -3.56   3.67
+## b10.6          983.39 323.37
+## b10.7         1051.86 329.77
+## b10.8          105.10  17.95
+## b10.9          108.71  16.21
+## b10.6 - b10.7  -68.46 164.90
+## b10.6 - b10.8  878.29 320.18
+## b10.6 - b10.9  874.68 322.10
+## b10.7 - b10.8  946.76 327.26
+## b10.7 - b10.9  943.14 329.25
+## b10.8 - b10.9   -3.61   3.76
 ```
 
 Our multivariable model, `b10.9`, looks like this:
@@ -769,13 +764,13 @@ print(b10.9)
 ##  
 ## Population-Level Effects: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## deptA     0.68      0.10     0.48     0.88       2270 1.00
-## deptB     0.64      0.11     0.42     0.86       2246 1.00
-## deptC    -0.58      0.08    -0.72    -0.44       3314 1.00
-## deptD    -0.61      0.08    -0.78    -0.45       2781 1.00
-## deptE    -1.06      0.10    -1.26    -0.86       4000 1.00
-## deptF    -2.63      0.16    -2.94    -2.34       4000 1.00
-## male     -0.10      0.08    -0.25     0.06       1702 1.00
+## deptA     0.69      0.10     0.49     0.88       2493 1.00
+## deptB     0.64      0.12     0.41     0.86       2675 1.00
+## deptC    -0.58      0.07    -0.72    -0.43       3609 1.00
+## deptD    -0.61      0.09    -0.78    -0.45       4000 1.00
+## deptE    -1.06      0.10    -1.25    -0.87       4000 1.00
+## deptF    -2.63      0.16    -2.95    -2.32       4000 1.00
+## male     -0.10      0.08    -0.26     0.06       2000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -852,8 +847,8 @@ print(b.good)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -5.55      4.50   -16.28     0.47        465 1.01
-## x             8.38      4.50     2.46    18.94        471 1.01
+## Intercept    -5.62      4.55   -16.30     0.34        471 1.01
+## x             8.41      4.56     2.34    19.21        473 1.01
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -900,7 +895,6 @@ y %>%
 
 
 ```r
-# detach(package:brms)
 library(rethinking)
 data(Kline)
 d <- Kline
@@ -969,36 +963,60 @@ print(b10.10)
 ##  
 ## Population-Level Effects: 
 ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                0.93      0.36     0.22     1.65       4423 1.00
-## log_pop                  0.26      0.03     0.19     0.33       4591 1.00
-## contact_high            -0.07      0.85    -1.72     1.58       3388 1.00
-## log_pop:contact_high     0.04      0.09    -0.14     0.22       3406 1.00
+## Intercept                0.94      0.37     0.19     1.64       3728 1.00
+## log_pop                  0.26      0.04     0.20     0.33       3799 1.00
+## contact_high            -0.08      0.84    -1.72     1.58       3372 1.00
+## log_pop:contact_high     0.04      0.09    -0.14     0.22       3383 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-Instead of looking at the correlation point estimates, we might plot:
+Here's the simple matrix of correlation point estimates for the parameters.
 
 
 ```r
 post <-
   posterior_samples(b10.10)
 
-post[1:4] %>%
+post %>%
+  select(-lp__) %>% 
   rename(b_interaction = `b_log_pop:contact_high`) %>%
-  cor() %>%
+  cor() %>% 
   round(digits = 2)
 ```
 
 ```
 ##                b_Intercept b_log_pop b_contact_high b_interaction
-## b_Intercept           1.00     -0.98          -0.14          0.08
-## b_log_pop            -0.98      1.00           0.14         -0.10
+## b_Intercept           1.00     -0.98          -0.14          0.07
+## b_log_pop            -0.98      1.00           0.14         -0.09
 ## b_contact_high       -0.14      0.14           1.00         -0.99
-## b_interaction         0.08     -0.10          -0.99          1.00
+## b_interaction         0.07     -0.09          -0.99          1.00
 ```
+
+And here's the coefficient plot:
+
+
+```r
+# We'll set a renewed color theme
+color_scheme_set(c(wes_palette("Moonrise2")[2],
+                   wes_palette("Moonrise2")[1], 
+                   wes_palette("Moonrise2")[4], 
+                   wes_palette("Moonrise2")[2], 
+                   wes_palette("Moonrise2")[1], 
+                   wes_palette("Moonrise2")[1]))
+
+post %>%
+  select(-lp__) %>% 
+  rename(b_interaction = `b_log_pop:contact_high`) %>%
+
+  mcmc_intervals(prob = .5, prob_outer = .95) +
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_text(hjust = 0))
+```
+
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 How plausible is it a high-contact island will have more tools than a low-contact island?
 
@@ -1016,7 +1034,7 @@ post %>%
 
 ```
 ##        sum
-## 1 0.956375
+## 1 0.958625
 ```
 
 Quite.
@@ -1035,21 +1053,39 @@ post %>%
   labs(x = "lambda_high - lambda_low")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
 
-I'm not sure how to elegantly insert the marginal posterior estimates as dot-and-line plots into Figure 10.8.b., so we'll just throw in a couple rug plots, instead.
+I’m not happy with how clunky this solution is, but one way to get those marginal dot and line plots for the axes is to make intermediary tibbles. Anyway, here’s a version of Figure 10.8.b.
 
 
 ```r
-post %>%
+# Intermediary tibbles for our the dot and line portoin of the plot
+point_tibble <-
+  tibble(x = c(median(post$b_contact_high), min(post$b_contact_high)),
+         
+         y = c(min(post$`b_log_pop:contact_high`), median(post$`b_log_pop:contact_high`)))
+
+line_tibble <-
+  tibble(parameter = rep(c("b_contact_high", "b_log_pop:contact_high"), each = 2),
+         
+         x = c(quantile(post$b_contact_high, probs = c(.025, .975)),
+               rep(min(post$b_contact_high), times = 2)),
+         
+         y = c(rep(min(post$`b_log_pop:contact_high`), times = 2),
+               quantile(post$`b_log_pop:contact_high`, probs = c(.025, .975))))
+
+# the plot
+post %>% 
   ggplot(aes(x = b_contact_high, y = `b_log_pop:contact_high`)) +
   geom_point(color = wes_palette("Moonrise2")[1],
              size = 1/10, alpha = 1/10) +
-  geom_rug(color = wes_palette("Moonrise2")[1],
-           size = 1/15, alpha = 1/8)
+  geom_point(data = point_tibble,
+             aes(x = x, y = y)) +
+  geom_line(data = line_tibble,
+            aes(x = x, y = y, group = parameter))
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 Here we deconstruct model `b10.10`, bit by bit.
 
@@ -1100,21 +1136,21 @@ compare_ic(w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14)
 
 ```
 ##                   WAIC    SE
-## b10.10           80.16 11.86
-## b10.11           78.91 11.64
-## b10.12           84.40  9.43
-## b10.13          150.28 47.28
-## b10.14          141.54 33.40
-## b10.10 - b10.11   1.25  1.24
-## b10.10 - b10.12  -4.24  8.02
-## b10.10 - b10.13 -70.12 47.20
-## b10.10 - b10.14 -61.38 34.80
-## b10.11 - b10.12  -5.49  8.42
-## b10.11 - b10.13 -71.37 46.91
-## b10.11 - b10.14 -62.63 34.50
-## b10.12 - b10.13 -65.88 47.05
-## b10.12 - b10.14 -57.14 33.32
-## b10.13 - b10.14   8.74 17.16
+## b10.10           80.17 11.85
+## b10.11           79.18 11.69
+## b10.12           84.52  9.44
+## b10.13          149.99 47.20
+## b10.14          141.72 33.61
+## b10.10 - b10.11   1.00  1.26
+## b10.10 - b10.12  -4.35  7.95
+## b10.10 - b10.13 -69.82 47.15
+## b10.10 - b10.14 -61.54 35.02
+## b10.11 - b10.12  -5.35  8.38
+## b10.11 - b10.13 -70.82 46.90
+## b10.11 - b10.14 -62.54 34.76
+## b10.12 - b10.13 -65.47 47.02
+## b10.12 - b10.14 -57.19 33.55
+## b10.13 - b10.14   8.28 16.86
 ```
 
 Our handmade WAIC plot.
@@ -1139,7 +1175,7 @@ tibble(model = c("b10.10", "b10.11", "b10.12", "b10.13", "b10.14"),
         legend.position = "none")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 Our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function.
 
@@ -1182,7 +1218,7 @@ ppa_10.9 %>%
         panel.border = element_blank())
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 ### 10.2.2. MCMC islands.
 
@@ -1204,10 +1240,10 @@ print(b10.10)
 ##  
 ## Population-Level Effects: 
 ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                0.93      0.36     0.22     1.65       4423 1.00
-## log_pop                  0.26      0.03     0.19     0.33       4591 1.00
-## contact_high            -0.07      0.85    -1.72     1.58       3388 1.00
-## log_pop:contact_high     0.04      0.09    -0.14     0.22       3406 1.00
+## Intercept                0.94      0.37     0.19     1.64       3728 1.00
+## log_pop                  0.26      0.04     0.20     0.33       3799 1.00
+## contact_high            -0.08      0.84    -1.72     1.58       3372 1.00
+## log_pop:contact_high     0.04      0.09    -0.14     0.22       3383 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1248,10 +1284,10 @@ print(b10.10.c)
 ##  
 ## Population-Level Effects: 
 ##                        Estimate Est.Error l-95% CI u-95% CI Eff.Sample
-## Intercept                  3.31      0.09     3.13     3.48       5680
-## log_pop_c                  0.26      0.04     0.19     0.33       6521
-## contact_high               0.29      0.12     0.06     0.52       6063
-## log_pop_c:contact_high     0.06      0.17    -0.27     0.39       7047
+## Intercept                  3.31      0.09     3.13     3.48       6557
+## log_pop_c                  0.26      0.03     0.19     0.33       7026
+## contact_high               0.29      0.12     0.06     0.51       6749
+## log_pop_c:contact_high     0.07      0.18    -0.28     0.41       6835
 ##                        Rhat
 ## Intercept              1.00
 ## log_pop_c              1.00
@@ -1282,7 +1318,7 @@ mcmc_pairs(x = posterior_samples(b10.10),
            diag_fun = "dens")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
 
 Figure 10.10.b. 
 
@@ -1294,7 +1330,7 @@ mcmc_pairs(x = posterior_samples(b10.10.c),
            diag_fun = "dens")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
 
 If you really want the correlation point estimates, `lowerCor()` from the [psych package](https://cran.r-project.org/web/packages/psych/index.html) gives a nice way to get the lower triangle of the matrix.
 
@@ -1310,7 +1346,7 @@ lowerCor(posterior_samples(b10.10)[, 1:4])
 ## b_Intercept             1.00                  
 ## b_log_pop              -0.98  1.00            
 ## b_contact_high         -0.14  0.14  1.00      
-## b_log_pop:contact_high  0.08 -0.10 -0.99  1.00
+## b_log_pop:contact_high  0.07 -0.09 -0.99  1.00
 ```
 
 ```r
@@ -1320,9 +1356,9 @@ lowerCor(posterior_samples(b10.10.c)[, 1:4])
 ```
 ##                          b_Int b_l__ b_cn_ b___:
 ## b_Intercept               1.00                  
-## b_log_pop_c              -0.47  1.00            
-## b_contact_high           -0.76  0.34  1.00      
-## b_log_pop_c:contact_high  0.09 -0.21 -0.25  1.00
+## b_log_pop_c              -0.44  1.00            
+## b_contact_high           -0.75  0.32  1.00      
+## b_log_pop_c:contact_high  0.11 -0.20 -0.28  1.00
 ```
 
 ### 10.2.3. Example: Exposure and the offset.
@@ -1408,8 +1444,8 @@ print(b10.15)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.17      0.16    -0.16     0.48       2211 1.00
-## monastery    -0.97      0.32    -1.61    -0.38       2239 1.00
+## Intercept     0.17      0.17    -0.18     0.48       1973 1.00
+## monastery    -0.97      0.31    -1.61    -0.38       2630 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1434,8 +1470,8 @@ posterior_samples(b10.15) %>%
 ## # A tibble: 2 x 5
 ##   key         Mean StdDev    LL    UL
 ##   <fctr>     <dbl>  <dbl> <dbl> <dbl>
-## 1 lambda_old 1.20   0.200 0.850 1.61 
-## 2 lambda_new 0.470  0.130 0.250 0.740
+## 1 lambda_old 1.20   0.200 0.840 1.61 
+## 2 lambda_new 0.460  0.130 0.250 0.740
 ```
 
 ## 10.3. Other count regressions
@@ -1476,7 +1512,7 @@ career %>%
   geom_bar(size = 0, fill = wes_palette("Moonrise2")[2])
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-70-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-71-1.png)<!-- -->
 
 Here's my naive attempt to fit the model in brms.
 
@@ -1511,8 +1547,8 @@ print(b10.16)
 ##  
 ## Population-Level Effects: 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## mu2_Intercept     0.29      0.13     0.04     0.55       1384 1.00
-## mu3_Intercept     0.97      0.12     0.74     1.19       1362 1.00
+## mu2_Intercept     0.29      0.13     0.04     0.55       1595 1.00
+## mu3_Intercept     0.97      0.12     0.74     1.19       1613 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1576,10 +1612,10 @@ print(b10.17)
 ##  
 ## Population-Level Effects: 
 ##                   Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## mu2_Intercept         1.85      0.58     0.73     3.00       2291 1.00
-## mu3_Intercept         1.54      0.57     0.44     2.66       2139 1.00
-## mu2_family_income    -3.95      1.06    -6.11    -1.95       2696 1.00
-## mu3_family_income    -2.53      0.91    -4.34    -0.72       2468 1.00
+## mu2_Intercept         1.85      0.57     0.77     2.99       2741 1.00
+## mu3_Intercept         1.54      0.56     0.49     2.68       2465 1.00
+## mu2_family_income    -3.94      1.04    -6.06    -2.02       3040 1.00
+## mu3_family_income    -2.54      0.91    -4.39    -0.83       2953 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1641,7 +1677,7 @@ post %>%
        subtitle = "The density is the posterior distribution. The line is the\nvalue in the data.")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-78-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-79-1.png)<!-- -->
 
 ```r
 post %>%
@@ -1654,7 +1690,7 @@ post %>%
        subtitle = "The density is the posterior distribution. The line is the\nvalue in the data.")
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-78-2.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-79-2.png)<!-- -->
 
 The model summaries:
 
@@ -1674,7 +1710,7 @@ print(b_binom)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.46      0.03    -0.52    -0.40       1244 1.00
+## Intercept    -0.46      0.03    -0.52    -0.40       1125 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1698,8 +1734,8 @@ print(b_pois)
 ##  
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## admit_Intercept     4.99      0.02     4.94     5.03       2688 1.00
-## rej_Intercept       5.44      0.02     5.40     5.48       3000 1.00
+## admit_Intercept     4.99      0.02     4.94     5.03       2784 1.00
+## rej_Intercept       5.44      0.02     5.40     5.48       2687 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1716,7 +1752,7 @@ fixef(b_binom) %>%
 
 ```
 ##            Estimate Est.Error   2.5%ile  97.5%ile
-## Intercept 0.3877494 0.5076837 0.3739817 0.4017431
+## Intercept 0.3879211 0.5076437 0.3735562 0.4019016
 ```
 
 Happily, we get the same value within simulation error from model `b_pois`.
@@ -1731,7 +1767,7 @@ exp(k[1])/(exp(k[1]) + exp(k[2]))
 ```
 
 ```
-## [1] 0.3877453
+## [1] 0.3877079
 ```
 
 ### 10.3.2. Geometric.
@@ -1757,7 +1793,7 @@ list(y = y, x = x) %>%
   geom_point(size = 3/5, alpha = 2/3)
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-83-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-84-1.png)<!-- -->
 
 Our geometric model:
 
@@ -1790,8 +1826,8 @@ print(b10.18, digits = 2)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept     1.16      0.23     0.71     1.60       1224 1.00
-## x            -2.29      0.43    -3.12    -1.41       1271 1.00
+## intercept     1.16      0.23     0.71     1.61       1251 1.00
+## x            -2.29      0.44    -3.14    -1.46       1233 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1809,7 +1845,7 @@ plot(marginal_effects(b10.18),
                    fill = wes_palette("Moonrise2")[1]))
 ```
 
-![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-86-1.png)<!-- -->
+![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-87-1.png)<!-- -->
 
 
 

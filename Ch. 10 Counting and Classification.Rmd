@@ -564,7 +564,6 @@ y %>%
 ```
 
 ```{r, message = F, warning = F}
-# detach(package:brms)
 library(rethinking)
 data(Kline)
 d <- Kline
@@ -604,16 +603,37 @@ b10.10 <-
 print(b10.10)
 ```
 
-Instead of looking at the correlation point estimates, we might plot:
+Here's the simple matrix of correlation point estimates for the parameters.
 
 ```{r}
 post <-
   posterior_samples(b10.10)
 
-post[1:4] %>%
+post %>%
+  select(-lp__) %>% 
   rename(b_interaction = `b_log_pop:contact_high`) %>%
-  cor() %>%
+  cor() %>% 
   round(digits = 2)
+```
+
+And here's the coefficient plot:
+
+```{r, fig.width = 8, fig.height = 1.25}
+# We'll set a renewed color theme
+color_scheme_set(c(wes_palette("Moonrise2")[2],
+                   wes_palette("Moonrise2")[1], 
+                   wes_palette("Moonrise2")[4], 
+                   wes_palette("Moonrise2")[2], 
+                   wes_palette("Moonrise2")[1], 
+                   wes_palette("Moonrise2")[1]))
+
+post %>%
+  select(-lp__) %>% 
+  rename(b_interaction = `b_log_pop:contact_high`) %>%
+
+  mcmc_intervals(prob = .5, prob_outer = .95) +
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_text(hjust = 0))
 ```
 
 How plausible is it a high-contact island will have more tools than a low-contact island?
@@ -644,15 +664,33 @@ post %>%
   labs(x = "lambda_high - lambda_low")
 ```
 
-I'm not sure how to elegantly insert the marginal posterior estimates as dot-and-line plots into Figure 10.8.b., so we'll just throw in a couple rug plots, instead.
+I’m not happy with how clunky this solution is, but one way to get those marginal dot and line plots for the axes is to make intermediary tibbles. Anyway, here’s a version of Figure 10.8.b.
 
 ```{r, fig.width = 3, fig.height = 2.9}
-post %>%
+# Intermediary tibbles for our the dot and line portoin of the plot
+point_tibble <-
+  tibble(x = c(median(post$b_contact_high), min(post$b_contact_high)),
+         
+         y = c(min(post$`b_log_pop:contact_high`), median(post$`b_log_pop:contact_high`)))
+
+line_tibble <-
+  tibble(parameter = rep(c("b_contact_high", "b_log_pop:contact_high"), each = 2),
+         
+         x = c(quantile(post$b_contact_high, probs = c(.025, .975)),
+               rep(min(post$b_contact_high), times = 2)),
+         
+         y = c(rep(min(post$`b_log_pop:contact_high`), times = 2),
+               quantile(post$`b_log_pop:contact_high`, probs = c(.025, .975))))
+
+# the plot
+post %>% 
   ggplot(aes(x = b_contact_high, y = `b_log_pop:contact_high`)) +
   geom_point(color = wes_palette("Moonrise2")[1],
              size = 1/10, alpha = 1/10) +
-  geom_rug(color = wes_palette("Moonrise2")[1],
-           size = 1/15, alpha = 1/8)
+  geom_point(data = point_tibble,
+             aes(x = x, y = y)) +
+  geom_line(data = line_tibble,
+            aes(x = x, y = y, group = parameter))
 ```
 
 Here we deconstruct model `b10.10`, bit by bit.
@@ -1125,7 +1163,7 @@ plot(marginal_effects(b10.18),
 
 
 ```{r, echo = F}
-rm(d, b10.1, invlogit, b10.2, b10.3, w_b10.1, w_b10.2, w_b10.3, post, d_plot, b10.4, d_plot_4, d_aggregated, b10.5, b10.6, b10.7, p_10.6, d_text, b10.8, b10.9, y, x, b.good, b10.10, b10.11, b10.12, b10.13, b10.14, w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14, nd, ppa_10.9, b10.10.c, num_days, num_weeks, y_new, b10.15, N, income, score, p, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
+rm(d, b10.1, invlogit, b10.2, b10.3, w_b10.1, w_b10.2, w_b10.3, post, d_plot, b10.4, d_plot_4, d_aggregated, b10.5, b10.6, b10.7, p_10.6, d_text, b10.8, b10.9, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14, nd, ppa_10.9, b10.10.c, num_days, num_weeks, y_new, b10.15, N, income, score, p, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
 ```
 
 Note. The analyses in this document were done with:
