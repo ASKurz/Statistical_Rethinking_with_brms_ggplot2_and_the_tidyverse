@@ -32,7 +32,7 @@ library(brms)
 
 The brms package currently supports `theme_black()`, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. You can find the origins of the code, [here](https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/). 
 
-Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used in this document is based on his version, with a few amendments.
+Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used for this chapter is based on his version, with a few amendments.
 
 ```{r}
 theme_black <- 
@@ -89,7 +89,7 @@ theme_black <-
 }
 ```
 
-One way to use `theme_black()` is to make it part of the code for an individual plot, such as `ggplot() + geom_point() + theme_back()`. Another way is to make `theme_black()` the default setting with `bayesplot::theme_set()`. That's the method we'll use in this document.
+One way to use `theme_black()` is to make it part of the code for an individual plot, such as `ggplot() + geom_point() + theme_back()`. Another way is to make `theme_black()` the default setting with `bayesplot::theme_set()`. That's the method we'll use.
 
 ```{r, message = F, warning = F}
 library(bayesplot)
@@ -107,7 +107,7 @@ In the brms 2.1.0 manual, Bürkner recommended complimenting `theme_black()` wit
 library(viridis)
 ```
 
-The `viridis_pal()` function will produce a list of colors within a given palette. In each palette, the colors fall on a spectrum. Within `viridis_pal()`, the `option` argument allows one to select a given spectrum, "C", in our case. The final parentheses, `()`, allows one to determine how many discrete colors one would like to break the spectrum up by. We'll choose 7.
+The `viridis_pal()` function gives a list of colors within a given palette. The colors in each palette fall on a spectrum. Within `viridis_pal()`, the `option` argument allows one to select a given spectrum, "C", in our case. The final parentheses, `()`, allows one to determine how many discrete colors one would like to break the spectrum up by. We'll choose 7.
 
 ```{r}
 viridis_pal(option = "C")(7)
@@ -165,38 +165,74 @@ d %>%
 
 ### 14.1.1. Error on the outcome.
 
-Now we're ready to fit our model. In brms, you specify error on the criterion variable following the form `response | se(se_response, sigma = TRUE)`. In this form, se stands for standard error, the loose frequentist analogue to the Bayesian posterior *SD*. Unless you're fitting a meta-analysis on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$!
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `response | se(se_response, sigma = TRUE)`. In this form, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior *SD*. Unless you're fitting a meta-analysis on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the *brmsformula* section.
+
+The second way uses the `mi()` syntax, following the form `response | mi(se_response)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms and has not found its way into the reference manual, yet. We'll explain it a little more in the second half of this chapter.
+
+We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
 ```{r, message = F, warning = F}
+# Putting the data into a list
 dlist <- list(
     div_obs = d$Divorce,
     div_sd  = d$Divorce.SE,
     R       = d$Marriage,
     A       = d$MedianAgeMarriage)
 
-b14.1 <- 
+# Here we specify the initial (i.e., starting) values
+inits <- list(Yl = dlist$div_obs)
+inits_list <- list(inits, inits)
+
+# Finally, the models
+b14.1_se <- 
   brm(data = dlist, family = gaussian,
       div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A,
       prior = c(set_prior("normal(0, 10)", class = "b"),
                 set_prior("cauchy(0, 2.5)", class = "sigma")),
-      chains = 2, iter = 5000, warmup = 1000, cores = 2,
-      control = list(adapt_delta = 0.95))
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      inits = inits_list)
+
+b14.1_mi <- 
+  brm(data = dlist, family = gaussian,
+      div_obs | mi(div_sd) ~ 0 + intercept + R + A,
+      prior = c(set_prior("normal(0, 10)", class = "b"),
+                set_prior("cauchy(0, 2.5)", class = "sigma")),
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      save_mevars = TRUE,  # note this line for the mi() model
+      inits = inits_list)
 ```
+
+Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `inits = inits_list` for both models, the differ by `fit@inits`. 
 
 ```{r}
-print(b14.1)
+b14.1_se$fit@inits
+b14.1_mi$fit@inits
 ```
 
-I'm unsure how to get the div_est parameters in brms they way McElreath shows them with rethinking. E.g., even the `broom::tidy()` method doesn't work.
+As we explore further, it should become apparent why. Here are the primary model summaries.
+
+```{r}
+print(b14.1_se)
+print(b14.1_mi)
+```
+
+Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `broom::tidy()` method. 
 
 ```{r}
 library(broom)
 
-tidy(b14.1) %>%
+tidy(b14.1_se) %>%
+  mutate_if(is.numeric, round, digits = 2)
+
+tidy(b14.1_mi) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-So it goes.
+Again, from `b_intercept` to `sigma`, the output is about the same. But model `b14.1_mi`, based on the `mi()` syntax, contained posterior summaries for all 50 of the criterion values. The `se()` method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as `div_est[i]`; with the `mi()` method, brms indexed them as `Yl[i]`--no big deal. So while both brms methods accommodated measurement error, the `mi()` method appears to be the brms analogue to what McElreath did with his model `m14.1` in the text.
 
 *Note*. The `normal(0, 10)` prior McElreath used was [quite informative and can lead to discrepancies between the rethinking and brms results](https://github.com/paul-buerkner/brms/issues/114) if you're not careful. A large issue is the default way brms handles intercept priors. From the hyperlink, Bürkner wrote:
 
@@ -205,15 +241,11 @@ So it goes.
 
 If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. But this model is quite sensitive to the intercept syntax.
 
-```{r}
-print(b14.1)
-```
-
-Figure 14.2.a.
+Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to McElreath's `m14.1`, we'll use that one for our plots. Here's our Figure 14.2.a.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 data_error <- 
-  fitted(b14.1) %>%
+  fitted(b14.1_mi) %>%
   as_tibble() %>%
   bind_cols(d %>%
               select(Divorce.SE, Divorce, Marriage))
@@ -241,7 +273,7 @@ b14.1b <-
 print(b14.1b)
 ```
 
-Figure 14.2.b.
+With that in hand, we're ready for Figure 14.2.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 nd <- 
@@ -250,7 +282,7 @@ nd <-
          div_sd = mean(d$Divorce.SE))
 
 fitd_error <- 
-  fitted(b14.1, newdata = nd) %>%
+  fitted(b14.1_mi, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
@@ -260,7 +292,7 @@ fitd_no_error <-
   bind_cols(nd)
 
 data_error <- 
-  fitted(b14.1) %>%
+  fitted(b14.1_mi) %>%
   as_tibble() %>%
   bind_cols(dlist %>%
               as_tibble())
@@ -291,9 +323,9 @@ ggplot(data = fitd_error,
 
 ### 14.1.2. Error on both outcome and predictor.
 
-In brms, you specify error on predictors with an `me` statement in the form of `me(predictor, sd_predictor)` where `sd_predictor` is a vector in the data denoting the size of the measurement error, presumed to be in a standard-deviation metric.
+In brms, you can specify error on predictors with an `me()` statement in the form of `me(predictor, sd_predictor)` where `sd_predictor` is a vector in the data denoting the size of the measurement error, presumed to be in a standard-deviation metric.
 
-```{r, message = F, warning = F}
+```{r, message = F, warning = F, results = 'hide'}
 # The data
 dlist <- list(
   div_obs = d$Divorce,
@@ -302,38 +334,60 @@ dlist <- list(
   mar_sd  = d$Marriage.SE,
   A       = d$MedianAgeMarriage)
 
-# The model
-b14.2 <- 
+# The `inits`
+inits <- list(Yl = dlist$div_obs)
+inits_list <- list(inits, inits)
+
+# The models
+b14.2_se <-
   brm(data = dlist, family = gaussian,
       div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
       prior = c(set_prior("normal(0, 10)", class = "b"),
                 set_prior("cauchy(0, 2.5)", class = "sigma")),
-      save_mevars = TRUE,
       iter = 5000, warmup = 1000, chains = 3, cores = 3,
-      control = list(adapt_delta = 0.95))
+      control = list(adapt_delta = 0.95),
+      save_mevars = TRUE) # Note the lack if `inits`. See below.
+
+b14.2_mi <- 
+  brm(data = dlist, family = gaussian,
+      div_obs | mi(div_sd) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
+      prior = c(set_prior("normal(0, 10)", class = "b"),
+                set_prior("cauchy(0, 2.5)", class = "sigma")),
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      save_mevars = TRUE,
+      inits = inits_list)
 ```
 
-McElreath set a few initial values in his model `m14.2`. It's unclear, to me, how to set the corresponding initial values in this brms model. If you want to get a sense of the structure of the initial values brms used, you can call this:
+We already know including `inits` values for our `Yl[i]` estimates is a waste of time for our `se()` model. But note how we still defined our `inits` values as `inits <- list(Yl = dlist$div_obs)` for the `mi()` model. Although it’s easy in brms to set the starting values for our `Yl[i]` estimates, much the way McElreth did, that isn’t the case when you have measurement error on the predictors. The brms package uses a non-centered parameterization for these, which requires users to have a deeper understanding of the underlying Stan code. This is where I get off the train, but if you want to go further, `stancode(b14.2_mi)`.
+
+Here's the two versions of the model.
 
 ```{r}
-b14.2$fit@inits %>% glimpse()
+print(b14.2_se)
+print(b14.2_mi)
 ```
 
-That's as far as I'm going to go, here. If you come up with code that'll work, hit me up.
+We'll use `broom::tidy()`, again, to get a sense of `depth = 2` summaries.
 
-Here's the model.
+```{r, results = 'hide'}
+tidy(b14.2_se) %>%
+  mutate_if(is.numeric, round, digits = 2)
 
-```{r}
-print(b14.2)
+tidy(b14.2_mi) %>%
+  mutate_if(is.numeric, round, digits = 2)
 ```
 
-Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function order to save the posterior samples of error-adjusted variables obtained by using the `me` argument. Without doing so, functions like `predict()` may give you trouble.
+Due to space concerns, I'm not going to show the results, here. You can do that on your own. Both methods yielded the posteriors for `Xme_memar_obs[1]`, but only the `b14.2_mi` model based on the `mi()` syntax yielded posteriors for the criterion, the `Yl[i]` summaries.
+
+Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
 
 Here is the code for Figure 14.3.a.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 data_error <-
-  fitted(b14.2) %>%
+  fitted(b14.2_mi) %>%
   as_tibble() %>%
   bind_cols(d %>%
               select(Divorce.SE, Divorce, Marriage))
@@ -346,13 +400,13 @@ data_error %>%
   geom_point(alpha = 2/3, size = 2, color = color)
 ```
 
-In order to get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with $i$ ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we' can now'll make our version of Figure 14.4.b.
+To get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with $i$ ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we' can now'll make our version of Figure 14.4.b.
 
 ```{r, message = F, warning = F, fig.width = 4, fig.height = 3.5}
 color_y <- viridis_pal(option = "C")(7)[7]
 color_p <- viridis_pal(option = "C")(7)[2]
 
-posterior_samples(b14.2) %>%
+posterior_samples(b14.2_mi) %>%
   select(starts_with("Xme")) %>%
   gather() %>%
   group_by(key) %>%
@@ -380,7 +434,7 @@ Our regularization was more agressive than what McElreath showed in the text. I'
 
 ## 14.2. Missing data
 
-Starting with the developer's version 2.1.2, brms now supports Bayesian imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). You can download the developer's version like this:
+Starting with the developer's version 2.1.2, brms now supports Bayesian imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). You can download the developer's version (which is version 2.1.9, at the moment) like this:
 
 ```{r, eval = F}
 if (!require("devtools")) {
@@ -431,9 +485,9 @@ When writing a multivariate model in brms, it’s easier to save the model code 
 
 ```{r}
 b_model <- 
-  # Here's the primary kcal model
+  # Here's the primary `kcal` model
   bf(kcal      | mi() ~ 1 + mi(neocortex) + logmass) + 
-  # Here's the model for the missing neocortex data 
+  # Here's the model for the missing `neocortex` data 
   bf(neocortex | mi() ~ 1) + 
   # Here we set the residual correlations for the two models to zero
   set_rescor(FALSE)
@@ -445,11 +499,11 @@ To get a sense of how to specify the priors for such a model, use the `get_prior
 
 ```{r}
 get_prior(data = data_list, 
-      family = gaussian,
-      b_model)
+          family = gaussian,
+          b_model)
 ```
 
-With the one-step Bayesian imputation procedure in brms, you typically need to use the `resp` argument when specifying non-defaut priors.
+With the one-step Bayesian imputation procedure in brms, you might need to use the `resp` argument when specifying non-defaut priors.
 
 Anyway, here we fit the model.
 
@@ -466,7 +520,7 @@ b14.3 <-
       iter = 1e4, chains = 2, cores = 2)
 ```
 
-The model parameters, including the imputed `neocortex` values, indexed by occasion number.
+The model parameters, including the imputed `neocortex` values, indexed by occasion number:
 
 ```{r}
 tidy(b14.3) %>%
@@ -493,7 +547,7 @@ tidy(b14.3cc) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-In order to make our versions of Figure 14.4.a. and 14.4.b., we'll need to do a little data wrangling with `fitted()`.
+In order to make our versions of Figure 14.4., we'll need to do a little data wrangling with `fitted()`.
 
 ```{r}
 nd <-
@@ -691,6 +745,6 @@ Note. The analyses in this document were done with:
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
 ```{r, echo = F}
-rm(d, color, dlist, b14.1, data_error, b14.1b, nd, fitd_error, fitd_no_error, color_y, color_r, b14.2, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi)
+rm(d, color, dlist, inits, inits_list, b14.1_se, b14.1_mi, data_error, b14.1b, nd, fitd_error, fitd_no_error, color_y, color_r, b14.2_se, b14.2_mi, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi)
 ```
 
