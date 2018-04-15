@@ -1,7 +1,7 @@
 ---
 title: "Ch. 11 Monsters and Mixtures"
 author: "A Solomon Kurz"
-date: "`r format(Sys.Date())`"
+date: "2018-04-15"
 output:
   html_document:
     code_folding: show
@@ -14,7 +14,8 @@ output:
 
 Let's get the `Trolley` data from rethinking.
 
-```{r, message = F}
+
+```r
 library(rethinking)
 data(Trolley)
 d <- Trolley
@@ -22,7 +23,8 @@ d <- Trolley
 
 Unload rethinking and load brms.
 
-```{r, message = F}
+
+```r
 rm(Trolley)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -32,22 +34,40 @@ library(brms)
 
 Before we get to plotting, in this manuscript we'll use theme settings and a color palette from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html), which you might learn more about [here](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
 
-```{r}
+
+```r
 library(ggthemes)
 ```
 
 We'll take our basic theme settings from the `theme_hc()` function. We'll use the `Green fields` color palette, which we can inspect with the `canva_pal()` function and a little help from `scales::show_col()`.
 
-```{r, fig.height = 2.5}
-scales::show_col(canva_pal("Green fields")(4))
 
+```r
+scales::show_col(canva_pal("Green fields")(4))
+```
+
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 canva_pal("Green fields")(4)
+```
+
+```
+## [1] "#919636" "#524a3a" "#fffae1" "#5a5f37"
+```
+
+```r
 canva_pal("Green fields")(4)[3]
+```
+
+```
+## [1] "#fffae1"
 ```
 
 Our ggplot2 version of the simple histogram, Figure 11.1.a.
 
-```{r, message = F, warning = F, fig.width = 2.5, fig.height = 3}
+
+```r
 library(tidyverse)
 
 ggplot(data = d, aes(x = response, fill = ..x..)) +
@@ -61,9 +81,12 @@ ggplot(data = d, aes(x = response, fill = ..x..)) +
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 Our cumulative proportion plot, Figure 11.1.b.
 
-```{r, fig.width = 2.5, fig.height = 3}
+
+```r
 d %>%
   group_by(response) %>% 
   count() %>%
@@ -88,9 +111,12 @@ d %>%
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
 In order to make the next plot, we'll need McElreath's `logit()` function, which is not to be confused with Gelman and Hill's (2007, p 91.) `invlogit()` function. Here it is, the logarithm of cumulative odds plot, Figure 11.1.c.
 
-```{r, fig.width = 2.5, fig.height = 3}
+
+```r
 # McElreath's convenience function
 logit <- function(x) log(x/(1-x))
 
@@ -119,9 +145,12 @@ d %>%
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
 Here's Figure 11.2.
 
-```{r, fig.width = 3.5, fig.height = 3}
+
+```r
 d_plot <-
   d %>%
   group_by(response) %>% 
@@ -166,9 +195,12 @@ ggplot(data = d_plot,
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
 Whereas in `rethinking::map()` you indicate the likelihood by `<criterion> ~ dordlogit(phi , c(<the thresholds>)`, in `brms::brm()` you code `family = cumulative`. Here's the intercepts (i.e., thresholds) only model:
 
-```{r, message = F, warning = F}
+
+```r
 # Here are our starting values, which we specify with the `inits` argument in brm()
 Inits <- list(`Intercept[1]` = -2,
               `Intercept[2]` = -1,
@@ -189,15 +221,40 @@ b11.1 <-
 
 McElreath needed to include the `depth = 2` argument in the `rethinking::precis()` function to show the threshold parameters. With a `brm()` fit, we just use `print()` or `summary()` as usual.
 
-```{r}
+
+```r
 print(b11.1)
+```
+
+```
+##  Family: cumulative 
+##   Links: mu = logit; disc = identity 
+## Formula: response ~ 1 
+##    Data: d (Number of observations: 9930) 
+## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 2000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept[1]    -1.92      0.03    -1.98    -1.86       1248 1.00
+## Intercept[2]    -1.27      0.02    -1.32    -1.22       1869 1.00
+## Intercept[3]    -0.72      0.02    -0.76    -0.68       2000 1.00
+## Intercept[4]     0.25      0.02     0.21     0.29       2000 1.00
+## Intercept[5]     0.89      0.02     0.85     0.93       2000 1.00
+## Intercept[6]     1.77      0.03     1.72     1.83       2000 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
 The summaries look like those in the text, number of effective samples are high, and the Rhat values are great. The model looks good.
 
 Here we can actually use Gelman and Hill's `invlogit()` function in place of McElreath's `logistic()` function.
 
-```{r}
+
+```r
 invlogit <- function(x){1/(1+exp(-x))}
 
 b11.1 %>% 
@@ -205,11 +262,22 @@ b11.1 %>%
   invlogit()
 ```
 
+```
+##               Estimate Est.Error   2.5%ile  97.5%ile
+## Intercept[1] 0.1281647 0.5074149 0.1217657 0.1350574
+## Intercept[2] 0.2197224 0.5059315 0.2116128 0.2280041
+## Intercept[3] 0.3275554 0.5054189 0.3182522 0.3370875
+## Intercept[4] 0.5617186 0.5051156 0.5516231 0.5713322
+## Intercept[5] 0.7091492 0.5055973 0.7001981 0.7180225
+## Intercept[6] 0.8546274 0.5071400 0.8477988 0.8614373
+```
+
 ### 11.1.3. Adding predictor variables.
 
 I'm not aware that brms has an equivalent to the `rethinking::dordlogit()` function. So here we'll make it by hand. The code comes from McElreath's [GitHub page](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/distributions.r).
 
-```{r}
+
+```r
 # First, we needed to specify the logistic() function, which is apart of the dordlogit() function
 logistic <- function(x) {
     p <- 1 / (1 + exp(-x))
@@ -232,37 +300,72 @@ dordlogit <-
 
 The `dordlogit()` function works like this.
 
-```{r}
+
+```r
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1]))
+```
+
+```
+## [1] 0.12816469 0.09155771 0.10783298 0.23416324 0.14743055 0.14547824
+## [7] 0.14537257
 ```
 
 Note the slight difference in how we used `dordlogit()` with a `brm()` fit summarized by `fixef()` than the way McElreath did with a `map2stan()` fit summarized by `coef()`. McElreath just put `coef(m11.1)` into `dordlogit()`. We, however, more specifically placed `fixef(b11.1)[, 1]` into the function. With the `[, 1]` part, we specified that we were working with the posterior means (i.e., `Estimate`) and neglecting the other summaries (i.e., the posterior *SD*s and 95% intervals). If you forget to do this, chaos ensues.
 
 Next, as McElreath further noted in the text, "these probabilities imply an average outcome of:"
 
-```{r}
+
+```r
 sum(pk*(1:7))
+```
+
+```
+## [1] 4.199062
 ```
  
 I found that a bit abstract. Here's the thing in a more elaborate tibble format.
 
-```{r}
+
+```r
 (
   explicit_example <-
   tibble(probability_of_a_response = pk) %>%
   mutate(the_response = 1:7) %>%
   mutate(their_product = probability_of_a_response*the_response)
 )
+```
 
+```
+## # A tibble: 7 x 3
+##   probability_of_a_response the_response their_product
+##                       <dbl>        <int>         <dbl>
+## 1                    0.128             1         0.128
+## 2                    0.0916            2         0.183
+## 3                    0.108             3         0.323
+## 4                    0.234             4         0.937
+## 5                    0.147             5         0.737
+## 6                    0.145             6         0.873
+## 7                    0.145             7         1.02
+```
+
+```r
 explicit_example %>%
   summarise(average_outcome_value = sum(their_product))
+```
+
+```
+## # A tibble: 1 x 1
+##   average_outcome_value
+##                   <dbl>
+## 1                  4.20
 ```
 
 **Side note**
 
 This made me wonder how this would compare if we were lazy and ignored the categorical nature of the `response`. Here we refit the model with the typical Gaussian likelihood.
 
-```{r, message = F, warning = F}
+
+```r
 brm(data = d, family = gaussian,
     response ~ 1,
     # In this case, 4 (i.e., the middle response) seems to be the conservative place to put the mean
@@ -272,23 +375,58 @@ brm(data = d, family = gaussian,
   print()
 ```
 
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: response ~ 1 
+##    Data: d (Number of observations: 9930) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 4000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept     4.20      0.02     4.16     4.24       2989 1.00
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## sigma     1.91      0.01     1.88     1.93       3516 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
 Happily, this yielded a mean estimate of 4.2, much like our `average_outcome_value`, above.
 
 **End side note**
 
 Now we'll try it by subtracting .5 from each.
  
-```{r}
+
+```r
 # The probabilities of a given response
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1] - .5))
+```
 
+```
+## [1] 0.08186413 0.06401619 0.08218593 0.20929949 0.15921915 0.18439155
+## [7] 0.21902356
+```
+
+```r
 # The average rating
 sum(pk*(1:7))
 ```
 
+```
+## [1] 4.729262
+```
+
 So the rule is we *subtract the linear model from each interecept*. Let's fit our multivariable models.
 
-```{r, message = F}
+
+```r
 # Start values for b11.2
 Inits <- list(`Intercept[1]` = -1.9,
               `Intercept[2]` = -1.2,
@@ -333,7 +471,8 @@ b11.3 <-
 
 We don't have a `coeftab()` function in brms like for rethinking. But as we did for the chapter 6 supplement, we can reproduce it with help from the [broom package](https://cran.r-project.org/web/packages/broom/index.html) and a bit of data wrangling.
 
-```{r, message = F}
+
+```r
 library(broom)
 
 tidy(b11.1) %>% mutate(model = "b11.1") %>% 
@@ -347,17 +486,46 @@ tidy(b11.1) %>% mutate(model = "b11.1") %>%
   slice(c(6:11, 1, 4, 3, 2, 5))  # Here we indicate the order we'd like the rows in
 ```
 
+```
+## # A tibble: 11 x 4
+##    term                  b11.1   b11.2  b11.3
+##    <chr>                 <dbl>   <dbl>  <dbl>
+##  1 b_Intercept[1]      - 1.92  - 2.84  -2.63 
+##  2 b_Intercept[2]      - 1.27  - 2.16  -1.94 
+##  3 b_Intercept[3]      - 0.720 - 1.57  -1.34 
+##  4 b_Intercept[4]        0.250 - 0.550 -0.310
+##  5 b_Intercept[5]        0.890   0.120  0.360
+##  6 b_Intercept[6]        1.77    1.02   1.27 
+##  7 b_action             NA     - 0.710 -0.470
+##  8 b_intention          NA     - 0.720 -0.280
+##  9 b_contact            NA     - 0.960 -0.330
+## 10 b_action:intention   NA      NA     -0.450
+## 11 b_intention:contact  NA      NA     -1.28
+```
+
 If you really wanted that last `nobs` row at the bottom, you could elaborate on this code: `b11.1$data %>% count()`. Also, if you want a proper `coeftab()` function for brms, McElreath's code lives [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r). Give it a whirl.
 
 Anyway, here are the WAIC comparisons. *Caution: This took some time to compute.*
 
-```{r}
+
+```r
 waic(b11.1, b11.2, b11.3)
+```
+
+```
+##                   WAIC    SE
+## b11.1         37854.43 57.76
+## b11.2         37090.70 76.27
+## b11.3         36929.10 81.24
+## b11.1 - b11.2   763.73 55.98
+## b11.1 - b11.3   925.33 62.67
+## b11.2 - b11.3   161.60 25.76
 ```
 
 McElreath made Figure 11.3 by extracting the samples of his `m11.3`, saving them as `post`, and working some hairy base R `plot()` code. We'll take a different route and use `brms::fitted()`. This will take substantial data wrangling, but hopefully it'll be instructive. Let's first take a look at the initial `fitted()` output for the beginnings of Figure 11.3.a.
 
-```{r}
+
+```r
 nd <-
   tibble(action = 0,
          contact = 0, 
@@ -373,11 +541,31 @@ fitted(b11.3,
   glimpse()
 ```
 
+```
+## Observations: 100
+## Variables: 14
+## $ `1.1` <dbl> 0.06607969, 0.06804450, 0.06313991, 0.06967209, 0.066911...
+## $ `2.1` <dbl> 0.08232286, 0.08457758, 0.08754097, 0.08444105, 0.084619...
+## $ `1.2` <dbl> 0.05919086, 0.05624270, 0.05816538, 0.05870517, 0.057521...
+## $ `2.2` <dbl> 0.07134662, 0.06767571, 0.07670318, 0.06909566, 0.070217...
+## $ `1.3` <dbl> 0.08418944, 0.08256804, 0.07784960, 0.07929351, 0.080028...
+## $ `2.3` <dbl> 0.09778866, 0.09588247, 0.09720693, 0.09048292, 0.094025...
+## $ `1.4` <dbl> 0.2217062, 0.2229208, 0.2094134, 0.2225237, 0.2173454, 0...
+## $ `2.4` <dbl> 0.2386027, 0.2400269, 0.2343633, 0.2377880, 0.2357903, 0...
+## $ `1.5` <dbl> 0.1718287, 0.1664320, 0.1660563, 0.1709790, 0.1662878, 0...
+## $ `2.5` <dbl> 0.1681413, 0.1632142, 0.1620720, 0.1680954, 0.1632987, 0...
+## $ `1.6` <dbl> 0.1886358, 0.1848620, 0.1992241, 0.1896900, 0.1940555, 0...
+## $ `2.6` <dbl> 0.1698829, 0.1672868, 0.1717873, 0.1733281, 0.1743754, 0...
+## $ `1.7` <dbl> 0.2083693, 0.2189299, 0.2261513, 0.2091366, 0.2178500, 0...
+## $ `2.7` <dbl> 0.1719150, 0.1813363, 0.1703263, 0.1767689, 0.1776729, 0...
+```
+
 Hopefully by now it’s clear why we needed the `nd` tibble, which we made use of in the `newdata = nd` argument. Because we set `summary = F`, we get draws from the posterior instead of summaries. With `max_iter`, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by `brms::fitted()` default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two `intention` values the draw is based on (i.e., 1 stands for intention = 0, 2, stands for intention = 1). The numbers on the right of the decimals are the seven response options for `response`. For each posterior draw, you get one of those for each value of `intention`. Finally, it might not be immediately apparent, but the values are in the probability scale, just like `pk` on page 338.
 
 Now we know what we have in hand, it’s just a matter of careful data wrangling to get those probabilities into a more useful format to insert into ggplot2. I’ve extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.
 
-```{r, fig.width = 2.5, fig.height = 3.5}
+
+```r
 nd <-
   tibble(action = 0,
          contact = 0, 
@@ -439,11 +627,14 @@ fitted(b11.3,
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+
 Boom!
 
 Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, `make_Figure_11.3_data()`. 
 
-```{r}
+
+```r
 make_Figure_11.3_data <- function(action, contact, max_iter){
   
   nd <-
@@ -476,7 +667,8 @@ make_Figure_11.3_data <- function(action, contact, max_iter){
 
 Now we'll use our sweet homemade function to make our plots.
 
-```{r, fig.width = 2.5, fig.height = 3.5}
+
+```r
 # Figure 11.3.a
 make_Figure_11.3_data(action = 0, 
                       contact = 0, 
@@ -502,7 +694,11 @@ make_Figure_11.3_data(action = 0,
                        high = canva_pal("Green fields")(4)[1]) +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+
+```r
 # Figure 11.3.b
 make_Figure_11.3_data(action = 1, 
                       contact = 0, 
@@ -528,7 +724,11 @@ make_Figure_11.3_data(action = 1,
                        high = canva_pal("Green fields")(4)[1]) +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-24-2.png)<!-- -->
+
+```r
 # Figure 11.3.c
 make_Figure_11.3_data(action = 0, 
                       contact = 1, 
@@ -556,13 +756,16 @@ make_Figure_11.3_data(action = 0,
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-24-3.png)<!-- -->
+
 If you really wanted to get crazy, you could save each of the three plots as objects and then feed them into the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/). I'll leave that up to you. 
 
 **Bonus**
 
 I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody’s got time for that. We’ve have clients to serve! Happily, we can go further. Look back at McElreath’s R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here’s the adjusted function:
 
-```{r}
+
+```r
 make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
   
   nd <-
@@ -596,7 +799,8 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
 
 Our handy homemade but monstrously-named `make_data_for_an_alternative_fiture()` function works very much like its predecessor. You’ll see.
 
-```{r, fig.width = 2.5, fig.height = 3.5}
+
+```r
 # Alternative to Figure 11.3.a
 make_data_for_an_alternative_fiture(action = 0, 
                                     contact = 0, 
@@ -613,7 +817,11 @@ make_data_for_an_alternative_fiture(action = 0,
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+
+```r
 # Alternative to Figure 11.3.b
 make_data_for_an_alternative_fiture(action = 1, 
                                     contact = 0, 
@@ -630,7 +838,11 @@ make_data_for_an_alternative_fiture(action = 1,
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-26-2.png)<!-- -->
+
+```r
 # Alternative to Figure 11.3.c
 make_data_for_an_alternative_fiture(action = 0, 
                                     contact = 1, 
@@ -649,6 +861,8 @@ make_data_for_an_alternative_fiture(action = 0,
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-26-3.png)<!-- -->
+
 Finally; now those are plots I can sell in a clinical psychology journal!
 
 **End Bonus**
@@ -659,7 +873,8 @@ Finally; now those are plots I can sell in a clinical psychology journal!
 
 Here we simulate our drunk monk data.
 
-```{r}
+
+```r
 # define parameters
 prob_drink <- 0.2  # 20% of days
 rate_work  <- 1    # average 1 manuscript per day
@@ -677,7 +892,8 @@ y <- (1 - drink)*rpois(N, rate_work)
 
 And here we'll put those data in a tidy tibble before plotting.
 
-```{r, fig.width = 5, fig.height = 3}
+
+```r
 d <-
   tibble(Y = y) %>%
   arrange(Y) %>% 
@@ -698,9 +914,12 @@ d <-
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+
 The intercept [and zi] only zero-inflated Poisson model:
 
-```{r, warning = F, message = F}
+
+```r
 b11.4 <- 
   brm(data = d, family = zero_inflated_poisson(),
       Y ~ 1,
@@ -712,20 +931,49 @@ b11.4 <-
 print(b11.4)
 ```
 
+```
+##  Family: zero_inflated_poisson 
+##   Links: mu = log; zi = identity 
+## Formula: Y ~ 1 
+##    Data: d (Number of observations: 365) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 4000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept     0.05      0.08    -0.11     0.20       1120 1.00
+## 
+## Family Specific Parameters: 
+##    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## zi     0.15      0.06     0.04     0.25       1258 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
 The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about 0.06. However, it did influence the summary of `zi`. Note how McElreaths `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of 0.15. First off, because he didn’t set his seed in the text before simulating (i.e., `set.seed(<insert some number>)`), we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
 
 Anyway, here's that exponentiated $\lambda$.
 
-```{r}
+
+```r
 fixef(b11.4)[1, ] %>%
   exp()
+```
+
+```
+##  Estimate Est.Error   2.5%ile  97.5%ile 
+## 1.0550964 1.0868599 0.8915979 1.2275018
 ```
 
 ## 11.3. Over-dispersed outcomes
 
 ### 11.3.1. Beta-binomial.
 
-```{r, fig.width = 4, fig.height = 3}
+
+```r
 pbar <- 0.5
 theta <- 5
 
@@ -743,11 +991,14 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+
 The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms version 2.2.0 allows users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
 Before we get carried away, let's load the data.
 
-```{r, warning = F, message = F}
+
+```r
 library(rethinking)
 data(UCBadmit)
 d <- UCBadmit
@@ -755,7 +1006,8 @@ d <- UCBadmit
 
 Unload rethinking and load brms.
 
-```{r, message = F}
+
+```r
 rm(UCBadmit)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -763,7 +1015,8 @@ library(brms)
 
 I’m not going to go into great detail explaining the ins and outs of making custom distributions for `brm()`. You've got Bürkner's vignette. For our purposes, we need two preparatory steps. First, we need to use the `custom_family()` function to define the name and parameters of the beta-binomial distribution for use in `brm()`. Second, we have to define some relevant Stan functions.
 
-```{r}
+
+```r
 beta_binomial2 <- 
   custom_family(
     "beta_binomial2", dpars = c("mu", "phi"),
@@ -783,7 +1036,8 @@ stan_funs <- "
 
 With that out of the way, we’re ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. It’s the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
 
-```{r, warning = F, message = F}
+
+```r
 b11.5 <-
   brm(data = d, 
       family = beta_binomial2,  # Here's our custom likelihood
@@ -796,21 +1050,56 @@ b11.5 <-
 
 Success, our results look a lot like those in the text!
 
-```{r}
+
+```r
 print(b11.5)
+```
+
+```
+##  Family: beta_binomial2 
+##   Links: mu = logit; phi = identity 
+## Formula: admit | trials(applications) ~ 1 
+##    Data: d (Number of observations: 12) 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 6000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept    -0.38      0.31    -0.97     0.23       4108 1.00
+## 
+## Family Specific Parameters: 
+##     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## phi     2.74      0.95     1.23     4.93       4729 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
 Here's what the corresponding `posterior_samples()` data object looks like.
 
-```{r}
+
+```r
 post <- posterior_samples(b11.5)
 
 head(post)
 ```
 
+```
+##   b_Intercept      phi      lp__
+## 1  0.12251887 2.942989 -71.68468
+## 2 -0.53644691 1.623473 -71.43350
+## 3 -0.04284798 2.829146 -70.74407
+## 4 -0.73517581 3.492832 -70.93003
+## 5  0.02351055 2.082325 -71.06584
+## 6 -0.25505905 3.336987 -70.31219
+```
+
 With our `post` object in hand, here's our Figure 11.5.a.
 
-```{r, fig.width = 4, fig.height = 3.5}
+
+```r
 tibble(x = 0:1) %>%
   ggplot(aes(x = x)) + 
   stat_function(fun = rethinking::dbeta2,
@@ -834,11 +1123,14 @@ tibble(x = 0:1) %>%
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+
 I got the idea to nest `stat_function()` within `mapply()` from [shadow's answer to this Stack Overflow question](http://stackoverflow.com/questions/27009641/plot-multiple-normal-curves-in-same-plot).
 
 Before we can do our variant of Figure 11.5.b., we'll need to specify a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarily, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
-```{r, results = 'hide', warning = F, message = F}
+
+```r
 expose_functions(b11.5, vectorize = TRUE)
 
 # Required to use `predict()`
@@ -871,7 +1163,8 @@ fitted_beta_binomial2 <-
 
 With those intermediary steps out of the way, we're ready to make Figure 11.5.b.
 
-```{r, fig.width = 4, fig.height = 3.5}
+
+```r
 # The prediction intervals
 predict(b11.5) %>%
   as_tibble() %>% 
@@ -911,13 +1204,16 @@ predict(b11.5) %>%
         legend.position = "none")
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+
 As in the text, the raw data are consistent with the prediction intervals. But those intervals are so incredibly wide, they're hardly an endorsement of the model.
 
 ### 11.3.2. Negative-binomial or gamma-Poisson.
 
 Here's a look at the $\gamma$ distribution. 
 
-```{r, fig.width = 3.5, fig.height = 3}
+
+```r
 mu <- 3
 theta <- 1
 
@@ -937,11 +1233,14 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
+![](Ch._11_Monsters_and_Mixtures_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+
 ##### Bonus
 
 McElreath didn't give an example of negative-binomial regression in the text. Here's one with the `UCBadmit` data.
 
-```{r, warning = F, message = F}
+
+```r
 brm(data = d, family = negbinomial,
       admit ~ 1 + applicant.gender,
       prior = c(set_prior("normal(0, 10)", class = "Intercept"),
@@ -953,10 +1252,38 @@ brm(data = d, family = negbinomial,
   print()
 ```
 
+```
+##  Family: negbinomial 
+##   Links: mu = log; shape = identity 
+## Formula: admit ~ 1 + applicant.gender 
+##    Data: d (Number of observations: 12) 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 6000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Population-Level Effects: 
+##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept                4.70      0.39     4.00     5.55       4118 1.00
+## applicant.gendermale     0.57      0.50    -0.44     1.53       4311 1.00
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## shape     1.23      0.49     0.51     2.37       4201 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
 Since the negative-binomial model uses the log link, you need to exponentiate to get the estimates back into the count metric. E.g.,
 
-```{r}
+
+```r
 exp(4.69)
+```
+
+```
+## [1] 108.8532
 ```
 
 Note. The analyses in this document were done with:
@@ -974,6 +1301,4 @@ Note. The analyses in this document were done with:
 ## Reference
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
-```{r, echo = F, eval = F}
-rm(d, logit, d_plot, Inits, InitsList, b11.1, invlogit, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, N, drink, y, b11.4, pbar, theta, beta_binomial2, stan_funs, b11.5, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
-```
+
