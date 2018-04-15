@@ -1,7 +1,7 @@
 ---
 title: "Ch 14. Missing Data and Other Opportunities"
 author: "A Solomon Kurz"
-date: "2018-04-07"
+date: "2018-04-15"
 output:
   html_document:
     code_folding: show
@@ -102,7 +102,7 @@ theme_set(theme_black())
 # theme_set(theme_default()) 
 ```
 
-In the brms 2.1.0 manual, Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/web/packages/viridis/index.html), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html).
+In the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/web/packages/viridis/index.html), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html).
 
 
 ```r
@@ -184,7 +184,7 @@ d %>%
 
 Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `response | se(se_response, sigma = TRUE)`. In this form, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior *SD*. Unless you're fitting a meta-analysis on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the *brmsformula* section.
 
-The second way uses the `mi()` syntax, following the form `response | mi(se_response)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms and has not found its way into the reference manual, yet. We'll explain it a little more in the second half of this chapter.
+The second way uses the `mi()` syntax, following the form `response | mi(se_response)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We'll explain it a little more in the second half of this chapter.
 
 We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
@@ -234,18 +234,18 @@ b14.1_se$fit@inits
 ```
 ## [[1]]
 ## [[1]]$b
-## [1]  0.4640517 -1.3748928  1.3522549
+## [1]  1.1985375  0.3111142 -1.3903219
 ## 
 ## [[1]]$sigma
-## [1] 1.598195
+## [1] 0.3109803
 ## 
 ## 
 ## [[2]]
 ## [[2]]$b
-## [1] -1.2883528  0.1385504  0.6327379
+## [1] 0.3898006 0.2022608 0.8074439
 ## 
 ## [[2]]$sigma
-## [1] 0.1653116
+## [1] 1.270774
 ```
 
 ```r
@@ -260,10 +260,10 @@ b14.1_mi$fit@inits
 ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
 ## 
 ## [[1]]$b
-## [1] -1.213344 -1.169194  0.445605
+## [1]  1.8814806 -1.9995429  0.1119839
 ## 
 ## [[1]]$sigma
-## [1] 4.785995
+## [1] 0.6189272
 ## 
 ## 
 ## [[2]]
@@ -273,10 +273,10 @@ b14.1_mi$fit@inits
 ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
 ## 
 ## [[2]]$b
-## [1] -1.4426289 -0.6236462 -0.3353888
+## [1]  0.7516742 -1.4945574 -0.4253562
 ## 
 ## [[2]]$sigma
-## [1] 0.2177953
+## [1] 0.1994272
 ```
 
 As we explore further, it should become apparent why. Here are the primary model summaries.
@@ -297,13 +297,13 @@ print(b14.1_se)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    21.04      6.52     8.00    33.92       1879 1.00
-## R             0.13      0.08    -0.02     0.28       1991 1.00
-## A            -0.54      0.21    -0.95    -0.12       2028 1.00
+## intercept    21.51      6.59     8.61    34.21       2096 1.00
+## R             0.12      0.08    -0.02     0.27       2594 1.00
+## A            -0.55      0.21    -0.96    -0.13       2168 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.13      0.20     0.77     1.57       3241 1.00
+## sigma     1.13      0.21     0.75     1.57       2703 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -325,13 +325,13 @@ print(b14.1_mi)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    21.29      6.62     8.00    34.05       3547 1.00
-## R             0.13      0.08    -0.02     0.28       4079 1.00
-## A            -0.55      0.21    -0.96    -0.12       3672 1.00
+## intercept    21.39      6.53     8.40    33.85       2068 1.00
+## R             0.13      0.08    -0.02     0.27       2532 1.00
+## A            -0.55      0.21    -0.96    -0.13       2160 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.13      0.21     0.76     1.58       3181 1.00
+## sigma     1.13      0.21     0.76     1.57       2147 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -350,11 +350,11 @@ tidy(b14.1_se) %>%
 
 ```
 ##          term estimate std.error   lower   upper
-## 1 b_intercept    21.04      6.52   10.24   31.54
-## 2         b_R     0.13      0.08    0.00    0.25
-## 3         b_A    -0.54      0.21   -0.87   -0.18
-## 4       sigma     1.13      0.20    0.82    1.49
-## 5        lp__  -105.33      1.42 -108.12 -103.68
+## 1 b_intercept    21.51      6.59   10.50   32.15
+## 2         b_R     0.12      0.08    0.00    0.25
+## 3         b_A    -0.55      0.21   -0.89   -0.20
+## 4       sigma     1.13      0.21    0.81    1.49
+## 5        lp__  -105.38      1.43 -108.15 -103.71
 ```
 
 ```r
@@ -364,61 +364,61 @@ tidy(b14.1_mi) %>%
 
 ```
 ##           term estimate std.error   lower   upper
-## 1  b_intercept    21.29      6.62   10.27   32.18
+## 1  b_intercept    21.39      6.53   10.64   31.88
 ## 2          b_R     0.13      0.08    0.00    0.25
-## 3          b_A    -0.55      0.21   -0.90   -0.19
-## 4        sigma     1.13      0.21    0.82    1.49
-## 5        Yl[1]    11.80      0.69   10.68   12.93
-## 6        Yl[2]    11.20      1.05    9.51   12.95
-## 7        Yl[3]    10.47      0.61    9.48   11.48
-## 8        Yl[4]    12.34      0.87   10.88   13.79
-## 9        Yl[5]     8.05      0.24    7.66    8.44
-## 10       Yl[6]    11.00      0.71    9.86   12.19
-## 11       Yl[7]     7.22      0.65    6.15    8.27
-## 12       Yl[8]     9.35      0.90    7.89   10.84
-## 13       Yl[9]     6.99      1.11    5.17    8.83
-## 14      Yl[10]     8.54      0.31    8.04    9.04
-## 15      Yl[11]    11.15      0.54   10.27   12.04
-## 16      Yl[12]     9.10      0.90    7.59   10.57
-## 17      Yl[13]     9.67      0.91    8.16   11.13
-## 18      Yl[14]     8.11      0.42    7.41    8.80
-## 19      Yl[15]    10.69      0.55    9.77   11.60
-## 20      Yl[16]    10.18      0.71    9.01   11.33
-## 21      Yl[17]    10.51      0.79    9.24   11.81
-## 22      Yl[18]    11.94      0.63   10.91   12.99
-## 23      Yl[19]    10.49      0.71    9.34   11.68
-## 24      Yl[20]    10.19      1.02    8.56   11.96
-## 25      Yl[21]     8.76      0.60    7.77    9.76
-## 26      Yl[22]     7.77      0.48    6.99    8.57
-## 27      Yl[23]     9.14      0.47    8.37    9.91
-## 28      Yl[24]     7.72      0.54    6.82    8.61
-## 29      Yl[25]    10.43      0.78    9.17   11.72
-## 30      Yl[26]     9.54      0.58    8.60   10.49
-## 31      Yl[27]     9.43      0.93    7.90   10.95
-## 32      Yl[28]     9.25      0.73    8.06   10.43
-## 33      Yl[29]     9.18      0.98    7.62   10.81
-## 34      Yl[30]     6.39      0.43    5.69    7.09
-## 35      Yl[31]     9.97      0.80    8.65   11.29
-## 36      Yl[32]     6.69      0.30    6.21    7.18
-## 37      Yl[33]     9.89      0.44    9.17   10.62
-## 38      Yl[34]     9.77      0.99    8.11   11.39
-## 39      Yl[35]     9.43      0.42    8.74   10.12
-## 40      Yl[36]    11.97      0.77   10.69   13.25
-## 41      Yl[37]    10.07      0.66    9.00   11.18
-## 42      Yl[38]     7.79      0.40    7.13    8.45
-## 43      Yl[39]     8.21      1.02    6.58    9.90
-## 44      Yl[40]     8.40      0.60    7.40    9.38
-## 45      Yl[41]    10.02      1.02    8.36   11.69
-## 46      Yl[42]    10.94      0.64    9.90   11.98
-## 47      Yl[43]    10.02      0.33    9.48   10.56
-## 48      Yl[44]    11.06      0.80    9.72   12.36
-## 49      Yl[45]     8.88      0.97    7.30   10.48
-## 50      Yl[46]     9.00      0.48    8.21    9.78
-## 51      Yl[47]     9.95      0.55    9.04   10.86
-## 52      Yl[48]    10.61      0.88    9.19   12.07
-## 53      Yl[49]     8.47      0.50    7.63    9.29
-## 54      Yl[50]    11.51      1.10    9.66   13.30
-## 55        lp__  -152.63      6.37 -163.72 -142.57
+## 3          b_A    -0.55      0.21   -0.89   -0.20
+## 4        sigma     1.13      0.21    0.81    1.49
+## 5        Yl[1]    11.77      0.66   10.68   12.86
+## 6        Yl[2]    11.17      1.05    9.47   12.89
+## 7        Yl[3]    10.47      0.62    9.46   11.48
+## 8        Yl[4]    12.32      0.89   10.90   13.81
+## 9        Yl[5]     8.05      0.23    7.67    8.44
+## 10       Yl[6]    11.00      0.74    9.82   12.23
+## 11       Yl[7]     7.24      0.64    6.18    8.28
+## 12       Yl[8]     9.35      0.89    7.89   10.81
+## 13       Yl[9]     7.00      1.10    5.22    8.85
+## 14      Yl[10]     8.54      0.31    8.02    9.05
+## 15      Yl[11]    11.16      0.52   10.30   12.02
+## 16      Yl[12]     9.09      0.90    7.60   10.54
+## 17      Yl[13]     9.69      0.92    8.15   11.18
+## 18      Yl[14]     8.11      0.42    7.42    8.80
+## 19      Yl[15]    10.68      0.56    9.77   11.60
+## 20      Yl[16]    10.18      0.71    9.04   11.34
+## 21      Yl[17]    10.50      0.78    9.20   11.78
+## 22      Yl[18]    11.94      0.64   10.90   13.01
+## 23      Yl[19]    10.50      0.69    9.40   11.65
+## 24      Yl[20]    10.18      1.01    8.58   11.90
+## 25      Yl[21]     8.76      0.59    7.82    9.72
+## 26      Yl[22]     7.77      0.47    6.99    8.54
+## 27      Yl[23]     9.15      0.47    8.38    9.92
+## 28      Yl[24]     7.74      0.55    6.84    8.64
+## 29      Yl[25]    10.43      0.75    9.20   11.68
+## 30      Yl[26]     9.54      0.59    8.57   10.51
+## 31      Yl[27]     9.42      0.96    7.86   10.99
+## 32      Yl[28]     9.27      0.73    8.04   10.43
+## 33      Yl[29]     9.18      0.92    7.68   10.73
+## 34      Yl[30]     6.39      0.43    5.67    7.10
+## 35      Yl[31]     9.97      0.80    8.67   11.28
+## 36      Yl[32]     6.69      0.30    6.21    7.20
+## 37      Yl[33]     9.89      0.44    9.17   10.60
+## 38      Yl[34]     9.76      0.96    8.14   11.33
+## 39      Yl[35]     9.43      0.43    8.74   10.13
+## 40      Yl[36]    11.96      0.78   10.67   13.25
+## 41      Yl[37]    10.07      0.66    8.99   11.15
+## 42      Yl[38]     7.80      0.41    7.13    8.47
+## 43      Yl[39]     8.21      1.01    6.58    9.91
+## 44      Yl[40]     8.40      0.59    7.43    9.36
+## 45      Yl[41]    10.01      1.06    8.28   11.73
+## 46      Yl[42]    10.94      0.63    9.92   11.99
+## 47      Yl[43]    10.02      0.33    9.47   10.58
+## 48      Yl[44]    11.07      0.79    9.76   12.36
+## 49      Yl[45]     8.91      0.99    7.30   10.53
+## 50      Yl[46]     9.00      0.47    8.23    9.79
+## 51      Yl[47]     9.95      0.56    9.00   10.88
+## 52      Yl[48]    10.62      0.89    9.19   12.06
+## 53      Yl[49]     8.46      0.51    7.62    9.30
+## 54      Yl[50]    11.49      1.11    9.66   13.29
+## 55        lp__  -152.57      6.33 -163.31 -142.55
 ```
 
 Again, from `b_intercept` to `sigma`, the output is about the same. But model `b14.1_mi`, based on the `mi()` syntax, contained posterior summaries for all 50 of the criterion values. The `se()` method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as `div_est[i]`; with the `mi()` method, brms indexed them as `Yl[i]`--no big deal. So while both brms methods accommodated measurement error, the `mi()` method appears to be the brms analogue to what McElreath did with his model `m14.1` in the text.
@@ -477,13 +477,13 @@ print(b14.1b)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    36.24      7.56    21.55    50.80       1823 1.00
-## R            -0.05      0.08    -0.21     0.10       2164 1.00
-## A            -0.98      0.24    -1.45    -0.50       1904 1.00
+## intercept    35.99      7.78    20.58    51.35       1962 1.00
+## R            -0.05      0.08    -0.21     0.11       2300 1.00
+## A            -0.97      0.25    -1.46    -0.48       2046 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.52      0.16     1.24     1.87       3123 1.00
+## sigma     1.52      0.16     1.24     1.87       3371 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -601,13 +601,13 @@ print(b14.2_se)
 ##  
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept          15.69      6.80     2.14    28.72       4039 1.00
-## A                  -0.44      0.21    -0.84    -0.03       4538 1.00
-## memar_obsmar_sd     0.27      0.11     0.07     0.49       4350 1.00
+## intercept          15.81      6.88     1.95    29.07       5521 1.00
+## A                  -0.44      0.21    -0.84    -0.03       6422 1.00
+## memar_obsmar_sd     0.27      0.11     0.07     0.49       5329 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.00      0.21     0.61     1.43      10033 1.00
+## sigma     1.00      0.21     0.61     1.44      12000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -629,13 +629,13 @@ print(b14.2_mi)
 ##  
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept          15.89      6.65     2.28    28.65       2090 1.00
-## A                  -0.45      0.20    -0.83    -0.03       2594 1.00
-## memar_obsmar_sd     0.27      0.10     0.07     0.48       2190 1.00
+## intercept          15.71      6.69     2.39    28.40       2618 1.00
+## A                  -0.44      0.20    -0.82    -0.04       3036 1.00
+## memar_obsmar_sd     0.27      0.11     0.07     0.48       2290 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.00      0.21     0.62     1.46       1866 1.00
+## sigma     1.00      0.21     0.61     1.45       1839 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -714,19 +714,9 @@ Our regularization was more agressive than what McElreath showed in the text. I'
 
 ## 14.2. Missing data
 
-Starting with the developer's version 2.1.2, brms now supports Bayesian imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). You can download the developer's version (which is version 2.1.9, at the moment) like this:
+Starting with the developer's version 2.1.2, (or the official [version 2.2.0 available on CRAN](https://cran.r-project.org/web/packages/brms/index.html)) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). The [*Handle Missing Values with brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) is quite helpful.
 
-
-```r
-if (!require("devtools")) {
-  install.packages("devtools")
-}
-devtools::install_github("paul-buerkner/brms", dependencies = TRUE)
-```
-
-An [official vignette](https://github.com/paul-buerkner/brms/pull/337/commits/2456a00c607aa070c871da27c07f7fe1321eb69f) is currently in the works.
-
-### 14.2.1. Imputing neocortex
+### 14.2.1. Imputing `neocortex`
 
 Once again, here are the `milk` data.
 
@@ -847,25 +837,25 @@ tidy(b14.3) %>%
 
 ```
 ##                     term estimate std.error lower upper
-## 1       b_kcal_Intercept    -0.53      0.47 -1.28  0.25
+## 1       b_kcal_Intercept    -0.54      0.47 -1.30  0.26
 ## 2  b_neocortex_Intercept     0.67      0.01  0.65  0.69
 ## 3         b_kcal_logmass    -0.07      0.02 -0.11 -0.03
-## 4   bsp_kcal_mineocortex     1.89      0.73  0.67  3.07
+## 4   bsp_kcal_mineocortex     1.91      0.74  0.66  3.09
 ## 5             sigma_kcal     0.13      0.02  0.10  0.17
 ## 6        sigma_neocortex     0.06      0.01  0.05  0.08
 ## 7       Ymi_neocortex[2]     0.63      0.05  0.55  0.72
 ## 8       Ymi_neocortex[3]     0.62      0.05  0.54  0.71
 ## 9       Ymi_neocortex[4]     0.62      0.05  0.54  0.71
-## 10      Ymi_neocortex[5]     0.65      0.05  0.57  0.73
+## 10      Ymi_neocortex[5]     0.65      0.05  0.58  0.73
 ## 11      Ymi_neocortex[9]     0.70      0.05  0.62  0.78
 ## 12     Ymi_neocortex[14]     0.66      0.05  0.58  0.74
 ## 13     Ymi_neocortex[15]     0.69      0.05  0.61  0.77
-## 14     Ymi_neocortex[17]     0.70      0.05  0.61  0.77
+## 14     Ymi_neocortex[17]     0.70      0.05  0.62  0.77
 ## 15     Ymi_neocortex[19]     0.71      0.05  0.63  0.79
-## 16     Ymi_neocortex[21]     0.65      0.05  0.56  0.73
+## 16     Ymi_neocortex[21]     0.65      0.05  0.57  0.73
 ## 17     Ymi_neocortex[23]     0.66      0.05  0.58  0.74
 ## 18     Ymi_neocortex[26]     0.70      0.05  0.61  0.77
-## 19                  lp__    40.33      4.37 32.43 46.76
+## 19                  lp__    40.54      4.31 32.79 46.70
 ```
 
 Here's the model that drops the cases with NAs on `neocortex`.
@@ -892,11 +882,11 @@ tidy(b14.3cc) %>%
 
 ```
 ##          term estimate std.error lower upper
-## 1 b_Intercept    -1.07      0.56 -1.99 -0.14
-## 2 b_neocortex     2.77      0.88  1.33  4.19
+## 1 b_Intercept    -1.07      0.59 -2.01 -0.11
+## 2 b_neocortex     2.76      0.92  1.26  4.24
 ## 3   b_logmass    -0.10      0.03 -0.14 -0.05
-## 4       sigma     0.14      0.03  0.10  0.19
-## 5        lp__    -4.20      1.60 -7.38 -2.37
+## 4       sigma     0.14      0.03  0.10  0.20
+## 5        lp__    -4.30      1.66 -7.54 -2.36
 ```
 
 In order to make our versions of Figure 14.4., we'll need to do a little data wrangling with `fitted()`.
@@ -919,14 +909,14 @@ f_b14.3 %>%
 ```
 ## Observations: 30
 ## Variables: 10
-## $ Estimate.kcal        <dbl> 0.3320351, 0.3548231, 0.3776111, 0.4003991, 0.4231871, 0.4459751, ...
-## $ Est.Error.kcal       <dbl> 0.12436655, 0.11580546, 0.10728448, 0.09881401, 0.09040823, 0.0820...
-## $ `2.5%ile.kcal`       <dbl> 0.09274489, 0.13148754, 0.17124859, 0.20949736, 0.24769145, 0.2862...
-## $ `97.5%ile.kcal`      <dbl> 0.5835398, 0.5893996, 0.5949787, 0.6008939, 0.6074919, 0.6131309, ...
-## $ Estimate.neocortex   <dbl> 0.6711569, 0.6711569, 0.6711569, 0.6711569, 0.6711569, 0.6711569, ...
-## $ Est.Error.neocortex  <dbl> 0.01408199, 0.01408199, 0.01408199, 0.01408199, 0.01408199, 0.0140...
-## $ `2.5%ile.neocortex`  <dbl> 0.6428145, 0.6428145, 0.6428145, 0.6428145, 0.6428145, 0.6428145, ...
-## $ `97.5%ile.neocortex` <dbl> 0.6989297, 0.6989297, 0.6989297, 0.6989297, 0.6989297, 0.6989297, ...
+## $ Estimate.kcal        <dbl> 0.3289769, 0.3519921, 0.3750073, 0.3980224, 0.4210376, 0.4440528, ...
+## $ Est.Error.kcal       <dbl> 0.12615432, 0.11748727, 0.10885861, 0.10027824, 0.09175973, 0.0833...
+## $ `2.5%ile.kcal`       <dbl> 0.08133707, 0.12202522, 0.16163270, 0.20135849, 0.24171655, 0.2810...
+## $ `97.5%ile.kcal`      <dbl> 0.5837377, 0.5887042, 0.5937618, 0.5988029, 0.6047521, 0.6107390, ...
+## $ Estimate.neocortex   <dbl> 0.6716919, 0.6716919, 0.6716919, 0.6716919, 0.6716919, 0.6716919, ...
+## $ Est.Error.neocortex  <dbl> 0.0136558, 0.0136558, 0.0136558, 0.0136558, 0.0136558, 0.0136558, ...
+## $ `2.5%ile.neocortex`  <dbl> 0.6446115, 0.6446115, 0.6446115, 0.6446115, 0.6446115, 0.6446115, ...
+## $ `97.5%ile.neocortex` <dbl> 0.6985419, 0.6985419, 0.6985419, 0.6985419, 0.6985419, 0.6985419, ...
 ## $ neocortex            <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, ...
 ## $ logmass              <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.2441...
 ```
@@ -949,12 +939,12 @@ f_b14.3_mi %>% head()
 
 ```
 ##                term  estimate  std.error     lower     upper kcal neocortex    logmass
-## 1  Ymi_neocortex[2] 0.6323518 0.05065187 0.5520670 0.7167851 0.51        NA  0.7371641
-## 2  Ymi_neocortex[3] 0.6236974 0.05165448 0.5411470 0.7096551 0.46        NA  0.9202828
-## 3  Ymi_neocortex[4] 0.6218818 0.05209456 0.5406163 0.7086790 0.48        NA  0.4824261
-## 4  Ymi_neocortex[5] 0.6524398 0.04963555 0.5741250 0.7339464 0.60        NA  0.7839015
-## 5  Ymi_neocortex[9] 0.7012530 0.05040065 0.6188029 0.7843556 0.91        NA -0.3424903
-## 6 Ymi_neocortex[14] 0.6566071 0.04949035 0.5779815 0.7399942 0.71        NA -0.5108256
+## 1  Ymi_neocortex[2] 0.6324513 0.05026370 0.5537426 0.7154900 0.51        NA  0.7371641
+## 2  Ymi_neocortex[3] 0.6242885 0.05133219 0.5419400 0.7096618 0.46        NA  0.9202828
+## 3  Ymi_neocortex[4] 0.6218958 0.05123676 0.5409776 0.7078083 0.48        NA  0.4824261
+## 4  Ymi_neocortex[5] 0.6524923 0.04845319 0.5754368 0.7308560 0.60        NA  0.7839015
+## 5  Ymi_neocortex[9] 0.7015955 0.04914283 0.6204982 0.7829370 0.91        NA -0.3424903
+## 6 Ymi_neocortex[14] 0.6562046 0.04921722 0.5773639 0.7379903 0.71        NA -0.5108256
 ```
 
 Data wrangling done--here's our code for Figure 14.4.a.
@@ -986,7 +976,7 @@ ggplot(data = f_b14.3, aes(x = neocortex,
        y = "kcal per gram")
 ```
 
-![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 Figure 14.4.b.
 
@@ -1008,7 +998,7 @@ ggplot(data = data_list %>% as_tibble(),
        y = "neocortex proportion")
 ```
 
-![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 ### 14.2.2. Improving the imputation model
 
@@ -1047,26 +1037,26 @@ tidy(b14.4) %>%
 
 ```
 ##                     term estimate std.error lower upper
-## 1       b_kcal_Intercept    -0.87      0.47 -1.61 -0.07
+## 1       b_kcal_Intercept    -0.85      0.48 -1.62 -0.04
 ## 2  b_neocortex_Intercept     0.64      0.01  0.62  0.66
-## 3         b_kcal_logmass    -0.09      0.02 -0.13 -0.05
+## 3         b_kcal_logmass    -0.09      0.02 -0.12 -0.05
 ## 4    b_neocortex_logmass     0.02      0.01  0.01  0.03
-## 5   bsp_kcal_mineocortex     2.43      0.74  1.19  3.60
+## 5   bsp_kcal_mineocortex     2.41      0.75  1.14  3.60
 ## 6             sigma_kcal     0.13      0.02  0.10  0.17
 ## 7        sigma_neocortex     0.04      0.01  0.03  0.06
 ## 8       Ymi_neocortex[2]     0.63      0.04  0.57  0.69
 ## 9       Ymi_neocortex[3]     0.63      0.04  0.57  0.69
 ## 10      Ymi_neocortex[4]     0.62      0.04  0.56  0.68
 ## 11      Ymi_neocortex[5]     0.65      0.03  0.59  0.70
-## 12      Ymi_neocortex[9]     0.66      0.04  0.61  0.72
-## 13     Ymi_neocortex[14]     0.63      0.04  0.57  0.68
+## 12      Ymi_neocortex[9]     0.66      0.04  0.60  0.72
+## 13     Ymi_neocortex[14]     0.63      0.03  0.57  0.68
 ## 14     Ymi_neocortex[15]     0.68      0.03  0.62  0.74
-## 15     Ymi_neocortex[17]     0.70      0.03  0.64  0.75
-## 16     Ymi_neocortex[19]     0.71      0.03  0.66  0.77
-## 17     Ymi_neocortex[21]     0.66      0.03  0.61  0.72
-## 18     Ymi_neocortex[23]     0.68      0.03  0.62  0.73
+## 15     Ymi_neocortex[17]     0.70      0.03  0.64  0.76
+## 16     Ymi_neocortex[19]     0.71      0.04  0.65  0.77
+## 17     Ymi_neocortex[21]     0.66      0.04  0.61  0.72
+## 18     Ymi_neocortex[23]     0.68      0.04  0.62  0.73
 ## 19     Ymi_neocortex[26]     0.74      0.04  0.68  0.80
-## 20                  lp__    48.81      4.15 41.33 54.79
+## 20                  lp__    48.57      4.20 40.81 54.68
 ```
 
 Here's our pre-Figure14.5. data wrangling.
@@ -1093,14 +1083,14 @@ f_b14.4 %>%
 ```
 ## Observations: 30
 ## Variables: 10
-## $ Estimate.kcal        <dbl> 0.2418193, 0.2711863, 0.3005532, 0.3299201, 0.3592871, 0.3886540, ...
-## $ Est.Error.kcal       <dbl> 0.12641923, 0.11769617, 0.10900862, 0.10036581, 0.09178039, 0.0832...
-## $ `2.5%ile.kcal`       <dbl> 0.0001620324, 0.0460809046, 0.0923526630, 0.1384863120, 0.18458290...
-## $ `97.5%ile.kcal`      <dbl> 0.5012212, 0.5127751, 0.5246294, 0.5364250, 0.5480119, 0.5603418, ...
-## $ Estimate.neocortex   <dbl> 0.6670931, 0.6670931, 0.6670931, 0.6670931, 0.6670931, 0.6670931, ...
-## $ Est.Error.neocortex  <dbl> 0.009577845, 0.009577845, 0.009577845, 0.009577845, 0.009577845, 0...
-## $ `2.5%ile.neocortex`  <dbl> 0.6479751, 0.6479751, 0.6479751, 0.6479751, 0.6479751, 0.6479751, ...
-## $ `97.5%ile.neocortex` <dbl> 0.6860175, 0.6860175, 0.6860175, 0.6860175, 0.6860175, 0.6860175, ...
+## $ Estimate.kcal        <dbl> 0.2451386, 0.2742440, 0.3033495, 0.3324550, 0.3615605, 0.3906659, ...
+## $ Est.Error.kcal       <dbl> 0.12868863, 0.11982311, 0.11099372, 0.10220984, 0.09348429, 0.0848...
+## $ `2.5%ile.kcal`       <dbl> -0.001236505, 0.044825879, 0.091733738, 0.137504435, 0.182183478, ...
+## $ `97.5%ile.kcal`      <dbl> 0.5124035, 0.5230155, 0.5334325, 0.5433233, 0.5537293, 0.5650376, ...
+## $ Estimate.neocortex   <dbl> 0.667191, 0.667191, 0.667191, 0.667191, 0.667191, 0.667191, 0.6671...
+## $ Est.Error.neocortex  <dbl> 0.009377935, 0.009377935, 0.009377935, 0.009377935, 0.009377935, 0...
+## $ `2.5%ile.neocortex`  <dbl> 0.6486236, 0.6486236, 0.6486236, 0.6486236, 0.6486236, 0.6486236, ...
+## $ `97.5%ile.neocortex` <dbl> 0.6855527, 0.6855527, 0.6855527, 0.6855527, 0.6855527, 0.6855527, ...
 ## $ neocortex            <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, ...
 ## $ logmass              <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.2441...
 ```
@@ -1114,10 +1104,10 @@ f_b14.4_mi %>%
 ## Observations: 12
 ## Variables: 8
 ## $ term      <chr> "Ymi_neocortex[2]", "Ymi_neocortex[3]", "Ymi_neocortex[4]", "Ymi_neocortex[5]...
-## $ estimate  <dbl> 0.6312501, 0.6285212, 0.6196918, 0.6474796, 0.6633503, 0.6269314, 0.6796435, ...
-## $ std.error <dbl> 0.03513060, 0.03585844, 0.03523442, 0.03371110, 0.03566352, 0.03525559, 0.034...
-## $ lower     <dbl> 0.5738113, 0.5698395, 0.5621542, 0.5929642, 0.6062079, 0.5694789, 0.6232869, ...
-## $ upper     <dbl> 0.6874055, 0.6871217, 0.6781009, 0.7037705, 0.7220257, 0.6847509, 0.7352277, ...
+## $ estimate  <dbl> 0.6312817, 0.6288730, 0.6195984, 0.6463371, 0.6632242, 0.6275439, 0.6800538, ...
+## $ std.error <dbl> 0.03588077, 0.03541047, 0.03588367, 0.03429072, 0.03629524, 0.03475244, 0.034...
+## $ lower     <dbl> 0.5731698, 0.5716585, 0.5615344, 0.5899822, 0.6035198, 0.5719379, 0.6227272, ...
+## $ upper     <dbl> 0.6897901, 0.6875024, 0.6776926, 0.7015633, 0.7226798, 0.6840412, 0.7370288, ...
 ## $ kcal      <dbl> 0.51, 0.46, 0.48, 0.60, 0.91, 0.71, 0.73, 0.72, 0.79, 0.48, 0.51, 0.53
 ## $ neocortex <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 ## $ logmass   <dbl> 0.7371641, 0.9202828, 0.4824261, 0.7839015, -0.3424903, -0.5108256, 1.2441546...
@@ -1152,7 +1142,7 @@ ggplot(data = f_b14.4, aes(x = neocortex,
        y = "kcal per gram")
 ```
 
-![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 Figure 14.5.b.
 
@@ -1174,7 +1164,7 @@ ggplot(data = data_list %>% as_tibble(),
        y = "neocortex proportion")
 ```
 
-![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](Ch._14_Missing_Data_and_Other_Opportunities_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
 Note. The analyses in this document were done with:
 
@@ -1183,8 +1173,8 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.1.9
-* bayesplot   1.4.0
+* brms        2.2.0
+* bayesplot   1.5.0
 * viridis     0.4.0
 * tidyverse   1.2.1
 * broom       0.4.3
