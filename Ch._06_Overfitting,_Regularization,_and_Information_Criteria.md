@@ -1,7 +1,7 @@
 ---
 title: "Ch. 6 Overfitting, Regularization, and Information Criteria"
 author: "A Solomon Kurz"
-date: "2018-03-27"
+date: "2018-04-16"
 output:
   html_document:
     code_folding: show
@@ -112,12 +112,12 @@ print(b6.8)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   702.43     98.99   494.68   893.21       2220 1.00
-## mass.s      226.34    110.27     7.50   454.77       2500 1.00
+## Intercept   706.03    103.16   493.67   913.79       2853 1.00
+## mass.s      221.23    114.61   -17.64   442.83       2069 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma   258.82     87.92   147.47   480.12       1646 1.00
+## sigma   262.18     90.82   147.35   493.34       1592 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -142,13 +142,13 @@ dfLL %>%
 ```
 ## Observations: 4,000
 ## Variables: 7
-## $ V1 <dbl> -6.327274, -6.344633, -6.647551, -6.466490, -6.146800, -6.4...
-## $ V2 <dbl> -6.328925, -6.296953, -6.689299, -6.202784, -6.093178, -6.3...
-## $ V3 <dbl> -6.761753, -6.555326, -7.076536, -5.921548, -6.544839, -6.4...
-## $ V4 <dbl> -6.339290, -6.367092, -6.638838, -6.335831, -6.173596, -6.4...
-## $ V5 <dbl> -6.484522, -6.543848, -6.793422, -6.170063, -6.399753, -6.5...
-## $ V6 <dbl> -6.498551, -6.539952, -6.867808, -5.979600, -6.390664, -6.5...
-## $ V7 <dbl> -9.027072, -8.858539, -7.904827, -13.012360, -10.149875, -8...
+## $ V1 <dbl> -6.283169, -6.283169, -7.584661, -7.379721, -6.696407, -6.8...
+## $ V2 <dbl> -6.059161, -6.059161, -7.294890, -7.111944, -6.627079, -6.8...
+## $ V3 <dbl> -6.171100, -6.171100, -6.244421, -6.264807, -6.517780, -6.9...
+## $ V4 <dbl> -6.410820, -6.410820, -7.271515, -7.203928, -6.642947, -6.8...
+## $ V5 <dbl> -7.207767, -7.207767, -6.691354, -6.910962, -6.561653, -6.9...
+## $ V6 <dbl> -7.292158, -7.292158, -6.377044, -6.649427, -6.517617, -6.9...
+## $ V7 <dbl> -9.628800, -9.628800, -9.094889, -8.337271, -8.511515, -7.6...
 ```
 
 Deviance is the sum of the occasion-level LLs multiplied by -2.
@@ -170,7 +170,7 @@ quantile(dfLL$deviance, c(.025, .5, .975))
 
 ```
 ##      2.5%       50%     97.5% 
-##  95.13852  97.35863 104.71196
+##  95.14044  97.55311 105.02463
 ```
 
 ```r
@@ -253,12 +253,12 @@ print(b)
 ##  
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   -17.17      7.29   -31.29    -2.70       1526 1.00
-## speed         3.91      0.45     3.02     4.78       1425 1.00
+## Intercept   -17.44      6.89   -30.69    -3.89       2056 1.00
+## speed         3.92      0.42     3.07     4.73       1971 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    15.84      1.71    13.03    19.58       2427 1.00
+## sigma    15.76      1.65    12.93    19.32       2149 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -295,7 +295,7 @@ dfmean <-
 ```
 
 ```
-## [1] -206.7068
+## [1] -206.6634
 ```
 
 Comupting the effective number of parameters, *p*~WAIC~, isn't much better.
@@ -316,7 +316,7 @@ pwaic
 ```
 
 ```
-## [1] 3.399945
+## [1] 3.226673
 ```
 
 ```r
@@ -327,16 +327,16 @@ dfvar
 ## # A tibble: 50 x 1
 ##      vars
 ##     <dbl>
-##  1 0.0239
-##  2 0.0781
-##  3 0.0231
-##  4 0.0494
-##  5 0.0138
-##  6 0.0218
-##  7 0.0137
-##  8 0.0137
-##  9 0.0295
-## 10 0.0176
+##  1 0.0213
+##  2 0.0721
+##  3 0.0208
+##  4 0.0458
+##  5 0.0126
+##  6 0.0199
+##  7 0.0126
+##  8 0.0127
+##  9 0.0275
+## 10 0.0163
 ## # ... with 40 more rows
 ```
 
@@ -348,7 +348,7 @@ Finally, here's what we've been working so hard for: our hand calculated WAIC va
 ```
 
 ```
-## [1] 420.2135
+## [1] 419.7801
 ```
 
 ```r
@@ -356,8 +356,13 @@ waic(b)
 ```
 
 ```
-##    WAIC    SE
-##  420.21 12.66
+## 
+## Computed from 4000 by 50 log-likelihood matrix
+## 
+##           Estimate   SE
+## elpd_waic   -209.9  6.4
+## p_waic         3.2  1.2
+## waic         419.8 12.7
 ```
 
 Here's how we get the WAIC standard error.
@@ -477,8 +482,18 @@ WAIC(b6.14)
 ```
 
 ```
-##   WAIC   SE
-##  -16.9 5.09
+## 
+## Computed from 4000 by 17 log-likelihood matrix
+## 
+##           Estimate  SE
+## elpd_waic      8.4 2.6
+## p_waic         3.1 0.8
+## waic         -16.8 5.2
+```
+
+```
+## Warning: 2 (11.8%) p_waic estimates greater than 0.4. We recommend trying
+## loo instead.
 ```
 
 ```r
@@ -486,9 +501,21 @@ waic(b6.14)
 ```
 
 ```
-##   WAIC   SE
-##  -16.9 5.09
+## 
+## Computed from 4000 by 17 log-likelihood matrix
+## 
+##           Estimate  SE
+## elpd_waic      8.4 2.6
+## p_waic         3.1 0.8
+## waic         -16.8 5.2
 ```
+
+```
+## Warning: 2 (11.8%) p_waic estimates greater than 0.4. We recommend trying
+## loo instead.
+```
+
+Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms, this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
 
 There are two basic ways to compare WAIC values from multiple models. In the first, you add more model names into the `waic()` function.
 
@@ -499,16 +526,16 @@ waic(b6.11, b6.12, b6.13, b6.14)
 
 ```
 ##                 WAIC   SE
-## b6.11          -8.81 3.74
-## b6.12          -7.31 3.26
-## b6.13          -8.70 4.19
-## b6.14         -16.90 5.09
-## b6.11 - b6.12  -1.50 1.14
-## b6.11 - b6.13  -0.11 2.35
-## b6.11 - b6.14   8.09 4.92
-## b6.12 - b6.13   1.40 2.98
-## b6.12 - b6.14   9.59 5.01
-## b6.13 - b6.14   8.19 3.50
+## b6.11          -8.64 3.69
+## b6.12          -7.11 3.29
+## b6.13          -8.99 4.20
+## b6.14         -16.78 5.17
+## b6.11 - b6.12  -1.53 1.12
+## b6.11 - b6.13   0.35 2.36
+## b6.11 - b6.14   8.14 4.93
+## b6.12 - b6.13   1.88 3.02
+## b6.12 - b6.14   9.67 5.07
+## b6.13 - b6.14   7.78 3.50
 ```
 
 Alternatively, you first save each model's `waic()` output in its own object, and then feed to those objects into `compare_ic()`.
@@ -525,16 +552,54 @@ compare_ic(w.b6.11, w.b6.12, w.b6.13, w.b6.14)
 
 ```
 ##                 WAIC   SE
-## b6.11          -8.81 3.74
-## b6.12          -7.31 3.26
-## b6.13          -8.70 4.19
-## b6.14         -16.90 5.09
-## b6.11 - b6.12  -1.50 1.14
-## b6.11 - b6.13  -0.11 2.35
-## b6.11 - b6.14   8.09 4.92
-## b6.12 - b6.13   1.40 2.98
-## b6.12 - b6.14   9.59 5.01
-## b6.13 - b6.14   8.19 3.50
+## b6.11          -8.64 3.69
+## b6.12          -7.11 3.29
+## b6.13          -8.99 4.20
+## b6.14         -16.78 5.17
+## b6.11 - b6.12  -1.53 1.12
+## b6.11 - b6.13   0.35 2.36
+## b6.11 - b6.14   8.14 4.93
+## b6.12 - b6.13   1.88 3.02
+## b6.12 - b6.14   9.67 5.07
+## b6.13 - b6.14   7.78 3.50
+```
+
+If you want to get those WAIC weights, you can use the `brms::model_weights()` function like so:
+
+
+```r
+model_weights(b6.11, b6.12, b6.13, b6.14, 
+              weights = "waic") %>% 
+  round(digits = 2)
+```
+
+```
+## b6.11 b6.12 b6.13 b6.14 
+##  0.02  0.01  0.02  0.96
+```
+
+That last `round()` line was just to limit the decimal-place precision. If you really wanted to go through the trouble, you could make yourself a little table like this:
+
+
+```r
+model_weights(b6.11, b6.12, b6.13, b6.14, 
+              weights = "waic") %>% 
+  as_tibble() %>% 
+  rename(weight = value) %>% 
+  mutate(model = c("b6.11", "b6.12", "b6.13", "b6.14"),
+         weight = weight %>% round(digits = 2)) %>% 
+  select(model, weight) %>% 
+  arrange(desc(weight))
+```
+
+```
+## # A tibble: 4 x 2
+##   model weight
+##   <chr>  <dbl>
+## 1 b6.14 0.960 
+## 2 b6.11 0.0200
+## 3 b6.13 0.0200
+## 4 b6.12 0.0100
 ```
 
 I'm not aware of a convenient way to plot the WAIC comparisons of brms models the way McElreath does with rethinking. However, one can get the basic comparison plot with a little data processing. It helps to examine the structure of your WAIC objects. For example:
@@ -545,48 +610,54 @@ glimpse(w.b6.11)
 ```
 
 ```
-## List of 8
-##  $ elpd_waic   : num 4.4
-##  $ p_waic      : num 1.31
-##  $ waic        : num -8.81
-##  $ se_elpd_waic: num 1.87
-##  $ se_p_waic   : num 0.312
-##  $ se_waic     : num 3.74
-##  $ pointwise   : num [1:17, 1:3] 0.269 0.15 0.574 -0.169 -0.437 ...
+## List of 9
+##  $ estimates   : num [1:3, 1:2] 4.32 1.346 -8.64 1.845 0.308 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
+##   .. ..$ : chr [1:2] "Estimate" "SE"
+##  $ pointwise   : num [1:17, 1:3] 0.266 0.149 0.565 -0.17 -0.433 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : NULL
 ##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
+##  $ elpd_waic   : num 4.32
+##  $ p_waic      : num 1.35
+##  $ waic        : num -8.64
+##  $ se_elpd_waic: num 1.84
+##  $ se_p_waic   : num 0.308
+##  $ se_waic     : num 3.69
 ##  $ model_name  : chr "b6.11"
-##  - attr(*, "log_lik_dim")= int [1:2] 4000 17
-##  - attr(*, "class")= chr [1:2] "ic" "loo"
+##  - attr(*, "dims")= int [1:2] 4000 17
+##  - attr(*, "class")= chr [1:3] "ic" "waic" "loo"
 ```
 
-We can index the point estimate for model `b6.11`'s WAIC as `w.b6.11$waic` and the standard error as `w.b6.11$se_waic`. 
+We can index the point estimate for model `b6.11`'s WAIC as `w.b6.11$estimates["waic", "Estimate"]` and the standard error as `w.b6.11$estimates["waic", "SE"]`.
 
-
-```r
-w.b6.11$waic
-```
-
-```
-## [1] -8.808165
-```
 
 ```r
-w.b6.11$se_waic
+w.b6.11$estimates["waic", "Estimate"]
 ```
 
 ```
-## [1] 3.743535
+## [1] -8.640175
 ```
+
+```r
+w.b6.11$estimates["waic", "SE"]
+```
+
+```
+## [1] 3.689496
+```
+
+Alternatively, you could do `w.b6.11$estimates[3, 1]` and `w.b6.11$estimates[3, 2]`.
 
 Armed with that information, we can make a data structure with those bits from all our models and then make a plot with the help of `ggplot2::geom_pointrange()`.
 
 
 ```r
 tibble(model = c("b6.11", "b6.12", "b6.13", "b6.14"),
-       waic = c(w.b6.11$waic, w.b6.12$waic, w.b6.13$waic, w.b6.14$waic),
-       se = c(w.b6.11$se_waic, w.b6.12$se_waic, w.b6.13$se_waic, w.b6.14$se_waic)) %>%
+       waic = c(w.b6.11$estimates[3, 1], w.b6.12$estimates[3, 1], w.b6.13$estimates[3, 1], w.b6.14$estimates[3, 1]),
+       se = c(w.b6.11$estimates[3, 2], w.b6.12$estimates[3, 2], w.b6.13$estimates[3, 2], w.b6.14$estimates[3, 2])) %>%
   
   ggplot() +
   theme_classic() +
@@ -601,9 +672,9 @@ tibble(model = c("b6.11", "b6.12", "b6.13", "b6.14"),
         axis.ticks.y = element_blank())
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
 
-This is as good a place as any to point out that brms also supports the LOO information criterion. It works similar to WAIC.
+We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
 
 
 ```r
@@ -611,8 +682,18 @@ LOO(b6.11)
 ```
 
 ```
-##  LOOIC   SE
-##  -8.77 3.77
+## 
+## Computed from 4000 by 17 log-likelihood matrix
+## 
+##          Estimate  SE
+## elpd_loo      4.3 1.9
+## p_loo         1.4 0.3
+## looic        -8.6 3.7
+## ------
+## Monte Carlo SE of elpd_loo is 0.0.
+## 
+## All Pareto k estimates are good (k < 0.5).
+## See help('pareto-k-diagnostic') for details.
 ```
 
 ```r
@@ -620,11 +701,21 @@ loo(b6.11)
 ```
 
 ```
-##  LOOIC   SE
-##  -8.77 3.77
+## 
+## Computed from 4000 by 17 log-likelihood matrix
+## 
+##          Estimate  SE
+## elpd_loo      4.3 1.9
+## p_loo         1.4 0.3
+## looic        -8.6 3.7
+## ------
+## Monte Carlo SE of elpd_loo is 0.0.
+## 
+## All Pareto k estimates are good (k < 0.5).
+## See help('pareto-k-diagnostic') for details.
 ```
 
-For computing WAIC and LOO values, brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html). [This vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo-example.html) is a fine place to learn more about the loo package and the LOO information criterion. Or you could dive a little deeper with [Aki Veharti's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Veharti's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t).
 
 #### 6.5.1.2. Comparing estimates.
 
@@ -640,11 +731,11 @@ tidy(b6.14)
 
 ```
 ##          term     estimate  std.error       lower        upper
-## 1 b_Intercept  -1.08446042 0.57148868  -2.0176038  -0.14869428
-## 2 b_neocortex   2.79443738 0.88466307   1.3587086   4.23272695
-## 3   b_logmass  -0.09693226 0.02689543  -0.1414518  -0.05216219
-## 4       sigma   0.14026844 0.03054993   0.1011299   0.19699731
-## 5        lp__ -19.17291516 1.67837783 -22.3690708 -17.27576521
+## 1 b_Intercept  -1.06972723 0.59410620  -2.0314058  -0.08565205
+## 2 b_neocortex   2.76855714 0.92158083   1.2614717   4.24874470
+## 3   b_logmass  -0.09584749 0.02824901  -0.1429289  -0.04967985
+## 4       sigma   0.13910517 0.03006200   0.1002100   0.19341450
+## 5        lp__ -19.17534178 1.66038200 -22.3662856 -17.28467262
 ```
 
 Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a `rbind()` and a little indexing, we can save the summaries for all four models in a single tibble.
@@ -666,12 +757,12 @@ head(my_coef_tab)
 
 ```
 ##   model        term  estimate  std.error      lower     upper
-## 1 b6.11 b_Intercept 0.6589638 0.04546794  0.5850064 0.7331809
-## 2 b6.11       sigma 0.1871957 0.03618470  0.1372538 0.2539551
-## 3 b6.12 b_Intercept 0.3631083 0.54959101 -0.5263881 1.2343254
-## 4 b6.12 b_neocortex 0.4361120 0.81087387 -0.8606234 1.7476952
-## 5 b6.12       sigma 0.1922825 0.03928947  0.1400495 0.2638777
-## 6 b6.13 b_Intercept 0.7042614 0.05910390  0.6092233 0.7994921
+## 1 b6.11 b_Intercept 0.6582530 0.04675229  0.5821289 0.7357594
+## 2 b6.11       sigma 0.1894174 0.03822525  0.1388652 0.2568818
+## 3 b6.12 b_Intercept 0.3500599 0.54150051 -0.5416017 1.2516576
+## 4 b6.12 b_neocortex 0.4549890 0.79846163 -0.8580444 1.7646954
+## 5 b6.12       sigma 0.1925202 0.03981026  0.1405420 0.2663468
+## 6 b6.13 b_Intercept 0.7052856 0.05681952  0.6149343 0.7997907
 ```
 
 Just a little more work and we'll have a table analogous to the one McElreath produced with his `coef_tab()` function.
@@ -688,9 +779,9 @@ my_coef_tab %>%
 
 ```
 ##          term b6.11 b6.12 b6.13 b6.14
-## 1 b_Intercept  0.66  0.36  0.70 -1.08
+## 1 b_Intercept  0.66  0.35  0.71 -1.07
 ## 2   b_logmass    NA    NA -0.03 -0.10
-## 3 b_neocortex    NA  0.44    NA  2.79
+## 3 b_neocortex    NA  0.45    NA  2.77
 ## 4       sigma  0.19  0.19  0.18  0.14
 ```
 
@@ -739,7 +830,7 @@ tibble(mdn = c(NA, median(p11[, 1]), median(p12[, 1]), median(p13[, 1]), median(
         axis.ticks.y = element_blank())
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
 Making that plot entailed a lot of hand typing values in the tibble, which just begs for human error. If possible, it's better to use functions in a principled way to produce the results. Below is such an attempt.
 
@@ -780,7 +871,7 @@ ggplot(data = my_coef_tab,
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 I'm sure there are better ways to do this. Have at it.
 
@@ -823,11 +914,11 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
   theme(text = element_text(family = "Courier"))
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
-##### Bonus: *R*^2^ talk
+##### Bonus: $R^2$ talk
 
-At the beginning of the chapter (pp. 167--168), McElreath briefly introduced *R*^2^ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where *R*^2^ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, SD, and 95% intervals. For example:
+At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, SD, and 95% intervals. For example:
 
 
 ```r
@@ -836,10 +927,10 @@ bayes_R2(b6.14) %>% round(digits = 3)
 
 ```
 ##    Estimate Est.Error 2.5%ile 97.5%ile
-## R2    0.503     0.124     0.2    0.664
+## R2    0.496     0.131   0.165    0.665
 ```
 
-With just a little data processing, you can get a table of each of models' *R*^2^ `Estimate`.
+With just a little data processing, you can get a table of each of models' $R^2$ `Estimate`.
 
 
 ```r
@@ -863,7 +954,7 @@ rbind(bayes_R2(b6.11),
 ## 4 b6.14                  0.500
 ```
 
-If you want the full distribution of the *R*^2^, you’ll need to add a `summary = F` argument. Note how this returns a numeric vector.
+If you want the full distribution of the $R^2$, you’ll need to add a `summary = F` argument. Note how this returns a numeric vector.
 
 
 ```r
@@ -874,7 +965,7 @@ b6.13.R2 %>%
 ```
 
 ```
-##  num [1:4000, 1] 0.1317 0.1602 0.1915 0.0956 0.2385 ...
+##  num [1:4000, 1] 0.166 0.138 0.156 0.241 0.029 ...
 ##  - attr(*, "dimnames")=List of 2
 ##   ..$ : NULL
 ##   ..$ : chr "R2"
@@ -916,9 +1007,9 @@ combined_R2s %>%
   theme(text = element_text(family = "Courier"))
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
-If you do your work in a field where folks use *R*^2^ change, you might do that with a simple difference score, which we computed above with `mutate(dif = R2.14 - R2.13)`. Here's the *R*^2^ change (i.e., `dif`) plot:
+If you do your work in a field where folks use $R^2$ change, you might do that with a simple difference score, which we computed above with `mutate(dif = R2.14 - R2.13)`. Here's the $R^2$ change (i.e., `dif`) plot:
 
 
 ```r
@@ -935,9 +1026,9 @@ combined_R2s %>%
   theme(text = element_text(family = "Courier"))
 ```
 
-![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](Ch._06_Overfitting,_Regularization,_and_Information_Criteria_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
-The brms package did not get these *R*^2^ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian *R*^2^ sausage is made, check out the paper by [Gelman, Goodrich, Gabry, and Ali](https://github.com/jgabry/bayes_R2/blob/master/bayes_R2.pdf).
+The brms package did not get these $R^2$ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian $R^2$ sausage is made, check out the paper by [Gelman, Goodrich, Gabry, and Ali](https://github.com/jgabry/bayes_R2/blob/master/bayes_R2.pdf).
 
 
 
@@ -948,7 +1039,7 @@ Note. The analyses in this document were done with:
 * rmarkdown  1.9
 * tidyverse  1.2.1
 * ggrepel    0.7.0
-* brms       2.1.9
+* brms       2.2.0
 * rethinking 1.59
 * rstan      2.17.3
 * broom      0.4.3
