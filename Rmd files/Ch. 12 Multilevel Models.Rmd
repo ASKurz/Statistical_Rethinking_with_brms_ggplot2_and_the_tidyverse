@@ -67,33 +67,23 @@ The syntax for the varying effects follows the [lme4 style](https://cran.r-proje
 
 Instead of computing the information criteria for each model, saving the results as objects and then placing those objects in `compare_ic()`, we can also just but both fit objects in `waic()` or `loo()`.
 
-```{r, warning = F}
+```{r}
 waic(b12.1, b12.2)
 loo(b12.1, b12.2)
 ```
 
-```{r, echo = F, eval = F}
-The loo yielded these warnings:
-  
-Found 47 observations with a pareto_k > 0.7 in model 'b12.1'. With this many problematic observations, it may be more appropriate to use 'kfold' with argument 'K = 10' to perform 10-fold cross-validation rather than LOO.Found 47 observations with a pareto_k > 0.7 in model 'b12.2'. With this many problematic observations, it may be more appropriate to use 'kfold' with argument 'K = 10' to perform 10-fold cross-validation rather than LOO.      
+Note those "pareto_k > 0.7" warnings. We can follow the advice and use the `kfold()` function, instead. We'll also go ahead and specify `K = 10`, as recommended. But beware, this takes a few minutes.
 
-Based on them, I experimented with this:
-
-kfold(b12.1, b12.2, K = 10)
-
-The code took like five minutes to finish. Here were the results:
-
-#               KFOLDIC    SE
-# b12.1          323.09 13.26
-# b12.2          264.55 12.90
-# b12.1 - b12.2   58.53 14.23
-# 
-# Based on 10-fold cross-validation
+```{r, message = F, results = 'hide'}
+kf <- kfold(b12.1, b12.2, 
+            K = 10, cores = 4)
 ```
 
-Unfortunately, this is one of those occasions in which the information criteria don't perfectly align. Gelman and his colleagues prefer the loo (e.g., https://arxiv.org/pdf/1507.04544.pdf).
+```{r}
+kf
+```
 
-`brms::loo()` also produced warning messages recommending we switch from the `loo()` function to the `kfold()` function with argument `K = 10`. This took several minutes and yielded a `b12.1 - b12.2` *K*-fold cross-validation difference of 59, with a standard error of about 14. For more on the `kfold()` function, see the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf).
+The $K$-fold cross-validation difference of `r kf$ic_diffs__[1] %>% round(0)`, with a standard error around `r kf$ic_diffs__[2] %>% round(0)`, suggests that model `b12.2` is the clear favorite relative to `b12.1`. For more on the `kfold()` function, see the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf).
 
 But here's our prep work for Figure 12.1
 
@@ -146,17 +136,16 @@ tibble(x = c(-3, 4)) %>%
   
   ggplot(aes(x = x)) + 
   theme_fivethirtyeight() +
-  mapply(function(mean, sd, size, alpha, color) {
+  mapply(function(mean, sd) {
     stat_function(fun = dnorm, 
                   args = list(mean = mean, sd = sd), 
-                  alpha = alpha, 
-                  color = color)
+                  alpha = .2, 
+                  color = "orange2")
   }, 
-  # Enter means, standard deviations, alpha, and color here
+  # Enter means and standard deviations here
   mean = post[1:100, 1],
-  sd = post[1:100, 2],
-  alpha = .2,
-  color = "orange2") +
+  sd = post[1:100, 2]
+  ) +
   labs(title = "Survival in log-odds") +
   scale_y_continuous(NULL, breaks = NULL)
 ```
@@ -268,19 +257,11 @@ b12.3 <-
 print(b12.3)
 ```
 
-I'm not aware that you can use McElreath's `depth = 2` trick in brms for `summary()` or `print()`. You can also get similar information by calling subcomponents in the brm object, such as with `b12.3$fit`. However, perhaps a better way is with the `tidy()` function in the [broom package](https://cran.r-project.org/web/packages/broom/index.html).
+I'm not aware that you can use McElreath's `depth = 2` trick in brms for `summary()` or `print()`. But can get that information with the `coef()` function. 
 
 ```{r}
-library(broom)
-
-tidy(b12.3) %>%
-  mutate_if(is.numeric, round, digits = 2)  # This just rounds the values
-```
-
-If you just want summaries of the pond-specific intercepts, you can also use `coef()`.
-
-```{r, warning = F, message = F}
-coef(b12.3)
+coef(b12.3)$pond[c(1:2, 59:60), , ] %>% 
+  round(digits = 2)
 ```
 
 Here we get ready for the diagnostic plot, Figure 12.3.
@@ -308,7 +289,7 @@ dsim %>%
   glimpse()
 ```
 
-Here is our code for Figure 12.3. The extra data processing for dfline is how we get the values necessary for the horizontal summary lines.
+Here is our code for Figure 12.3. The extra data processing for `dfline` is how we get the values necessary for the horizontal summary lines.
 
 ```{r, fig.width = 5, fig.height = 5}
 dfline <- 
@@ -455,12 +436,16 @@ b12.5 <-
       control = list(adapt_delta = 0.99))
 ```
 
-Again with the divergent transitions issue. Increasing `adapt_delta` to `.99` worked fine. We'll use `tidy()` again to look at the model. In the `bind_cols()` function, we use `bayesplot::rhat()` and a little data processing to add the r_hat values. 
+Again with the divergent transitions issue. Increasing `adapt_delta` to `.99` worked fine. Again, we can look at the primary coefficients with `print()`, but need to use the `coef()` function to get those `depth = 2` estimates.
 
 ```{r}
-tidy(b12.5) %>%
-  bind_cols(rhat(b12.5) %>% as_tibble() %>% rename(r_hat = value)) %>%
-  mutate_if(is.numeric, round, digits = 3)
+print(b12.5)
+
+coef(b12.5)$actor[, , "Intercept"] %>% 
+  round(digits = 2)
+
+coef(b12.5)$block[, , "Intercept"] %>% 
+  round(digits = 2)
 ```
 
 We might make the coefficient plot in Figure 12.4.a. like this:
@@ -469,7 +454,7 @@ We might make the coefficient plot in Figure 12.4.a. like this:
 library(bayesplot)
 color_scheme_set("orange")
 
-stanplot(b12.5, pars = c("^b_", "^r_", "^sd_")) +
+stanplot(b12.5, pars = c("^r_", "^b_", "^sd_")) +
   theme_fivethirtyeight() +
   theme(axis.text.y = element_text(hjust = 0))
 ```
@@ -493,22 +478,36 @@ posterior_samples(b12.5) %>%
   annotate("text", x = 2, y = 3/4, label = "actor", color = "orange1")
 ```
 
-We might compare our models by their LOO-IC values.
+We might compare our models by their PSIS-LOO values.
 
-```{r, message = F}
-loo(b12.4, b12.5)
+```{r}
+l.b12.4 <- loo(b12.4, cores = 4)
+l.b12.5 <- loo(b12.5, cores = 4)
+
+compare_ic(l.b12.4, l.b12.5)
 ```
 
-The two models yield nearly-equivalent information criteria values. Yet recall what McElreath wrote: “There is nothing to gain here by selecting either model. The comparison of the two models tells a richer story” (p. 367).
+And you can get the LOO version of the `p_waic`, the `p_loo`, like so.
+
+```{r}
+l.b12.4
+l.b12.5
+```
+
+And if you peek at the structure of the loo objects, you'll see you can call the `p_loo` values directly with something like `l.b12.5$ estimates["p_loo",]`.
+
+The results are quite similar to those in the text.
+
+Anyways, the two models yield nearly-equivalent information criteria values. Yet recall what McElreath wrote: "There is nothing to gain here by selecting either model. The comparison of the two models tells a richer story" (p. 367).
 
 ## 12.4. Multilevel posterior predictions
 
-### 12.4.2 Posterior prediction for hew clusters. 
+### 12.4.2 Posterior prediction for new clusters. 
 
-It'll take a bit of prep work to make Figure 12.5. First, let's glance at the model.
+It'll take a bit of prep work to make Figure 12.5. First, let's use `posterior_summary()` to survey at the posterior.
 
 ```{r}
-print(b12.4)
+posterior_summary(b12.4)
 ```
 
 ```{r}
@@ -639,7 +638,7 @@ library(brms)
 rm(Kline)
 ```
 
-With brms, we don't actually need to make the logpop or society variables. We're ready to fit the multilevel Kline model with the data in hand.
+With brms, we don't actually need to make the logpop or society variables. We're ready to fit the multilevel `Kline` model with the data in hand.
 
 ```{r, message = F, warning = F}
 b12.6 <- 
@@ -654,7 +653,7 @@ b12.6 <-
 
 Note how we used the special `0 + intercept` syntax rather than using the default Intercept. This is because our predictor variable was not mean centered. For more info, see [here](https://github.com/paul-buerkner/brms/issues/114). Though we used the `0 + intercept` syntax for the fixed effect, it was not necessary for the random effect. Both ways work.
 
-Here is the data-processing work for my attempt to recreate Figure 12.6.
+Here is the data-processing work for our variant of Figure 12.6.
 
 ```{r}
 nd <- 
@@ -698,7 +697,7 @@ p12.6 %>%
 ```
 
 ```{r, warning = F, echo = F}
-rm(d, b12.1, b12.2, post, invlogit, postMdn, b12.2.e, a, sigma, nponds, ni, dsim, b12.3, p_partpool, dfline, two_gaussians, b12.4, b12.5, nd, postAverageActor, ran_ef, fix_ef, ran_and_fix_ef, marginal_effects, k, b12.6, p12.6)
+rm(d, b12.1, b12.2, post, invlogit, postMdn, b12.2.e, a, sigma, nponds, ni, dsim, b12.3, p_partpool, dfline, two_gaussians, b12.4, b12.5, l.b12.4, l.b12.5, nd, postAverageActor, ran_ef, fix_ef, ran_and_fix_ef, marginal_effects, k, b12.6, p12.6)
 ```
 
 Note. The analyses in this document were done with:
@@ -708,11 +707,12 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.1.9
+* brms        2.2.0
 * tidyverse   1.2.1 
 * ggthemes    3.4.0
-* bayesplot   1.4.0
+* bayesplot   1.5.0
 
 ## References
+
 Gelman, A., & Hill, J. (2007). *Data analysis using regression and multilevel/hierarchical models.* New York, NY, US: Cambridge University Press. 
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
