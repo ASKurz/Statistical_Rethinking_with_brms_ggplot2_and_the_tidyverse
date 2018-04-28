@@ -1,0 +1,28 @@
+---
+title: "CH 13 formulas"
+output:
+  html_document:
+    df_print: paged
+---
+### brms:
+
+$k(x_{i},x_{j}) = sdgp^2exp(-||x_{i} - x_{j}||/2lscale^2)$
+
+### rethinking:
+
+$\mathbf{K}_{ij} = \eta^2exp(-\rho^2D^2_{ij}) + \delta_{ij}\sigma^2$
+
+In the text, McElreath reports $\delta_{ij}\sigma^2$ drops out when we only have one observation per location, so we don't need to conisder it further in this example.
+
+What you call $sdgp$, McElreath called $\eta$. While brms appears to estimate $sdgp$ (i.e., `sdgp(gplatlon2)` in my output), McElreath estimated $\eta^2$ in the text, which he called `etasq` in the code. 
+
+It appears that what you expressed as $||x_{i} - x_{j}||$ (i.e., the Euclidian norm), McElreath simply called $D_{ij}$, though the parameterization he used in the text includes its square, $D^2_{ij}$.
+
+**Question**: Am I following correctly that $||x_{i} - x_{j}||$ (i.e., the Euclidian norm), equivalent to McElreath's $D^2_{ij}$?
+
+Also, you multiply $||x_{i} - x_{j}||$ by $-1/2lscale^2$, in which $lscale$ is what you call the "characteristic length-scale parameter." At this point in his equation, McElreath simply multiplies $D^2_{ij}$ by $-\rho^2$, where $\rho$ is what he described as the "rate of decline."
+
+In my brms output, I get `lscale(gplatlon2)`, which gets squared in the equation. In contrast, McElreath appears to estimate $\rho^2$ directly, what he called `rhosq` in his code. 
+
+**Question**: Am I following correctly that your $lscale$ should correspond to $\sqrt{1/(2*\rho^2)}$?
+

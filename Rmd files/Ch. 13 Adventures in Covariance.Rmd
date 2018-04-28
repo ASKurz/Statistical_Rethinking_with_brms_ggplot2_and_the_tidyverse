@@ -82,8 +82,8 @@ vary_effects <- mvrnorm(N_cafes, Mu, Sigma)
 *What's the distribution of `a_cafe` and `b_cafe`?*, you might ask.
 
 ```{r, fig.width = 3.25, fig.height = 3}
-tibble(a_cafe = vary_effects[ ,1],
-       b_cafe = vary_effects[ ,2]) %>%
+tibble(a_cafe = vary_effects[ , 1],
+       b_cafe = vary_effects[ , 2]) %>%
   
   ggplot(aes(x = a_cafe, y = b_cafe)) +
   geom_point(color = "#80A0C7") +
@@ -107,7 +107,7 @@ set.seed(5)  # used to replicate example
 d <-
   tibble(cafe = rep(1:N_cafes, each = N_visits),
          afternoon = rep(0:1, N_visits*N_cafes/2),
-         mu = rep(vary_effects[ ,1], each = N_visits) + rep(vary_effects[ ,2], each = N_visits)*afternoon,
+         mu = rep(vary_effects[ , 1], each = N_visits) + rep(vary_effects[ , 2], each = N_visits)*afternoon,
          wait = rnorm(N_visits*N_cafes, mu, sigma)) %>%
   select(-mu)
 ```
@@ -403,7 +403,7 @@ coef(b13.2)
 And just to confirm, the average of the posterior means of the `Intercept` random effects with `brms::coef()` is also the global mean within rounding error:
 
 ```{r}
-mean(coef(b13.2)$dept_id[, "Estimate", "Intercept"])
+mean(coef(b13.2)$dept_id[ , "Estimate", "Intercept"])
 ```
 
 Note how `coef()` returned a three-dimensional list.
@@ -415,7 +415,7 @@ coef(b13.2) %>% str()
 If you just want the parameter summaries for the random intercepts, you have to use three-dimensional indexing. 
 
 ```{r}
-coef(b13.2)$dept_id[, , "Intercept"]  # this also works: coef(b13.2)$dept_id[, , 1]
+coef(b13.2)$dept_id[ , , "Intercept"]  # this also works: coef(b13.2)$dept_id[ , , 1]
 ```
 
 So to get our brms summaries in a similar format to those in the text, we'll have to combine `coef()` with `fixef()` and `VarCorr()`. 
@@ -711,9 +711,9 @@ b12.5 <-
       iter = 5000, warmup = 1000, chains = 3, cores = 3)
 ```
 
-The waic comparison:
+The WAIC comparison:
 
-```{r, warning = F, message = F}
+```{r}
 waic(b13.6, b12.5)
 ```
 
@@ -751,15 +751,16 @@ Dmat %>%
   geom_text(aes(label = round(distance, digits = 1)),
             size = 3, family = "Courier", color = "#100F14") +
   scale_fill_gradient(low = "#FCF9F0", high = "#A65141") +
-  scale_x_discrete(position = "top") +
+  scale_x_discrete(position = "top", expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
   labs(x = NULL, y = NULL) +
   theme_pearl_earring +
   theme(axis.ticks = element_blank(),
         axis.text.y = element_text(hjust = 0))
 ```
 
-Figure 13.8., the "shape of the function relating distance to the covariance **K**$_{ij}$."
-
+Figure 13.8., the "shape of the function relating distance to the covariance $\mathbf{K}_{ij}$."
+ 
 ```{r, fig.width = 3.25, fig.height = 3}
 tibble(
   x = seq(from = 0, to = 4, by = .01),
@@ -771,6 +772,7 @@ tibble(
             color = "#B1934A", linetype = 2) +
   geom_line(aes(y = squared),
             color = "#DCA258") +
+  scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(breaks = c(0, .5, 1),
                      labels = c(0, ".5", 1)) +
   labs(x = "distance",
@@ -788,9 +790,328 @@ d <-
 d %>% glimpse()
 ```
 
-Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. 
+Okay, it appears this is going to be a bit of a ride. It's not entire clear to me if we can fit a Gaussian process model in brms that's a direct equivalent to what McElreath did with rethinking. But we can try. First, note our use of the `gp()` syntax in the `brm()` function, below. We're attempting to tell brms that we would like to include latitude and longitude (i.e., `lat` and `long2`, respectively) in a Gaussian process. Note how our priors are a little different. I'll explain, below. Let's just move ahead and fit the model.
 
-On [Issues #8 in my GitHub page for his project](), [Bürkner](https://paul-buerkner.github.io) suggested `brm(total_tools ~ gp(x) + logpop, ...)`, where "`x` is the position variable from which `Dmat` was constructed. Not sure if this is really equivalent, but it might be a start." I haven't gotten around to playing with this, yet. Stay tuned or, even better, play with it yourself and share your results.
+```{r, message = F, warning = F, results = "hide"}
+detach(package:rethinking, unload = T)
+library(brms)
+
+b13.7 <- 
+  brm(data = d, family = poisson,
+      total_tools ~ 1 + gp(lat, lon2) + logpop,
+      prior = c(set_prior("normal(0, 10)", class = "Intercept"),
+                set_prior("normal(0, 1)", class = "b"),
+                set_prior("inv_gamma(2.874624, 0.393695)", class =	"lscale"),
+                set_prior("cauchy(0, 1)", class = "sdgp")),
+      iter = 1e4, warmup = 2000, chains = 4, cores = 4,
+      control = list(adapt_delta = 0.999,
+                     max_treedepth = 12))
+```
+
+Here's the model.
+
+```{r}
+posterior_summary(b13.7) %>%
+  round(digits = 2)
+```
+
+Our Gaussian process parameters are different than McElreath's. From the brms reference manual, here's the brms parameterization:
+
+$$k(x_{i},x_{j}) = sdgp^2exp(-||x_{i} - x_{j}||/2lscale^2)$$
+
+What McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplatlon2` before it's on the same scale as `etasq` in the text. Here it is.
+
+```{r}
+posterior_samples(b13.7) %>% 
+  transmute(sdgp_squared = sdgp_gplatlon2^2) %>% 
+  summarise_at(vars(sdgp_squared), funs(mean, sd)) %>% 
+  round(digits = 2)
+```
+
+Now we're in the ballpark. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`.
+
+Now look at the denominator of the inner part of Bürkner equation, $2lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that whereas McElreath estimated $\rho^2$ directly as `rhosq`
+
+If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
+
+$$\rho^2 = 1/(2*(lscale^2))$$
+
+But that doesn't appear to be the case. *Sigh*. 
+
+```{r}
+posterior_samples(b13.7) %>% 
+  transmute(rho_squared = 1/(2*(lscale_gplatlon2^2))) %>% 
+  summarise_at(vars(rho_squared), funs(mean, sd)) %>% 
+  round(digits = 2)
+```
+
+Oh man, that isn't even close to the 2.67 (51.60) McElreath reported in the text. The plot deepens. If you look back, you'll see we used a very different prior for $lscale$. Here is it: `inv_gamma(2.874624, 0.393695)`. Here's where that came from:
+
+```{r}
+get_prior(data = d, family = poisson,
+      total_tools ~ 1 + gp(lat, lon2) + logpop)
+```
+
+That is, we used the brms defualt prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on Michael Betancourt [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on the prior.
+
+Now that we’ve started, we may as well keep going down the comparison train. Let’s reproduce McElreath’s model with rethinking. 
+
+```{r, message = F, warning = F, results = "hide"}
+detach(package:brms, unload = T)
+library(rethinking)
+
+m13.7 <- map2stan(
+    alist(
+        total_tools ~ dpois(lambda),
+        log(lambda) <- a + g[society] + bp*logpop,
+        g[society] ~ GPL2( Dmat , etasq , rhosq , 0.01 ),
+        a ~ dnorm(0,10),
+        bp ~ dnorm(0,1),
+        etasq ~ dcauchy(0,1),
+        rhosq ~ dcauchy(0,1)
+    ),
+    data=list(
+        total_tools=d$total_tools,
+        logpop=d$logpop,
+        society=d$society,
+        Dmat=islandsDistMatrix),
+    warmup=2000 , iter=1e4 , chains=4)
+```
+
+Alright, now we'll work directly with the posteriors to make some visual comparisons.
+
+```{r, message = F, warning = F}
+post_m13.7 <- rethinking::extract.samples(m13.7)[2:5] %>% as_tibble()
+
+detach(package:rethinking, unload = T)
+library(brms)
+
+post_b13.7 <- posterior_samples(b13.7)
+```
+
+Here's the model intercept, by package:
+
+```{r, fig.width = 6, fig.height = 2}
+post_m13.7[, "a"] %>% 
+  bind_rows(post_b13.7[, "b_Intercept"] %>% 
+              as_tibble() %>% 
+              rename(a = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = a, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Not identical, but pretty close",
+       x = "intercept") +
+  theme_pearl_earring
+```
+
+The slope:
+
+```{r, fig.width = 6, fig.height = 2}
+post_m13.7[, "bp"] %>% 
+  bind_rows(post_b13.7[, "b_logpop"] %>% 
+              as_tibble() %>% 
+              rename(bp = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = bp, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Again, pretty close",
+       x = "slope") +
+  theme_pearl_earring
+```
+
+This one, $\eta^2$, required a little transformation:
+
+```{r, fig.width = 6, fig.height = 2}
+post_m13.7[, "etasq"] %>% 
+  bind_rows(post_b13.7[, "sdgp_gplatlon2"] %>% 
+              as_tibble() %>%
+              mutate(value = value^2) %>% 
+              rename(etasq = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = etasq, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Still in the same ballpark",
+       x = expression(eta^2)) +
+  coord_cartesian(xlim = 0:3) +
+  theme_pearl_earring
+```
+
+$\rho^2$ required more extensive transformation of the brms posterior:
+
+```{r, fig.width = 8, fig.height = 2.5}
+post_m13.7[, "rhosq"] %>%
+  bind_rows(post_b13.7[, "lscale_gplatlon2"] %>% 
+              as_tibble() %>%
+              transmute(value = 1/(2*(value^2))) %>%
+              # transmute(value = value^2) %>% 
+              rename(rhosq = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = rhosq, fill = model)) +
+  geom_density(size = 0) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  labs(title = "Holy smokes are those not the same!",
+       subtitle = "Notice how differently the y axes got scaled. Also, the brms density is\nright skewed for days.",
+       x = expression(rho^2)) +
+  coord_cartesian(xlim = 0:50) +
+  theme_pearl_earring +
+  theme(legend.position = "none") +
+  facet_wrap(~model, scales = "free_y")
+```
+
+I'm in clinical psychology. Folks in my field don't tend to use Gaussian processes, so getting to the bottom of this is low on my to-do list. Perhaps one of y'all are more experienced with Gaussian processes and see a flaw somewhere in my code. Please [hit me up](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues) if you do.
+
+Anyways, here's our brms + ggplot2 version of Figure 13.9.
+
+```{r, fig.width = 4.24, fig.height = 3}
+ggplot(data = tibble(x = c(0, 50.2)), aes(x = x)) +
+  mapply(function(etasq, rhosq) {
+    stat_function(fun = function(x, etasq, rhosq) etasq*exp(-rhosq*x^2), 
+                  args = list(etasq = etasq, rhosq = rhosq), 
+                  size = 1/4,
+                  alpha = 1/4,
+                  color = "#EEDA9D")
+  }, 
+  etasq = post_b13.7[1:100, "sdgp_gplatlon2"]^2,
+  rhosq = post_b13.7[1:100, "lscale_gplatlon2"]^2*.5
+  ) +
+  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *exp(-median(post_b13.7[1:100, "lscale_gplatlon2"] )^2*.5*x^2),
+                color = "#EEDA9D", size = 1.1) +
+  coord_cartesian(ylim = 0:1) +
+  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 10),
+                     expand = c(0, 0)) +
+  labs(x = "distance (thousand km)", 
+       y ="covariance") +
+  theme_pearl_earring
+```
+
+Do note the scale on which we placed our x axis. The brms parameterization resulted in a gentler decline in spatial covariance.
+
+Let's finish this up and "push the parameters back through the function for $\mathbf{K}$, the covariance matrix" (p. 415).
+
+```{r}
+# compute posterior median covariance among societies
+K <- matrix(0, nrow = 10, ncol = 10)
+for (i in 1:10)
+    for (j in 1:10)
+        K[i, j] <- median(post_b13.7$sdgp_gplatlon2^2) * exp(-median(post_b13.7$lscale_gplatlon2^2) * islandsDistMatrix[i, j]^2)
+
+diag(K) <- median(post_b13.7$sdgp_gplatlon2^2) + 0.01
+
+K %>% round(2)
+```
+
+And we'll continue to follow suit and change these to a correlation matrix.
+
+```{r}
+# convert to correlation matrix
+Rho <- round(cov2cor(K), 2)
+# add row/col names for convenience
+colnames(Rho) <- c("Ml","Ti","SC","Ya","Fi","Tr","Ch","Mn","To","Ha")
+rownames(Rho) <- colnames(Rho)
+
+Rho %>% round(2)
+```
+
+The correlations in our `Rho` matrix look a little higher than those in the text. Before we get see them in a plot, let's consider `psize`. If you really want to scale the points in Figure 13.10.a. like McElreath did, you can make the `psize` variable in a tidyverse sort of way as follows. However, if you compare the `psize` method and the default ggplot2 method using just `logpop`, you'll see the difference is negligible. In that light, I'm going to be lazy and just use `logpop` in my plots.
+
+```{r}
+d %>% 
+  transmute(psize = logpop / max(logpop)) %>% 
+  transmute(psize = exp(psize*1.5) - 2)
+```
+
+Okay, here's our Figure 13.10.a.
+
+```{r, fig.width = 4, fig.height = 3.5}
+library(ggrepel)
+
+# As far as I can figure, you still have to get `Rho` into a tidy data frame before feeding it into ggplot2. 
+# Here’s my hackish attempt at doing so. I’m sure there are more elegant ways to do this. 
+# If you’ve got ideas, share your code.
+Rho %>%
+  as_tibble() %>%
+  gather() %>%
+  mutate(culture = rep(unique(d$culture), each = 10) %>% as.character(),
+         culture_2 = rep(unique(d$culture), times = 10) %>% as.character()) %>% 
+  mutate(group = paste(pmin(culture, culture_2), pmax(culture, culture_2)),
+         culture = culture %>% as.factor(),
+         rev_value = max(value) - value) %>% 
+  left_join(d, by = "culture") %>% 
+  
+# The plot
+  ggplot(aes(x = lon2, y = lat)) +
+  geom_line(aes(group = group, alpha = value^2),
+            color = "#80A0C7") +
+  geom_point(data = d, aes(size = logpop), color = "#DCA258") +
+  geom_text_repel(data = d, aes(label = culture), 
+                  seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
+  scale_alpha_continuous(range = c(0, 1)) +
+  labs(x = "longitude",
+       y = "latitude") +
+  coord_cartesian(xlim = range(d$lon2),
+                  y = range(d$lat)) +
+  theme(legend.position = "none") +
+  theme_pearl_earring 
+```
+
+Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced. Here's our Figure 13.10.b.
+
+```{r, fig.width = 4, fig.height = 3.5}
+# new data for fitted()
+nd <- 
+  tibble(logpop = seq(from = 6, to = 14, length.out = 30),
+         lat = median(d$lat),
+         lon2 = median(d$lon2))
+
+# fitted()
+ftd <-
+  fitted(b13.7, newdata = nd) %>% 
+  as_tibble() %>% 
+  bind_cols(nd)
+  
+# making Rho tidy
+Rho %>%
+  as_tibble() %>%
+  gather() %>%
+  mutate(culture = rep(unique(d$culture), each = 10) %>% as.character(),
+         culture_2 = rep(unique(d$culture), times = 10) %>% as.character()) %>% 
+  mutate(group = paste(pmin(culture, culture_2), pmax(culture, culture_2)),
+         culture = culture %>% as.factor(),
+         rev_value = max(value) - value) %>% 
+  left_join(d, by = "culture") %>% 
+  
+# The plot
+  ggplot(aes(x = logpop)) +
+  geom_ribbon(data = ftd,
+              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              fill = "#394165", alpha = .5) +
+  geom_line(data = ftd,
+            aes(y = Estimate), color = "#100F14", linetype = 1, size = 1.1) + #  80A0C7 100F14
+  geom_line(aes(y = total_tools, group = group, alpha = value^2),
+            color = "#80A0C7") +
+  geom_point(data = d, aes(y = total_tools, size = logpop), color = "#DCA258") +
+  geom_text_repel(data = d, aes(y = total_tools, label = culture), 
+                  seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
+  scale_alpha_continuous(range = c(0, 1)) +
+  labs(x = "log population",
+       y = "total tools") +
+  coord_cartesian(xlim = range(d$logpop),
+                  y = range(d$total_tools)) +
+  theme(legend.position = "none") +
+  theme_pearl_earring
+```
+
+Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner's thoughts on this model in brms, check out the [thread on this issue](https://github.com/paul-buerkner/brms/issues/300).
 
 ##### Bonus: Another Berkley-admissions-data-like example. 
 
@@ -826,9 +1147,6 @@ Let’s fit a few models.
 First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we’ll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
 ```{r, message = F}
-detach(package:rethinking, unload = T)
-library(brms)
-
 b13.bonus_0 <- 
   brm(data = funding, family = binomial,
       awards | trials(applications) ~ 1 + male,
@@ -846,7 +1164,7 @@ tidy(b13.bonus_0) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian *p*-value, you might do something like:
+Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like:
 
 ```{r}
 posterior_samples(b13.bonus_0) %>%
@@ -880,7 +1198,7 @@ b13.bonus_2 <-
 
 We'll compare the models with information criteria.
 
-```{r, warning = F, message = F}
+```{r}
 waic(b13.bonus_0, b13.bonus_1, b13.bonus_2)
 ```
 
@@ -917,7 +1235,7 @@ tidy(b13.bonus_2) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-And if you wanted a one-sided Bayesian *p*-value for the `male` dummy for the full model:
+And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model:
 
 ```{r}
 posterior_samples(b13.bonus_2) %>%
@@ -935,23 +1253,19 @@ Note. The analyses in this document were done with:
 * tidyverse    1.2.1 
 * MASS         7.3-47
 * rethinking   1.59
-* brms         2.1.9
+* brms         2.2.0
 * rstan        2.17.3
 * broom        0.4.2
 * ggrepel      0.7.0
 * ggbeeswarm   0.5.3
-* bayesplot    1.4.0
+* bayesplot    1.5.0
 
 ## Reference
+
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
 ```{r, echo = F, results = "hide", warning = F, message = F}
-rm(d, Rho, Sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, Mu, N_cafes, N_visits, neff, ratios_cp, rho, R_1, R_2, R_4, sigma, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, Dmat, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2)
+rm(d, Rho, Sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, Mu, N_cafes, N_visits, neff, ratios_cp, rho, R_1, R_2, R_4, sigma, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, Dmat, K, nd, ftd, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2)
 ```
-
-
-
-
-
 
 

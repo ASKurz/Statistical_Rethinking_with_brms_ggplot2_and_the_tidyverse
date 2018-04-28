@@ -1,12 +1,14 @@
 ---
 title: "Ch. 13 Adventures in Covariance"
 author: "A Solomon Kurz"
-date: "2018-04-05"
+date: "2018-04-28"
 output:
   html_document:
     code_folding: show
     keep_md: TRUE
 ---
+
+
 
 For our plots in this document, we'll use a custom theme. The color palette will come from the pearl_earring palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
 
@@ -19,12 +21,12 @@ dutchmasters$pearl_earring
 ```
 
 ```
-##         red(lips)              skin      blue(scarf1)      blue(scarf2) 
-##         "#A65141"         "#E7CDC2"         "#80A0C7"         "#394165" 
-##      white(colar)       gold(dress)      gold(dress2) black(background) 
-##         "#FCF9F0"         "#B1934A"         "#DCA258"         "#100F14" 
-##      grey(scarf3)    yellow(scarf4)                   
-##         "#8B9DAF"         "#EEDA9D"         "#E8DCCF"
+##         red(lips)              skin      blue(scarf1)      blue(scarf2)      white(colar) 
+##         "#A65141"         "#E7CDC2"         "#80A0C7"         "#394165"         "#FCF9F0" 
+##       gold(dress)      gold(dress2) black(background)      grey(scarf3)    yellow(scarf4) 
+##         "#B1934A"         "#DCA258"         "#100F14"         "#8B9DAF"         "#EEDA9D" 
+##                   
+##         "#E8DCCF"
 ```
 
 We'll name our custom theme `theme_pearl_earring`. Here we make it.
@@ -98,8 +100,8 @@ vary_effects <- mvrnorm(N_cafes, Mu, Sigma)
 
 
 ```r
-tibble(a_cafe = vary_effects[ ,1],
-       b_cafe = vary_effects[ ,2]) %>%
+tibble(a_cafe = vary_effects[ , 1],
+       b_cafe = vary_effects[ , 2]) %>%
   
   ggplot(aes(x = a_cafe, y = b_cafe)) +
   geom_point(color = "#80A0C7") +
@@ -126,7 +128,7 @@ set.seed(5)  # used to replicate example
 d <-
   tibble(cafe = rep(1:N_cafes, each = N_visits),
          afternoon = rep(0:1, N_visits*N_cafes/2),
-         mu = rep(vary_effects[ ,1], each = N_visits) + rep(vary_effects[ ,2], each = N_visits)*afternoon,
+         mu = rep(vary_effects[ , 1], each = N_visits) + rep(vary_effects[ , 2], each = N_visits)*afternoon,
          wait = rnorm(N_visits*N_cafes, mu, sigma)) %>%
   select(-mu)
 ```
@@ -142,9 +144,9 @@ d %>%
 ```
 ## Observations: 200
 ## Variables: 3
-## $ cafe      <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2...
-## $ afternoon <int> 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1...
-## $ wait      <dbl> 3.8035347, 3.3067856, 3.5962165, 2.6496773, 5.079682...
+## $ cafe      <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,...
+## $ afternoon <int> 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,...
+## $ wait      <dbl> 3.8035347, 3.3067856, 3.5962165, 2.6496773, 5.0796829, 2.3131520, 3.9878792, ...
 ```
 
 Now we've finally simulated our data, we are ready to make our version of Figure 13.1., from way back on page 388.
@@ -273,50 +275,50 @@ coef(b13.1)
 ## , , Intercept
 ## 
 ##    Estimate Est.Error  2.5%ile 97.5%ile
-## 1  4.073352 0.2048543 3.671889 4.473134
-## 2  1.930753 0.2070414 1.523242 2.343093
-## 3  4.823600 0.2101443 4.406742 5.233474
-## 4  3.476495 0.2088389 3.066082 3.900891
-## 5  1.771516 0.2108093 1.354675 2.186843
-## 6  4.388640 0.2014375 3.993861 4.788692
-## 7  3.247357 0.2076626 2.842378 3.652057
-## 8  4.011307 0.2117056 3.595492 4.428183
-## 9  4.244639 0.2036538 3.854347 4.647960
-## 10 3.706305 0.2065057 3.294928 4.105019
-## 11 2.160949 0.2165894 1.734274 2.576872
-## 12 4.033970 0.2059616 3.635531 4.440158
-## 13 4.085902 0.2067812 3.676111 4.494135
-## 14 3.598932 0.2071543 3.194617 3.995352
-## 15 4.263103 0.2078604 3.858035 4.670339
-## 16 3.484183 0.2064896 3.074771 3.886627
-## 17 4.037423 0.2069901 3.627032 4.435351
-## 18 5.843193 0.2085295 5.433520 6.256226
-## 19 3.775992 0.2069196 3.369462 4.175021
-## 20 3.855821 0.2011516 3.454780 4.240218
+## 1  4.077107 0.2013771 3.681260 4.458975
+## 2  1.932077 0.2079905 1.515477 2.330373
+## 3  4.821411 0.2094029 4.408490 5.239974
+## 4  3.479082 0.2042593 3.083084 3.879400
+## 5  1.775612 0.2128696 1.373613 2.198097
+## 6  4.389801 0.2092032 3.973917 4.799380
+## 7  3.249627 0.2099596 2.835671 3.658664
+## 8  4.010166 0.2128854 3.599862 4.425507
+## 9  4.240591 0.2038785 3.836644 4.636570
+## 10 3.714363 0.2040433 3.315452 4.116500
+## 11 2.167070 0.2104227 1.750114 2.579150
+## 12 4.034373 0.2097469 3.629999 4.449651
+## 13 4.087100 0.2106516 3.670820 4.504416
+## 14 3.597239 0.2093367 3.190374 4.008360
+## 15 4.263455 0.2111289 3.857460 4.682504
+## 16 3.485491 0.2106076 3.072396 3.890974
+## 17 4.040508 0.2094546 3.642716 4.460346
+## 18 5.844080 0.2098627 5.436894 6.264377
+## 19 3.772031 0.2049096 3.363057 4.178860
+## 20 3.853937 0.2061762 3.451648 4.260211
 ## 
 ## , , afternoon
 ## 
 ##      Estimate Est.Error   2.5%ile    97.5%ile
-## 1  -1.4012349 0.2634323 -1.912918 -0.89066258
-## 2  -0.9529583 0.2690773 -1.484715 -0.43259103
-## 3  -1.8961869 0.2698510 -2.421251 -1.37613629
-## 4  -1.2029087 0.2638471 -1.717318 -0.69334339
-## 5  -0.5795899 0.2763090 -1.105607 -0.03482191
-## 6  -1.4978116 0.2551614 -2.004005 -1.00200711
-## 7  -1.0525960 0.2574086 -1.548089 -0.53829434
-## 8  -1.7287012 0.2742541 -2.285522 -1.20604363
-## 9  -1.5717800 0.2623306 -2.083063 -1.07118290
-## 10 -1.0267059 0.2635431 -1.536336 -0.50930311
-## 11 -0.4791191 0.2814797 -1.021003  0.07147783
-## 12 -1.2700844 0.2574595 -1.774658 -0.75365961
-## 13 -1.8123027 0.2704954 -2.354609 -1.29307618
-## 14 -1.6381293 0.2700656 -2.183864 -1.11292500
-## 15 -1.6795837 0.2649035 -2.217099 -1.17667137
-## 16 -0.9570437 0.2601023 -1.474810 -0.44218815
-## 17 -0.6832356 0.2785556 -1.229976 -0.12140521
-## 18 -1.5482478 0.2732372 -2.085494 -1.01178220
-## 19 -0.9192454 0.2671748 -1.441489 -0.38431502
-## 20 -0.9437515 0.2573507 -1.429376 -0.43122143
+## 1  -1.4054278 0.2602921 -1.926668 -0.90096103
+## 2  -0.9550032 0.2720678 -1.475428 -0.41841112
+## 3  -1.8950506 0.2739168 -2.448858 -1.37397445
+## 4  -1.2041357 0.2544138 -1.710028 -0.71393151
+## 5  -0.5750146 0.2748632 -1.115100 -0.03162366
+## 6  -1.4981383 0.2634736 -2.029319 -0.98615471
+## 7  -1.0533078 0.2657141 -1.567117 -0.53143063
+## 8  -1.7286099 0.2782638 -2.274126 -1.20091205
+## 9  -1.5712325 0.2625818 -2.088687 -1.05871504
+## 10 -1.0279665 0.2615095 -1.542092 -0.51382729
+## 11 -0.4861373 0.2814037 -1.023062  0.06992285
+## 12 -1.2690315 0.2624971 -1.791592 -0.76951532
+## 13 -1.8155358 0.2801226 -2.382894 -1.27966223
+## 14 -1.6318849 0.2676812 -2.163710 -1.11382609
+## 15 -1.6812507 0.2709270 -2.215235 -1.16821334
+## 16 -0.9664612 0.2629176 -1.468614 -0.43686663
+## 17 -0.6880308 0.2821609 -1.250742 -0.13277139
+## 18 -1.5512991 0.2709892 -2.078766 -1.01285332
+## 19 -0.9153343 0.2597581 -1.420172 -0.40309967
+## 20 -0.9482864 0.2689457 -1.466186 -0.40722112
 ```
 
 Here's the code to extract the relevant elements from the `coef()` list, convert them to a tibble, and add the `cafe` index.
@@ -362,11 +364,11 @@ params %>%
 ## # A tibble: 10 x 4
 ##     cafe Intercept  Slope pooled   
 ##    <int>     <dbl>  <dbl> <chr>    
-##  1     1      4.07 -1.40  partially
-##  2     2      1.93 -0.953 partially
+##  1     1      4.08 -1.41  partially
+##  2     2      1.93 -0.955 partially
 ##  3     3      4.82 -1.90  partially
 ##  4     4      3.48 -1.20  partially
-##  5     5      1.77 -0.580 partially
+##  5     5      1.78 -0.575 partially
 ##  6    16      3.42 -0.836 not      
 ##  7    17      3.91 -0.348 not      
 ##  8    18      5.89 -1.50  not      
@@ -508,30 +510,19 @@ b13.2$fit
 ## 3 chains, each with iter=4500; warmup=500; thin=1; 
 ## post-warmup draws per chain=4000, total post-warmup draws=12000.
 ## 
-##                          mean se_mean   sd   2.5%    25%    50%    75%
-## b_Intercept             -0.58    0.02 0.65  -1.89  -0.94  -0.58  -0.20
-## b_male                  -0.10    0.00 0.08  -0.26  -0.15  -0.10  -0.04
-## sd_dept_id__Intercept    1.46    0.01 0.55   0.76   1.09   1.34   1.69
-## r_dept_id[1,Intercept]   1.26    0.02 0.65  -0.04   0.88   1.25   1.62
-## r_dept_id[2,Intercept]   1.22    0.02 0.65  -0.07   0.83   1.21   1.57
-## r_dept_id[3,Intercept]   0.00    0.02 0.65  -1.31  -0.38   0.00   0.36
-## r_dept_id[4,Intercept]  -0.03    0.02 0.65  -1.33  -0.41  -0.03   0.33
-## r_dept_id[5,Intercept]  -0.47    0.02 0.65  -1.76  -0.86  -0.48  -0.11
-## r_dept_id[6,Intercept]  -2.02    0.02 0.66  -3.35  -2.40  -2.02  -1.65
-## lp__                   -61.96    0.05 2.62 -68.11 -63.42 -61.58 -60.09
-##                         97.5% n_eff Rhat
-## b_Intercept              0.71  1706    1
-## b_male                   0.07  5281    1
-## sd_dept_id__Intercept    2.91  1984    1
-## r_dept_id[1,Intercept]   2.56  1686    1
-## r_dept_id[2,Intercept]   2.53  1688    1
-## r_dept_id[3,Intercept]   1.31  1677    1
-## r_dept_id[4,Intercept]   1.28  1678    1
-## r_dept_id[5,Intercept]   0.85  1733    1
-## r_dept_id[6,Intercept]  -0.72  1724    1
-## lp__                   -57.90  2351    1
+##                          mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
+## b_Intercept             -0.61    0.01 0.63  -1.93  -0.98  -0.61  -0.22   0.67  2147    1
+## b_male                  -0.10    0.00 0.08  -0.25  -0.15  -0.10  -0.04   0.06  4451    1
+## sd_dept_id__Intercept    1.48    0.01 0.59   0.78   1.10   1.35   1.70   2.95  1644    1
+## r_dept_id[1,Intercept]   1.28    0.01 0.64   0.01   0.89   1.28   1.66   2.62  2155    1
+## r_dept_id[2,Intercept]   1.24    0.01 0.64  -0.04   0.84   1.24   1.61   2.58  2211    1
+## r_dept_id[3,Intercept]   0.02    0.01 0.64  -1.25  -0.36   0.02   0.40   1.36  2175    1
+## r_dept_id[4,Intercept]  -0.01    0.01 0.64  -1.29  -0.40  -0.01   0.37   1.32  2164    1
+## r_dept_id[5,Intercept]  -0.45    0.01 0.64  -1.73  -0.85  -0.45  -0.07   0.88  2189    1
+## r_dept_id[6,Intercept]  -2.00    0.01 0.65  -3.29  -2.39  -2.00  -1.61  -0.67  2217    1
+## lp__                   -61.79    0.06 2.52 -67.60 -63.27 -61.47 -59.95 -57.88  1994    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Apr  5 12:11:28 2018.
+## Samples were drawn using NUTS(diag_e) at Sat Apr 28 17:25:25 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -565,33 +556,33 @@ coef(b13.2)
 ## , , Intercept
 ## 
 ##     Estimate  Est.Error    2.5%ile   97.5%ile
-## 1  0.6755552 0.10042081  0.4806926  0.8718832
-## 2  0.6305958 0.11716294  0.3973254  0.8620831
-## 3 -0.5826204 0.07604597 -0.7312332 -0.4304359
-## 4 -0.6162015 0.08600027 -0.7832934 -0.4489865
-## 5 -1.0575477 0.09962859 -1.2579984 -0.8624124
-## 6 -2.6076713 0.15546862 -2.9167375 -2.3111568
+## 1  0.6755743 0.09752590  0.4873072  0.8709593
+## 2  0.6305963 0.11295805  0.4090718  0.8526946
+## 3 -0.5822929 0.07480478 -0.7288549 -0.4339501
+## 4 -0.6170411 0.08622332 -0.7852764 -0.4483062
+## 5 -1.0582279 0.09788922 -1.2534361 -0.8705057
+## 6 -2.6069951 0.15480064 -2.9209211 -2.3106579
 ## 
 ## , , male
 ## 
-##      Estimate Est.Error    2.5%ile   97.5%ile
-## 1 -0.09673845 0.0822732 -0.2557497 0.06671579
-## 2 -0.09673845 0.0822732 -0.2557497 0.06671579
-## 3 -0.09673845 0.0822732 -0.2557497 0.06671579
-## 4 -0.09673845 0.0822732 -0.2557497 0.06671579
-## 5 -0.09673845 0.0822732 -0.2557497 0.06671579
-## 6 -0.09673845 0.0822732 -0.2557497 0.06671579
+##      Estimate  Est.Error    2.5%ile  97.5%ile
+## 1 -0.09650257 0.07878758 -0.2473558 0.0563275
+## 2 -0.09650257 0.07878758 -0.2473558 0.0563275
+## 3 -0.09650257 0.07878758 -0.2473558 0.0563275
+## 4 -0.09650257 0.07878758 -0.2473558 0.0563275
+## 5 -0.09650257 0.07878758 -0.2473558 0.0563275
+## 6 -0.09650257 0.07878758 -0.2473558 0.0563275
 ```
 
 And just to confirm, the average of the posterior means of the `Intercept` random effects with `brms::coef()` is also the global mean within rounding error:
 
 
 ```r
-mean(coef(b13.2)$dept_id[, "Estimate", "Intercept"])
+mean(coef(b13.2)$dept_id[ , "Estimate", "Intercept"])
 ```
 
 ```
-## [1] -0.5929817
+## [1] -0.5930644
 ```
 
 Note how `coef()` returned a three-dimensional list.
@@ -603,7 +594,7 @@ coef(b13.2) %>% str()
 
 ```
 ## List of 1
-##  $ dept_id: num [1:6, 1:4, 1:2] 0.676 0.631 -0.583 -0.616 -1.058 ...
+##  $ dept_id: num [1:6, 1:4, 1:2] 0.676 0.631 -0.582 -0.617 -1.058 ...
 ##   ..- attr(*, "dimnames")=List of 3
 ##   .. ..$ : chr [1:6] "1" "2" "3" "4" ...
 ##   .. ..$ : chr [1:4] "Estimate" "Est.Error" "2.5%ile" "97.5%ile"
@@ -614,17 +605,17 @@ If you just want the parameter summaries for the random intercepts, you have to 
 
 
 ```r
-coef(b13.2)$dept_id[, , "Intercept"]  # this also works: coef(b13.2)$dept_id[, , 1]
+coef(b13.2)$dept_id[ , , "Intercept"]  # this also works: coef(b13.2)$dept_id[ , , 1]
 ```
 
 ```
 ##     Estimate  Est.Error    2.5%ile   97.5%ile
-## 1  0.6755552 0.10042081  0.4806926  0.8718832
-## 2  0.6305958 0.11716294  0.3973254  0.8620831
-## 3 -0.5826204 0.07604597 -0.7312332 -0.4304359
-## 4 -0.6162015 0.08600027 -0.7832934 -0.4489865
-## 5 -1.0575477 0.09962859 -1.2579984 -0.8624124
-## 6 -2.6076713 0.15546862 -2.9167375 -2.3111568
+## 1  0.6755743 0.09752590  0.4873072  0.8709593
+## 2  0.6305963 0.11295805  0.4090718  0.8526946
+## 3 -0.5822929 0.07480478 -0.7288549 -0.4339501
+## 4 -0.6170411 0.08622332 -0.7852764 -0.4483062
+## 5 -1.0582279 0.09788922 -1.2534361 -0.8705057
+## 6 -2.6069951 0.15480064 -2.9209211 -2.3106579
 ```
 
 So to get our brms summaries in a similar format to those in the text, we'll have to combine `coef()` with `fixef()` and `VarCorr()`. 
@@ -643,15 +634,15 @@ coef(b13.2)$dept_id[, , "Intercept"] %>%
 ## # A tibble: 9 x 4
 ##   Estimate Est.Error `2.5%ile` `97.5%ile`
 ##      <dbl>     <dbl>     <dbl>      <dbl>
-## 1   0.676     0.100      0.481     0.872 
-## 2   0.631     0.117      0.397     0.862 
-## 3  -0.583     0.0760    -0.731    -0.430 
-## 4  -0.616     0.0860    -0.783    -0.449 
-## 5  -1.06      0.0996    -1.26     -0.862 
+## 1   0.676     0.0975     0.487     0.871 
+## 2   0.631     0.113      0.409     0.853 
+## 3  -0.582     0.0748    -0.729    -0.434 
+## 4  -0.617     0.0862    -0.785    -0.448 
+## 5  -1.06      0.0979    -1.25     -0.871 
 ## 6  -2.61      0.155     -2.92     -2.31  
-## 7  -0.584     0.647     -1.89      0.713 
-## 8  -0.0967    0.0823    -0.256     0.0667
-## 9   1.46      0.553      0.764     2.91
+## 7  -0.607     0.635     -1.93      0.666 
+## 8  -0.0965    0.0788    -0.247     0.0563
+## 9   1.48      0.587      0.782     2.95
 ```
 
 And a little more data wrangling will make the summaries easier to read:
@@ -674,15 +665,15 @@ coef(b13.2)$dept_id[, , "Intercept"] %>%
 ## # A tibble: 9 x 5
 ##   parameter     Estimate Est.Error `2.5%ile` `97.5%ile`
 ##   <chr>            <dbl>     <dbl>     <dbl>      <dbl>
-## 1 Intercept [1]    0.680    0.100      0.480     0.870 
-## 2 Intercept [2]    0.630    0.120      0.400     0.860 
-## 3 Intercept [3]   -0.580    0.0800    -0.730    -0.430 
-## 4 Intercept [4]   -0.620    0.0900    -0.780    -0.450 
-## 5 Intercept [5]   -1.06     0.100     -1.26     -0.860 
-## 6 Intercept [6]   -2.61     0.160     -2.92     -2.31  
-## 7 Intercept       -0.580    0.650     -1.89      0.710 
-## 8 male            -0.100    0.0800    -0.260     0.0700
-## 9 sigma            1.46     0.550      0.760     2.91
+## 1 Intercept [1]    0.680    0.100      0.490     0.870 
+## 2 Intercept [2]    0.630    0.110      0.410     0.850 
+## 3 Intercept [3]   -0.580    0.0700    -0.730    -0.430 
+## 4 Intercept [4]   -0.620    0.0900    -0.790    -0.450 
+## 5 Intercept [5]   -1.06     0.100     -1.25     -0.870 
+## 6 Intercept [6]   -2.61     0.150     -2.92     -2.31  
+## 7 Intercept       -0.610    0.630     -1.93      0.670 
+## 8 male            -0.100    0.0800    -0.250     0.0600
+## 9 sigma            1.48     0.590      0.780     2.95
 ```
 
 I’m not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you’re fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
@@ -699,16 +690,16 @@ tidy(b13.2) %>%
 
 ```
 ##                      term estimate std.error  lower  upper
-## 1             b_Intercept    -0.58      0.65  -1.62   0.43
-## 2                  b_male    -0.10      0.08  -0.23   0.04
-## 3   sd_dept_id__Intercept     1.46      0.55   0.82   2.51
-## 4  r_dept_id[1,Intercept]     1.26      0.65   0.23   2.30
-## 5  r_dept_id[2,Intercept]     1.22      0.65   0.18   2.26
-## 6  r_dept_id[3,Intercept]     0.00      0.65  -1.02   1.04
-## 7  r_dept_id[4,Intercept]    -0.03      0.65  -1.05   1.02
-## 8  r_dept_id[5,Intercept]    -0.47      0.65  -1.49   0.58
-## 9  r_dept_id[6,Intercept]    -2.02      0.66  -3.07  -0.98
-## 10                   lp__   -61.96      2.62 -66.77 -58.36
+## 1             b_Intercept    -0.61      0.63  -1.65   0.41
+## 2                  b_male    -0.10      0.08  -0.23   0.03
+## 3   sd_dept_id__Intercept     1.48      0.59   0.84   2.58
+## 4  r_dept_id[1,Intercept]     1.28      0.64   0.28   2.34
+## 5  r_dept_id[2,Intercept]     1.24      0.64   0.22   2.29
+## 6  r_dept_id[3,Intercept]     0.02      0.64  -0.98   1.06
+## 7  r_dept_id[4,Intercept]    -0.01      0.64  -1.02   1.03
+## 8  r_dept_id[5,Intercept]    -0.45      0.64  -1.47   0.60
+## 9  r_dept_id[6,Intercept]    -2.00      0.65  -3.04  -0.95
+## 10                   lp__   -61.79      2.52 -66.35 -58.27
 ```
 
 But note how, just as with `b13.2$fit`, this approach summarizes the posterior with the **non-centered** parameterization. Which is a fine parameterization. It's just a little different from what you'll get when using `precis( m13.2 , depth=2 )`, as in the text.
@@ -743,22 +734,22 @@ coef(b13.3)
 ## , , Intercept
 ## 
 ##     Estimate  Est.Error    2.5%ile   97.5%ile
-## 1  1.3056204 0.25506859  0.8138653  1.8190851
-## 2  0.7444135 0.32548834  0.1194053  1.4049231
-## 3 -0.6474318 0.08637996 -0.8145377 -0.4799312
-## 4 -0.6174365 0.10466815 -0.8241510 -0.4139319
-## 5 -1.1319566 0.11320892 -1.3571082 -0.9150872
-## 6 -2.6035394 0.20251645 -3.0153532 -2.2156893
+## 1  1.2983487 0.25642947  0.8004212  1.8097103
+## 2  0.7470227 0.32530485  0.1108067  1.4072925
+## 3 -0.6460258 0.08602256 -0.8161996 -0.4784191
+## 4 -0.6170242 0.10558236 -0.8251117 -0.4111143
+## 5 -1.1333483 0.11557643 -1.3615385 -0.9114442
+## 6 -2.6024291 0.20130535 -3.0110574 -2.2242124
 ## 
 ## , , male
 ## 
 ##      Estimate Est.Error    2.5%ile   97.5%ile
-## 1 -0.79362853 0.2686068 -1.3304344 -0.2753400
-## 2 -0.21492548 0.3281351 -0.8745124  0.4206929
-## 3  0.08054499 0.1395825 -0.1860989  0.3601138
-## 4 -0.09279442 0.1415786 -0.3713503  0.1857831
-## 5  0.11925717 0.1845587 -0.2305366  0.4837667
-## 6 -0.12076874 0.2717636 -0.6645634  0.4097235
+## 1 -0.78537623 0.2702163 -1.3286949 -0.2563393
+## 2 -0.21691400 0.3274441 -0.8792421  0.4274910
+## 3  0.07827489 0.1401691 -0.1896844  0.3603439
+## 4 -0.09199150 0.1405800 -0.3642057  0.1854753
+## 5  0.12195441 0.1899510 -0.2398102  0.5004943
+## 6 -0.12275348 0.2687263 -0.6602945  0.3896532
 ```
 
 It just takes a little data wrangling to put the brms-based **centered** random effects into a tidy tibble with which we might make a coefficient plot, like McElreath did on page 401.
@@ -857,12 +848,12 @@ params
 ## # A tibble: 12 x 5
 ##     dept intercept   slope pooled    dept_letter
 ##    <int>     <dbl>   <dbl> <chr>     <chr>      
-##  1     1     1.31  -0.794  partially A          
-##  2     2     0.744 -0.215  partially B          
-##  3     3    -0.647  0.0805 partially C          
-##  4     4    -0.617 -0.0928 partially D          
-##  5     5    -1.13   0.119  partially E          
-##  6     6    -2.60  -0.121  partially F          
+##  1     1     1.30  -0.785  partially A          
+##  2     2     0.747 -0.217  partially B          
+##  3     3    -0.646  0.0783 partially C          
+##  4     4    -0.617 -0.0920 partially D          
+##  5     5    -1.13   0.122  partially E          
+##  6     6    -2.60  -0.123  partially F          
 ##  7     1     1.54  -1.05   not       A          
 ##  8     2     0.754 -0.220  not       B          
 ##  9     3    -0.660  0.125  not       C          
@@ -922,12 +913,12 @@ waic(b13.2, b13.3, b13.4)
 
 ```
 ##                 WAIC    SE
-## b13.2         109.06 16.56
-## b13.3          90.92  4.67
-## b13.4         105.07 17.99
-## b13.2 - b13.3  18.14 13.45
-## b13.2 - b13.4   3.99  3.71
-## b13.3 - b13.4 -14.15 15.15
+## b13.2         108.18 16.27
+## b13.3          91.27  4.79
+## b13.4         104.77 17.96
+## b13.2 - b13.3  16.91 12.90
+## b13.2 - b13.4   3.41  3.75
+## b13.3 - b13.4 -13.51 14.85
 ```
 
 ## 13.3. Example: Cross-classified `chimpanzees` with varying slopes
@@ -988,12 +979,12 @@ head(neff)
 ## # A tibble: 6 x 2
 ##   neff_ratio  neff
 ##        <dbl> <dbl>
-## 1      0.284  3404
-## 2      0.585  7019
-## 3      0.616  7387
-## 4      0.299  3592
-## 5      0.509  6103
-## 6      0.249  2994
+## 1      0.226  2715
+## 2      0.510  6118
+## 3      0.625  7504
+## 4      0.268  3220
+## 5      0.498  5977
+## 6      0.458  5494
 ```
 
 Our variant of Figure 13.7. The handy [ggbeeswarm package](https://cran.r-project.org/web/packages/ggbeeswarm/index.html) and it's `geom_quasirandom()` function will give a better sense of the distribution.
@@ -1043,12 +1034,12 @@ tidy(b13.6) %>%
 
 ```
 ##                                 term estimate std.error lower upper
-## 1                sd_actor__Intercept     2.35      0.92  1.31  4.08
-## 2              sd_actor__prosoc_left     0.45      0.37  0.03  1.13
-## 3    sd_actor__prosoc_left:condition     0.52      0.58  0.04  1.40
-## 4             sd_block_id__Intercept     0.23      0.21  0.02  0.63
-## 5           sd_block_id__prosoc_left     0.57      0.41  0.06  1.31
-## 6 sd_block_id__prosoc_left:condition     0.52      0.41  0.04  1.30
+## 1                sd_actor__Intercept     2.36      0.94  1.29  4.05
+## 2              sd_actor__prosoc_left     0.46      0.36  0.04  1.13
+## 3    sd_actor__prosoc_left:condition     0.51      0.46  0.04  1.41
+## 4             sd_block_id__Intercept     0.23      0.20  0.02  0.61
+## 5           sd_block_id__prosoc_left     0.57      0.40  0.06  1.30
+## 6 sd_block_id__prosoc_left:condition     0.51      0.42  0.04  1.30
 ```
 
 Here we refit the simpler model from way back in chapter 12.
@@ -1066,7 +1057,7 @@ b12.5 <-
       iter = 5000, warmup = 1000, chains = 3, cores = 3)
 ```
 
-The waic comparison:
+The WAIC comparison:
 
 
 ```r
@@ -1074,10 +1065,17 @@ waic(b13.6, b12.5)
 ```
 
 ```
+## Using the maximum response value as the number of trials.
+## Using the maximum response value as the number of trials.
+## Using the maximum response value as the number of trials.
+## Using the maximum response value as the number of trials.
+```
+
+```
 ##                 WAIC    SE
-## b13.6         534.72 19.93
-## b12.5         532.70 19.68
-## b13.6 - b12.5   2.02  4.05
+## b13.6         534.91 19.92
+## b12.5         532.73 19.67
+## b13.6 - b12.5   2.18  4.09
 ```
 
 ## 13.4. Continuous categories and the Gaussian process
@@ -1130,7 +1128,8 @@ Dmat %>%
   geom_text(aes(label = round(distance, digits = 1)),
             size = 3, family = "Courier", color = "#100F14") +
   scale_fill_gradient(low = "#FCF9F0", high = "#A65141") +
-  scale_x_discrete(position = "top") +
+  scale_x_discrete(position = "top", expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
   labs(x = NULL, y = NULL) +
   theme_pearl_earring +
   theme(axis.ticks = element_blank(),
@@ -1139,8 +1138,8 @@ Dmat %>%
 
 ![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
-Figure 13.8., the "shape of the function relating distance to the covariance **K**$_{ij}$."
-
+Figure 13.8., the "shape of the function relating distance to the covariance $\mathbf{K}_{ij}$."
+ 
 
 ```r
 tibble(
@@ -1153,6 +1152,7 @@ tibble(
             color = "#B1934A", linetype = 2) +
   geom_line(aes(y = squared),
             color = "#DCA258") +
+  scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(breaks = c(0, .5, 1),
                      labels = c(0, ".5", 1)) +
   labs(x = "distance",
@@ -1176,21 +1176,453 @@ d %>% glimpse()
 ```
 ## Observations: 10
 ## Variables: 10
-## $ culture     <fctr> Malekula, Tikopia, Santa Cruz, Yap, Lau Fiji, Tro...
-## $ population  <int> 1100, 1500, 3600, 4791, 7400, 8000, 9200, 13000, 1...
-## $ contact     <fctr> low, low, low, high, high, high, high, low, high,...
+## $ culture     <fctr> Malekula, Tikopia, Santa Cruz, Yap, Lau Fiji, Trobriand, Chuuk, Manus, Ton...
+## $ population  <int> 1100, 1500, 3600, 4791, 7400, 8000, 9200, 13000, 17500, 275000
+## $ contact     <fctr> low, low, low, high, high, high, high, low, high, low
 ## $ total_tools <int> 13, 22, 24, 43, 33, 19, 40, 28, 55, 71
 ## $ mean_TU     <dbl> 3.2, 4.7, 4.0, 5.0, 5.0, 4.0, 3.8, 6.6, 5.4, 6.6
-## $ lat         <dbl> -16.3, -12.3, -10.7, 9.5, -17.7, -8.7, 7.4, -2.1, ...
-## $ lon         <dbl> 167.5, 168.8, 166.0, 138.1, 178.1, 150.9, 151.6, 1...
-## $ lon2        <dbl> -12.5, -11.2, -14.0, -41.9, -1.9, -29.1, -28.4, -3...
-## $ logpop      <dbl> 7.003065, 7.313220, 8.188689, 8.474494, 8.909235, ...
+## $ lat         <dbl> -16.3, -12.3, -10.7, 9.5, -17.7, -8.7, 7.4, -2.1, -21.2, 19.9
+## $ lon         <dbl> 167.5, 168.8, 166.0, 138.1, 178.1, 150.9, 151.6, 146.9, -175.2, -155.6
+## $ lon2        <dbl> -12.5, -11.2, -14.0, -41.9, -1.9, -29.1, -28.4, -33.1, 4.8, 24.4
+## $ logpop      <dbl> 7.003065, 7.313220, 8.188689, 8.474494, 8.909235, 8.987197, 9.126959, 9.472...
 ## $ society     <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 ```
 
-Unfortunately, this is as far as I can go. brms does allow for Gaussian process models (e.g., [here](https://github.com/paul-buerkner/brms/issues/221)). However, my technical skills are not yet up to the task of working with them. 
+Okay, it appears this is going to be a bit of a ride. It's not entire clear to me if we can fit a Gaussian process model in brms that's a direct equivalent to what McElreath did with rethinking. But we can try. First, note our use of the `gp()` syntax in the `brm()` function, below. We're attempting to tell brms that we would like to include latitude and longitude (i.e., `lat` and `long2`, respectively) in a Gaussian process. Note how our priors are a little different. I'll explain, below. Let's just move ahead and fit the model.
 
-On [Issues #8 in my GitHub page for his project](), [Bürkner](https://paul-buerkner.github.io) suggested `brm(total_tools ~ gp(x) + logpop, ...)`, where "`x` is the position variable from which `Dmat` was constructed. Not sure if this is really equivalent, but it might be a start." I haven't gotten around to playing with this, yet. Stay tuned or, even better, play with it yourself and share your results.
+
+```r
+detach(package:rethinking, unload = T)
+library(brms)
+
+b13.7 <- 
+  brm(data = d, family = poisson,
+      total_tools ~ 1 + gp(lat, lon2) + logpop,
+      prior = c(set_prior("normal(0, 10)", class = "Intercept"),
+                set_prior("normal(0, 1)", class = "b"),
+                set_prior("inv_gamma(2.874624, 0.393695)", class =	"lscale"),
+                set_prior("cauchy(0, 1)", class = "sdgp")),
+      iter = 1e4, warmup = 2000, chains = 4, cores = 4,
+      control = list(adapt_delta = 0.999,
+                     max_treedepth = 12))
+```
+
+Here's the model.
+
+
+```r
+posterior_summary(b13.7) %>%
+  round(digits = 2)
+```
+
+```
+##                   Estimate Est.Error 2.5%ile 97.5%ile
+## b_Intercept           1.45      1.13   -0.79     3.78
+## b_logpop              0.23      0.11    0.02     0.45
+## sdgp_gplatlon2        0.53      0.37    0.16     1.45
+## lscale_gplatlon2      0.23      0.13    0.07     0.56
+## zgp_gplatlon2[1]     -0.60      0.79   -2.17     0.93
+## zgp_gplatlon2[2]      0.45      0.84   -1.26     2.10
+## zgp_gplatlon2[3]     -0.61      0.70   -1.95     0.90
+## zgp_gplatlon2[4]      0.87      0.70   -0.47     2.27
+## zgp_gplatlon2[5]      0.26      0.76   -1.25     1.78
+## zgp_gplatlon2[6]     -1.00      0.79   -2.55     0.60
+## zgp_gplatlon2[7]      0.13      0.71   -1.37     1.51
+## zgp_gplatlon2[8]     -0.18      0.88   -1.90     1.57
+## zgp_gplatlon2[9]      0.40      0.91   -1.51     2.09
+## zgp_gplatlon2[10]    -0.32      0.83   -1.94     1.31
+## lp__                -51.51      3.16  -58.69   -46.35
+```
+
+Our Gaussian process parameters are different than McElreath's. From the brms reference manual, here's the brms parameterization:
+
+$$k(x_{i},x_{j}) = sdgp^2exp(-||x_{i} - x_{j}||/2lscale^2)$$
+
+What McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplatlon2` before it's on the same scale as `etasq` in the text. Here it is.
+
+
+```r
+posterior_samples(b13.7) %>% 
+  transmute(sdgp_squared = sdgp_gplatlon2^2) %>% 
+  summarise_at(vars(sdgp_squared), funs(mean, sd)) %>% 
+  round(digits = 2)
+```
+
+```
+##   mean   sd
+## 1 0.42 1.14
+```
+
+Now we're in the ballpark. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`.
+
+Now look at the denominator of the inner part of Bürkner equation, $2lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that whereas McElreath estimated $\rho^2$ directly as `rhosq`
+
+If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
+
+$$\rho^2 = 1/(2*(lscale^2))$$
+
+But that doesn't appear to be the case. *Sigh*. 
+
+
+```r
+posterior_samples(b13.7) %>% 
+  transmute(rho_squared = 1/(2*(lscale_gplatlon2^2))) %>% 
+  summarise_at(vars(rho_squared), funs(mean, sd)) %>% 
+  round(digits = 2)
+```
+
+```
+##   mean    sd
+## 1 21.6 28.55
+```
+
+Oh man, that isn't even close to the 2.67 (51.60) McElreath reported in the text. The plot deepens. If you look back, you'll see we used a very different prior for $lscale$. Here is it: `inv_gamma(2.874624, 0.393695)`. Here's where that came from:
+
+
+```r
+get_prior(data = d, family = poisson,
+      total_tools ~ 1 + gp(lat, lon2) + logpop)
+```
+
+```
+##                           prior     class          coef group resp dpar nlpar bound
+## 1                                       b                                          
+## 2                                       b        logpop                            
+## 3           student_t(3, 3, 10) Intercept                                          
+## 4                normal(0, 0.5)    lscale                                          
+## 5 inv_gamma(2.874624, 0.393695)    lscale gp(lat, lon2)                            
+## 6           student_t(3, 0, 10)      sdgp                                          
+## 7                                    sdgp gp(lat, lon2)
+```
+
+That is, we used the brms defualt prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on Michael Betancourt [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on the prior.
+
+Now that we’ve started, we may as well keep going down the comparison train. Let’s reproduce McElreath’s model with rethinking. 
+
+
+```r
+detach(package:brms, unload = T)
+library(rethinking)
+
+m13.7 <- map2stan(
+    alist(
+        total_tools ~ dpois(lambda),
+        log(lambda) <- a + g[society] + bp*logpop,
+        g[society] ~ GPL2( Dmat , etasq , rhosq , 0.01 ),
+        a ~ dnorm(0,10),
+        bp ~ dnorm(0,1),
+        etasq ~ dcauchy(0,1),
+        rhosq ~ dcauchy(0,1)
+    ),
+    data=list(
+        total_tools=d$total_tools,
+        logpop=d$logpop,
+        society=d$society,
+        Dmat=islandsDistMatrix),
+    warmup=2000 , iter=1e4 , chains=4)
+```
+
+Alright, now we'll work directly with the posteriors to make some visual comparisons.
+
+
+```r
+post_m13.7 <- rethinking::extract.samples(m13.7)[2:5] %>% as_tibble()
+
+detach(package:rethinking, unload = T)
+library(brms)
+
+post_b13.7 <- posterior_samples(b13.7)
+```
+
+Here's the model intercept, by package:
+
+
+```r
+post_m13.7[, "a"] %>% 
+  bind_rows(post_b13.7[, "b_Intercept"] %>% 
+              as_tibble() %>% 
+              rename(a = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = a, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Not identical, but pretty close",
+       x = "intercept") +
+  theme_pearl_earring
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+
+The slope:
+
+
+```r
+post_m13.7[, "bp"] %>% 
+  bind_rows(post_b13.7[, "b_logpop"] %>% 
+              as_tibble() %>% 
+              rename(bp = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = bp, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Again, pretty close",
+       x = "slope") +
+  theme_pearl_earring
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
+
+This one, $\eta^2$, required a little transformation:
+
+
+```r
+post_m13.7[, "etasq"] %>% 
+  bind_rows(post_b13.7[, "sdgp_gplatlon2"] %>% 
+              as_tibble() %>%
+              mutate(value = value^2) %>% 
+              rename(etasq = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = etasq, fill = model)) +
+  geom_density(size = 0, alpha = 1/2) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Still in the same ballpark",
+       x = expression(eta^2)) +
+  coord_cartesian(xlim = 0:3) +
+  theme_pearl_earring
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
+
+$\rho^2$ required more extensive transformation of the brms posterior:
+
+
+```r
+post_m13.7[, "rhosq"] %>%
+  bind_rows(post_b13.7[, "lscale_gplatlon2"] %>% 
+              as_tibble() %>%
+              transmute(value = 1/(2*(value^2))) %>%
+              # transmute(value = value^2) %>% 
+              rename(rhosq = value)) %>% 
+  mutate(model = rep(c("m13.7", "b13.7"), each = nrow(post_m13.7))) %>% 
+  
+  ggplot(aes(x = rhosq, fill = model)) +
+  geom_density(size = 0) +
+  scale_fill_manual(values = c("#80A0C7", "#A65141")) +
+  labs(title = "Holy smokes are those not the same!",
+       subtitle = "Notice how differently the y axes got scaled. Also, the brms density is\nright skewed for days.",
+       x = expression(rho^2)) +
+  coord_cartesian(xlim = 0:50) +
+  theme_pearl_earring +
+  theme(legend.position = "none") +
+  facet_wrap(~model, scales = "free_y")
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
+
+I'm in clinical psychology. Folks in my field don't tend to use Gaussian processes, so getting to the bottom of this is low on my to-do list. Perhaps one of y'all are more experienced with Gaussian processes and see a flaw somewhere in my code. Please [hit me up](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues) if you do.
+
+Anyways, here's our brms + ggplot2 version of Figure 13.9.
+
+
+```r
+ggplot(data = tibble(x = c(0, 50.2)), aes(x = x)) +
+  mapply(function(etasq, rhosq) {
+    stat_function(fun = function(x, etasq, rhosq) etasq*exp(-rhosq*x^2), 
+                  args = list(etasq = etasq, rhosq = rhosq), 
+                  size = 1/4,
+                  alpha = 1/4,
+                  color = "#EEDA9D")
+  }, 
+  etasq = post_b13.7[1:100, "sdgp_gplatlon2"]^2,
+  rhosq = post_b13.7[1:100, "lscale_gplatlon2"]^2*.5
+  ) +
+  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *exp(-median(post_b13.7[1:100, "lscale_gplatlon2"] )^2*.5*x^2),
+                color = "#EEDA9D", size = 1.1) +
+  coord_cartesian(ylim = 0:1) +
+  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 10),
+                     expand = c(0, 0)) +
+  labs(x = "distance (thousand km)", 
+       y ="covariance") +
+  theme_pearl_earring
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-63-1.png)<!-- -->
+
+Do note the scale on which we placed our x axis. The brms parameterization resulted in a gentler decline in spatial covariance.
+
+Let's finish this up and "push the parameters back through the function for $\mathbf{K}$, the covariance matrix" (p. 415).
+
+
+```r
+# compute posterior median covariance among societies
+K <- matrix(0, nrow = 10, ncol = 10)
+for (i in 1:10)
+    for (j in 1:10)
+        K[i, j] <- median(post_b13.7$sdgp_gplatlon2^2) * exp(-median(post_b13.7$lscale_gplatlon2^2) * islandsDistMatrix[i, j]^2)
+
+diag(K) <- median(post_b13.7$sdgp_gplatlon2^2) + 0.01
+
+K %>% round(2)
+```
+
+```
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,] 0.20 0.18 0.18 0.09 0.18 0.16 0.12 0.14 0.16  0.05
+##  [2,] 0.18 0.20 0.19 0.09 0.17 0.16 0.13 0.14 0.16  0.06
+##  [3,] 0.18 0.19 0.20 0.10 0.17 0.17 0.14 0.15 0.15  0.06
+##  [4,] 0.09 0.09 0.10 0.20 0.06 0.15 0.17 0.17 0.04  0.02
+##  [5,] 0.18 0.17 0.17 0.06 0.20 0.12 0.10 0.10 0.18  0.07
+##  [6,] 0.16 0.16 0.17 0.15 0.12 0.20 0.16 0.18 0.10  0.03
+##  [7,] 0.12 0.13 0.14 0.17 0.10 0.16 0.20 0.18 0.07  0.05
+##  [8,] 0.14 0.14 0.15 0.17 0.10 0.18 0.18 0.20 0.08  0.03
+##  [9,] 0.16 0.16 0.15 0.04 0.18 0.10 0.07 0.08 0.20  0.07
+## [10,] 0.05 0.06 0.06 0.02 0.07 0.03 0.05 0.03 0.07  0.20
+```
+
+And we'll continue to follow suit and change these to a correlation matrix.
+
+
+```r
+# convert to correlation matrix
+Rho <- round(cov2cor(K), 2)
+# add row/col names for convenience
+colnames(Rho) <- c("Ml","Ti","SC","Ya","Fi","Tr","Ch","Mn","To","Ha")
+rownames(Rho) <- colnames(Rho)
+
+Rho %>% round(2)
+```
+
+```
+##      Ml   Ti   SC   Ya   Fi   Tr   Ch   Mn   To   Ha
+## Ml 1.00 0.94 0.93 0.44 0.89 0.80 0.63 0.69 0.83 0.26
+## Ti 0.94 1.00 0.95 0.47 0.89 0.81 0.68 0.71 0.81 0.31
+## SC 0.93 0.95 1.00 0.52 0.86 0.84 0.73 0.76 0.77 0.29
+## Ya 0.44 0.47 0.52 1.00 0.30 0.74 0.86 0.85 0.21 0.12
+## Fi 0.89 0.89 0.86 0.30 1.00 0.63 0.50 0.51 0.93 0.36
+## Tr 0.80 0.81 0.84 0.74 0.63 1.00 0.83 0.92 0.52 0.16
+## Ch 0.63 0.68 0.73 0.86 0.50 0.83 1.00 0.89 0.38 0.25
+## Mn 0.69 0.71 0.76 0.85 0.51 0.92 0.89 1.00 0.40 0.16
+## To 0.83 0.81 0.77 0.21 0.93 0.52 0.38 0.40 1.00 0.34
+## Ha 0.26 0.31 0.29 0.12 0.36 0.16 0.25 0.16 0.34 1.00
+```
+
+The correlations in our `Rho` matrix look a little higher than those in the text. Before we get see them in a plot, let's consider `psize`. If you really want to scale the points in Figure 13.10.a. like McElreath did, you can make the `psize` variable in a tidyverse sort of way as follows. However, if you compare the `psize` method and the default ggplot2 method using just `logpop`, you'll see the difference is negligible. In that light, I'm going to be lazy and just use `logpop` in my plots.
+
+
+```r
+d %>% 
+  transmute(psize = logpop / max(logpop)) %>% 
+  transmute(psize = exp(psize*1.5) - 2)
+```
+
+```
+##        psize
+## 1  0.3134090
+## 2  0.4009582
+## 3  0.6663711
+## 4  0.7592196
+## 5  0.9066890
+## 6  0.9339560
+## 7  0.9834797
+## 8  1.1096138
+## 9  1.2223112
+## 10 2.4816891
+```
+
+Okay, here's our Figure 13.10.a.
+
+
+```r
+library(ggrepel)
+
+# As far as I can figure, you still have to get `Rho` into a tidy data frame before feeding it into ggplot2. 
+# Here’s my hackish attempt at doing so. I’m sure there are more elegant ways to do this. 
+# If you’ve got ideas, share your code.
+Rho %>%
+  as_tibble() %>%
+  gather() %>%
+  mutate(culture = rep(unique(d$culture), each = 10) %>% as.character(),
+         culture_2 = rep(unique(d$culture), times = 10) %>% as.character()) %>% 
+  mutate(group = paste(pmin(culture, culture_2), pmax(culture, culture_2)),
+         culture = culture %>% as.factor(),
+         rev_value = max(value) - value) %>% 
+  left_join(d, by = "culture") %>% 
+  
+# The plot
+  ggplot(aes(x = lon2, y = lat)) +
+  geom_line(aes(group = group, alpha = value^2),
+            color = "#80A0C7") +
+  geom_point(data = d, aes(size = logpop), color = "#DCA258") +
+  geom_text_repel(data = d, aes(label = culture), 
+                  seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
+  scale_alpha_continuous(range = c(0, 1)) +
+  labs(x = "longitude",
+       y = "latitude") +
+  coord_cartesian(xlim = range(d$lon2),
+                  y = range(d$lat)) +
+  theme(legend.position = "none") +
+  theme_pearl_earring 
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-67-1.png)<!-- -->
+
+Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced. Here's our Figure 13.10.b.
+
+
+```r
+# new data for fitted()
+nd <- 
+  tibble(logpop = seq(from = 6, to = 14, length.out = 30),
+         lat = median(d$lat),
+         lon2 = median(d$lon2))
+
+# fitted()
+ftd <-
+  fitted(b13.7, newdata = nd) %>% 
+  as_tibble() %>% 
+  bind_cols(nd)
+  
+# making Rho tidy
+Rho %>%
+  as_tibble() %>%
+  gather() %>%
+  mutate(culture = rep(unique(d$culture), each = 10) %>% as.character(),
+         culture_2 = rep(unique(d$culture), times = 10) %>% as.character()) %>% 
+  mutate(group = paste(pmin(culture, culture_2), pmax(culture, culture_2)),
+         culture = culture %>% as.factor(),
+         rev_value = max(value) - value) %>% 
+  left_join(d, by = "culture") %>% 
+  
+# The plot
+  ggplot(aes(x = logpop)) +
+  geom_ribbon(data = ftd,
+              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              fill = "#394165", alpha = .5) +
+  geom_line(data = ftd,
+            aes(y = Estimate), color = "#100F14", linetype = 1, size = 1.1) + #  80A0C7 100F14
+  geom_line(aes(y = total_tools, group = group, alpha = value^2),
+            color = "#80A0C7") +
+  geom_point(data = d, aes(y = total_tools, size = logpop), color = "#DCA258") +
+  geom_text_repel(data = d, aes(y = total_tools, label = culture), 
+                  seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
+  scale_alpha_continuous(range = c(0, 1)) +
+  labs(x = "log population",
+       y = "total tools") +
+  coord_cartesian(xlim = range(d$logpop),
+                  y = range(d$total_tools)) +
+  theme(legend.position = "none") +
+  theme_pearl_earring
+```
+
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-68-1.png)<!-- -->
+
+Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner's thoughts on this model in brms, check out the [thread on this issue](https://github.com/paul-buerkner/brms/issues/300).
 
 ##### Bonus: Another Berkley-admissions-data-like example. 
 
@@ -1252,9 +1684,6 @@ First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ 
 
 
 ```r
-detach(package:rethinking, unload = T)
-library(brms)
-
 b13.bonus_0 <- 
   brm(data = funding, family = binomial,
       awards | trials(applications) ~ 1 + male,
@@ -1275,11 +1704,11 @@ tidy(b13.bonus_0) %>%
 
 ```
 ##          term estimate std.error lower upper
-## 1 b_Intercept    -1.74      0.08 -1.88 -1.61
-## 2      b_male     0.21      0.11  0.03  0.38
+## 1 b_Intercept    -1.75      0.08 -1.88 -1.61
+## 2      b_male     0.21      0.10  0.04  0.38
 ```
 
-Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian *p*-value, you might do something like:
+Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like:
 
 
 ```r
@@ -1289,7 +1718,7 @@ posterior_samples(b13.bonus_0) %>%
 
 ```
 ##   One_sided_Bayesian_p_value
-## 1                  0.0229375
+## 1                   0.023125
 ```
 
 Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications. 
@@ -1327,12 +1756,12 @@ waic(b13.bonus_0, b13.bonus_1, b13.bonus_2)
 
 ```
 ##                             WAIC   SE
-## b13.bonus_0               129.84 8.95
-## b13.bonus_1               125.72 7.33
-## b13.bonus_2               116.68 5.57
-## b13.bonus_0 - b13.bonus_1   4.12 6.26
-## b13.bonus_0 - b13.bonus_2  13.16 5.57
-## b13.bonus_1 - b13.bonus_2   9.03 2.78
+## b13.bonus_0               129.79 8.91
+## b13.bonus_1               125.46 7.31
+## b13.bonus_2               116.46 5.57
+## b13.bonus_0 - b13.bonus_1   4.33 6.25
+## b13.bonus_0 - b13.bonus_2  13.34 5.53
+## b13.bonus_1 - b13.bonus_2   9.01 2.86
 ```
 
 The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here's what the random intercepts look like in a coefficient plot.
@@ -1361,7 +1790,7 @@ coef(b13.bonus_2)$discipline[, , 2] %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+![](Ch._13_Adventures_in_Covariance_files/figure-html/unnamed-chunk-75-1.png)<!-- -->
 
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects:
 
@@ -1375,10 +1804,10 @@ tidy(b13.bonus_2) %>%
 ```
 ##          term estimate std.error lower upper
 ## 1 b_Intercept    -1.63      0.14 -1.85 -1.38
-## 2      b_male     0.15      0.17 -0.14  0.42
+## 2      b_male     0.15      0.17 -0.13  0.43
 ```
 
-And if you wanted a one-sided Bayesian *p*-value for the `male` dummy for the full model:
+And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model:
 
 
 ```r
@@ -1388,7 +1817,7 @@ posterior_samples(b13.bonus_2) %>%
 
 ```
 ##   One_sided_Bayesian_p_value
-## 1                   0.174375
+## 1                   0.178125
 ```
 
 So, the estimate of the gender bias is small and consistent with the null hypothesis. Which is good! We want gender equality for things like funding success.
@@ -1402,20 +1831,16 @@ Note. The analyses in this document were done with:
 * tidyverse    1.2.1 
 * MASS         7.3-47
 * rethinking   1.59
-* brms         2.1.9
+* brms         2.2.0
 * rstan        2.17.3
 * broom        0.4.2
 * ggrepel      0.7.0
 * ggbeeswarm   0.5.3
-* bayesplot    1.4.0
+* bayesplot    1.5.0
 
 ## Reference
+
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
-
-
-
-
-
 
 
 
