@@ -1,7 +1,7 @@
 ---
 title: "Ch. 7 Interactions"
 author: "A Solomon Kurz"
-date: "2018-04-21"
+date: "2018-05-26"
 output:
   html_document:
     code_folding: show
@@ -123,8 +123,8 @@ dd %>%
   scale_colour_pander() +
   scale_fill_pander() +
   geom_ribbon(data = fit.both,
-              aes(ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+              aes(ymin = Q2.5, 
+                  ymax = Q97.5,
                   fill = cont_africa),
               alpha = 1/4) +
   geom_line(data = fit.both,
@@ -179,9 +179,9 @@ waic(b7.3, b7.4)
 
 ```
 ##               WAIC    SE
-## b7.3        539.47 12.97
-## b7.4        476.19 14.85
-## b7.3 - b7.4  63.29 14.58
+## b7.3        539.72 13.00
+## b7.4        475.90 14.87
+## b7.3 - b7.4  63.82 14.64
 ```
 
 ```r
@@ -190,9 +190,9 @@ loo(b7.3, b7.4)
 
 ```
 ##              LOOIC    SE
-## b7.3        539.49 12.97
-## b7.4        476.27 14.88
-## b7.3 - b7.4  63.22 14.61
+## b7.3        539.73 13.00
+## b7.4        475.93 14.87
+## b7.3 - b7.4  63.81 14.65
 ```
 
 Happily, the WAIC and the LOO are in agreement. The model with the dummy, `b7.4`, fit the data much better. Here are the WAIC model weights.
@@ -243,8 +243,8 @@ ggplot(aes(x = rugged)) +
   scale_colour_pander() +
   scale_fill_pander() +
   geom_ribbon(data = fit.7.4,
-              aes(ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+              aes(ymin = Q2.5, 
+                  ymax = Q97.5,
                   fill = cont_africa,
                   group = cont_africa),
               alpha = 1/4) +
@@ -290,12 +290,12 @@ loo(b7.3, b7.4, b7.5,
 
 ```
 ##              LOOIC    SE
-## b7.3        539.49 12.97
-## b7.4        476.27 14.88
-## b7.5        469.52 14.56
-## b7.3 - b7.4  63.22 14.61
-## b7.3 - b7.5  69.97 14.64
-## b7.4 - b7.5   6.75  6.00
+## b7.3        539.73 13.00
+## b7.4        475.93 14.87
+## b7.5        469.53 14.54
+## b7.3 - b7.4  63.81 14.65
+## b7.3 - b7.5  70.20 14.64
+## b7.4 - b7.5   6.39  5.83
 ```
 
 And we can weigh the models based on the LOO rather than the WAIC, too.
@@ -309,7 +309,7 @@ model_weights(b7.3, b7.4, b7.5,
 
 ```
 ##  b7.3  b7.4  b7.5 
-## 0.000 0.033 0.967
+## 0.000 0.039 0.961
 ```
 
 ##### Overthinking: Conventional form of interaction.
@@ -336,9 +336,9 @@ waic(b7.5, b7.5b)
 
 ```
 ##                WAIC    SE
-## b7.5         469.36 14.54
-## b7.5b        469.17 14.57
-## b7.5 - b7.5b   0.19  0.11
+## b7.5         469.39 14.52
+## b7.5b        469.08 14.51
+## b7.5 - b7.5b   0.31  0.10
 ```
 
 ```r
@@ -347,9 +347,9 @@ loo(b7.5, b7.5b)
 
 ```
 ##               LOOIC    SE
-## b7.5         469.52 14.56
-## b7.5b        469.30 14.59
-## b7.5 - b7.5b   0.22  0.14
+## b7.5         469.53 14.54
+## b7.5b        469.21 14.53
+## b7.5 - b7.5b   0.32  0.11
 ```
 
 ### 7.1.3. Plotting the interaction.
@@ -386,8 +386,8 @@ ggplot(aes(x = rugged)) +
   scale_colour_pander() +
   scale_fill_pander() +
   geom_ribbon(data = fit.7.5,
-              aes(ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+              aes(ymin = Q2.5, 
+                  ymax = Q97.5,
                   fill = cont_africa,
                   group = cont_africa),
               alpha = 1/4) +
@@ -429,8 +429,8 @@ p7.5 %>%
 ## # A tibble: 2 x 2
 ##   key               mean
 ##   <chr>            <dbl>
-## 1 gamma_Africa     0.164
-## 2 gamma_notAfrica -0.184
+## 1 gamma_Africa     0.161
+## 2 gamma_notAfrica -0.183
 ```
 
 And here is our version of Figure 7.5.
@@ -471,7 +471,7 @@ p7.5 %>%
 
 ```
 ##   Proportion_of_the_difference_below_0
-## 1                              0.00375
+## 1                              0.00575
 ```
 
 Here is our version of McElreath's Figure 7.6.
@@ -499,8 +499,8 @@ ggplot(aes(x = cont_africa)) +
   scale_colour_pander() +
   scale_fill_pander() +
   geom_ribbon(data = fit.7.5,
-              aes(ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+              aes(ymin = Q2.5, 
+                  ymax = Q97.5,
                   fill = factor(ox),
                   group = factor(ox)),
               alpha = 1/4) +
@@ -574,7 +574,7 @@ b7.6 <-
 ```
 
 ```
-## Warning: There were 47 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+## Warning: There were 36 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
 ## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 ```
 
@@ -588,7 +588,7 @@ b7.7 <- update(b7.6,
 ```
 
 ```
-## Warning: There were 7 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+## Warning: There were 3 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
 ## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 
 ## Warning: Examine the pairs() plot to diagnose sampling problems
@@ -621,12 +621,12 @@ posterior_summary(b7.6) %>% round(digits = 2)
 ```
 
 ```
-##             Estimate Est.Error 2.5%ile 97.5%ile
-## b_Intercept    60.32     42.51  -23.81   140.96
-## b_water        74.27     14.31   46.34   102.65
-## b_shade       -40.84     14.50  -69.12   -11.67
-## sigma          61.40      8.98   46.93    81.69
-## lp__         -169.73      1.45 -173.44  -167.86
+##             Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept    60.44     43.79  -23.75  149.74
+## b_water        74.19     14.70   45.44  103.97
+## b_shade       -40.91     14.90  -69.89  -11.91
+## sigma          61.55      8.98   46.45   81.51
+## lp__         -169.82      1.51 -173.49 -167.87
 ```
 
 ```r
@@ -634,13 +634,13 @@ posterior_summary(b7.7) %>% round(digits = 2)
 ```
 
 ```
-##               Estimate Est.Error 2.5%ile 97.5%ile
-## b_Intercept    -108.99     62.14 -227.38    16.08
-## b_water         160.37     28.83  101.98   215.21
-## b_shade          44.47     28.77  -13.38   100.07
-## b_water:shade   -43.30     13.27  -68.60   -16.80
-## sigma            50.08      7.82   37.34    68.14
-## lp__           -170.65      1.73 -174.90  -168.36
+##               Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept    -105.07     63.28 -225.41   24.96
+## b_water         159.07     29.08   96.04  214.21
+## b_shade          43.16     29.46  -18.08   99.20
+## b_water:shade   -42.82     13.49  -67.65  -14.47
+## sigma            49.87      7.49   37.47   66.81
+## lp__           -170.60      1.70 -174.99 -168.40
 ```
 
 This is an example where HMC yielded point estimates notably different from MAP. However, look at the size of those posterior standard deviations (i.e., Est.Error)! The MAP estimates are well within a fraction of those *SD*s.
@@ -654,9 +654,9 @@ waic(b7.6, b7.7)
 
 ```
 ##               WAIC   SE
-## b7.6        303.83 7.63
-## b7.7        293.49 7.91
-## b7.6 - b7.7  10.34 5.38
+## b7.6        304.29 7.68
+## b7.7        293.30 7.92
+## b7.6 - b7.7  10.99 5.33
 ```
 
 ### 7.3.3. Center and re-estimate.
@@ -694,12 +694,12 @@ posterior_summary(b7.8) %>% round(digits = 2)
 ```
 
 ```
-##             Estimate Est.Error 2.5%ile 97.5%ile
-## b_Intercept   128.95     11.70  105.98   152.08
-## b_water.c      74.40     14.33   46.26   102.49
-## b_shade.c     -40.66     14.70  -69.25   -12.40
-## sigma          61.59      9.25   47.38    82.72
-## lp__         -168.93      1.54 -172.79  -167.05
+##             Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept   129.17     12.21  104.70  152.53
+## b_water.c      74.00     14.59   45.05  102.27
+## b_shade.c     -41.08     14.44  -69.52  -12.87
+## sigma          61.57      9.07   46.84   82.47
+## lp__         -168.97      1.51 -172.79 -167.06
 ```
 
 ```r
@@ -707,13 +707,13 @@ posterior_summary(b7.9) %>% round(digits = 2)
 ```
 
 ```
-##                   Estimate Est.Error 2.5%ile 97.5%ile
-## b_Intercept         129.01      9.81  109.55   148.49
-## b_water.c            74.68     11.76   51.43    97.34
-## b_shade.c           -40.99     11.48  -63.31   -18.27
-## b_water.c:shade.c   -51.89     14.13  -78.81   -24.16
-## sigma                49.64      7.58   37.41    67.30
-## lp__               -168.58      1.71 -172.77  -166.30
+##                   Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept         129.24      9.46  110.58  148.50
+## b_water.c            74.78     11.79   51.37   98.73
+## b_shade.c           -41.24     11.75  -63.99  -18.63
+## b_water.c:shade.c   -52.02     14.54  -80.56  -22.96
+## sigma                49.39      7.47   37.39   66.39
+## lp__               -168.59      1.76 -172.81 -166.25
 ```
 
 And okay fine, if you really want a `coeftab()`-like summary, here's a grotesque way to do it.
@@ -742,11 +742,11 @@ posterior_summary(b7.8) %>%
 
 ```
 ##           parameter   b7.8   b7.9
-## 1       b_Intercept 128.95 129.01
-## 2         b_shade.c -40.66 -40.99
-## 3         b_water.c  74.40  74.68
-## 4 b_water.c:shade.c     NA -51.89
-## 5             sigma  61.59  49.64
+## 1       b_Intercept 129.17 129.24
+## 2         b_shade.c -41.08 -41.24
+## 3         b_water.c  74.00  74.78
+## 4 b_water.c:shade.c     NA -52.02
+## 5             sigma  61.57  49.39
 ```
 
 Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the Est.Error values are uniformly smaller.
@@ -760,7 +760,7 @@ k[1] + k[2]*2 + k[3]*2 + k[4]*2*2
 ```
 
 ```
-## [1] 127.5043
+## [1] 128.0882
 ```
 
 
@@ -770,7 +770,7 @@ k[1] + k[2]*0 + k[3]*0 + k[4]*0*0
 ```
 
 ```
-## [1] 129.0101
+## [1] 129.2438
 ```
 
 
@@ -783,20 +783,19 @@ print(b7.9)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: blooms ~ water.c + shade.c + water.c:shade.c 
 ##    Data: d (Number of observations: 27) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept         129.01      9.81   109.55   148.49       4000 1.00
-## water.c            74.68     11.76    51.43    97.34       4000 1.00
-## shade.c           -40.99     11.48   -63.31   -18.27       4000 1.00
-## water.c:shade.c   -51.89     14.13   -78.81   -24.16       4000 1.00
+## Intercept         129.24      9.46   110.58   148.50       4000 1.00
+## water.c            74.78     11.79    51.37    98.73       4000 1.00
+## shade.c           -41.24     11.75   -63.99   -18.63       4000 1.00
+## water.c:shade.c   -52.02     14.54   -80.56   -22.96       4000 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    49.64      7.58    37.41    67.30       4000 1.00
+## sigma    49.39      7.47    37.39    66.39       4000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -827,8 +826,8 @@ for(w in -1:1){
     theme_pander() + 
     geom_ribbon(data = fit.7.9, 
                 aes(x = shade.c,
-                    ymin = `2.5%ile`,
-                    ymax = `97.5%ile`), 
+                    ymin = Q2.5,
+                    ymax = Q97.5), 
                 fill = "#CC79A7", alpha = 1/5) +
     geom_line(data = fit.7.9, aes(x = shade.c, y = Estimate), 
               color = "#CC79A7") +
@@ -869,8 +868,8 @@ fitted(b7.8) %>%
          y_grid = paste("model: ", fit)) %>% 
   
   ggplot(aes(x = shade.c)) +
-  geom_ribbon(aes(ymin = `2.5%ile`,
-                  ymax = `97.5%ile`), 
+  geom_ribbon(aes(ymin = Q2.5,
+                  ymax = Q97.5), 
               fill = "#CC79A7", alpha = 1/5) +
   geom_line(aes(y = Estimate), 
             color = "#CC79A7") +
@@ -1090,10 +1089,10 @@ Note. The analyses in this document were done with:
 * RStudio     1.1.442
 * rmarkdown   1.9
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * rstan       2.17.3
 * tidyverse   1.2.1 
-* ggthemes    3.4.0
+* ggthemes    3.5.0
 
 ## Reference
 

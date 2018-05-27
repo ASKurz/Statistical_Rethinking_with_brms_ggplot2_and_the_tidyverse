@@ -1,7 +1,7 @@
 ---
 title: "Ch. 6 Overfitting, Regularization, and Information Criteria"
 author: "A Solomon Kurz"
-date: "2018-04-16"
+date: "2018-05-27"
 output:
   html_document:
     code_folding: show
@@ -106,18 +106,17 @@ print(b6.8)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: brain ~ 1 + mass.s 
 ##    Data: d (Number of observations: 7) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   706.03    103.16   493.67   913.79       2853 1.00
-## mass.s      221.23    114.61   -17.64   442.83       2069 1.00
+## Intercept   701.86    112.97   475.91   905.53       2479 1.00
+## mass.s      227.79    116.05     0.98   471.45       2324 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma   262.18     90.82   147.35   493.34       1592 1.00
+## sigma   266.63    105.37   146.93   514.17       1083 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -142,13 +141,13 @@ dfLL %>%
 ```
 ## Observations: 4,000
 ## Variables: 7
-## $ V1 <dbl> -6.283169, -6.283169, -7.584661, -7.379721, -6.696407, -6.8...
-## $ V2 <dbl> -6.059161, -6.059161, -7.294890, -7.111944, -6.627079, -6.8...
-## $ V3 <dbl> -6.171100, -6.171100, -6.244421, -6.264807, -6.517780, -6.9...
-## $ V4 <dbl> -6.410820, -6.410820, -7.271515, -7.203928, -6.642947, -6.8...
-## $ V5 <dbl> -7.207767, -7.207767, -6.691354, -6.910962, -6.561653, -6.9...
-## $ V6 <dbl> -7.292158, -7.292158, -6.377044, -6.649427, -6.517617, -6.9...
-## $ V7 <dbl> -9.628800, -9.628800, -9.094889, -8.337271, -8.511515, -7.6...
+## $ V1 <dbl> -6.384370, -6.630980, -6.781984, -6.852513, -6.380154, -6.5...
+## $ V2 <dbl> -6.306264, -6.516224, -6.636554, -6.934464, -6.334511, -6.5...
+## $ V3 <dbl> -6.404118, -6.322862, -6.410364, -7.370973, -6.610321, -6.7...
+## $ V4 <dbl> -6.372629, -6.562622, -6.825997, -6.804172, -6.433614, -6.5...
+## $ V5 <dbl> -6.401141, -6.463053, -7.105097, -7.062533, -6.840004, -6.5...
+## $ V6 <dbl> -6.346848, -6.376201, -7.090881, -7.264752, -6.937612, -6.5...
+## $ V7 <dbl> -9.388046, -8.952386, -7.480607, -7.464748, -8.109330, -9.0...
 ```
 
 Deviance is the sum of the occasion-level LLs multiplied by -2.
@@ -170,7 +169,7 @@ quantile(dfLL$deviance, c(.025, .5, .975))
 
 ```
 ##      2.5%       50%     97.5% 
-##  95.14044  97.55311 105.02463
+##  95.14495  97.54159 105.46343
 ```
 
 ```r
@@ -247,18 +246,17 @@ print(b)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: dist ~ 1 + speed 
 ##    Data: cars (Number of observations: 50) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   -17.44      6.89   -30.69    -3.89       2056 1.00
-## speed         3.92      0.42     3.07     4.73       1971 1.00
+## Intercept   -17.68      7.02   -31.58    -4.07       1379 1.00
+## speed         3.94      0.43     3.12     4.81       1269 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    15.76      1.65    12.93    19.32       2149 1.00
+## sigma    15.81      1.67    12.92    19.40       2172 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -295,7 +293,7 @@ dfmean <-
 ```
 
 ```
-## [1] -206.6634
+## [1] -206.6662
 ```
 
 Comupting the effective number of parameters, *p*~WAIC~, isn't much better.
@@ -316,7 +314,7 @@ pwaic
 ```
 
 ```
-## [1] 3.226673
+## [1] 3.282429
 ```
 
 ```r
@@ -327,15 +325,15 @@ dfvar
 ## # A tibble: 50 x 1
 ##      vars
 ##     <dbl>
-##  1 0.0213
-##  2 0.0721
-##  3 0.0208
-##  4 0.0458
-##  5 0.0126
-##  6 0.0199
-##  7 0.0126
-##  8 0.0127
-##  9 0.0275
+##  1 0.0253
+##  2 0.0786
+##  3 0.0204
+##  4 0.0489
+##  5 0.0141
+##  6 0.0195
+##  7 0.0130
+##  8 0.0137
+##  9 0.0288
 ## 10 0.0163
 ## # ... with 40 more rows
 ```
@@ -348,7 +346,7 @@ Finally, here's what we've been working so hard for: our hand calculated WAIC va
 ```
 
 ```
-## [1] 419.7801
+## [1] 419.8972
 ```
 
 ```r
@@ -360,9 +358,9 @@ waic(b)
 ## Computed from 4000 by 50 log-likelihood matrix
 ## 
 ##           Estimate   SE
-## elpd_waic   -209.9  6.4
-## p_waic         3.2  1.2
-## waic         419.8 12.7
+## elpd_waic   -209.9  6.3
+## p_waic         3.3  1.2
+## waic         419.9 12.6
 ```
 
 Here's how we get the WAIC standard error.
@@ -378,7 +376,7 @@ dfmean %>%
 ## # A tibble: 1 x 1
 ##   waic_se
 ##     <dbl>
-## 1    12.7
+## 1    12.6
 ```
 
 ### 6.5.1. Model comparison. 
@@ -487,8 +485,8 @@ WAIC(b6.14)
 ## 
 ##           Estimate  SE
 ## elpd_waic      8.4 2.6
-## p_waic         3.1 0.8
-## waic         -16.8 5.2
+## p_waic         3.1 0.9
+## waic         -16.7 5.1
 ```
 
 ```
@@ -506,8 +504,8 @@ waic(b6.14)
 ## 
 ##           Estimate  SE
 ## elpd_waic      8.4 2.6
-## p_waic         3.1 0.8
-## waic         -16.8 5.2
+## p_waic         3.1 0.9
+## waic         -16.7 5.1
 ```
 
 ```
@@ -526,16 +524,16 @@ waic(b6.11, b6.12, b6.13, b6.14)
 
 ```
 ##                 WAIC   SE
-## b6.11          -8.64 3.69
-## b6.12          -7.11 3.29
-## b6.13          -8.99 4.20
-## b6.14         -16.78 5.17
-## b6.11 - b6.12  -1.53 1.12
-## b6.11 - b6.13   0.35 2.36
-## b6.11 - b6.14   8.14 4.93
-## b6.12 - b6.13   1.88 3.02
-## b6.12 - b6.14   9.67 5.07
-## b6.13 - b6.14   7.78 3.50
+## b6.11          -8.69 3.74
+## b6.12          -7.14 3.15
+## b6.13          -8.83 4.22
+## b6.14         -16.74 5.15
+## b6.11 - b6.12  -1.55 1.24
+## b6.11 - b6.13   0.14 2.37
+## b6.11 - b6.14   8.06 4.96
+## b6.12 - b6.13   1.69 3.02
+## b6.12 - b6.14   9.61 5.02
+## b6.13 - b6.14   7.92 3.53
 ```
 
 Alternatively, you first save each model's `waic()` output in its own object, and then feed to those objects into `compare_ic()`.
@@ -552,16 +550,16 @@ compare_ic(w.b6.11, w.b6.12, w.b6.13, w.b6.14)
 
 ```
 ##                 WAIC   SE
-## b6.11          -8.64 3.69
-## b6.12          -7.11 3.29
-## b6.13          -8.99 4.20
-## b6.14         -16.78 5.17
-## b6.11 - b6.12  -1.53 1.12
-## b6.11 - b6.13   0.35 2.36
-## b6.11 - b6.14   8.14 4.93
-## b6.12 - b6.13   1.88 3.02
-## b6.12 - b6.14   9.67 5.07
-## b6.13 - b6.14   7.78 3.50
+## b6.11          -8.69 3.74
+## b6.12          -7.14 3.15
+## b6.13          -8.83 4.22
+## b6.14         -16.74 5.15
+## b6.11 - b6.12  -1.55 1.24
+## b6.11 - b6.13   0.14 2.37
+## b6.11 - b6.14   8.06 4.96
+## b6.12 - b6.13   1.69 3.02
+## b6.12 - b6.14   9.61 5.02
+## b6.13 - b6.14   7.92 3.53
 ```
 
 If you want to get those WAIC weights, you can use the `brms::model_weights()` function like so:
@@ -611,23 +609,24 @@ glimpse(w.b6.11)
 
 ```
 ## List of 9
-##  $ estimates   : num [1:3, 1:2] 4.32 1.346 -8.64 1.845 0.308 ...
+##  $ estimates   : num [1:3, 1:2] 4.343 1.351 -8.685 1.871 0.314 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
 ##   .. ..$ : chr [1:2] "Estimate" "SE"
-##  $ pointwise   : num [1:17, 1:3] 0.266 0.149 0.565 -0.17 -0.433 ...
+##  $ pointwise   : num [1:17, 1:3] 0.272 0.154 0.572 -0.179 -0.446 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : NULL
 ##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
-##  $ elpd_waic   : num 4.32
+##  $ elpd_waic   : num 4.34
 ##  $ p_waic      : num 1.35
-##  $ waic        : num -8.64
-##  $ se_elpd_waic: num 1.84
-##  $ se_p_waic   : num 0.308
-##  $ se_waic     : num 3.69
+##  $ waic        : num -8.69
+##  $ se_elpd_waic: num 1.87
+##  $ se_p_waic   : num 0.314
+##  $ se_waic     : num 3.74
 ##  $ model_name  : chr "b6.11"
 ##  - attr(*, "dims")= int [1:2] 4000 17
 ##  - attr(*, "class")= chr [1:3] "ic" "waic" "loo"
+##  - attr(*, "yhash")= chr "1a471e77d65d7aa4da83df3672e7305b2621b59a"
 ```
 
 We can index the point estimate for model `b6.11`'s WAIC as `w.b6.11$estimates["waic", "Estimate"]` and the standard error as `w.b6.11$estimates["waic", "SE"]`.
@@ -638,7 +637,7 @@ w.b6.11$estimates["waic", "Estimate"]
 ```
 
 ```
-## [1] -8.640175
+## [1] -8.685298
 ```
 
 ```r
@@ -646,7 +645,7 @@ w.b6.11$estimates["waic", "SE"]
 ```
 
 ```
-## [1] 3.689496
+## [1] 3.742184
 ```
 
 Alternatively, you could do `w.b6.11$estimates[3, 1]` and `w.b6.11$estimates[3, 2]`.
@@ -688,7 +687,7 @@ LOO(b6.11)
 ##          Estimate  SE
 ## elpd_loo      4.3 1.9
 ## p_loo         1.4 0.3
-## looic        -8.6 3.7
+## looic        -8.6 3.8
 ## ------
 ## Monte Carlo SE of elpd_loo is 0.0.
 ## 
@@ -707,7 +706,7 @@ loo(b6.11)
 ##          Estimate  SE
 ## elpd_loo      4.3 1.9
 ## p_loo         1.4 0.3
-## looic        -8.6 3.7
+## looic        -8.6 3.8
 ## ------
 ## Monte Carlo SE of elpd_loo is 0.0.
 ## 
@@ -731,11 +730,11 @@ tidy(b6.14)
 
 ```
 ##          term     estimate  std.error       lower        upper
-## 1 b_Intercept  -1.06972723 0.59410620  -2.0314058  -0.08565205
-## 2 b_neocortex   2.76855714 0.92158083   1.2614717   4.24874470
-## 3   b_logmass  -0.09584749 0.02824901  -0.1429289  -0.04967985
-## 4       sigma   0.13910517 0.03006200   0.1002100   0.19341450
-## 5        lp__ -19.17534178 1.66038200 -22.3662856 -17.28467262
+## 1 b_Intercept  -1.08367123 0.57839191  -2.0309003  -0.16663505
+## 2 b_neocortex   2.78986386 0.89796245   1.3524915   4.25622063
+## 3   b_logmass  -0.09634916 0.02742385  -0.1411516  -0.05199341
+## 4       sigma   0.13985341 0.02978890   0.1006489   0.19424366
+## 5        lp__ -19.17846922 1.59870612 -22.2970964 -17.28453239
 ```
 
 Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a `rbind()` and a little indexing, we can save the summaries for all four models in a single tibble.
@@ -757,12 +756,12 @@ head(my_coef_tab)
 
 ```
 ##   model        term  estimate  std.error      lower     upper
-## 1 b6.11 b_Intercept 0.6582530 0.04675229  0.5821289 0.7357594
-## 2 b6.11       sigma 0.1894174 0.03822525  0.1388652 0.2568818
-## 3 b6.12 b_Intercept 0.3500599 0.54150051 -0.5416017 1.2516576
-## 4 b6.12 b_neocortex 0.4549890 0.79846163 -0.8580444 1.7646954
-## 5 b6.12       sigma 0.1925202 0.03981026  0.1405420 0.2663468
-## 6 b6.13 b_Intercept 0.7052856 0.05681952  0.6149343 0.7997907
+## 1 b6.11 b_Intercept 0.6571755 0.04675093  0.5818159 0.7354615
+## 2 b6.11       sigma 0.1883024 0.03745990  0.1386249 0.2571681
+## 3 b6.12 b_Intercept 0.3540292 0.56757047 -0.5743082 1.2858252
+## 4 b6.12 b_neocortex 0.4501496 0.83618722 -0.9385354 1.8193396
+## 5 b6.12       sigma 0.1940185 0.03995018  0.1418255 0.2651367
+## 6 b6.13 b_Intercept 0.7046361 0.05835391  0.6083749 0.8004557
 ```
 
 Just a little more work and we'll have a table analogous to the one McElreath produced with his `coef_tab()` function.
@@ -779,9 +778,9 @@ my_coef_tab %>%
 
 ```
 ##          term b6.11 b6.12 b6.13 b6.14
-## 1 b_Intercept  0.66  0.35  0.71 -1.07
+## 1 b_Intercept  0.66  0.35  0.70 -1.08
 ## 2   b_logmass    NA    NA -0.03 -0.10
-## 3 b_neocortex    NA  0.45    NA  2.77
+## 3 b_neocortex    NA  0.45    NA  2.79
 ## 4       sigma  0.19  0.19  0.18  0.14
 ```
 
@@ -899,10 +898,10 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
   
   ggplot(aes(x = neocortex, y = Estimate)) +
   theme_classic() +
-  geom_ribbon(aes(ymin = `2.5%ile`, ymax = `97.5%ile`), 
+  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5), 
               fill = "plum", alpha = 1/3) +
   geom_line(color = "plum2") +
-  geom_ribbon(data = ftd, aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+  geom_ribbon(data = ftd, aes(ymin = Q2.5, ymax = Q97.5),
               fill = "transparent", color = "plum3", linetype = 2) +
   geom_line(data = ftd,
               color = "plum3", linetype = 2) +
@@ -926,8 +925,8 @@ bayes_R2(b6.14) %>% round(digits = 3)
 ```
 
 ```
-##    Estimate Est.Error 2.5%ile 97.5%ile
-## R2    0.496     0.131   0.165    0.665
+##    Estimate Est.Error  Q2.5 Q97.5
+## R2      0.5     0.128 0.179 0.664
 ```
 
 With just a little data processing, you can get a table of each of models' $R^2$ `Estimate`.
@@ -949,7 +948,7 @@ rbind(bayes_R2(b6.11),
 ##   model r_square_posterior_mean
 ##   <chr>                   <dbl>
 ## 1 b6.11                  0     
-## 2 b6.12                  0.0700
+## 2 b6.12                  0.0800
 ## 3 b6.13                  0.150 
 ## 4 b6.14                  0.500
 ```
@@ -965,7 +964,7 @@ b6.13.R2 %>%
 ```
 
 ```
-##  num [1:4000, 1] 0.166 0.138 0.156 0.241 0.029 ...
+##  num [1:4000, 1] 0.156 0.127 0.266 0.177 0.26 ...
 ##  - attr(*, "dimnames")=List of 2
 ##   ..$ : NULL
 ##   ..$ : chr "R2"
@@ -1039,7 +1038,7 @@ Note. The analyses in this document were done with:
 * rmarkdown  1.9
 * tidyverse  1.2.1
 * ggrepel    0.7.0
-* brms       2.2.0
+* brms       2.3.1
 * rethinking 1.59
 * rstan      2.17.3
 * broom      0.4.3

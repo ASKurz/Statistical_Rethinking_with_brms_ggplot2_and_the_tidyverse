@@ -1,14 +1,14 @@
 ---
 title: "Ch. 8 Markov Chain Monte Carlo"
 author: "A Solomon Kurz"
-date: "2018-04-05"
+date: "2018-05-27"
 output:
   html_document:
     code_folding: show
     keep_md: TRUE
 ---
 
-## 8.1. Good King Markov and His island kingdom.
+## 8.1. Good King Markov and His island kingdom
 
 In this version of the code, we've added `set.seed()`, which helps make the exact results reproducible. If you're new to setting seeds, play around with different values.
 
@@ -153,10 +153,9 @@ print(b8.1)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
 ##    Data: dd (Number of observations: 170) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
 ## Intercept              9.22      0.14     8.96     9.50       2570 1.00
@@ -173,19 +172,16 @@ print(b8.1)
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
+If you look closely at the summary information at the top, you'll see that the `brms::brm()` function defaults to `chains = 4`. If you check the manual, you'll see it also defaults to `cores = 1`.
+
 ### 8.3.3. Sampling again, in parallel.
 
-Here we add `chains = 4, cores = 4`.
+Here we sample in parallel by adding `cores = 4`.
 
 
 ```r
-b8.1_4chains_4cores <-
-  brm(data = dd, family = gaussian,
-      log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
-      prior = c(set_prior("normal(0, 100)", class = "Intercept"),
-                set_prior("normal(0, 10)", class = "b"),
-                set_prior("cauchy(0, 2)", class = "sigma")),
-      chains = 4, cores = 4)
+b8.1_4chains_4cores <- update(b8.1, 
+                              cores = 4)
 ```
 
 This model sampled so fast that it really didn't matter if we sampled in parallel or not. It will for others.
@@ -200,20 +196,19 @@ print(b8.1_4chains_4cores)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
 ##    Data: dd (Number of observations: 170) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              9.22      0.14     8.95     9.49       3097 1.00
-## rugged                -0.20      0.08    -0.35    -0.05       2884 1.00
-## cont_africa           -1.95      0.23    -2.39    -1.50       2445 1.00
-## rugged:cont_africa     0.39      0.13     0.13     0.65       2262 1.00
+## Intercept              9.22      0.14     8.95     9.50       2532 1.00
+## rugged                -0.20      0.08    -0.36    -0.05       2590 1.00
+## cont_africa           -1.95      0.23    -2.41    -1.50       2337 1.00
+## rugged:cont_africa     0.39      0.14     0.13     0.66       2258 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.95      0.05     0.86     1.06       4000 1.00
+## sigma     0.95      0.05     0.85     1.06       3237 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -296,7 +291,7 @@ For more ideas on customizing a GGally pairs plot, go [here](http://ggobi.github
 
 ### 8.3.5. Using the samples.
 
-If you want information criteria as a part of your brms model summary, just add `loo = T` and/or `waic = T` in the `summary()` function. 
+Older versions of brms allowed users to include information criteria as a part of the model summary by adding `loo = T` and/or `waic = T` in the `summary()` function (e.g., `summary(b8.1, loo = T, waic = T)`. However, this is no longer the case: 
 
 
 ```r
@@ -308,10 +303,9 @@ summary(b8.1, loo = T, waic = T)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
 ##    Data: dd (Number of observations: 170) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = 469.15; WAIC = 469.02; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
 ## Intercept              9.22      0.14     8.96     9.50       2570 1.00
@@ -328,7 +322,46 @@ summary(b8.1, loo = T, waic = T)
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
-But beware: the information criteria haven’t taken long to estimate in the models we’ve fit thus far in the text. As your models become more complex and as your data get larger, the time their information criteria will take to compute will increase. So, if you have a complex multilevel model with a large data set, you might be better off computing the information criteria separately from the model summary.
+Although R didn't bark at us for adding `loo = T, waic = T`, they didn't do anything. Nowadays, if you want that information, you'll have to use the `waic()` and/or `loo()` functions, which you can save as objects as needed.
+
+
+```r
+waic(b8.1)
+```
+
+```
+## 
+## Computed from 4000 by 170 log-likelihood matrix
+## 
+##           Estimate   SE
+## elpd_waic   -234.5  7.4
+## p_waic         5.0  0.9
+## waic         469.0 14.8
+```
+
+```
+## Warning: 2 (1.2%) p_waic estimates greater than 0.4. We recommend trying
+## loo instead.
+```
+
+```r
+(l_b8.1 <- loo(b8.1))
+```
+
+```
+## 
+## Computed from 4000 by 170 log-likelihood matrix
+## 
+##          Estimate   SE
+## elpd_loo   -234.6  7.4
+## p_loo         5.0  0.9
+## looic       469.2 14.8
+## ------
+## Monte Carlo SE of elpd_loo is 0.0.
+## 
+## All Pareto k estimates are good (k < 0.5).
+## See help('pareto-k-diagnostic') for details.
+```
 
 ### 8.3.6. Checking the chain.
 
@@ -339,7 +372,7 @@ Using `plot()` for a `brm()` fit returns both density and trace lots for the par
 plot(b8.1)
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
 
 The bayesplot package allows a little more control. Here, we use [bayesplot's](https://cran.r-project.org/web/packages/bayesplot/index.html) `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects. There's a further complication. Recall how we made `post` (i.e., `post <- posterior_samples(b8.1)`). Our `post` data frame carries no information on chains. To retain that information, we'll need to add an `add_chain = T` argument to our `posterior_samples()` function.
 
@@ -358,7 +391,7 @@ mcmc_trace(post[, c(1:5, 7)], # We need to include column 7 because that contain
   theme(legend.position = c(.95, .2))
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 
 The bayesplot package offers a variety of diagnostic plots. Here we make autocorrelation plots for all model parameters, one for each HMC chain.
 
@@ -371,7 +404,7 @@ mcmc_acf(post,
   theme_ipsum()
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
 
 That's just what we like to see--nice L-shaped autocorrelation plots. Those are the kinds of shapes you'd expect when you have reasonably large effective samples. Anyway...
 
@@ -385,7 +418,7 @@ stancode(b8.1)
 ```
 
 ```
-## // generated with brms 2.1.9
+## // generated with brms 2.3.1
 ## functions { 
 ## } 
 ## data { 
@@ -466,7 +499,7 @@ mcmc_trace(post[, c(1:2, 4)],
         legend.direction = "horizontal")
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 Let's peek at the summary.
 
@@ -476,7 +509,7 @@ print(b8.2)
 ```
 
 ```
-## Warning: There were 411 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help.
+## Warning: There were 1285 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help.
 ## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 ```
 
@@ -485,19 +518,18 @@ print(b8.2)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 1 
 ##    Data: list(y = c(-1, 1)) (Number of observations: 2) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
-##              Estimate    Est.Error      l-95% CI     u-95% CI Eff.Sample
-## Intercept -9381278.35 264223729.30 -747487598.08 536966887.33         47
+##               Estimate    Est.Error     l-95% CI      u-95% CI Eff.Sample
+## Intercept 103583182.95 372634423.73 -47596907.77 1233403820.81         35
 ##           Rhat
-## Intercept 1.03
+## Intercept 1.05
 ## 
 ## Family Specific Parameters: 
 ##           Estimate     Est.Error l-95% CI      u-95% CI Eff.Sample Rhat
-## sigma 348895812.70 1049117124.27 75477.37 3613144907.13         47 1.04
+## sigma 318449913.44 1056592781.72  3318.58 3458739759.26         40 1.04
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -529,17 +561,16 @@ print(b8.3)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 1 
 ##    Data: list(y = c(-1, 1)) (Number of observations: 2) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.03      1.71    -3.07     3.22       1057 1.00
+## Intercept    -0.09      1.56    -3.57     3.01       1036 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.99      2.20     0.60     6.66       1069 1.00
+## sigma     1.95      2.02     0.59     6.25       1451 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -562,7 +593,7 @@ mcmc_trace(post[, c(1:2, 4)],
         legend.direction = "horizontal")
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 Our version of Figure 8.6.a.
 
@@ -581,7 +612,7 @@ post %>%
   theme_ipsum()
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
   
 And our version of Figure 8.6.b.
   
@@ -601,7 +632,59 @@ post %>%
   theme_ipsum()
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+
+#### Overthinking: Cauchy distribution
+
+Here's our version of the simulation. Note our use of the `cummean()` function.
+
+
+```r
+N <- 1e4
+
+set.seed(1e4)
+tibble(y = rcauchy(N, 0, 5),
+       mu = cummean(y),
+       index = 1:N) %>% 
+  
+  ggplot(aes(x = index, y = mu)) +
+  geom_line() +
+  theme_ipsum()
+```
+
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+
+The whole thing is quite remarkible. Just for kicks, here we do it again, this time with eight simulations.
+
+
+```r
+N <- 1e4
+
+set.seed(1)
+tibble(a = rcauchy(N, 0, 5),
+       b = rcauchy(N, 0, 5),
+       c = rcauchy(N, 0, 5),
+       d = rcauchy(N, 0, 5),
+       e = rcauchy(N, 0, 5),
+       f = rcauchy(N, 0, 5),
+       g = rcauchy(N, 0, 5),
+       h = rcauchy(N, 0, 5)) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  mutate(mu = cummean(value)) %>% 
+  ungroup() %>% 
+  mutate(index = rep(1:N, times = 8)) %>% 
+
+  ggplot(aes(x = index, y = mu)) +
+  geom_line(aes(color = key)) +
+  scale_color_manual(values = ipsum_pal()(8)) +
+  scale_x_continuous(breaks = c(0, 5000, 10000)) +
+  theme_ipsum() +
+  theme(legend.position = "none") +
+  facet_wrap(~key, ncol = 4, scales = "free")
+```
+
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 ### 8.4.4. Non-identifiable parameters.
 
@@ -646,10 +729,9 @@ print(b8.4)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 0 + intercept1 + intercept2 
 ##    Data: list(y = y, intercept1 = 1, intercept2 = 1) (Number of observations: 100) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
 ## intercept1  1116.48    944.73  -762.62  2439.62          2 2.50
@@ -691,10 +773,9 @@ print(b8.5)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 0 + intercept1 + intercept2 
 ##    Data: list(y = y, intercept1 = 1, intercept2 = 1) (Number of observations: 100) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
 ## intercept1     0.20      7.11   -14.03    14.12       1192 1.00
@@ -786,11 +867,9 @@ We're finally ready to use `multiplot()` to make our version of Figure 8.7.
 multiplot(left_column, right_column, cols = 2)
 ```
 
-![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](Ch._08_Markov_Chain_Monte_Carlo_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Dan Simpson's post on Gelman's blog](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/) and their [corresponding paper with Michael Betancourt](https://arxiv.org/abs/1708.07487).
-
-
 
 Note. The analyses in this document were done with:
 
@@ -798,13 +877,15 @@ Note. The analyses in this document were done with:
 * RStudio     1.1.442
 * rmarkdown   1.9
 * rethinking  1.59
-* brms        2.1.9
+* brms        2.3.1
 * rstan       2.17.3
 * tidyverse   1.2.1
-* hrbrthemes  0.1.0
+* hrbrthemes  0.5.0
 * GGally      1.3.0
-* bayesplot   1.4.0
+* bayesplot   1.5.0
 
 ## Reference
+
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
+
 

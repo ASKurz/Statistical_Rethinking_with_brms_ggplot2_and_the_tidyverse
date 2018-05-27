@@ -1,7 +1,7 @@
 ---
 title: "Ch. 4 Linear Models"
 author: "A Solomon Kurz"
-date: "2018-03-27"
+date: "2018-05-27"
 output:
   html_document:
     code_folding: show
@@ -252,7 +252,7 @@ d2 <-
 
 ### 4.3.2. The model. 
 
-Here's the shape of the prior for $\mu$ in *N*(178, 20)
+Here's the shape of the prior for $\mu$ in $N$(178, 20)
 
 
 ```r
@@ -322,27 +322,13 @@ b4.1 <-
 ## sigma ~ uniform(0, 50)
 ```
 
-```
-## Warning: There were 372 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
-## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-```
-
-```
-## Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
-## http://mc-stan.org/misc/warnings.html#bfmi-low
-```
-
-```
-## Warning: Examine the pairs() plot to diagnose sampling problems
-```
-
 Note the warning message. [Stan](http://mc-stan.org), which is the [engine under the hood of our brms vehicle](https://github.com/paul-buerkner/brms), gets concerned when you use priors with hard bounds on parameters for which we wouldn't expect hard bounds. There's no reason to expect a hard upper bound on $\sigma$, so Stan barks. Beware of unneeded hard bounds.
 
 McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covers in chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
 
 
 ```r
-b4.1halfCaucy <- 
+b4.1_half_caucy <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
       prior = c(set_prior("normal(178, 20)", class = "Intercept"),
@@ -354,7 +340,7 @@ This leads to an important point. After running an HMC model, it's a good idea t
 
 
 ```r
-plot(b4.1halfCaucy)
+plot(b4.1_half_caucy)
 ```
 
 ![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
@@ -365,7 +351,7 @@ Here's how to get the model summary, the brms equivalent to rethinking's `precis
 
 
 ```r
-print(b4.1halfCaucy)
+print(b4.1_half_caucy)
 ```
 
 ```
@@ -373,17 +359,16 @@ print(b4.1halfCaucy)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 
 ##    Data: d2 (Number of observations: 352) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.61      0.42   153.80   155.40       3544 1.00
+## Intercept   154.62      0.41   153.81   155.43       3085 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     7.75      0.30     7.19     8.38       3023 1.00
+## sigma     7.74      0.29     7.20     8.32       3480 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -396,7 +381,7 @@ You can also get a [Stan-like summary](https://cran.r-project.org/web/packages/r
 
 
 ```r
-b4.1halfCaucy$fit
+b4.1_half_caucy$fit
 ```
 
 ```
@@ -405,11 +390,11 @@ b4.1halfCaucy$fit
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5% n_eff Rhat
-## b_Intercept   154.61    0.01 0.42   153.80   154.32   154.62   154.89   155.40  3544    1
-## sigma           7.75    0.01 0.30     7.19     7.54     7.73     7.94     8.38  3023    1
-## lp__        -1227.55    0.02 1.02 -1230.22 -1227.95 -1227.24 -1226.81 -1226.54  1742    1
+## b_Intercept   154.62    0.01 0.41   153.81   154.34   154.62   154.89   155.43  3085    1
+## sigma           7.74    0.00 0.29     7.20     7.54     7.73     7.94     8.32  3480    1
+## lp__        -1227.51    0.02 0.99 -1230.20 -1227.91 -1227.20 -1226.79 -1226.54  1860    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue Mar 27 19:08:04 2018.
+## Samples were drawn using NUTS(diag_e) at Sun May 27 11:53:43 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -419,7 +404,7 @@ Whereas rethinking defaults to 89% intervals, using `print()` or `summary()` wit
 
 
 ```r
-summary(b4.1halfCaucy, prob = .89)
+summary(b4.1_half_caucy, prob = .89)
 ```
 
 ```
@@ -427,17 +412,16 @@ summary(b4.1halfCaucy, prob = .89)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 
 ##    Data: d2 (Number of observations: 352) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## Intercept   154.61      0.42   153.95   155.27       3544 1.00
+## Intercept   154.62      0.41   153.96   155.28       3085 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-89% CI u-89% CI Eff.Sample Rhat
-## sigma     7.75      0.30     7.27     8.25       3023 1.00
+## sigma     7.74      0.29     7.29     8.22       3480 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -460,8 +444,11 @@ plot(b4.2)
 
 ![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
 
+I had to increase the warmup due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. Here's the model summary.
+
+
 ```r
-print(b4.2)
+summary(b4.2)
 ```
 
 ```
@@ -469,24 +456,21 @@ print(b4.2)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 
 ##    Data: d2 (Number of observations: 352) 
-## Samples: 4 chains, each with iter = 3000; warmup = 2000; thin = 1; 
+## Samples: 4 chains, each with iter = 3000; warmup = 2000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   177.87      0.10   177.67   178.06       3131 1.00
+## Intercept   177.86      0.10   177.66   178.06       3151 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    24.62      0.96    22.84    26.61       3187 1.00
+## sigma    24.61      0.94    22.88    26.60       3150 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
-
-I had to increase the warmup due to convergence issues. After doing so, everything looks to be on the up and up.
 
 ### 4.3.6. Sampling from a ~~`map()`~~ `brm()` fit.
 
@@ -494,12 +478,12 @@ brms doesn't seem to have a convenience function that works the way `vcov()` doe
 
 
 ```r
-vcov(b4.1halfCaucy)
+vcov(b4.1_half_caucy)
 ```
 
 ```
 ##           Intercept
-## Intercept 0.1737822
+## Intercept 0.1714606
 ```
 
 This only returns the first element in the matrix it did for rethinking. 
@@ -508,14 +492,14 @@ However, if you really wanted this information, you could get it after putting t
 
 
 ```r
-post <- posterior_samples(b4.1halfCaucy)
+post <- posterior_samples(b4.1_half_caucy)
 cov(post[, 1:2])
 ```
 
 ```
-##              b_Intercept        sigma
-## b_Intercept  0.173782231 -0.001064611
-## sigma       -0.001064611  0.089245076
+##               b_Intercept         sigma
+## b_Intercept  0.1714606089 -0.0003195014
+## sigma       -0.0003195014  0.0838245234
 ```
 
 That was "(1) a vector of variances for the parameters and (2) a correlation matrix" for them (p. 90). Here are just the variances (i.e., the diagonal elements) and the correlation matrix.
@@ -529,7 +513,7 @@ post[, 1:2] %>%
 
 ```
 ## b_Intercept       sigma 
-##  0.17378223  0.08924508
+##  0.17146061  0.08382452
 ```
 
 ```r
@@ -539,12 +523,12 @@ select(b_Intercept, sigma) %>%
 ```
 
 ```
-##             b_Intercept       sigma
-## b_Intercept  1.00000000 -0.00854862
-## sigma       -0.00854862  1.00000000
+##              b_Intercept        sigma
+## b_Intercept  1.000000000 -0.002665048
+## sigma       -0.002665048  1.000000000
 ```
 
-With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()`. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 
 ```r
@@ -553,12 +537,12 @@ head(post)
 
 ```
 ##   b_Intercept    sigma      lp__
-## 1    154.3990 7.545208 -1226.840
-## 2    154.7699 7.830834 -1226.663
-## 3    154.3890 8.368070 -1228.808
-## 4    155.1478 7.411853 -1228.062
-## 5    155.4009 7.680373 -1228.409
-## 6    154.5520 7.361897 -1227.352
+## 1    154.2608 8.288238 -1228.522
+## 2    154.5861 7.450983 -1226.975
+## 3    154.2174 8.042576 -1227.505
+## 4    154.9369 7.733038 -1226.838
+## 5    154.9466 7.709303 -1226.859
+## 6    155.0725 7.705251 -1227.161
 ```
 
 Notice how our data frame, `post`, includes a third vector, `lp__`, which is the log posterior. See the [brms manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
@@ -572,12 +556,12 @@ summary(post[, 1:2])
 
 ```
 ##   b_Intercept        sigma      
-##  Min.   :152.9   Min.   :6.801  
-##  1st Qu.:154.3   1st Qu.:7.542  
-##  Median :154.6   Median :7.735  
-##  Mean   :154.6   Mean   :7.745  
-##  3rd Qu.:154.9   3rd Qu.:7.940  
-##  Max.   :156.0   Max.   :8.905
+##  Min.   :152.9   Min.   :6.812  
+##  1st Qu.:154.3   1st Qu.:7.535  
+##  Median :154.6   Median :7.731  
+##  Mean   :154.6   Mean   :7.742  
+##  3rd Qu.:154.9   3rd Qu.:7.938  
+##  Max.   :156.1   Max.   :8.744
 ```
 
 Here's one option using the transpose of a `quantile()` call nested within `apply()`, which is a very general function you can learn more about [here](https://www.datacamp.com/community/tutorials/r-tutorial-apply-family#gs.f7fyw2s) or [here](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/).
@@ -589,8 +573,8 @@ t(apply(post[, 1:2], 2, quantile, probs = c(.5, .025, .75)))
 
 ```
 ##                    50%       2.5%        75%
-## b_Intercept 154.615023 153.801419 154.892995
-## sigma         7.734768   7.185759   7.940413
+## b_Intercept 154.619467 153.805172 154.889963
+## sigma         7.731388   7.200514   7.937809
 ```
 
 The base R code is compact, but somewhat opaque. Here's how to do something similar with more explicit tidyverse code.
@@ -612,11 +596,31 @@ post %>%
 ## # A tibble: 2 x 5
 ##   parameter     mean    SD `2.5_percentile` `97.5_percentile`
 ##   <chr>        <dbl> <dbl>            <dbl>             <dbl>
-## 1 b_Intercept 155    0.420           154               155   
-## 2 sigma         7.75 0.300             7.19              8.38
+## 1 b_Intercept 155    0.410           154               155   
+## 2 sigma         7.74 0.290             7.20              8.32
 ```
 
-With respect to McElreath's "Overthinking: Getting $\sigma$ right.", there's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
+And you can always get pretty similar information by just putting the `brm()` fit object into `posterior_summary()`.
+
+
+```r
+posterior_summary(b4.1_half_caucy)
+```
+
+```
+##                 Estimate Est.Error         Q2.5        Q97.5
+## b_Intercept   154.618098 0.4140780   153.805172   155.433794
+## sigma           7.742355 0.2895247     7.200514     8.318556
+## lp__        -1227.512274 0.9881927 -1230.203184 -1226.539661
+```
+
+#### Overthinking: Under the hood with multivariate sampling.
+
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath covers all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
+
+#### Overthinking: Getting $\sigma$ right.
+
+There's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
 
 
 ```r
@@ -628,7 +632,7 @@ ggplot(data = post,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 See? HMC handled the mild skew just fine. 
 
@@ -645,7 +649,7 @@ ggplot(data = d2,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 ### 4.4.2. Fitting the model.
 
@@ -662,7 +666,7 @@ b4.3 <-
 plot(b4.3)
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 ```r
 print(b4.3)
@@ -673,18 +677,17 @@ print(b4.3)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 + weight 
 ##    Data: d2 (Number of observations: 352) 
-## Samples: 4 chains, each with iter = 41000; warmup = 40000; thin = 1; 
+## Samples: 4 chains, each with iter = 41000; warmup = 40000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   113.82      1.91   109.94   117.40        690 1.00
-## weight        0.91      0.04     0.83     0.99        678 1.00
+## Intercept   113.85      1.87   110.20   117.49        632 1.01
+## weight        0.91      0.04     0.83     0.99        618 1.01
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.11      0.19     4.74     5.51       2013 1.00
+## sigma     5.11      0.19     4.75     5.49       2466 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -705,9 +708,9 @@ posterior_samples(b4.3) %>%
 
 ```
 ##             b_Intercept b_weight sigma
-## b_Intercept        1.00    -0.99  0.01
-## b_weight          -0.99     1.00 -0.02
-## sigma              0.01    -0.02  1.00
+## b_Intercept        1.00    -0.99     0
+## b_weight          -0.99     1.00     0
+## sigma              0.00     0.00     1
 ```
 
 With centering, we can reduce the correlations among the parameters.
@@ -736,7 +739,7 @@ b4.4 <-
 plot(b4.4)
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 ```r
 print(b4.4)
@@ -747,18 +750,17 @@ print(b4.4)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 + weight.c 
 ##    Data: d2 (Number of observations: 352) 
-## Samples: 4 chains, each with iter = 41000; warmup = 40000; thin = 1; 
+## Samples: 4 chains, each with iter = 41000; warmup = 40000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   154.60      0.27   154.08   155.12       4000 1.00
-## weight.c      0.91      0.04     0.82     0.99        821 1.00
+## Intercept   154.60      0.27   154.08   155.13       3632 1.00
+## weight.c      0.90      0.04     0.82     0.99        674 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.11      0.19     4.76     5.50       1945 1.00
+## sigma     5.11      0.19     4.74     5.51       2641 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -777,9 +779,9 @@ posterior_samples(b4.4) %>%
 
 ```
 ##             b_Intercept b_weight.c sigma
-## b_Intercept        1.00      -0.02  0.01
-## b_weight.c        -0.02       1.00  0.00
-## sigma              0.01       0.00  1.00
+## b_Intercept        1.00       0.01  0.01
+## b_weight.c         0.01       1.00  0.01
+## sigma              0.01       0.01  1.00
 ```
 
 See? Now all the correlations are quite low. Also, if you prefer a visual approach, you might do `pairs(b4.4)`.
@@ -799,7 +801,7 @@ d2 %>%
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
 
 ```r
@@ -813,11 +815,11 @@ post %>%
 ## # A tibble: 5 x 4
 ##   b_Intercept b_weight sigma  lp__
 ##         <dbl>    <dbl> <dbl> <dbl>
-## 1         114    0.916  5.49 -1084
-## 2         112    0.947  5.43 -1084
-## 3         110    0.972  5.52 -1087
-## 4         113    0.935  5.57 -1086
-## 5         112    0.935  5.18 -1084
+## 1         113    0.934  5.31 -1083
+## 2         113    0.927  5.18 -1082
+## 3         113    0.924  5.44 -1084
+## 4         114    0.901  5.37 -1083
+## 5         115    0.878  4.80 -1084
 ```
 
 Here are the four models leading up to McElreaths Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
@@ -1009,7 +1011,7 @@ We're finally ready to use `multiplot()` to make Figure 4.5.
 multiplot(p10, p150, p50, p352, cols = 2)
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 #### 4.4.3.4. Plotting regression intervals and contours
 
@@ -1033,7 +1035,7 @@ mu_at_50 %>%
   labs(x = expression(paste(mu, " at 50")))
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 brms doesn't appear to have a HPDI convenience function at this time. However, you can get them with the help of the [HDInterval package](https://cran.r-project.org/web/packages/HDInterval/index.html).
 
@@ -1046,8 +1048,8 @@ hdi(mu_at_50[,1], credMass = .89)
 
 ```
 ##       mu_at_50
-## lower 158.5807
-## upper 159.6838
+## lower 158.5373
+## upper 159.6232
 ## attr(,"credMass")
 ## [1] 0.89
 ```
@@ -1058,13 +1060,13 @@ hdi(mu_at_50[,1], credMass = .95)
 
 ```
 ##       mu_at_50
-## lower 158.4593
-## upper 159.8230
+## lower 158.4735
+## upper 159.7856
 ## attr(,"credMass")
 ## [1] 0.95
 ```
 
-Bonus: If you wanted to express those sweet 95% HPDIs on your density plot, you might do it like this.
+**Bonus**: If you wanted to express those sweet 95% HPDIs on your density plot, you might do it like this.
 
 
 ```r
@@ -1078,7 +1080,7 @@ mu_at_50 %>%
   labs(x = expression(paste(mu, " at 50")))
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 In brms, you would use `fitted()` to do what McElreath accomplished with `link()`.
 
@@ -1090,10 +1092,10 @@ str(mu)
 ```
 
 ```
-##  num [1:4000, 1:352] 157 157 157 158 157 ...
+##  num [1:4000, 1:352] 157 157 157 157 157 ...
 ```
 
-When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and *n* = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
+When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
 
 Much like rethinking's `link()`, `fitted()` can accommodate custom predictor values with its `newdata` argument.
 
@@ -1149,7 +1151,7 @@ d2 %>%
              color = "navyblue", alpha = .1)
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 ```r
 # or prettied up a bit
@@ -1161,7 +1163,7 @@ d2 %>%
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-53-2.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-55-2.png)<!-- -->
 
 With `fitted()`, it's quite easy to plot a regression line and its intervals. Just omit the `summary = T` argument.
 
@@ -1178,14 +1180,14 @@ head(muSummary)
 
 ```
 ## # A tibble: 6 x 5
-##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
-##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      136     0.884       135        138   25.0
-## 2      137     0.845       136        139   26.0
-## 3      138     0.805       137        140   27.0
-## 4      139     0.766       138        141   28.0
-## 5      140     0.727       139        141   29.0
-## 6      141     0.688       140        142   30.0
+##   Estimate Est.Error  Q2.5 Q97.5 weight
+##      <dbl>     <dbl> <dbl> <dbl>  <dbl>
+## 1      136     0.866   135   138   25.0
+## 2      137     0.827   136   139   26.0
+## 3      138     0.788   137   140   27.0
+## 4      139     0.750   138   141   28.0
+## 5      140     0.712   139   142   29.0
+## 6      141     0.674   140   142   30.0
 ```
 
 Here it is, our analogue to Figure 4.7.b:
@@ -1195,17 +1197,22 @@ Here it is, our analogue to Figure 4.7.b:
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
   geom_ribbon(data = muSummary, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = muSummary, aes(y = Estimate)) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
+  coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
-And if you wanted to use intervals other than the defaullt 95% ones, you'd enter a `probs` argument like this: `fitted(b4.3, newdata = weight.seq, probs = c(.25, .75))`.
+And if you wanted to use intervals other than the default 95% ones, you'd enter a `probs` argument like this: `fitted(b4.3, newdata = weight.seq, probs = c(.25, .75))`. The resulting third and fourth vectors from the `fitted()` object would be named `Q25` and `Q75` instead of the default `Q2.5` and `Q97.5`. The [`Q` prefix](https://github.com/paul-buerkner/brms/issues/425) stands for quantile.
+
+##### Overthinking: How ~~link~~ `fitted()` works.
+
+Similar to `rethinking::link()`, `brms::fitted()` uses the formula from your model to compute the model expectations for a given set of predictor values. I use it a lot in this project. If you follow along, you'll get a good handle on it.
 
 #### 4.4.3.5. Prediction intervals.
 
@@ -1234,14 +1241,14 @@ pred.height %>%
 
 ```
 ## # A tibble: 6 x 5
-##   Estimate Est.Error `2.5%ile` `97.5%ile` weight
-##      <dbl>     <dbl>     <dbl>      <dbl>  <dbl>
-## 1      136      5.20       127        146   25.0
-## 2      137      5.21       127        148   26.0
-## 3      138      5.19       128        148   27.0
-## 4      139      5.10       129        149   28.0
-## 5      140      5.18       130        150   29.0
-## 6      141      5.26       131        151   30.0
+##   Estimate Est.Error  Q2.5 Q97.5 weight
+##      <dbl>     <dbl> <dbl> <dbl>  <dbl>
+## 1      136      5.15   127   146   25.0
+## 2      137      5.22   127   147   26.0
+## 3      138      5.18   128   148   27.0
+## 4      139      5.12   129   149   28.0
+## 5      140      5.18   130   150   29.0
+## 6      141      5.26   131   151   30.0
 ```
 
 This time the summary information in our data frame is for, as McElreath puts is, "simulated heights, not distributions of plausible average height, $\mu$" (p. 108). Another way of saying that is that these simulations are the joint consequence of both $\mu$ and $\sigma$, unlike the results of `fitted()`, which only reflect $\mu$. Our plot for Figure 4.8:
@@ -1251,18 +1258,19 @@ This time the summary information in our data frame is for, as McElreath puts is
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
   geom_ribbon(data = pred.height, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = muSummary, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = muSummary, aes(y = Estimate)) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
+  coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
 
 ## 4.5. Polynomial regression
 
@@ -1318,19 +1326,18 @@ print(b4.5)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: height ~ 1 + weight.s + I(weight.s^2) 
 ##    Data: d (Number of observations: 544) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##             Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     146.68      0.39   145.91   147.43       3690 1.00
-## weight.s       21.39      0.30    20.81    21.99       3349 1.00
-## Iweight.sE2    -8.42      0.29    -8.97    -7.86       3597 1.00
+## Intercept     146.67      0.38   145.90   147.42       3829 1.00
+## weight.s       21.41      0.29    20.85    21.97       3604 1.00
+## Iweight.sE2    -8.41      0.28    -8.96    -7.87       3329 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     5.77      0.17     5.44     6.12       4000 1.00
+## sigma     5.77      0.18     5.45     6.13       3936 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1363,10 +1370,10 @@ The code for our version of Figure 4.9.a. You'll notice how little the code chan
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = predquad, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitdquad, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitdquad, 
             aes(y = Estimate), size = 1/4) +
@@ -1375,7 +1382,7 @@ ggplot(data = d,
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-64-1.png)<!-- -->
 
 The cubic model:
 
@@ -1422,10 +1429,10 @@ pred_cub <-
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_cub, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_cub, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_cub, 
             aes(y = Estimate), 
@@ -1435,7 +1442,7 @@ ggplot(data = d,
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-65-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-67-1.png)<!-- -->
 
 And here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.a., the linear model.
 
@@ -1456,10 +1463,10 @@ pred_line <-
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_line, 
             aes(y = Estimate), size = 1/4) +
@@ -1468,7 +1475,7 @@ ggplot(data = d,
         panel.grid = element_blank())
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-66-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-68-1.png)<!-- -->
 
 ##### Overthinking: Converting back to natural scale.
 
@@ -1481,10 +1488,10 @@ at <- c(-2, -1, 0, 1, 2)
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_line, 
             aes(y = Estimate), size = 1/4) +
@@ -1496,16 +1503,16 @@ ggplot(data = d,
                      labels = round(at*sd(d$weight) + mean(d$weight), 1))
 ```
 
-![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-67-1.png)<!-- -->
+![](Ch._04_Linear_Models_files/figure-html/unnamed-chunk-69-1.png)<!-- -->
 
 Note. The analyses in this document were done with:
 
-* R           3.4.3
+* R           3.4.4
 * RStudio     1.1.442
 * rmarkdown   1.9
 * tidyverse   1.2.1 
 * rethinking  1.59
-* brms        2.1.2
+* brms        2.3.1
 * rstan       2.17.3
 * HDInterval  0.1.3
 

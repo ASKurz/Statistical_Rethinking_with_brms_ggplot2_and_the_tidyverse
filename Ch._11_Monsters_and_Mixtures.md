@@ -1,7 +1,7 @@
 ---
 title: "Ch. 11 Monsters and Mixtures"
 author: "A Solomon Kurz"
-date: "2018-04-15"
+date: "2018-05-26"
 output:
   html_document:
     code_folding: show
@@ -231,14 +231,13 @@ print(b11.1)
 ##   Links: mu = logit; disc = identity 
 ## Formula: response ~ 1 
 ##    Data: d (Number of observations: 9930) 
-## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 2000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept[1]    -1.92      0.03    -1.98    -1.86       1248 1.00
-## Intercept[2]    -1.27      0.02    -1.32    -1.22       1869 1.00
+## Intercept[1]    -1.92      0.03    -1.98    -1.86       1444 1.00
+## Intercept[2]    -1.27      0.02    -1.31    -1.22       2000 1.00
 ## Intercept[3]    -0.72      0.02    -0.76    -0.68       2000 1.00
 ## Intercept[4]     0.25      0.02     0.21     0.29       2000 1.00
 ## Intercept[5]     0.89      0.02     0.85     0.93       2000 1.00
@@ -263,13 +262,13 @@ b11.1 %>%
 ```
 
 ```
-##               Estimate Est.Error   2.5%ile  97.5%ile
-## Intercept[1] 0.1281647 0.5074149 0.1217657 0.1350574
-## Intercept[2] 0.2197224 0.5059315 0.2116128 0.2280041
-## Intercept[3] 0.3275554 0.5054189 0.3182522 0.3370875
-## Intercept[4] 0.5617186 0.5051156 0.5516231 0.5713322
-## Intercept[5] 0.7091492 0.5055973 0.7001981 0.7180225
-## Intercept[6] 0.8546274 0.5071400 0.8477988 0.8614373
+##               Estimate Est.Error      Q2.5     Q97.5
+## Intercept[1] 0.1282137 0.5075107 0.1216275 0.1348627
+## Intercept[2] 0.2197793 0.5060882 0.2117884 0.2280184
+## Intercept[3] 0.3276794 0.5053145 0.3183652 0.3369812
+## Intercept[4] 0.5616002 0.5049915 0.5518304 0.5713597
+## Intercept[5] 0.7089208 0.5055444 0.7002244 0.7178024
+## Intercept[6] 0.8545542 0.5072713 0.8475065 0.8616319
 ```
 
 ### 11.1.3. Adding predictor variables.
@@ -306,8 +305,8 @@ The `dordlogit()` function works like this.
 ```
 
 ```
-## [1] 0.12816469 0.09155771 0.10783298 0.23416324 0.14743055 0.14547824
-## [7] 0.14537257
+## [1] 0.12821375 0.09156552 0.10790009 0.23392089 0.14732055 0.14563344
+## [7] 0.14544577
 ```
 
 Note the slight difference in how we used `dordlogit()` with a `brm()` fit summarized by `fixef()` than the way McElreath did with a `map2stan()` fit summarized by `coef()`. McElreath just put `coef(m11.1)` into `dordlogit()`. We, however, more specifically placed `fixef(b11.1)[, 1]` into the function. With the `[, 1]` part, we specified that we were working with the posterior means (i.e., `Estimate`) and neglecting the other summaries (i.e., the posterior *SD*s and 95% intervals). If you forget to do this, chaos ensues.
@@ -320,7 +319,7 @@ sum(pk*(1:7))
 ```
 
 ```
-## [1] 4.199062
+## [1] 4.199252
 ```
  
 I found that a bit abstract. Here's the thing in a more elaborate tibble format.
@@ -341,10 +340,10 @@ I found that a bit abstract. Here's the thing in a more elaborate tibble format.
 ##                       <dbl>        <int>         <dbl>
 ## 1                    0.128             1         0.128
 ## 2                    0.0916            2         0.183
-## 3                    0.108             3         0.323
-## 4                    0.234             4         0.937
+## 3                    0.108             3         0.324
+## 4                    0.234             4         0.936
 ## 5                    0.147             5         0.737
-## 6                    0.145             6         0.873
+## 6                    0.146             6         0.874
 ## 7                    0.145             7         1.02
 ```
 
@@ -380,17 +379,16 @@ brm(data = d, family = gaussian,
 ##   Links: mu = identity; sigma = identity 
 ## Formula: response ~ 1 
 ##    Data: d (Number of observations: 9930) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     4.20      0.02     4.16     4.24       2989 1.00
+## Intercept     4.20      0.02     4.16     4.24       2771 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.91      0.01     1.88     1.93       3516 1.00
+## sigma     1.91      0.01     1.88     1.93       3141 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -410,8 +408,8 @@ Now we'll try it by subtracting .5 from each.
 ```
 
 ```
-## [1] 0.08186413 0.06401619 0.08218593 0.20929949 0.15921915 0.18439155
-## [7] 0.21902356
+## [1] 0.08189713 0.06402451 0.08224369 0.20908207 0.15907101 0.18455726
+## [7] 0.21912433
 ```
 
 ```r
@@ -420,7 +418,7 @@ sum(pk*(1:7))
 ```
 
 ```
-## [1] 4.729262
+## [1] 4.729574
 ```
 
 So the rule is we *subtract the linear model from each interecept*. Let's fit our multivariable models.
@@ -490,7 +488,7 @@ tidy(b11.1) %>% mutate(model = "b11.1") %>%
 ## # A tibble: 11 x 4
 ##    term                  b11.1   b11.2  b11.3
 ##    <chr>                 <dbl>   <dbl>  <dbl>
-##  1 b_Intercept[1]      - 1.92  - 2.84  -2.63 
+##  1 b_Intercept[1]      - 1.92  - 2.84  -2.64 
 ##  2 b_Intercept[2]      - 1.27  - 2.16  -1.94 
 ##  3 b_Intercept[3]      - 0.720 - 1.57  -1.34 
 ##  4 b_Intercept[4]        0.250 - 0.550 -0.310
@@ -500,7 +498,7 @@ tidy(b11.1) %>% mutate(model = "b11.1") %>%
 ##  8 b_intention          NA     - 0.720 -0.280
 ##  9 b_contact            NA     - 0.960 -0.330
 ## 10 b_action:intention   NA      NA     -0.450
-## 11 b_intention:contact  NA      NA     -1.28
+## 11 b_intention:contact  NA      NA     -1.27
 ```
 
 If you really wanted that last `nobs` row at the bottom, you could elaborate on this code: `b11.1$data %>% count()`. Also, if you want a proper `coeftab()` function for brms, McElreath's code lives [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r). Give it a whirl.
@@ -514,12 +512,12 @@ waic(b11.1, b11.2, b11.3)
 
 ```
 ##                   WAIC    SE
-## b11.1         37854.43 57.76
-## b11.2         37090.70 76.27
-## b11.3         36929.10 81.24
-## b11.1 - b11.2   763.73 55.98
-## b11.1 - b11.3   925.33 62.67
-## b11.2 - b11.3   161.60 25.76
+## b11.1         37854.03 57.66
+## b11.2         37089.61 76.30
+## b11.3         36929.59 81.28
+## b11.1 - b11.2   764.43 55.98
+## b11.1 - b11.3   924.44 62.68
+## b11.2 - b11.3   160.01 25.75
 ```
 
 McElreath made Figure 11.3 by extracting the samples of his `m11.3`, saving them as `post`, and working some hairy base R `plot()` code. We'll take a different route and use `brms::fitted()`. This will take substantial data wrangling, but hopefully it'll be instructive. Let's first take a look at the initial `fitted()` output for the beginnings of Figure 11.3.a.
@@ -544,20 +542,20 @@ fitted(b11.3,
 ```
 ## Observations: 100
 ## Variables: 14
-## $ `1.1` <dbl> 0.06607969, 0.06804450, 0.06313991, 0.06967209, 0.066911...
-## $ `2.1` <dbl> 0.08232286, 0.08457758, 0.08754097, 0.08444105, 0.084619...
-## $ `1.2` <dbl> 0.05919086, 0.05624270, 0.05816538, 0.05870517, 0.057521...
-## $ `2.2` <dbl> 0.07134662, 0.06767571, 0.07670318, 0.06909566, 0.070217...
-## $ `1.3` <dbl> 0.08418944, 0.08256804, 0.07784960, 0.07929351, 0.080028...
-## $ `2.3` <dbl> 0.09778866, 0.09588247, 0.09720693, 0.09048292, 0.094025...
-## $ `1.4` <dbl> 0.2217062, 0.2229208, 0.2094134, 0.2225237, 0.2173454, 0...
-## $ `2.4` <dbl> 0.2386027, 0.2400269, 0.2343633, 0.2377880, 0.2357903, 0...
-## $ `1.5` <dbl> 0.1718287, 0.1664320, 0.1660563, 0.1709790, 0.1662878, 0...
-## $ `2.5` <dbl> 0.1681413, 0.1632142, 0.1620720, 0.1680954, 0.1632987, 0...
-## $ `1.6` <dbl> 0.1886358, 0.1848620, 0.1992241, 0.1896900, 0.1940555, 0...
-## $ `2.6` <dbl> 0.1698829, 0.1672868, 0.1717873, 0.1733281, 0.1743754, 0...
-## $ `1.7` <dbl> 0.2083693, 0.2189299, 0.2261513, 0.2091366, 0.2178500, 0...
-## $ `2.7` <dbl> 0.1719150, 0.1813363, 0.1703263, 0.1767689, 0.1776729, 0...
+## $ `1.1` <dbl> 0.06943299, 0.06979785, 0.05948892, 0.07160179, 0.066474...
+## $ `2.1` <dbl> 0.09141910, 0.08655199, 0.08517116, 0.09179364, 0.087207...
+## $ `1.2` <dbl> 0.06087582, 0.05717843, 0.05482927, 0.05787884, 0.057459...
+## $ `2.2` <dbl> 0.07667035, 0.06861398, 0.07448176, 0.07133291, 0.072318...
+## $ `1.3` <dbl> 0.08464058, 0.07609670, 0.07709164, 0.07861610, 0.078541...
+## $ `2.3` <dbl> 0.10157157, 0.08827977, 0.09874423, 0.09303338, 0.094555...
+## $ `1.4` <dbl> 0.2123016, 0.2207743, 0.2157141, 0.2268426, 0.2102385, 0...
+## $ `2.4` <dbl> 0.2318206, 0.2381421, 0.2442757, 0.2460115, 0.2312167, 0...
+## $ `1.5` <dbl> 0.1642505, 0.1659488, 0.1679154, 0.1647787, 0.1702228, 0...
+## $ `2.5` <dbl> 0.1598376, 0.1632536, 0.1630718, 0.1603840, 0.1669132, 0...
+## $ `1.6` <dbl> 0.1872656, 0.1973835, 0.1980571, 0.1920082, 0.1921545, 0...
+## $ `2.6` <dbl> 0.1646749, 0.1788159, 0.1680049, 0.1702686, 0.1699732, 0...
+## $ `1.7` <dbl> 0.2212329, 0.2128204, 0.2269035, 0.2082737, 0.2249090, 0...
+## $ `2.7` <dbl> 0.1740058, 0.1763427, 0.1662504, 0.1671761, 0.1778154, 0...
 ```
 
 Hopefully by now it’s clear why we needed the `nd` tibble, which we made use of in the `newdata = nd` argument. Because we set `summary = F`, we get draws from the posterior instead of summaries. With `max_iter`, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by `brms::fitted()` default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two `intention` values the draw is based on (i.e., 1 stands for intention = 0, 2, stands for intention = 1). The numbers on the right of the decimals are the seven response options for `response`. For each posterior draw, you get one of those for each value of `intention`. Finally, it might not be immediately apparent, but the values are in the probability scale, just like `pk` on page 338.
@@ -936,17 +934,16 @@ print(b11.4)
 ##   Links: mu = log; zi = identity 
 ## Formula: Y ~ 1 
 ##    Data: d (Number of observations: 365) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.05      0.08    -0.11     0.20       1120 1.00
+## Intercept     0.06      0.08    -0.11     0.22       1244 1.00
 ## 
 ## Family Specific Parameters: 
 ##    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## zi     0.15      0.06     0.04     0.25       1258 1.00
+## zi     0.16      0.06     0.04     0.26       1335 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -964,8 +961,8 @@ fixef(b11.4)[1, ] %>%
 ```
 
 ```
-##  Estimate Est.Error   2.5%ile  97.5%ile 
-## 1.0550964 1.0868599 0.8915979 1.2275018
+##  Estimate Est.Error      Q2.5     Q97.5 
+## 1.0565458 1.0870674 0.8956377 1.2481714
 ```
 
 ## 11.3. Over-dispersed outcomes
@@ -1060,17 +1057,16 @@ print(b11.5)
 ##   Links: mu = logit; phi = identity 
 ## Formula: admit | trials(applications) ~ 1 
 ##    Data: d (Number of observations: 12) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.38      0.31    -0.97     0.23       4108 1.00
+## Intercept    -0.38      0.31    -0.98     0.26       4307 1.00
 ## 
 ## Family Specific Parameters: 
 ##     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## phi     2.74      0.95     1.23     4.93       4729 1.00
+## phi     2.78      0.95     1.25     4.98       5120 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1088,12 +1084,12 @@ head(post)
 
 ```
 ##   b_Intercept      phi      lp__
-## 1  0.12251887 2.942989 -71.68468
-## 2 -0.53644691 1.623473 -71.43350
-## 3 -0.04284798 2.829146 -70.74407
-## 4 -0.73517581 3.492832 -70.93003
-## 5  0.02351055 2.082325 -71.06584
-## 6 -0.25505905 3.336987 -70.31219
+## 1   0.3219678 1.353812 -73.41943
+## 2   0.3264757 1.406626 -73.31349
+## 3  -0.6831565 2.812292 -70.56644
+## 4  -0.3740155 4.127376 -70.73701
+## 5  -0.3426225 4.145022 -70.79077
+## 6  -0.1840864 1.145504 -72.85941
 ```
 
 With our `post` object in hand, here's our Figure 11.5.a.
@@ -1168,8 +1164,8 @@ With those intermediary steps out of the way, we're ready to make Figure 11.5.b.
 # The prediction intervals
 predict(b11.5) %>%
   as_tibble() %>% 
-  rename(LL = `2.5%ile`,
-         UL = `97.5%ile`) %>%
+  rename(LL = Q2.5,
+         UL = Q97.5) %>%
   select(LL:UL) %>% 
   # The fitted intervals
   bind_cols(
@@ -1185,8 +1181,8 @@ predict(b11.5) %>%
                      ymax = UL/applications),
                  color = canva_pal("Green fields")(4)[1], 
                  size = 2.5, alpha = 1/4) +
-  geom_pointrange(aes(ymin = `2.5%ile`/applications, 
-                      ymax = `97.5%ile`/applications, 
+  geom_pointrange(aes(ymin = Q2.5/applications, 
+                      ymax = Q97.5/applications, 
                       y = Estimate/applications),
                   color = canva_pal("Green fields")(4)[4],
                   size = 1/2, shape = 1) +
@@ -1257,18 +1253,17 @@ brm(data = d, family = negbinomial,
 ##   Links: mu = log; shape = identity 
 ## Formula: admit ~ 1 + applicant.gender 
 ##    Data: d (Number of observations: 12) 
-## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                4.70      0.39     4.00     5.55       4118 1.00
-## applicant.gendermale     0.57      0.50    -0.44     1.53       4311 1.00
+## Intercept                4.70      0.40     4.01     5.56       3663 1.00
+## applicant.gendermale     0.57      0.50    -0.44     1.54       4611 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## shape     1.23      0.49     0.51     2.37       4201 1.00
+## shape     1.23      0.48     0.49     2.38       4470 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1292,7 +1287,7 @@ Note. The analyses in this document were done with:
 * RStudio     1.1.442
 * rmarkdown   1.9
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * rstan       2.17.3
 * ggthemes    3.4.0
 * tidyverse   1.2.1

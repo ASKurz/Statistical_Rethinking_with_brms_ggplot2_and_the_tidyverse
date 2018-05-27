@@ -1,7 +1,7 @@
 ---
 title: "Ch. 10 Counting and Classification"
 author: "A Solomon Kurz"
-date: "2018-04-20"
+date: "2018-05-26"
 output:
   html_document:
     code_folding: show
@@ -49,8 +49,8 @@ fixef(b10.1) %>%
 ```
 
 ```
-##           Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept     0.32      0.09    0.15     0.49
+##           Estimate Est.Error Q2.5 Q97.5
+## Intercept     0.32      0.09 0.14   0.5
 ```
 
 On page 81, [Gelman and Hill (2007)](http://www.stat.columbia.edu/~gelman/arm/) give the formula for `invlogit()`, which is our alternative to the `logistic()` function in rethinking.
@@ -78,8 +78,8 @@ fixef(b10.1) %>%
 ```
 
 ```
-##            Estimate Est.Error   2.5%ile  97.5%ile
-## Intercept 0.5788494 0.5220452 0.5365652 0.6199605
+##            Estimate Est.Error      Q2.5     Q97.5
+## Intercept 0.5797503 0.5229882 0.5355274 0.6225545
 ```
 
 The next two chimp models add predictors.
@@ -112,12 +112,12 @@ compare_ic(w_b10.1, w_b10.2, w_b10.3)
 
 ```
 ##                 WAIC   SE
-## b10.1         687.86 7.07
-## b10.2         680.55 9.33
-## b10.3         682.55 9.45
-## b10.1 - b10.2   7.31 6.16
-## b10.1 - b10.3   5.30 6.27
-## b10.2 - b10.3  -2.00 0.79
+## b10.1         688.02 7.15
+## b10.2         680.46 9.35
+## b10.3         682.34 9.45
+## b10.1 - b10.2   7.56 6.16
+## b10.1 - b10.3   5.69 6.30
+## b10.2 - b10.3  -1.88 0.79
 ```
 
 For this manuscript, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s *Moonrise2* palette.
@@ -189,15 +189,14 @@ print(b10.3)
 ##   Links: mu = logit 
 ## Formula: pulled_left ~ 1 + prosoc_left + condition:prosoc_left 
 ##    Data: d (Number of observations: 504) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                 0.05      0.13    -0.21     0.30       3687 1.00
-## prosoc_left               0.61      0.23     0.17     1.07       2639 1.00
-## prosoc_left:condition    -0.10      0.27    -0.65     0.41       2907 1.00
+## Intercept                 0.05      0.12    -0.20     0.29       3643 1.00
+## prosoc_left               0.62      0.23     0.17     1.06       2749 1.00
+## prosoc_left:condition    -0.10      0.27    -0.63     0.42       2779 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -213,7 +212,7 @@ fixef(b10.3)[2] %>%
 ```
 
 ```
-## [1] 1.845779
+## [1] 1.850503
 ```
 
 Given an estimated value of 4, the probability of a pull, all else equal, would be:
@@ -236,7 +235,7 @@ Adding the coefficient, `fixef(b10.3)[2]`, would yield:
 ```
 
 ```
-## [1] 0.9901745
+## [1] 0.9901994
 ```
 
 For our variant of Figure 10.2., we use `brms::pp_average()` in place of `rethinking::ensemble()`.
@@ -247,10 +246,10 @@ For our variant of Figure 10.2., we use `brms::pp_average()` in place of `rethin
 pp_a <- 
   pp_average(b10.1, b10.2, b10.3,
              weights = "waic",
-             method = "fitted") %>% 
+             method = "fitted") %>%
   as_tibble() %>% 
   bind_cols(b10.3$data) %>% 
-  distinct(Estimate, `2.5%ile`, `97.5%ile`, condition, prosoc_left) %>% 
+  distinct(Estimate, Q2.5, Q97.5, condition, prosoc_left) %>% 
   mutate(x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
   mutate(x_axis = factor(x_axis, levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
   rename(pulled_left = Estimate)
@@ -267,8 +266,8 @@ d_plot <-
 ggplot() +
   geom_ribbon(data = pp_a,
               aes(x = x_axis,
-                  ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+                  ymin = Q2.5, 
+                  ymax = Q97.5,
                   group = 0),
               fill = wes_palette("Moonrise2")[2]) +
   geom_line(data = pp_a,
@@ -349,25 +348,29 @@ print(b10.4)
 ```
 
 ```
+## Warning: There were 1 divergent transitions after warmup. Increasing adapt_delta above 0.9 may help.
+## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+```
+
+```
 ##  Family: binomial 
 ##   Links: mu = logit 
 ## Formula: pulled_left ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left 
 ##    Data: d (Number of observations: 504) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## factoractor1             -0.75      0.27    -1.30    -0.22       3364 1.00
-## factoractor2             10.71      5.33     3.87    23.82       1582 1.00
-## factoractor3             -1.06      0.28    -1.63    -0.51       4000 1.00
-## factoractor4             -1.05      0.29    -1.63    -0.52       3080 1.00
+## factoractor1             -0.74      0.27    -1.28    -0.22       4000 1.00
+## factoractor2             10.91      5.22     3.84    23.41       1810 1.00
+## factoractor3             -1.05      0.28    -1.60    -0.51       4000 1.00
+## factoractor4             -1.05      0.29    -1.63    -0.50       3525 1.00
 ## factoractor5             -0.74      0.27    -1.28    -0.22       4000 1.00
-## factoractor6              0.22      0.27    -0.31     0.75       4000 1.00
-## factoractor7              1.81      0.40     1.09     2.61       4000 1.00
-## prosoc_left               0.85      0.27     0.33     1.37       2325 1.00
-## prosoc_left:condition    -0.14      0.30    -0.72     0.44       3298 1.00
+## factoractor6              0.21      0.27    -0.32     0.75       4000 1.00
+## factoractor7              1.81      0.39     1.09     2.61       4000 1.00
+## prosoc_left               0.84      0.27     0.32     1.39       2522 1.00
+## prosoc_left:condition    -0.14      0.31    -0.74     0.47       3636 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -387,16 +390,16 @@ post %>%
 ```
 ## Observations: 4,000
 ## Variables: 10
-## $ b_factoractor1            <dbl> -0.8723748, -0.8546134, -0.5447378, -0.7393345, -0.8778171, -...
-## $ b_factoractor2            <dbl> 9.485225, 5.342891, 8.934217, 5.539231, 6.983931, 13.895901, ...
-## $ b_factoractor3            <dbl> -0.8518603, -0.8689300, -1.0467558, -1.0524038, -0.6294351, -...
-## $ b_factoractor4            <dbl> -0.9409851, -1.1269788, -0.9922542, -0.7713788, -1.0716356, -...
-## $ b_factoractor5            <dbl> -0.91433776, -0.88925906, -0.58779203, -0.61372311, -0.844070...
-## $ b_factoractor6            <dbl> 0.08891537, 0.33531726, -0.17504247, -0.01302908, -0.11118986...
-## $ b_factoractor7            <dbl> 1.813066, 2.261805, 1.334932, 1.404166, 1.546851, 1.791760, 1...
-## $ b_prosoc_left             <dbl> 0.6361544, 1.2874925, 0.7217485, 0.8283404, 1.2712593, 1.2195...
-## $ `b_prosoc_left:condition` <dbl> 0.082196572, -0.501476397, -0.456589907, -0.426951442, -0.518...
-## $ lp__                      <dbl> -287.4449, -289.8728, -290.9517, -288.4279, -290.2982, -291.8...
+## $ b_factoractor1            <dbl> -0.4864574, -1.3058604, -0.2642374, -1.1252677, -1.1052332, -...
+## $ b_factoractor2            <dbl> 11.045800, 13.498221, 9.115538, 5.335425, 6.973991, 8.741842,...
+## $ b_factoractor3            <dbl> -1.0552088, -0.9494935, -1.1882042, -0.8936645, -1.1812715, -...
+## $ b_factoractor4            <dbl> -1.2959134, -1.4280920, -0.8998277, -1.0370899, -0.7647098, -...
+## $ b_factoractor5            <dbl> -1.0497013, -0.7819927, -0.7463659, -0.8574204, -0.8120734, -...
+## $ b_factoractor6            <dbl> -0.09390899, -0.18852322, 0.53971209, -0.21538838, -0.2237802...
+## $ b_factoractor7            <dbl> 1.352978, 2.344229, 1.262324, 1.877243, 1.216007, 2.262792, 1...
+## $ b_prosoc_left             <dbl> 1.3107568, 1.0899821, 0.9945761, 0.7085668, 0.7617417, 0.6299...
+## $ `b_prosoc_left:condition` <dbl> -0.679560228, 0.017507885, -0.454986913, 0.294882845, 0.31508...
+## $ lp__                      <dbl> -290.7846, -292.0805, -290.5599, -289.7259, -291.0326, -290.5...
 ```
 
 Our variant of Figure 10.3.
@@ -430,7 +433,7 @@ ftd <-
   as_tibble() %>% 
   bind_cols(b10.4$data) %>% 
   filter(actor %in% c(3, 5:7)) %>% 
-  distinct(Estimate, `2.5%ile`, `97.5%ile`, condition, prosoc_left, actor) %>% 
+  distinct(Estimate, Q2.5, Q97.5, condition, prosoc_left, actor) %>% 
   select(actor, everything()) %>% 
   mutate(actor = str_c("actor ", actor)) %>% 
   mutate(x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
@@ -440,8 +443,8 @@ ftd <-
   ggplot(data = ftd,
          aes(x = x_axis, y = pulled_left, group = actor)) +
   geom_ribbon(aes(x = x_axis,
-                  ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`),
+                  ymin = Q2.5, 
+                  ymax = Q97.5),
               fill = wes_palette("Moonrise2")[2]) +
   geom_line(aes(x = x_axis, 
                 y = pulled_left)) +
@@ -514,10 +517,10 @@ fixef(b10.3) %>% round(digits = 2)
 ```
 
 ```
-##                       Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept                 0.05      0.13   -0.21     0.30
-## prosoc_left               0.61      0.23    0.17     1.07
-## prosoc_left:condition    -0.10      0.27   -0.65     0.41
+##                       Estimate Est.Error  Q2.5 Q97.5
+## Intercept                 0.05      0.12 -0.20  0.29
+## prosoc_left               0.62      0.23  0.17  1.06
+## prosoc_left:condition    -0.10      0.27 -0.63  0.42
 ```
 
 ```r
@@ -525,10 +528,10 @@ fixef(b10.5) %>% round(digits = 2)
 ```
 
 ```
-##                       Estimate Est.Error 2.5%ile 97.5%ile
-## Intercept                 0.05      0.13   -0.21     0.30
-## prosoc_left               0.63      0.22    0.20     1.06
-## prosoc_left:condition    -0.12      0.26   -0.62     0.40
+##                       Estimate Est.Error  Q2.5 Q97.5
+## Intercept                 0.05      0.13 -0.20  0.29
+## prosoc_left               0.61      0.23  0.17  1.07
+## prosoc_left:condition    -0.11      0.26 -0.62  0.42
 ```
 
 Close within rounding error.
@@ -603,9 +606,9 @@ waic(b10.6, b10.7)
 
 ```
 ##                  WAIC     SE
-## b10.6          995.05 328.09
-## b10.7         1050.40 329.35
-## b10.6 - b10.7  -55.35 165.84
+## b10.6          992.46 329.62
+## b10.7         1043.89 326.66
+## b10.6 - b10.7  -51.43 167.38
 ```
 
 ##### Information criteria digression.
@@ -629,9 +632,9 @@ l_b10.7 <- loo(b10.7)
 ```
 
 ```
-## Warning: Found 5 observations with a pareto_k > 0.7 in model 'b10.7'. It is recommended to set
+## Warning: Found 4 observations with a pareto_k > 0.7 in model 'b10.7'. It is recommended to set
 ## 'reloo = TRUE' in order to calculate the ELPD without the assumption that these observations are
-## negligible. This will refit the model 5 times to compute the ELPDs for the problematic observations
+## negligible. This will refit the model 4 times to compute the ELPDs for the problematic observations
 ## directly.
 ```
 
@@ -654,9 +657,9 @@ pareto_k_table(l_b10.6)
 ```
 ## Pareto k diagnostic values:
 ##                          Count Pct.    Min. n_eff
-## (-Inf, 0.5]   (good)     4     33.3%   381       
-##  (0.5, 0.7]   (ok)       2     16.7%   125       
-##    (0.7, 1]   (bad)      1      8.3%   166       
+## (-Inf, 0.5]   (good)     5     41.7%   383       
+##  (0.5, 0.7]   (ok)       1      8.3%   166       
+##    (0.7, 1]   (bad)      1      8.3%   52        
 ##    (1, Inf)   (very bad) 5     41.7%   1
 ```
 
@@ -669,7 +672,7 @@ plot(l_b10.6)
 
 ![](Ch._10_Counting_and_Classification_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
-So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ value, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
+So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ value, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "very bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
 
 
 ```r
@@ -691,12 +694,12 @@ l_b10.6$diagnostics
 
 ```
 ## $pareto_k
-##  [1] 1.9976083 1.0952573 1.3641879 0.1512574 0.2968972 0.7085011 0.6089652 0.5080230 0.3385667
-## [10] 0.3941838 1.8640225 1.5218953
+##  [1] 2.0253259 1.0310272 1.4248475 0.1743877 0.4474604 0.6843733 0.8140350 0.4997591 0.4971078
+## [10] 0.4801012 2.2180646 1.4804552
 ## 
 ## $n_eff
-##  [1]    1.497857    8.445083    3.278668 3155.594918 1251.143930  166.328501  124.851725  852.037318
-##  [9]  796.822103  381.440499    1.648605    2.453530
+##  [1]    1.473677   10.327033    2.953097 3165.231485 1042.629721  166.286689   51.933336  809.747837
+##  [9]  602.375823  382.837396    1.336624    2.645434
 ```
 
 The `pareto_k` values can be used to examine cases that are overly-influential on the model parameters, something like a Cook's $D_{i}$. See, for example [this discussion on stackoverflow.com](https://stackoverflow.com/questions/39578834/linear-model-diagnostics-for-bayesian-models-using-rstan/39595436) in which several members of the [Stan team](http://mc-stan.org) weighed in. The issue is also discussed in [this paper](https://arxiv.org/abs/1507.04544) and in [this presentation by Aki Vehtari](https://www.youtube.com/watch?v=FUROJM3u5HQ&feature=youtu.be&a=).
@@ -724,16 +727,16 @@ l_b10.6_reloo
 ## Computed from 4000 by 12 log-likelihood matrix
 ## 
 ##          Estimate    SE
-## elpd_loo   -515.0 169.6
-## p_loo       130.3  49.5
-## looic      1030.1 339.3
+## elpd_loo   -518.1 171.6
+## p_loo       133.8  52.4
+## looic      1036.1 343.2
 ## ------
 ## Monte Carlo SE of elpd_loo is NA.
 ## 
 ## Pareto k diagnostic values:
 ##                          Count Pct.    Min. n_eff
-## (-Inf, 0.5]   (good)     10    83.3%   1         
-##  (0.5, 0.7]   (ok)        2    16.7%   125       
+## (-Inf, 0.5]   (good)     11    91.7%   1         
+##  (0.5, 0.7]   (ok)        1     8.3%   166       
 ##    (0.7, 1]   (bad)       0     0.0%   <NA>      
 ##    (1, Inf)   (very bad)  0     0.0%   <NA>      
 ## 
@@ -757,9 +760,9 @@ compare_ic(l_b10.6, l_b10.7)
 
 ```
 ##                 LOOIC     SE
-## b10.6          963.01 314.43
-## b10.7         1040.78 324.48
-## b10.6 - b10.7  -77.77 163.11
+## b10.6          964.09 316.48
+## b10.7         1028.48 319.79
+## b10.6 - b10.7  -64.39 161.89
 ```
 
 ```r
@@ -768,12 +771,12 @@ compare_ic(l_b10.6_reloo, l_b10.7_reloo)
 
 ```
 ##                 LOOIC     SE
-## b10.6         1030.05 339.25
-## b10.7         1068.03 338.36
-## b10.6 - b10.7  -37.98 163.17
+## b10.6         1036.15 343.20
+## b10.7         1049.20 329.92
+## b10.6 - b10.7  -13.05 157.67
 ```
 
-In this case, the results are kinda similar. But holy smokes, look at the size of those SEs! Anyway, watch out for this in your real-world data. You also might check out this [vignette on how the loo package’s Pareto $k$ can help detect outliers](https://github.com/ASKurz/Student-s-t_regression).
+In this case, the results are kinda similar. But holy smokes, look at the size of those *SE*s! Anyway, watch out for this in your real-world data. You also might check out this [vignette on how the loo package’s Pareto $k$ can help detect outliers](https://github.com/ASKurz/Student-s-t_regression).
 
 But this has all been a tangent from the central thrust of this section. Let's get back on track. Here's a look at `b10.6`, the unavailable model:
 
@@ -787,14 +790,13 @@ print(b10.6)
 ##   Links: mu = logit 
 ## Formula: admit | trials(applications) ~ 1 + male 
 ##    Data: d (Number of observations: 12) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.83      0.05    -0.93    -0.73       2634 1.00
-## male          0.61      0.06     0.48     0.74       3251 1.00
+## Intercept    -0.83      0.05    -0.93    -0.74       2316 1.00
+## male          0.61      0.06     0.48     0.73       2703 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -809,7 +811,7 @@ fixef(b10.6)[2] %>%
 ```
 
 ```
-## [1] 1.84
+## [1] 1.85
 ```
 
 The difference in admission probabilities.
@@ -828,8 +830,8 @@ post %>%
 ```
 
 ```
-##        2.5%       50%    97.5%
-## 1 0.1126511 0.1421341 0.169364
+##        2.5%       50%     97.5%
+## 1 0.1130499 0.1423233 0.1691757
 ```
 
 Here's our version of Figure 10.5.
@@ -854,8 +856,8 @@ d_text <-
 ggplot(data = d, aes(x = case, y = admit/applications)) +
   geom_pointrange(data = p_10.6, 
                   aes(y = Estimate/applications,
-                      ymin = `2.5%ile`/applications ,
-                      ymax = `97.5%ile`/applications),
+                      ymin = Q2.5/applications ,
+                      ymax = Q97.5/applications),
                   color = wes_palette("Moonrise2")[1],
                   shape = 1, alpha = 1/3) +
   geom_point(color = wes_palette("Moonrise2")[2]) +
@@ -908,16 +910,16 @@ loos
 
 ```
 ##                 LOOIC     SE
-## b10.6         1033.50 342.26
-## b10.7         1062.11 335.35
-## b10.8          131.39  32.88
-## b10.9          137.25  30.83
-## b10.6 - b10.7  -28.61 164.95
-## b10.6 - b10.8  902.11 333.63
-## b10.6 - b10.9  896.25 336.71
-## b10.7 - b10.8  930.72 321.00
-## b10.7 - b10.9  924.86 324.54
-## b10.8 - b10.9   -5.85   5.88
+## b10.6         1033.48 338.32
+## b10.7         1063.37 335.46
+## b10.8          135.28  35.99
+## b10.9          138.36  32.41
+## b10.6 - b10.7  -29.89 161.46
+## b10.6 - b10.8  898.20 328.31
+## b10.6 - b10.9  895.12 331.52
+## b10.7 - b10.8  928.09 319.42
+## b10.7 - b10.9  925.00 323.65
+## b10.8 - b10.9   -3.09   6.46
 ```
 
 The parameters summaries for our multivariable model, `b10.9`, look like this:
@@ -928,14 +930,14 @@ fixef(b10.9) %>% round(digits = 2)
 ```
 
 ```
-##       Estimate Est.Error 2.5%ile 97.5%ile
-## deptA     0.68      0.10    0.48     0.87
-## deptB     0.64      0.12    0.41     0.87
-## deptC    -0.58      0.08   -0.73    -0.44
-## deptD    -0.62      0.09   -0.79    -0.45
-## deptE    -1.06      0.10   -1.26    -0.86
-## deptF    -2.64      0.16   -2.96    -2.32
-## male     -0.10      0.08   -0.26     0.06
+##       Estimate Est.Error  Q2.5 Q97.5
+## deptA     0.68      0.10  0.48  0.87
+## deptB     0.64      0.12  0.41  0.86
+## deptC    -0.58      0.08 -0.74 -0.44
+## deptD    -0.62      0.09 -0.79 -0.45
+## deptE    -1.06      0.10 -1.25 -0.87
+## deptF    -2.64      0.16 -2.96 -2.34
+## male     -0.10      0.08 -0.26  0.07
 ```
 
 Since we've been using brms, there's no need to fit our version of McElreath's `m10.9stan`. We already have that in our `b10.9`. But just for kicks and giggles, here's another way to get the model summary. 
@@ -951,16 +953,16 @@ b10.9$fit
 ## post-warmup draws per chain=2000, total post-warmup draws=4000.
 ## 
 ##           mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## b_deptA   0.68    0.00 0.10   0.48   0.61   0.68   0.75   0.87  2358    1
-## b_deptB   0.64    0.00 0.12   0.41   0.56   0.64   0.71   0.87  2574    1
-## b_deptC  -0.58    0.00 0.08  -0.73  -0.63  -0.58  -0.53  -0.44  4000    1
-## b_deptD  -0.62    0.00 0.09  -0.79  -0.68  -0.62  -0.56  -0.45  4000    1
-## b_deptE  -1.06    0.00 0.10  -1.26  -1.13  -1.06  -0.99  -0.86  4000    1
-## b_deptF  -2.64    0.00 0.16  -2.96  -2.74  -2.63  -2.53  -2.32  4000    1
-## b_male   -0.10    0.00 0.08  -0.26  -0.15  -0.10  -0.04   0.06  1884    1
-## lp__    -70.69    0.04 1.83 -75.10 -71.74 -70.36 -69.36 -68.07  1738    1
+## b_deptA   0.68    0.00 0.10   0.48   0.61   0.68   0.74   0.87  2306    1
+## b_deptB   0.64    0.00 0.12   0.41   0.56   0.64   0.71   0.86  2350    1
+## b_deptC  -0.58    0.00 0.08  -0.74  -0.64  -0.58  -0.53  -0.44  4000    1
+## b_deptD  -0.62    0.00 0.09  -0.79  -0.67  -0.62  -0.56  -0.45  4000    1
+## b_deptE  -1.06    0.00 0.10  -1.25  -1.13  -1.06  -1.00  -0.87  4000    1
+## b_deptF  -2.64    0.00 0.16  -2.96  -2.75  -2.64  -2.53  -2.34  4000    1
+## b_male   -0.10    0.00 0.08  -0.26  -0.15  -0.10  -0.04   0.07  1799    1
+## lp__    -70.71    0.04 1.85 -75.10 -71.72 -70.41 -69.33 -68.10  1861    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri Apr 20 21:43:46 2018.
+## Samples were drawn using NUTS(diag_e) at Sat May 26 22:43:30 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -970,14 +972,14 @@ Here's our version of Figure 10.6, the posterior validation check.
 
 
 ```r
-predict(b10.9) %>% 
+predict(b10.9) %>%
   as_tibble() %>% 
   bind_cols(d) %>% 
 
-ggplot(aes(x = case, y = admit/applications)) +
+  ggplot(aes(x = case, y = admit/applications)) +
   geom_pointrange(aes(y = Estimate/applications,
-                      ymin = `2.5%ile`/applications ,
-                      ymax = `97.5%ile`/applications),
+                      ymin = Q2.5/applications ,
+                      ymax = Q97.5/applications),
                   color = wes_palette("Moonrise2")[1],
                   shape = 1, alpha = 1/3) +
   geom_point(color = wes_palette("Moonrise2")[2]) +
@@ -1032,14 +1034,13 @@ print(b.good)
 ##   Links: mu = logit 
 ## Formula: y ~ 1 + x 
 ##    Data: list(y = y, x = x) (Number of observations: 20) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -5.45      4.22   -15.68     0.27        426 1.00
-## x             8.24      4.22     2.52    18.54        432 1.00
+## Intercept    -5.28      4.22   -15.07     0.27        359 1.01
+## x             8.07      4.21     2.55    17.62        352 1.01
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1149,16 +1150,15 @@ print(b10.10)
 ##   Links: mu = log 
 ## Formula: total_tools ~ 1 + log_pop + contact_high + contact_high:log_pop 
 ##    Data: d (Number of observations: 10) 
-## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                0.93      0.36     0.21     1.62       4016 1.00
-## log_pop                  0.26      0.03     0.20     0.33       4124 1.00
-## contact_high            -0.09      0.84    -1.76     1.54       2930 1.00
-## log_pop:contact_high     0.04      0.09    -0.14     0.22       2927 1.00
+## Intercept                0.95      0.35     0.24     1.63       4279 1.00
+## log_pop                  0.26      0.03     0.20     0.33       4556 1.00
+## contact_high            -0.06      0.85    -1.71     1.62       2530 1.00
+## log_pop:contact_high     0.04      0.09    -0.14     0.22       2544 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1181,10 +1181,10 @@ post %>%
 
 ```
 ##                b_Intercept b_log_pop b_contact_high b_interaction
-## b_Intercept           1.00     -0.97          -0.13          0.07
-## b_log_pop            -0.97      1.00           0.12         -0.08
-## b_contact_high       -0.13      0.12           1.00         -0.99
-## b_interaction         0.07     -0.08          -0.99          1.00
+## b_Intercept           1.00     -0.97          -0.14          0.07
+## b_log_pop            -0.97      1.00           0.13         -0.09
+## b_contact_high       -0.14      0.13           1.00         -0.99
+## b_interaction         0.07     -0.09          -0.99          1.00
 ```
 
 And here's the coefficient plot:
@@ -1225,8 +1225,8 @@ post %>%
 ```
 
 ```
-##        sum
-## 1 0.957125
+##      sum
+## 1 0.9545
 ```
 
 Quite.
@@ -1321,21 +1321,21 @@ compare_ic(w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14)
 
 ```
 ##                   WAIC    SE
-## b10.10           80.29 11.84
-## b10.11           79.10 11.69
-## b10.12           84.24  9.37
-## b10.13          150.82 47.61
-## b10.14          141.60 33.43
-## b10.10 - b10.11   1.18  1.41
-## b10.10 - b10.12  -3.95  7.87
-## b10.10 - b10.13 -70.53 47.60
-## b10.10 - b10.14 -61.31 34.88
-## b10.11 - b10.12  -5.13  8.34
-## b10.11 - b10.13 -71.71 47.37
-## b10.11 - b10.14 -62.50 34.63
-## b10.12 - b10.13 -66.58 47.34
-## b10.12 - b10.14 -57.36 33.32
-## b10.13 - b10.14   9.22 17.43
+## b10.10           80.03 11.83
+## b10.11           78.88 11.67
+## b10.12           84.38  9.40
+## b10.13          150.93 47.82
+## b10.14          141.85 33.63
+## b10.10 - b10.11   1.15  1.26
+## b10.10 - b10.12  -4.35  7.92
+## b10.10 - b10.13 -70.90 47.83
+## b10.10 - b10.14 -61.82 35.08
+## b10.11 - b10.12  -5.50  8.39
+## b10.11 - b10.13 -72.05 47.57
+## b10.11 - b10.14 -62.97 34.81
+## b10.12 - b10.13 -66.54 47.57
+## b10.12 - b10.14 -57.47 33.51
+## b10.13 - b10.14   9.07 17.41
 ```
 
 
@@ -1382,8 +1382,8 @@ ppa_10.9 <-
 ppa_10.9 %>%
   ggplot(aes(x = log_pop,
              group = contact_high)) +
-  geom_ribbon(aes(ymin = `2.5%ile`,
-                  ymax = `97.5%ile`,
+  geom_ribbon(aes(ymin = Q2.5,
+                  ymax = Q97.5,
                   fill = contact_high),
               alpha = 1/4) +
   geom_line(aes(y = Estimate, color = contact_high)) +
@@ -1413,7 +1413,7 @@ model_weights(b10.10, b10.11, b10.12,
 
 ```
 ##     b10.10     b10.11     b10.12 
-## 0.28134896 0.66734058 0.05131046
+## 0.31737187 0.64741354 0.03521459
 ```
 
 ### 10.2.2. MCMC islands.
@@ -1430,16 +1430,15 @@ print(b10.10)
 ##   Links: mu = log 
 ## Formula: total_tools ~ 1 + log_pop + contact_high + contact_high:log_pop 
 ##    Data: d (Number of observations: 10) 
-## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                0.93      0.36     0.21     1.62       4016 1.00
-## log_pop                  0.26      0.03     0.20     0.33       4124 1.00
-## contact_high            -0.09      0.84    -1.76     1.54       2930 1.00
-## log_pop:contact_high     0.04      0.09    -0.14     0.22       2927 1.00
+## Intercept                0.95      0.35     0.24     1.63       4279 1.00
+## log_pop                  0.26      0.03     0.20     0.33       4556 1.00
+## contact_high            -0.06      0.85    -1.71     1.62       2530 1.00
+## log_pop:contact_high     0.04      0.09    -0.14     0.22       2544 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1474,16 +1473,15 @@ print(b10.10.c)
 ##   Links: mu = log 
 ## Formula: total_tools ~ 1 + log_pop_c + contact_high + contact_high:log_pop_c 
 ##    Data: d (Number of observations: 10) 
-## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                        Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                  3.31      0.09     3.13     3.48       5840 1.00
-## log_pop_c                  0.26      0.04     0.19     0.33       5881 1.00
-## contact_high               0.29      0.12     0.06     0.53       6269 1.00
-## log_pop_c:contact_high     0.07      0.17    -0.28     0.41       6662 1.00
+## Intercept                  3.31      0.09     3.13     3.49       5691 1.00
+## log_pop_c                  0.26      0.04     0.19     0.34       5693 1.00
+## contact_high               0.29      0.12     0.05     0.52       6656 1.00
+## log_pop_c:contact_high     0.06      0.17    -0.27     0.40       6946 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1536,8 +1534,8 @@ lowerCor(posterior_samples(b10.10)[, 1:4])
 ##                        b_Int b_lg_ b_cn_ b__:_
 ## b_Intercept             1.00                  
 ## b_log_pop              -0.97  1.00            
-## b_contact_high         -0.13  0.12  1.00      
-## b_log_pop:contact_high  0.07 -0.08 -0.99  1.00
+## b_contact_high         -0.14  0.13  1.00      
+## b_log_pop:contact_high  0.07 -0.09 -0.99  1.00
 ```
 
 ```r
@@ -1547,9 +1545,9 @@ lowerCor(posterior_samples(b10.10.c)[, 1:4])
 ```
 ##                          b_Int b_l__ b_cn_ b___:
 ## b_Intercept               1.00                  
-## b_log_pop_c              -0.46  1.00            
-## b_contact_high           -0.77  0.35  1.00      
-## b_log_pop_c:contact_high  0.13 -0.24 -0.30  1.00
+## b_log_pop_c              -0.48  1.00            
+## b_contact_high           -0.76  0.37  1.00      
+## b_log_pop_c:contact_high  0.09 -0.22 -0.25  1.00
 ```
 
 ### 10.2.3. Example: Exposure and the offset.
@@ -1576,12 +1574,12 @@ Let's make them tidy.
 
 
 ```r
-d <- 
+(
+  d <- 
   tibble(y = c(y, y_new), 
          days = c(rep(1, 30), rep(7, 4)),
          monastery = c(rep(0, 30), rep(1, 4)))
-
-d
+)
 ```
 
 ```
@@ -1629,14 +1627,13 @@ print(b10.15)
 ##   Links: mu = log 
 ## Formula: y ~ 1 + offset(log_days) + monastery 
 ##    Data: d (Number of observations: 34) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.17      0.16    -0.17     0.47       1714 1.00
-## monastery    -0.97      0.31    -1.60    -0.38       2184 1.00
+## Intercept     0.17      0.17    -0.16     0.49       2259 1.00
+## monastery    -0.97      0.32    -1.64    -0.38       2592 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1661,8 +1658,8 @@ posterior_samples(b10.15) %>%
 ## # A tibble: 2 x 5
 ##   key         Mean StdDev    LL    UL
 ##   <fctr>     <dbl>  <dbl> <dbl> <dbl>
-## 1 lambda_old 1.20   0.200 0.850 1.60 
-## 2 lambda_new 0.470  0.120 0.260 0.740
+## 1 lambda_old 1.20   0.200 0.850 1.63 
+## 2 lambda_new 0.460  0.130 0.250 0.750
 ```
 
 ## 10.3. Other count regressions
@@ -1732,14 +1729,13 @@ print(b10.16)
 ##   Links: mu2 = logit; mu3 = logit 
 ## Formula: career ~ 1 
 ##    Data: list(career = career) (Number of observations: 500) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## mu2_Intercept     0.29      0.13     0.02     0.55       1590 1.00
-## mu3_Intercept     0.96      0.12     0.74     1.20       1507 1.00
+## mu2_Intercept     0.29      0.13     0.03     0.55       1344 1.00
+## mu3_Intercept     0.96      0.12     0.73     1.20       1456 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1777,11 +1773,11 @@ library(brms)
 
 b10.17 <-
   brm(data = list(career = career,
-                family_income = family_income), 
+                  family_income = family_income), 
       family = categorical(link = "logit"),
       career ~ 1 + family_income,
-       prior = c(set_prior("normal(0, 5)", class = "Intercept"),
-                 set_prior("normal(0, 5)", class = "b")),
+      prior = c(set_prior("normal(0, 5)", class = "Intercept"),
+                set_prior("normal(0, 5)", class = "b")),
       iter = 2500, warmup = 500, cores = 2, chains = 2)
 ```
 
@@ -1797,16 +1793,15 @@ print(b10.17)
 ##   Links: mu2 = logit; mu3 = logit 
 ## Formula: career ~ 1 + family_income 
 ##    Data: list(career = career, family_income = family_incom (Number of observations: 100) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                   Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## mu2_Intercept         1.86      0.59     0.76     3.05       2271 1.00
-## mu3_Intercept         1.55      0.58     0.48     2.75       2423 1.00
-## mu2_family_income    -3.96      1.06    -6.05    -1.99       2616 1.00
-## mu3_family_income    -2.55      0.94    -4.53    -0.78       2860 1.00
+## mu2_Intercept         1.84      0.57     0.75     2.99       2337 1.00
+## mu3_Intercept         1.53      0.57     0.45     2.69       2136 1.00
+## mu2_family_income    -3.92      1.03    -6.00    -1.97       2502 1.00
+## mu3_family_income    -2.53      0.93    -4.33    -0.68       2662 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1895,13 +1890,12 @@ print(b_binom)
 ##   Links: mu = logit 
 ## Formula: admit | trials(applications) ~ 1 
 ##    Data: d (Number of observations: 12) 
-## Samples: 3 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 3 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 3000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.46      0.03    -0.51    -0.40        939 1.00
+## Intercept    -0.46      0.03    -0.52    -0.40       1319 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1919,14 +1913,13 @@ print(b_pois)
 ## Formula: admit ~ 1 
 ##          rej ~ 1 
 ##    Data: d (Number of observations: 12) 
-## Samples: 3 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+## Samples: 3 chains, each with iter = 2000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 3000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## admit_Intercept     4.98      0.02     4.94     5.03       2493 1.00
-## rej_Intercept       5.44      0.02     5.41     5.48       2288 1.00
+## admit_Intercept     4.98      0.02     4.94     5.03       2519 1.00
+## rej_Intercept       5.44      0.02     5.40     5.48       2901 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1942,8 +1935,8 @@ fixef(b_binom) %>%
 ```
 
 ```
-##           Estimate Est.Error   2.5%ile  97.5%ile
-## Intercept 0.388041 0.5075814 0.3741243 0.4024753
+##            Estimate Est.Error      Q2.5     Q97.5
+## Intercept 0.3874809 0.5076713 0.3728788 0.4017596
 ```
 
 Happily, we get the same value within simulation error from model `b_pois`.
@@ -1958,7 +1951,7 @@ exp(k[1])/(exp(k[1]) + exp(k[2]))
 ```
 
 ```
-## [1] 0.3876133
+## [1] 0.3876207
 ```
 
 ### 10.3.2. Geometric.
@@ -2011,14 +2004,13 @@ print(b10.18, digits = 2)
 ##   Links: mu = log 
 ## Formula: y ~ 0 + intercept + x 
 ##    Data: list(y = y, x = x) (Number of observations: 100) 
-## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1; 
+## Samples: 2 chains, each with iter = 2500; warmup = 500; thin = 1;
 ##          total post-warmup samples = 4000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept     1.16      0.23     0.70     1.62       1043 1.00
-## x            -2.27      0.45    -3.15    -1.41       1144 1.00
+## intercept     1.15      0.23     0.71     1.59       1281 1.00
+## x            -2.26      0.44    -3.13    -1.40       1448 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -2049,9 +2041,9 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * tidyverse   1.2.1
-* wesanderson 0.3.2
+* wesanderson 0.3.6
 * ggthemes    3.4.0
 * bayesplot   1.5.0
 * loo         2.0.0

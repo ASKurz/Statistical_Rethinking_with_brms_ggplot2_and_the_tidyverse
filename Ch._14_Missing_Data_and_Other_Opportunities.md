@@ -1,7 +1,7 @@
 ---
 title: "Ch 14. Missing Data and Other Opportunities"
 author: "A Solomon Kurz"
-date: "2018-04-15"
+date: "2018-05-27"
 output:
   html_document:
     code_folding: show
@@ -234,18 +234,18 @@ b14.1_se$fit@inits
 ```
 ## [[1]]
 ## [[1]]$b
-## [1]  1.1985375  0.3111142 -1.3903219
+## [1]  0.6084162 -1.6136396 -0.6907710
 ## 
 ## [[1]]$sigma
-## [1] 0.3109803
+## [1] 1.651458
 ## 
 ## 
 ## [[2]]
 ## [[2]]$b
-## [1] 0.3898006 0.2022608 0.8074439
+## [1] 1.4044675 0.3984267 0.1093932
 ## 
 ## [[2]]$sigma
-## [1] 1.270774
+## [1] 5.786521
 ```
 
 ```r
@@ -260,10 +260,10 @@ b14.1_mi$fit@inits
 ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
 ## 
 ## [[1]]$b
-## [1]  1.8814806 -1.9995429  0.1119839
+## [1] -1.84002039  1.99939838 -0.09915831
 ## 
 ## [[1]]$sigma
-## [1] 0.6189272
+## [1] 3.359573
 ## 
 ## 
 ## [[2]]
@@ -273,10 +273,10 @@ b14.1_mi$fit@inits
 ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
 ## 
 ## [[2]]$b
-## [1]  0.7516742 -1.4945574 -0.4253562
+## [1] -1.0102658  0.9673734  0.2870645
 ## 
 ## [[2]]$sigma
-## [1] 0.1994272
+## [1] 0.3158946
 ```
 
 As we explore further, it should become apparent why. Here are the primary model summaries.
@@ -291,19 +291,18 @@ print(b14.1_se)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A 
 ##    Data: dlist (Number of observations: 50) 
-## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    21.51      6.59     8.61    34.21       2096 1.00
-## R             0.12      0.08    -0.02     0.27       2594 1.00
-## A            -0.55      0.21    -0.96    -0.13       2168 1.00
+## intercept    21.37      6.63     7.81    33.92       1602 1.00
+## R             0.13      0.08    -0.02     0.28       1923 1.00
+## A            -0.55      0.21    -0.95    -0.11       1720 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.13      0.21     0.75     1.57       2703 1.00
+## sigma     1.12      0.21     0.75     1.55       2621 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -319,19 +318,18 @@ print(b14.1_mi)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: div_obs | mi(div_sd) ~ 0 + intercept + R + A 
 ##    Data: dlist (Number of observations: 50) 
-## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    21.39      6.53     8.40    33.85       2068 1.00
-## R             0.13      0.08    -0.02     0.27       2532 1.00
-## A            -0.55      0.21    -0.96    -0.13       2160 1.00
+## intercept    21.49      6.56     8.62    34.23       4446 1.00
+## R             0.12      0.08    -0.03     0.27       5039 1.00
+## A            -0.55      0.21    -0.96    -0.13       4510 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.13      0.21     0.76     1.57       2147 1.00
+## sigma     1.12      0.21     0.76     1.56       3079 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -350,11 +348,11 @@ tidy(b14.1_se) %>%
 
 ```
 ##          term estimate std.error   lower   upper
-## 1 b_intercept    21.51      6.59   10.50   32.15
-## 2         b_R     0.12      0.08    0.00    0.25
-## 3         b_A    -0.55      0.21   -0.89   -0.20
-## 4       sigma     1.13      0.21    0.81    1.49
-## 5        lp__  -105.38      1.43 -108.15 -103.71
+## 1 b_intercept    21.37      6.63   10.11   31.85
+## 2         b_R     0.13      0.08    0.00    0.25
+## 3         b_A    -0.55      0.21   -0.89   -0.19
+## 4       sigma     1.12      0.21    0.80    1.48
+## 5        lp__  -105.41      1.46 -108.26 -103.70
 ```
 
 ```r
@@ -364,61 +362,61 @@ tidy(b14.1_mi) %>%
 
 ```
 ##           term estimate std.error   lower   upper
-## 1  b_intercept    21.39      6.53   10.64   31.88
-## 2          b_R     0.13      0.08    0.00    0.25
-## 3          b_A    -0.55      0.21   -0.89   -0.20
-## 4        sigma     1.13      0.21    0.81    1.49
-## 5        Yl[1]    11.77      0.66   10.68   12.86
-## 6        Yl[2]    11.17      1.05    9.47   12.89
-## 7        Yl[3]    10.47      0.62    9.46   11.48
-## 8        Yl[4]    12.32      0.89   10.90   13.81
-## 9        Yl[5]     8.05      0.23    7.67    8.44
-## 10       Yl[6]    11.00      0.74    9.82   12.23
-## 11       Yl[7]     7.24      0.64    6.18    8.28
-## 12       Yl[8]     9.35      0.89    7.89   10.81
-## 13       Yl[9]     7.00      1.10    5.22    8.85
-## 14      Yl[10]     8.54      0.31    8.02    9.05
-## 15      Yl[11]    11.16      0.52   10.30   12.02
-## 16      Yl[12]     9.09      0.90    7.60   10.54
-## 17      Yl[13]     9.69      0.92    8.15   11.18
-## 18      Yl[14]     8.11      0.42    7.42    8.80
-## 19      Yl[15]    10.68      0.56    9.77   11.60
-## 20      Yl[16]    10.18      0.71    9.04   11.34
-## 21      Yl[17]    10.50      0.78    9.20   11.78
-## 22      Yl[18]    11.94      0.64   10.90   13.01
-## 23      Yl[19]    10.50      0.69    9.40   11.65
-## 24      Yl[20]    10.18      1.01    8.58   11.90
-## 25      Yl[21]     8.76      0.59    7.82    9.72
-## 26      Yl[22]     7.77      0.47    6.99    8.54
-## 27      Yl[23]     9.15      0.47    8.38    9.92
-## 28      Yl[24]     7.74      0.55    6.84    8.64
-## 29      Yl[25]    10.43      0.75    9.20   11.68
-## 30      Yl[26]     9.54      0.59    8.57   10.51
-## 31      Yl[27]     9.42      0.96    7.86   10.99
-## 32      Yl[28]     9.27      0.73    8.04   10.43
-## 33      Yl[29]     9.18      0.92    7.68   10.73
-## 34      Yl[30]     6.39      0.43    5.67    7.10
-## 35      Yl[31]     9.97      0.80    8.67   11.28
-## 36      Yl[32]     6.69      0.30    6.21    7.20
-## 37      Yl[33]     9.89      0.44    9.17   10.60
-## 38      Yl[34]     9.76      0.96    8.14   11.33
-## 39      Yl[35]     9.43      0.43    8.74   10.13
-## 40      Yl[36]    11.96      0.78   10.67   13.25
-## 41      Yl[37]    10.07      0.66    8.99   11.15
-## 42      Yl[38]     7.80      0.41    7.13    8.47
-## 43      Yl[39]     8.21      1.01    6.58    9.91
-## 44      Yl[40]     8.40      0.59    7.43    9.36
-## 45      Yl[41]    10.01      1.06    8.28   11.73
-## 46      Yl[42]    10.94      0.63    9.92   11.99
-## 47      Yl[43]    10.02      0.33    9.47   10.58
-## 48      Yl[44]    11.07      0.79    9.76   12.36
-## 49      Yl[45]     8.91      0.99    7.30   10.53
+## 1  b_intercept    21.49      6.56   10.67   32.33
+## 2          b_R     0.12      0.08    0.00    0.25
+## 3          b_A    -0.55      0.21   -0.90   -0.20
+## 4        sigma     1.12      0.21    0.81    1.47
+## 5        Yl[1]    11.77      0.66   10.70   12.88
+## 6        Yl[2]    11.18      1.05    9.49   12.90
+## 7        Yl[3]    10.47      0.62    9.47   11.49
+## 8        Yl[4]    12.32      0.87   10.94   13.77
+## 9        Yl[5]     8.05      0.24    7.66    8.44
+## 10       Yl[6]    11.00      0.73    9.81   12.21
+## 11       Yl[7]     7.25      0.64    6.17    8.30
+## 12       Yl[8]     9.36      0.91    7.86   10.85
+## 13       Yl[9]     6.99      1.07    5.24    8.78
+## 14      Yl[10]     8.54      0.31    8.04    9.04
+## 15      Yl[11]    11.14      0.53   10.27   12.02
+## 16      Yl[12]     9.09      0.90    7.61   10.57
+## 17      Yl[13]     9.69      0.90    8.16   11.12
+## 18      Yl[14]     8.11      0.42    7.44    8.80
+## 19      Yl[15]    10.68      0.55    9.77   11.60
+## 20      Yl[16]    10.17      0.72    8.99   11.36
+## 21      Yl[17]    10.51      0.76    9.27   11.76
+## 22      Yl[18]    11.94      0.64   10.90   12.99
+## 23      Yl[19]    10.49      0.71    9.35   11.68
+## 24      Yl[20]    10.17      1.01    8.61   11.90
+## 25      Yl[21]     8.75      0.60    7.76    9.73
+## 26      Yl[22]     7.77      0.47    6.98    8.54
+## 27      Yl[23]     9.14      0.48    8.37    9.94
+## 28      Yl[24]     7.74      0.53    6.86    8.58
+## 29      Yl[25]    10.43      0.78    9.17   11.70
+## 30      Yl[26]     9.54      0.58    8.58   10.48
+## 31      Yl[27]     9.43      0.94    7.91   10.98
+## 32      Yl[28]     9.25      0.74    8.03   10.48
+## 33      Yl[29]     9.18      0.93    7.69   10.73
+## 34      Yl[30]     6.39      0.44    5.66    7.10
+## 35      Yl[31]     9.99      0.79    8.67   11.29
+## 36      Yl[32]     6.69      0.30    6.20    7.19
+## 37      Yl[33]     9.89      0.43    9.18   10.61
+## 38      Yl[34]     9.78      0.98    8.15   11.36
+## 39      Yl[35]     9.44      0.41    8.76   10.12
+## 40      Yl[36]    11.95      0.78   10.69   13.25
+## 41      Yl[37]    10.07      0.65    9.01   11.14
+## 42      Yl[38]     7.80      0.40    7.13    8.46
+## 43      Yl[39]     8.22      1.01    6.60    9.91
+## 44      Yl[40]     8.40      0.60    7.40    9.40
+## 45      Yl[41]    10.01      1.06    8.29   11.74
+## 46      Yl[42]    10.94      0.63    9.91   11.98
+## 47      Yl[43]    10.02      0.33    9.48   10.57
+## 48      Yl[44]    11.08      0.79    9.75   12.35
+## 49      Yl[45]     8.91      0.99    7.29   10.55
 ## 50      Yl[46]     9.00      0.47    8.23    9.79
-## 51      Yl[47]     9.95      0.56    9.00   10.88
-## 52      Yl[48]    10.62      0.89    9.19   12.06
-## 53      Yl[49]     8.46      0.51    7.62    9.30
-## 54      Yl[50]    11.49      1.11    9.66   13.29
-## 55        lp__  -152.57      6.33 -163.31 -142.55
+## 51      Yl[47]     9.96      0.56    9.04   10.89
+## 52      Yl[48]    10.63      0.88    9.19   12.06
+## 53      Yl[49]     8.47      0.49    7.66    9.28
+## 54      Yl[50]    11.51      1.11    9.67   13.33
+## 55        lp__  -152.41      6.38 -163.36 -142.32
 ```
 
 Again, from `b_intercept` to `sigma`, the output is about the same. But model `b14.1_mi`, based on the `mi()` syntax, contained posterior summaries for all 50 of the criterion values. The `se()` method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as `div_est[i]`; with the `mi()` method, brms indexed them as `Yl[i]`--no big deal. So while both brms methods accommodated measurement error, the `mi()` method appears to be the brms analogue to what McElreath did with his model `m14.1` in the text.
@@ -471,19 +469,18 @@ print(b14.1b)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: div_obs ~ 0 + intercept + R + A 
 ##    Data: dlist (Number of observations: 50) 
-## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept    35.99      7.78    20.58    51.35       1962 1.00
-## R            -0.05      0.08    -0.21     0.11       2300 1.00
-## A            -0.97      0.25    -1.46    -0.48       2046 1.00
+## intercept    35.91      7.89    20.79    51.85       1867 1.00
+## R            -0.05      0.08    -0.22     0.11       2231 1.00
+## A            -0.97      0.25    -1.47    -0.49       1927 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.52      0.16     1.24     1.87       3371 1.00
+## sigma     1.52      0.16     1.24     1.86       2936 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -521,12 +518,12 @@ color_r <- viridis_pal(option = "C")(7)[4]
 ggplot(data = fitd_error, 
        aes(x = A, y = Estimate)) +
   geom_ribbon(data = fitd_no_error,
-              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = color_y, alpha = 1/4) +
   geom_line(data = fitd_no_error,
             color = color_y, linetype = 2) +
   geom_ribbon(data = fitd_error,
-              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = color_r, alpha = 1/3) +
   geom_line(data = fitd_error,
             color = color_r) +
@@ -595,19 +592,18 @@ print(b14.2_se)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + me(mar_obs, mar_sd) + A 
 ##    Data: dlist (Number of observations: 50) 
-## Samples: 3 chains, each with iter = 5000; warmup = 1000; thin = 1; 
+## Samples: 3 chains, each with iter = 5000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 12000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept          15.81      6.88     1.95    29.07       5521 1.00
-## A                  -0.44      0.21    -0.84    -0.03       6422 1.00
-## memar_obsmar_sd     0.27      0.11     0.07     0.49       5329 1.00
+## intercept          15.63      6.66     2.17    28.75       6662 1.00
+## A                  -0.44      0.20    -0.83    -0.04       7659 1.00
+## memar_obsmar_sd     0.28      0.11     0.07     0.49       6378 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.00      0.21     0.61     1.44      12000 1.00
+## sigma     0.99      0.21     0.61     1.44      12000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -623,19 +619,18 @@ print(b14.2_mi)
 ##   Links: mu = identity; sigma = identity 
 ## Formula: div_obs | mi(div_sd) ~ 0 + intercept + me(mar_obs, mar_sd) + A 
 ##    Data: dlist (Number of observations: 50) 
-## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1; 
+## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 8000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept          15.71      6.69     2.39    28.40       2618 1.00
-## A                  -0.44      0.20    -0.82    -0.04       3036 1.00
-## memar_obsmar_sd     0.27      0.11     0.07     0.48       2290 1.00
+## intercept          15.80      6.76     2.36    29.01       2484 1.00
+## A                  -0.44      0.20    -0.85    -0.04       2794 1.00
+## memar_obsmar_sd     0.27      0.11     0.07     0.48       1849 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.00      0.21     0.61     1.45       1839 1.00
+## sigma     0.99      0.21     0.61     1.43       1797 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -837,25 +832,25 @@ tidy(b14.3) %>%
 
 ```
 ##                     term estimate std.error lower upper
-## 1       b_kcal_Intercept    -0.54      0.47 -1.30  0.26
+## 1       b_kcal_Intercept    -0.55      0.47 -1.31  0.22
 ## 2  b_neocortex_Intercept     0.67      0.01  0.65  0.69
 ## 3         b_kcal_logmass    -0.07      0.02 -0.11 -0.03
-## 4   bsp_kcal_mineocortex     1.91      0.74  0.66  3.09
+## 4   bsp_kcal_mineocortex     1.93      0.73  0.72  3.12
 ## 5             sigma_kcal     0.13      0.02  0.10  0.17
 ## 6        sigma_neocortex     0.06      0.01  0.05  0.08
-## 7       Ymi_neocortex[2]     0.63      0.05  0.55  0.72
-## 8       Ymi_neocortex[3]     0.62      0.05  0.54  0.71
-## 9       Ymi_neocortex[4]     0.62      0.05  0.54  0.71
-## 10      Ymi_neocortex[5]     0.65      0.05  0.58  0.73
+## 7       Ymi_neocortex[2]     0.63      0.05  0.55  0.71
+## 8       Ymi_neocortex[3]     0.62      0.05  0.55  0.71
+## 9       Ymi_neocortex[4]     0.62      0.05  0.54  0.70
+## 10      Ymi_neocortex[5]     0.65      0.05  0.57  0.73
 ## 11      Ymi_neocortex[9]     0.70      0.05  0.62  0.78
 ## 12     Ymi_neocortex[14]     0.66      0.05  0.58  0.74
-## 13     Ymi_neocortex[15]     0.69      0.05  0.61  0.77
+## 13     Ymi_neocortex[15]     0.69      0.05  0.61  0.76
 ## 14     Ymi_neocortex[17]     0.70      0.05  0.62  0.77
 ## 15     Ymi_neocortex[19]     0.71      0.05  0.63  0.79
-## 16     Ymi_neocortex[21]     0.65      0.05  0.57  0.73
+## 16     Ymi_neocortex[21]     0.65      0.05  0.57  0.72
 ## 17     Ymi_neocortex[23]     0.66      0.05  0.58  0.74
-## 18     Ymi_neocortex[26]     0.70      0.05  0.61  0.77
-## 19                  lp__    40.54      4.31 32.79 46.70
+## 18     Ymi_neocortex[26]     0.69      0.05  0.61  0.77
+## 19                  lp__    40.62      4.33 32.82 46.72
 ```
 
 Here's the model that drops the cases with NAs on `neocortex`.
@@ -882,11 +877,11 @@ tidy(b14.3cc) %>%
 
 ```
 ##          term estimate std.error lower upper
-## 1 b_Intercept    -1.07      0.59 -2.01 -0.11
-## 2 b_neocortex     2.76      0.92  1.26  4.24
-## 3   b_logmass    -0.10      0.03 -0.14 -0.05
+## 1 b_Intercept    -1.05      0.59 -1.99 -0.08
+## 2 b_neocortex     2.74      0.92  1.24  4.20
+## 3   b_logmass    -0.09      0.03 -0.14 -0.05
 ## 4       sigma     0.14      0.03  0.10  0.20
-## 5        lp__    -4.30      1.66 -7.54 -2.36
+## 5        lp__    -4.29      1.69 -7.56 -2.35
 ```
 
 In order to make our versions of Figure 14.4., we'll need to do a little data wrangling with `fitted()`.
@@ -909,16 +904,16 @@ f_b14.3 %>%
 ```
 ## Observations: 30
 ## Variables: 10
-## $ Estimate.kcal        <dbl> 0.3289769, 0.3519921, 0.3750073, 0.3980224, 0.4210376, 0.4440528, ...
-## $ Est.Error.kcal       <dbl> 0.12615432, 0.11748727, 0.10885861, 0.10027824, 0.09175973, 0.0833...
-## $ `2.5%ile.kcal`       <dbl> 0.08133707, 0.12202522, 0.16163270, 0.20135849, 0.24171655, 0.2810...
-## $ `97.5%ile.kcal`      <dbl> 0.5837377, 0.5887042, 0.5937618, 0.5988029, 0.6047521, 0.6107390, ...
-## $ Estimate.neocortex   <dbl> 0.6716919, 0.6716919, 0.6716919, 0.6716919, 0.6716919, 0.6716919, ...
-## $ Est.Error.neocortex  <dbl> 0.0136558, 0.0136558, 0.0136558, 0.0136558, 0.0136558, 0.0136558, ...
-## $ `2.5%ile.neocortex`  <dbl> 0.6446115, 0.6446115, 0.6446115, 0.6446115, 0.6446115, 0.6446115, ...
-## $ `97.5%ile.neocortex` <dbl> 0.6985419, 0.6985419, 0.6985419, 0.6985419, 0.6985419, 0.6985419, ...
-## $ neocortex            <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, ...
-## $ logmass              <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.2441...
+## $ Estimate.kcal       <dbl> 0.3261651, 0.3494209, 0.3726768, 0.3959327, 0.4191885, 0.4424444, 0...
+## $ Est.Error.kcal      <dbl> 0.12441355, 0.11588710, 0.10740106, 0.09896583, 0.09059559, 0.08231...
+## $ Q2.5.kcal           <dbl> 0.08147818, 0.12108296, 0.16040753, 0.20138703, 0.24168390, 0.28144...
+## $ Q97.5.kcal          <dbl> 0.5765098, 0.5831633, 0.5900092, 0.5965719, 0.6030822, 0.6098887, 0...
+## $ Estimate.neocortex  <dbl> 0.6712486, 0.6712486, 0.6712486, 0.6712486, 0.6712486, 0.6712486, 0...
+## $ Est.Error.neocortex <dbl> 0.01370519, 0.01370519, 0.01370519, 0.01370519, 0.01370519, 0.01370...
+## $ Q2.5.neocortex      <dbl> 0.6438702, 0.6438702, 0.6438702, 0.6438702, 0.6438702, 0.6438702, 0...
+## $ Q97.5.neocortex     <dbl> 0.6977456, 0.6977456, 0.6977456, 0.6977456, 0.6977456, 0.6977456, 0...
+## $ neocortex           <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, 0...
+## $ logmass             <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.24415...
 ```
 
 To include the imputed `neocortex` values in the plot, we'll extract the information from `broom::tidy()`.
@@ -939,12 +934,12 @@ f_b14.3_mi %>% head()
 
 ```
 ##                term  estimate  std.error     lower     upper kcal neocortex    logmass
-## 1  Ymi_neocortex[2] 0.6324513 0.05026370 0.5537426 0.7154900 0.51        NA  0.7371641
-## 2  Ymi_neocortex[3] 0.6242885 0.05133219 0.5419400 0.7096618 0.46        NA  0.9202828
-## 3  Ymi_neocortex[4] 0.6218958 0.05123676 0.5409776 0.7078083 0.48        NA  0.4824261
-## 4  Ymi_neocortex[5] 0.6524923 0.04845319 0.5754368 0.7308560 0.60        NA  0.7839015
-## 5  Ymi_neocortex[9] 0.7015955 0.04914283 0.6204982 0.7829370 0.91        NA -0.3424903
-## 6 Ymi_neocortex[14] 0.6562046 0.04921722 0.5773639 0.7379903 0.71        NA -0.5108256
+## 1  Ymi_neocortex[2] 0.6322811 0.04895157 0.5544072 0.7141608 0.51        NA  0.7371641
+## 2  Ymi_neocortex[3] 0.6245690 0.05014065 0.5454557 0.7075930 0.46        NA  0.9202828
+## 3  Ymi_neocortex[4] 0.6214316 0.05057949 0.5412705 0.7046204 0.48        NA  0.4824261
+## 4  Ymi_neocortex[5] 0.6523145 0.04808745 0.5742454 0.7319279 0.60        NA  0.7839015
+## 5  Ymi_neocortex[9] 0.7020095 0.04934025 0.6227149 0.7838583 0.91        NA -0.3424903
+## 6 Ymi_neocortex[14] 0.6554462 0.04904173 0.5758904 0.7365828 0.71        NA -0.5108256
 ```
 
 Data wrangling done--here's our code for Figure 14.4.a.
@@ -955,8 +950,8 @@ color <- viridis_pal(option = "D")(7)[4]
 
 ggplot(data = f_b14.3, aes(x = neocortex,
                            y = Estimate.kcal)) +
-  geom_ribbon(aes(ymin = `2.5%ile.kcal`,
-                  ymax = `97.5%ile.kcal`),
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
               fill = color, alpha = 1/3) +
   geom_line(color = color) +
   geom_point(data = data_list %>% as_tibble(),
@@ -1037,26 +1032,26 @@ tidy(b14.4) %>%
 
 ```
 ##                     term estimate std.error lower upper
-## 1       b_kcal_Intercept    -0.85      0.48 -1.62 -0.04
+## 1       b_kcal_Intercept    -0.86      0.50 -1.64 -0.01
 ## 2  b_neocortex_Intercept     0.64      0.01  0.62  0.66
-## 3         b_kcal_logmass    -0.09      0.02 -0.12 -0.05
+## 3         b_kcal_logmass    -0.09      0.02 -0.13 -0.05
 ## 4    b_neocortex_logmass     0.02      0.01  0.01  0.03
-## 5   bsp_kcal_mineocortex     2.41      0.75  1.14  3.60
+## 5   bsp_kcal_mineocortex     2.43      0.77  1.09  3.64
 ## 6             sigma_kcal     0.13      0.02  0.10  0.17
 ## 7        sigma_neocortex     0.04      0.01  0.03  0.06
-## 8       Ymi_neocortex[2]     0.63      0.04  0.57  0.69
+## 8       Ymi_neocortex[2]     0.63      0.04  0.58  0.69
 ## 9       Ymi_neocortex[3]     0.63      0.04  0.57  0.69
 ## 10      Ymi_neocortex[4]     0.62      0.04  0.56  0.68
 ## 11      Ymi_neocortex[5]     0.65      0.03  0.59  0.70
 ## 12      Ymi_neocortex[9]     0.66      0.04  0.60  0.72
 ## 13     Ymi_neocortex[14]     0.63      0.03  0.57  0.68
 ## 14     Ymi_neocortex[15]     0.68      0.03  0.62  0.74
-## 15     Ymi_neocortex[17]     0.70      0.03  0.64  0.76
+## 15     Ymi_neocortex[17]     0.70      0.03  0.64  0.75
 ## 16     Ymi_neocortex[19]     0.71      0.04  0.65  0.77
 ## 17     Ymi_neocortex[21]     0.66      0.04  0.61  0.72
-## 18     Ymi_neocortex[23]     0.68      0.04  0.62  0.73
+## 18     Ymi_neocortex[23]     0.68      0.03  0.62  0.73
 ## 19     Ymi_neocortex[26]     0.74      0.04  0.68  0.80
-## 20                  lp__    48.57      4.20 40.81 54.68
+## 20                  lp__    48.64      4.31 40.76 54.70
 ```
 
 Here's our pre-Figure14.5. data wrangling.
@@ -1083,16 +1078,16 @@ f_b14.4 %>%
 ```
 ## Observations: 30
 ## Variables: 10
-## $ Estimate.kcal        <dbl> 0.2451386, 0.2742440, 0.3033495, 0.3324550, 0.3615605, 0.3906659, ...
-## $ Est.Error.kcal       <dbl> 0.12868863, 0.11982311, 0.11099372, 0.10220984, 0.09348429, 0.0848...
-## $ `2.5%ile.kcal`       <dbl> -0.001236505, 0.044825879, 0.091733738, 0.137504435, 0.182183478, ...
-## $ `97.5%ile.kcal`      <dbl> 0.5124035, 0.5230155, 0.5334325, 0.5433233, 0.5537293, 0.5650376, ...
-## $ Estimate.neocortex   <dbl> 0.667191, 0.667191, 0.667191, 0.667191, 0.667191, 0.667191, 0.6671...
-## $ Est.Error.neocortex  <dbl> 0.009377935, 0.009377935, 0.009377935, 0.009377935, 0.009377935, 0...
-## $ `2.5%ile.neocortex`  <dbl> 0.6486236, 0.6486236, 0.6486236, 0.6486236, 0.6486236, 0.6486236, ...
-## $ `97.5%ile.neocortex` <dbl> 0.6855527, 0.6855527, 0.6855527, 0.6855527, 0.6855527, 0.6855527, ...
-## $ neocortex            <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, ...
-## $ logmass              <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.2441...
+## $ Estimate.kcal       <dbl> 0.2425346, 0.2718337, 0.3011329, 0.3304320, 0.3597311, 0.3890302, 0...
+## $ Est.Error.kcal      <dbl> 0.13184967, 0.12271996, 0.11362520, 0.10457450, 0.09558039, 0.08666...
+## $ Q2.5.kcal           <dbl> -0.006130095, 0.040476094, 0.087059081, 0.132868954, 0.178714700, 0...
+## $ Q97.5.kcal          <dbl> 0.5155597, 0.5253359, 0.5347931, 0.5442452, 0.5547341, 0.5653579, 0...
+## $ Estimate.neocortex  <dbl> 0.6670509, 0.6670509, 0.6670509, 0.6670509, 0.6670509, 0.6670509, 0...
+## $ Est.Error.neocortex <dbl> 0.009647519, 0.009647519, 0.009647519, 0.009647519, 0.009647519, 0....
+## $ Q2.5.neocortex      <dbl> 0.6478213, 0.6478213, 0.6478213, 0.6478213, 0.6478213, 0.6478213, 0...
+## $ Q97.5.neocortex     <dbl> 0.6861177, 0.6861177, 0.6861177, 0.6861177, 0.6861177, 0.6861177, 0...
+## $ neocortex           <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, 0...
+## $ logmass             <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.24415...
 ```
 
 ```r
@@ -1104,10 +1099,10 @@ f_b14.4_mi %>%
 ## Observations: 12
 ## Variables: 8
 ## $ term      <chr> "Ymi_neocortex[2]", "Ymi_neocortex[3]", "Ymi_neocortex[4]", "Ymi_neocortex[5]...
-## $ estimate  <dbl> 0.6312817, 0.6288730, 0.6195984, 0.6463371, 0.6632242, 0.6275439, 0.6800538, ...
-## $ std.error <dbl> 0.03588077, 0.03541047, 0.03588367, 0.03429072, 0.03629524, 0.03475244, 0.034...
-## $ lower     <dbl> 0.5731698, 0.5716585, 0.5615344, 0.5899822, 0.6035198, 0.5719379, 0.6227272, ...
-## $ upper     <dbl> 0.6897901, 0.6875024, 0.6776926, 0.7015633, 0.7226798, 0.6840412, 0.7370288, ...
+## $ estimate  <dbl> 0.6317407, 0.6292829, 0.6196844, 0.6470233, 0.6620218, 0.6268416, 0.6795267, ...
+## $ std.error <dbl> 0.03546612, 0.03570246, 0.03627386, 0.03418512, 0.03673571, 0.03473802, 0.034...
+## $ lower     <dbl> 0.5755746, 0.5714457, 0.5612081, 0.5906570, 0.6024662, 0.5704552, 0.6228705, ...
+## $ upper     <dbl> 0.6908354, 0.6881814, 0.6803200, 0.7029325, 0.7209369, 0.6832673, 0.7366196, ...
 ## $ kcal      <dbl> 0.51, 0.46, 0.48, 0.60, 0.91, 0.71, 0.73, 0.72, 0.79, 0.48, 0.51, 0.53
 ## $ neocortex <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 ## $ logmass   <dbl> 0.7371641, 0.9202828, 0.4824261, 0.7839015, -0.3424903, -0.5108256, 1.2441546...
@@ -1121,8 +1116,8 @@ color <- viridis_pal(option = "D")(7)[3]
 
 ggplot(data = f_b14.4, aes(x = neocortex,
                            y = Estimate.kcal)) +
-  geom_ribbon(aes(ymin = `2.5%ile.kcal`,
-                  ymax = `97.5%ile.kcal`),
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
               fill = color, alpha = 1/2) +
   geom_line(color = color) +
   geom_point(data = data_list %>% as_tibble(),
@@ -1173,7 +1168,7 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * bayesplot   1.5.0
 * viridis     0.4.0
 * tidyverse   1.2.1

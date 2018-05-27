@@ -1,7 +1,7 @@
 ---
 title: "Ch. 12 Multilevel Models"
 author: "A Solomon Kurz"
-date: "2018-04-21"
+date: "2018-05-26"
 output:
   html_document:
     code_folding: show
@@ -90,9 +90,9 @@ waic(b12.1, b12.2)
 
 ```
 ##                 WAIC   SE
-## b12.1         201.41 9.46
-## b12.2         200.74 7.20
-## b12.1 - b12.2   0.67 4.58
+## b12.1         201.32 9.29
+## b12.2         200.55 7.15
+## b12.1 - b12.2   0.77 4.52
 ```
 
 ```r
@@ -100,14 +100,14 @@ loo(b12.1, b12.2)
 ```
 
 ```
-## Warning: Found 36 observations with a pareto_k > 0.7 in model 'b12.1'.
+## Warning: Found 44 observations with a pareto_k > 0.7 in model 'b12.1'.
 ## With this many problematic observations, it may be more appropriate to use
 ## 'kfold' with argument 'K = 10' to perform 10-fold cross-validation rather
 ## than LOO.
 ```
 
 ```
-## Warning: Found 41 observations with a pareto_k > 0.7 in model 'b12.2'.
+## Warning: Found 42 observations with a pareto_k > 0.7 in model 'b12.2'.
 ## With this many problematic observations, it may be more appropriate to use
 ## 'kfold' with argument 'K = 10' to perform 10-fold cross-validation rather
 ## than LOO.
@@ -115,9 +115,9 @@ loo(b12.1, b12.2)
 
 ```
 ##                LOOIC    SE
-## b12.1         231.59 10.65
-## b12.2         229.17  8.35
-## b12.1 - b12.2   2.42  6.98
+## b12.1         230.64 10.03
+## b12.2         229.02  8.25
+## b12.1 - b12.2   1.62  6.34
 ```
 
 Note those "pareto_k > 0.7" warnings. We can follow the advice and use the `kfold()` function, instead. We'll also go ahead and specify `K = 10`, as recommended. But beware, this takes a few minutes.
@@ -135,12 +135,12 @@ kf
 
 ```
 ##               KFOLDIC    SE
-## b12.1          324.15 13.08
-## b12.2          266.25 13.36
-## b12.1 - b12.2   57.90  8.63
+## b12.1          323.51 13.17
+## b12.2          264.12 13.04
+## b12.1 - b12.2   59.39  8.50
 ```
 
-The $K$-fold cross-validation difference of 58, with a standard error around 9, suggests that model `b12.2` is the clear favorite relative to `b12.1`. For more on the `kfold()` function, see the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf).
+The $K$-fold cross-validation difference of 59, with a standard error around 9, suggests that model `b12.2` is the clear favorite relative to `b12.1`. For more on the `kfold()` function, see the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf).
 
 But here's our prep work for Figure 12.1
 
@@ -242,7 +242,7 @@ rnorm(1, mean = post[, 1], sd = post[, 2]) %>%
 ```
 
 ```
-## [1] 0.9897544
+## [1] 0.7187087
 ```
 
 First, we took one random draw from a normal distribution with a mean of the first row in `post[, 1]` and a standard deviation of the value from the first row in `post[, 2]`, and passed it through the `invlogit()` function. By replacing the `1` `nrow(post)`, we do this `nrow(post)` times (i.e., 12,000). So our orange density is the summary of that process.
@@ -273,18 +273,17 @@ print(b12.2.e)
 ##   Links: mu = logit 
 ## Formula: surv | trials(density) ~ 1 + (1 | tank) 
 ##    Data: d (Number of observations: 48) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1; 
+## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
 ##          total post-warmup samples = 6000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Group-Level Effects: 
 ## ~tank (Number of levels: 48) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     1.61      0.21     1.25     2.07       1542 1.00
+## sd(Intercept)     1.62      0.22     1.25     2.10       1621 1.00
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     1.30      0.25     0.82     1.80       1054 1.00
+## Intercept     1.28      0.25     0.79     1.78       1257 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -373,8 +372,8 @@ b12.3 <-
 ## 
 ## SAMPLING FOR MODEL 'binomial brms-model' NOW (CHAIN 1).
 ## 
-## Gradient evaluation took 7.1e-05 seconds
-## 1000 transitions using 10 leapfrog steps per transition would take 0.71 seconds.
+## Gradient evaluation took 5.7e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.57 seconds.
 ## Adjust your expectations accordingly!
 ## 
 ## 
@@ -391,9 +390,9 @@ b12.3 <-
 ## Iteration: 9000 / 10000 [ 90%]  (Sampling)
 ## Iteration: 10000 / 10000 [100%]  (Sampling)
 ## 
-##  Elapsed Time: 0.872771 seconds (Warm-up)
-##                5.70663 seconds (Sampling)
-##                6.57941 seconds (Total)
+##  Elapsed Time: 0.818694 seconds (Warm-up)
+##                5.63614 seconds (Sampling)
+##                6.45483 seconds (Total)
 ```
 
 ```r
@@ -405,10 +404,9 @@ print(b12.3)
 ##   Links: mu = logit 
 ## Formula: si | trials(ni) ~ 1 + (1 | pond) 
 ##    Data: dsim (Number of observations: 60) 
-## Samples: 1 chains, each with iter = 10000; warmup = 1000; thin = 1; 
+## Samples: 1 chains, each with iter = 10000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 9000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Group-Level Effects: 
 ## ~pond (Number of levels: 60) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
@@ -432,11 +430,11 @@ coef(b12.3)$pond[c(1:2, 59:60), , ] %>%
 ```
 
 ```
-##    Estimate Est.Error 2.5%ile 97.5%ile
-## 1      1.47      0.88   -0.13     3.28
-## 2      2.34      1.01    0.54     4.50
-## 59     1.59      0.42    0.80     2.47
-## 60     2.59      0.59    1.54     3.87
+##    Estimate Est.Error  Q2.5 Q97.5
+## 1      1.47      0.88 -0.13  3.28
+## 2      2.34      1.01  0.54  4.50
+## 59     1.59      0.42  0.80  2.47
+## 60     2.59      0.59  1.54  3.87
 ```
 
 Here we get ready for the diagnostic plot, Figure 12.3.
@@ -630,7 +628,7 @@ post %>%
 ##   key                    mean
 ##   <chr>                 <dbl>
 ## 1 r_actor[1,Intercept] -0.710
-## 2 r_actor[2,Intercept]  4.59 
+## 2 r_actor[2,Intercept]  4.60 
 ## 3 r_actor[3,Intercept] -1.02 
 ## 4 r_actor[4,Intercept] -1.02 
 ## 5 r_actor[5,Intercept] -0.710
@@ -646,7 +644,7 @@ coef(b12.4)$actor[ , c(1, 3:4), 1] %>%
   as_tibble() %>%
   round(digits = 2) %>%
   # Here we put the credible intervals in an APA-6-style format
-  mutate(`95% CIs` = str_c("[", `2.5%ile`, ", ", `97.5%ile`, "]")) %>%
+  mutate(`95% CIs` = str_c("[", Q2.5, ", ", Q97.5, "]")) %>%
   mutate(actor = str_c("chimp #", 1:7)) %>%
   rename(mean = Estimate) %>%
   select(actor, mean, `95% CIs`)
@@ -656,13 +654,13 @@ coef(b12.4)$actor[ , c(1, 3:4), 1] %>%
 ## # A tibble: 7 x 3
 ##   actor      mean `95% CIs`     
 ##   <chr>     <dbl> <chr>         
-## 1 chimp #1 -0.710 [-1.24, -0.18]
-## 2 chimp #2  4.59  [2.56, 8.43]  
-## 3 chimp #3 -1.02  [-1.58, -0.48]
+## 1 chimp #1 -0.710 [-1.25, -0.18]
+## 2 chimp #2  4.60  [2.53, 8.59]  
+## 3 chimp #3 -1.02  [-1.59, -0.47]
 ## 4 chimp #4 -1.02  [-1.58, -0.48]
-## 5 chimp #5 -0.710 [-1.26, -0.19]
-## 6 chimp #6  0.230 [-0.29, 0.75] 
-## 7 chimp #7  1.76  [1.06, 2.53]
+## 5 chimp #5 -0.710 [-1.25, -0.2] 
+## 6 chimp #6  0.230 [-0.3, 0.77]  
+## 7 chimp #7  1.76  [1.06, 2.57]
 ```
 
 If you prefer the posterior median to the mean, just add a `robust = T` argument inside the `coef()` function.
@@ -680,7 +678,7 @@ b12.5 <-
       prior = c(set_prior("normal(0, 10)", class = "Intercept"),
                 set_prior("normal(0, 10)", class = "b"),
                 set_prior("cauchy(0, 1)", class = "sd")),
-      chains = 4, iter = 6000, warmup = 1000, cores = 4,
+      iter = 6000, warmup = 1000, cores = 4, chains = 4, 
       control = list(adapt_delta = 0.99))
 ```
 
@@ -696,24 +694,23 @@ print(b12.5)
 ##   Links: mu = logit 
 ## Formula: pulled_left ~ 1 + prosoc_left + prosoc_left:condition + (1 | actor) + (1 | block) 
 ##    Data: d (Number of observations: 504) 
-## Samples: 4 chains, each with iter = 6000; warmup = 1000; thin = 1; 
+## Samples: 4 chains, each with iter = 6000; warmup = 1000; thin = 1;
 ##          total post-warmup samples = 20000
-##     ICs: LOO = NA; WAIC = NA; R2 = NA
-##  
+## 
 ## Group-Level Effects: 
 ## ~actor (Number of levels: 7) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     2.26      0.93     1.12     4.57       5773 1.00
+## sd(Intercept)     2.27      0.92     1.14     4.60       6210 1.00
 ## 
 ## ~block (Number of levels: 6) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     0.22      0.18     0.01     0.68       8284 1.00
+## sd(Intercept)     0.22      0.18     0.01     0.67       8132 1.00
 ## 
 ## Population-Level Effects: 
 ##                       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept                 0.46      0.97    -1.43     2.55       4179 1.00
-## prosoc_left               0.83      0.26     0.32     1.35      17258 1.00
-## prosoc_left:condition    -0.14      0.30    -0.73     0.45      16514 1.00
+## Intercept                 0.45      0.95    -1.35     2.49       4828 1.00
+## prosoc_left               0.82      0.26     0.32     1.34      16723 1.00
+## prosoc_left:condition    -0.13      0.30    -0.72     0.45      16062 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -726,14 +723,14 @@ coef(b12.5)$actor[, , "Intercept"] %>%
 ```
 
 ```
-##   Estimate Est.Error 2.5%ile 97.5%ile
-## 1    -0.71      0.30   -1.30    -0.14
-## 2     4.63      1.58    2.54     8.62
-## 3    -1.02      0.30   -1.62    -0.44
-## 4    -1.02      0.31   -1.63    -0.44
-## 5    -0.72      0.29   -1.30    -0.13
-## 6     0.23      0.29   -0.34     0.81
-## 7     1.77      0.40    1.03     2.61
+##   Estimate Est.Error  Q2.5 Q97.5
+## 1    -0.72      0.30 -1.31 -0.14
+## 2     4.64      1.63  2.55  8.66
+## 3    -1.02      0.30 -1.63 -0.44
+## 4    -1.02      0.30 -1.62 -0.44
+## 5    -0.72      0.30 -1.31 -0.15
+## 6     0.23      0.29 -0.33  0.82
+## 7     1.78      0.40  1.03  2.61
 ```
 
 ```r
@@ -742,13 +739,13 @@ coef(b12.5)$block[, , "Intercept"] %>%
 ```
 
 ```
-##   Estimate Est.Error 2.5%ile 97.5%ile
-## 1     0.28      0.99   -1.61     2.38
-## 2     0.50      0.98   -1.38     2.58
-## 3     0.51      0.98   -1.39     2.57
-## 4     0.46      0.98   -1.41     2.55
-## 5     0.43      0.98   -1.45     2.49
-## 6     0.57      0.98   -1.33     2.65
+##   Estimate Est.Error  Q2.5 Q97.5
+## 1     0.27      0.97 -1.58  2.32
+## 2     0.48      0.96 -1.34  2.54
+## 3     0.50      0.96 -1.32  2.56
+## 4     0.45      0.96 -1.36  2.50
+## 5     0.41      0.96 -1.40  2.44
+## 6     0.56      0.96 -1.26  2.62
 ```
 
 We might make the coefficient plot in Figure 12.4.a. like this:
@@ -796,6 +793,7 @@ l.b12.4 <- loo(b12.4, cores = 4)
 
 ```
 ## Using the maximum response value as the number of trials.
+## Using the maximum response value as the number of trials.
 ```
 
 ```r
@@ -803,6 +801,7 @@ l.b12.5 <- loo(b12.5, cores = 4)
 ```
 
 ```
+## Using the maximum response value as the number of trials.
 ## Using the maximum response value as the number of trials.
 ```
 
@@ -812,9 +811,9 @@ compare_ic(l.b12.4, l.b12.5)
 
 ```
 ##                LOOIC    SE
-## b12.4         531.44 19.47
-## b12.5         532.79 19.68
-## b12.4 - b12.5  -1.35  1.72
+## b12.4         531.78 19.48
+## b12.5         532.58 19.69
+## b12.4 - b12.5  -0.80  1.73
 ```
 
 And you can get the LOO version of the `p_waic`, the `p_loo`, like so.
@@ -829,9 +828,9 @@ l.b12.4
 ## Computed from 16000 by 504 log-likelihood matrix
 ## 
 ##          Estimate   SE
-## elpd_loo   -265.7  9.7
-## p_loo         8.1  0.4
-## looic       531.4 19.5
+## elpd_loo   -265.9  9.7
+## p_loo         8.3  0.4
+## looic       531.8 19.5
 ## ------
 ## Monte Carlo SE of elpd_loo is 0.0.
 ## 
@@ -848,9 +847,9 @@ l.b12.5
 ## Computed from 20000 by 504 log-likelihood matrix
 ## 
 ##          Estimate   SE
-## elpd_loo   -266.4  9.8
-## p_loo        10.4  0.5
-## looic       532.8 19.7
+## elpd_loo   -266.3  9.8
+## p_loo        10.3  0.5
+## looic       532.6 19.7
 ## ------
 ## Monte Carlo SE of elpd_loo is 0.0.
 ## 
@@ -876,19 +875,19 @@ posterior_summary(b12.4)
 ```
 
 ```
-##                             Estimate Est.Error      2.5%ile     97.5%ile
-## b_Intercept                0.4338808 0.9481819   -1.3430613    2.4251020
-## b_prosoc_left              0.8172876 0.2580356    0.3155837    1.3206135
-## b_prosoc_left:condition   -0.1274315 0.2919477   -0.7000943    0.4432054
-## sd_actor__Intercept        2.2526737 0.9167157    1.1241921    4.6232926
-## r_actor[1,Intercept]      -1.1428554 0.9646670   -3.1835356    0.6977285
-## r_actor[2,Intercept]       4.1515888 1.5983383    1.7708463    8.0243244
-## r_actor[3,Intercept]      -1.4504129 0.9668190   -3.5226384    0.3572580
-## r_actor[4,Intercept]      -1.4518991 0.9672759   -3.5062100    0.3869243
-## r_actor[5,Intercept]      -1.1481262 0.9649792   -3.1926106    0.6779769
-## r_actor[6,Intercept]      -0.2050011 0.9624747   -2.2514881    1.6263234
-## r_actor[7,Intercept]       1.3250156 0.9908587   -0.7422503    3.2345595
-## lp__                    -282.9130692 2.8070885 -289.2315420 -278.3884987
+##                             Estimate Est.Error         Q2.5        Q97.5
+## b_Intercept                0.4346760 0.9704951   -1.4099853    2.5001274
+## b_prosoc_left              0.8219506 0.2612433    0.3086700    1.3311752
+## b_prosoc_left:condition   -0.1328526 0.2972081   -0.7217570    0.4437542
+## sd_actor__Intercept        2.2476350 0.9171242    1.1203411    4.5595419
+## r_actor[1,Intercept]      -1.1447924 0.9865376   -3.2433015    0.7146494
+## r_actor[2,Intercept]       4.1622722 1.7020698    1.7270010    8.2969564
+## r_actor[3,Intercept]      -1.4511536 0.9907349   -3.5404416    0.4082969
+## r_actor[4,Intercept]      -1.4506192 0.9898506   -3.5450094    0.3732213
+## r_actor[5,Intercept]      -1.1466985 0.9901356   -3.2629928    0.7014790
+## r_actor[6,Intercept]      -0.2064541 0.9870240   -2.2711829    1.6562001
+## r_actor[7,Intercept]       1.3236079 1.0124276   -0.7871794    3.2785519
+## lp__                    -283.0285647 2.8387829 -289.4952614 -278.5050479
 ```
 
 
@@ -918,10 +917,10 @@ postAverageActor
 ## # A tibble: 4 x 5
 ##   key       M    LL    UL Condition
 ##   <chr> <dbl> <dbl> <dbl>     <dbl>
-## 1 C00   0.589 0.339 0.826      1.00
-## 2 C10   0.744 0.536 0.917      2.00
-## 3 C01   0.589 0.339 0.826      3.00
-## 4 C11   0.722 0.504 0.906      4.00
+## 1 C00   0.590 0.340 0.828      1.00
+## 2 C10   0.745 0.534 0.918      2.00
+## 3 C01   0.590 0.340 0.828      3.00
+## 4 C11   0.722 0.502 0.909      4.00
 ```
 
 Figure 12.5.a.
@@ -1053,7 +1052,7 @@ b12.6 <-
       prior = c(set_prior("normal(0, 10)", class = "b", coef = "intercept"),
                 set_prior("normal(0, 1)", class = "b"),
                 set_prior("cauchy(0, 1)", class = "sd")),
-      chains = 3, iter = 4000, warmup = 1000, cores = 3)
+      iter = 4000, warmup = 1000, cores = 3, chains = 3)
 ```
 
 Note how we used the special `0 + intercept` syntax rather than using the default Intercept. This is because our predictor variable was not mean centered. For more info, see [here](https://github.com/paul-buerkner/brms/issues/114). Though we used the `0 + intercept` syntax for the fixed effect, it was not necessary for the random effect. Both ways work.
@@ -1087,14 +1086,14 @@ p12.6 %>%
 ```
 ## Observations: 60
 ## Variables: 10
-## $ Estimate   <dbl> 19.70822, 31.14944, 36.33389, 40.30067, 43.32856, 4...
-## $ Est.Error  <dbl> 9.996754, 14.050138, 16.006741, 18.257357, 19.56248...
-## $ `1.5%ile`  <dbl> 5, 10, 13, 14, 15, 16, 17, 17, 18, 19, 19, 19, 20, ...
-## $ `5.5%ile`  <dbl> 8, 14, 17, 19, 21, 22, 23, 24, 25, 26, 27, 27, 27, ...
-## $ `16.5%ile` <dbl> 11, 20, 23, 26, 28, 30, 31, 32, 33, 34, 35, 36, 37,...
-## $ `83.5%ile` <dbl> 27.000, 41.165, 48.000, 53.000, 57.000, 60.000, 63....
-## $ `94.5%ile` <dbl> 35.000, 52.055, 61.000, 68.000, 72.000, 77.000, 81....
-## $ `98.5%ile` <dbl> 47.000, 69.015, 80.000, 89.000, 97.015, 100.000, 10...
+## $ Estimate   <dbl> 19.70333, 31.12122, 36.35444, 40.09122, 43.12478, 4...
+## $ Est.Error  <dbl> 9.730208, 13.509385, 15.488717, 17.137288, 18.41633...
+## $ Q1.5       <dbl> 5.000, 10.000, 12.000, 14.000, 15.000, 16.000, 17.0...
+## $ Q5.5       <dbl> 8, 15, 18, 19, 21, 22, 23, 24, 25, 26, 26, 27, 27, ...
+## $ Q16.5      <dbl> 11, 20, 24, 26, 28, 29, 31, 32, 33, 34, 35, 36, 37,...
+## $ Q83.5      <dbl> 27, 42, 48, 53, 57, 60, 63, 65, 68, 70, 72, 74, 76,...
+## $ Q94.5      <dbl> 35.000, 52.000, 61.000, 67.000, 72.000, 76.000, 81....
+## $ Q98.5      <dbl> 47.000, 68.000, 81.000, 90.000, 98.000, 104.000, 10...
 ## $ population <dbl> 1000, 6000, 11000, 16000, 21000, 26000, 31000, 3600...
 ## $ culture    <chr> "My_island", "My_island", "My_island", "My_island",...
 ```
@@ -1108,9 +1107,9 @@ Here's our version of the figure:
 p12.6 %>%
   ggplot(aes(x = log(population), y = Estimate)) +
   theme_fivethirtyeight() +
-  geom_ribbon(aes(ymin = `1.5%ile`, ymax = `98.5%ile`), fill = "orange2", alpha = 1/3) +
-  geom_ribbon(aes(ymin = `5.5%ile`, ymax = `94.5%ile`), fill = "orange2", alpha = 1/3) +
-  geom_ribbon(aes(ymin = `16.5%ile`, ymax = `83.5%ile`), fill = "orange2", alpha = 1/3) +
+  geom_ribbon(aes(ymin = Q1.5, ymax = Q98.5), fill = "orange2", alpha = 1/3) +
+  geom_ribbon(aes(ymin = Q5.5, ymax = Q94.5), fill = "orange2", alpha = 1/3) +
+  geom_ribbon(aes(ymin = Q16.5, ymax = Q83.5), fill = "orange2", alpha = 1/3) +
   coord_cartesian(ylim = range(k$total_tools)) +
   geom_line(color = "orange4") +
   geom_text(data = k, aes(y = total_tools, label = culture), 
@@ -1129,9 +1128,9 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * tidyverse   1.2.1 
-* ggthemes    3.4.0
+* ggthemes    3.5.0
 * bayesplot   1.5.0
 
 ## References
