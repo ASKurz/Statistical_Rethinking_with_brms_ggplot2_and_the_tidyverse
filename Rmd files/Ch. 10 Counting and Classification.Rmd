@@ -165,10 +165,10 @@ For our variant of Figure 10.2., we use `brms::pp_average()` in place of `rethin
 pp_a <- 
   pp_average(b10.1, b10.2, b10.3,
              weights = "waic",
-             method = "fitted") %>% 
+             method = "fitted") %>%
   as_tibble() %>% 
   bind_cols(b10.3$data) %>% 
-  distinct(Estimate, `2.5%ile`, `97.5%ile`, condition, prosoc_left) %>% 
+  distinct(Estimate, Q2.5, Q97.5, condition, prosoc_left) %>% 
   mutate(x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
   mutate(x_axis = factor(x_axis, levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
   rename(pulled_left = Estimate)
@@ -185,8 +185,8 @@ d_plot <-
 ggplot() +
   geom_ribbon(data = pp_a,
               aes(x = x_axis,
-                  ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`,
+                  ymin = Q2.5, 
+                  ymax = Q97.5,
                   group = 0),
               fill = wes_palette("Moonrise2")[2]) +
   geom_line(data = pp_a,
@@ -283,7 +283,7 @@ ftd <-
   as_tibble() %>% 
   bind_cols(b10.4$data) %>% 
   filter(actor %in% c(3, 5:7)) %>% 
-  distinct(Estimate, `2.5%ile`, `97.5%ile`, condition, prosoc_left, actor) %>% 
+  distinct(Estimate, Q2.5, Q97.5, condition, prosoc_left, actor) %>% 
   select(actor, everything()) %>% 
   mutate(actor = str_c("actor ", actor)) %>% 
   mutate(x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
@@ -293,8 +293,8 @@ ftd <-
   ggplot(data = ftd,
          aes(x = x_axis, y = pulled_left, group = actor)) +
   geom_ribbon(aes(x = x_axis,
-                  ymin = `2.5%ile`, 
-                  ymax = `97.5%ile`),
+                  ymin = Q2.5, 
+                  ymax = Q97.5),
               fill = wes_palette("Moonrise2")[2]) +
   geom_line(aes(x = x_axis, 
                 y = pulled_left)) +
@@ -423,7 +423,7 @@ You may have noticed that this same table pops out when you just do something li
 plot(l_b10.6)
 ```
 
-So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ value, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
+So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ value, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "very bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
 
 ```{r}
 pareto_k_ids(l_b10.6, threshold = 1)
@@ -468,7 +468,7 @@ compare_ic(l_b10.6, l_b10.7)
 compare_ic(l_b10.6_reloo, l_b10.7_reloo)
 ```
 
-In this case, the results are kinda similar. But holy smokes, look at the size of those SEs! Anyway, watch out for this in your real-world data. You also might check out this [vignette on how the loo package’s Pareto $k$ can help detect outliers](https://github.com/ASKurz/Student-s-t_regression).
+In this case, the results are kinda similar. But holy smokes, look at the size of those *SE*s! Anyway, watch out for this in your real-world data. You also might check out this [vignette on how the loo package’s Pareto $k$ can help detect outliers](https://github.com/ASKurz/Student-s-t_regression).
 
 But this has all been a tangent from the central thrust of this section. Let's get back on track. Here's a look at `b10.6`, the unavailable model:
 
@@ -517,8 +517,8 @@ d_text <-
 ggplot(data = d, aes(x = case, y = admit/applications)) +
   geom_pointrange(data = p_10.6, 
                   aes(y = Estimate/applications,
-                      ymin = `2.5%ile`/applications ,
-                      ymax = `97.5%ile`/applications),
+                      ymin = Q2.5/applications ,
+                      ymax = Q97.5/applications),
                   color = wes_palette("Moonrise2")[1],
                   shape = 1, alpha = 1/3) +
   geom_point(color = wes_palette("Moonrise2")[2]) +
@@ -579,14 +579,14 @@ b10.9$fit
 Here's our version of Figure 10.6, the posterior validation check.
 
 ```{r, fig.height = 2.5, fig.width = 4}
-predict(b10.9) %>% 
+predict(b10.9) %>%
   as_tibble() %>% 
   bind_cols(d) %>% 
 
-ggplot(aes(x = case, y = admit/applications)) +
+  ggplot(aes(x = case, y = admit/applications)) +
   geom_pointrange(aes(y = Estimate/applications,
-                      ymin = `2.5%ile`/applications ,
-                      ymax = `97.5%ile`/applications),
+                      ymin = Q2.5/applications ,
+                      ymax = Q97.5/applications),
                   color = wes_palette("Moonrise2")[1],
                   shape = 1, alpha = 1/3) +
   geom_point(color = wes_palette("Moonrise2")[2]) +
@@ -895,8 +895,8 @@ ppa_10.9 <-
 ppa_10.9 %>%
   ggplot(aes(x = log_pop,
              group = contact_high)) +
-  geom_ribbon(aes(ymin = `2.5%ile`,
-                  ymax = `97.5%ile`,
+  geom_ribbon(aes(ymin = Q2.5,
+                  ymax = Q97.5,
                   fill = contact_high),
               alpha = 1/4) +
   geom_line(aes(y = Estimate, color = contact_high)) +
@@ -1007,12 +1007,12 @@ y_new <- rpois(num_weeks, 0.5*7)
 Let's make them tidy.
 
 ```{r}
-d <- 
+(
+  d <- 
   tibble(y = c(y, y_new), 
          days = c(rep(1, 30), rep(7, 4)),
          monastery = c(rep(0, 30), rep(1, 4)))
-
-d
+)
 ```
 
 Here we compute the offset and fit the model. With the brms package, you use the `offset()` syntax, in which you put a pre-processed variable like `log_days` or the log of a variable, such as `log(days)`.
@@ -1134,11 +1134,11 @@ library(brms)
 
 b10.17 <-
   brm(data = list(career = career,
-                family_income = family_income), 
+                  family_income = family_income), 
       family = categorical(link = "logit"),
       career ~ 1 + family_income,
-       prior = c(set_prior("normal(0, 5)", class = "Intercept"),
-                 set_prior("normal(0, 5)", class = "b")),
+      prior = c(set_prior("normal(0, 5)", class = "Intercept"),
+                set_prior("normal(0, 5)", class = "b")),
       iter = 2500, warmup = 500, cores = 2, chains = 2)
 ```
 
@@ -1295,9 +1295,9 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * tidyverse   1.2.1
-* wesanderson 0.3.2
+* wesanderson 0.3.6
 * ggthemes    3.4.0
 * bayesplot   1.5.0
 * loo         2.0.0

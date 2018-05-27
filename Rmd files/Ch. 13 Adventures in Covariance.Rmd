@@ -495,7 +495,7 @@ coef(b13.3)$dept_id[, , 1] %>%
   # The plot
   ggplot(aes(x = reorder(param, reorder))) +
   geom_hline(yintercept = 0, linetype = 3, color = "#E8DCCF") +
-             geom_linerange(aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+             geom_linerange(aes(ymin = Q2.5, ymax = Q97.5),
                  color = "#E7CDC2") +
   geom_point(aes(y = Estimate),
              color = "#A65141") +
@@ -1093,7 +1093,7 @@ Rho %>%
 # The plot
   ggplot(aes(x = logpop)) +
   geom_ribbon(data = ftd,
-              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = "#394165", alpha = .5) +
   geom_line(data = ftd,
             aes(y = Estimate), color = "#100F14", linetype = 1, size = 1.1) + #  80A0C7 100F14
@@ -1213,8 +1213,8 @@ coef(b13.bonus_2)$discipline[, , 2] %>%
                         "Social sciences", "Medical sciences")) %>%
   
   ggplot(aes(x = discipline, y = Estimate,
-             ymin = `2.5%ile`,
-             ymax = `97.5%ile`)) +
+             ymin = Q2.5,
+             ymax = Q97.5)) +
   geom_hline(yintercept = 0, color = "#E8DCCF", size = 1/10) +
   geom_hline(yintercept = fixef(b13.bonus_2)[2], linetype = 3, color = "#A65141") +
   geom_pointrange(shape = 20, color = "#A65141") +
@@ -1253,7 +1253,7 @@ Note. The analyses in this document were done with:
 * tidyverse    1.2.1 
 * MASS         7.3-47
 * rethinking   1.59
-* brms         2.2.0
+* brms         2.3.1
 * rstan        2.17.3
 * broom        0.4.2
 * ggrepel      0.7.0

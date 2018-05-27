@@ -303,12 +303,12 @@ color_r <- viridis_pal(option = "C")(7)[4]
 ggplot(data = fitd_error, 
        aes(x = A, y = Estimate)) +
   geom_ribbon(data = fitd_no_error,
-              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = color_y, alpha = 1/4) +
   geom_line(data = fitd_no_error,
             color = color_y, linetype = 2) +
   geom_ribbon(data = fitd_error,
-              aes(ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = color_r, alpha = 1/3) +
   geom_line(data = fitd_error,
             color = color_r) +
@@ -576,8 +576,8 @@ color <- viridis_pal(option = "D")(7)[4]
 
 ggplot(data = f_b14.3, aes(x = neocortex,
                            y = Estimate.kcal)) +
-  geom_ribbon(aes(ymin = `2.5%ile.kcal`,
-                  ymax = `97.5%ile.kcal`),
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
               fill = color, alpha = 1/3) +
   geom_line(color = color) +
   geom_point(data = data_list %>% as_tibble(),
@@ -679,8 +679,8 @@ color <- viridis_pal(option = "D")(7)[3]
 
 ggplot(data = f_b14.4, aes(x = neocortex,
                            y = Estimate.kcal)) +
-  geom_ribbon(aes(ymin = `2.5%ile.kcal`,
-                  ymax = `97.5%ile.kcal`),
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
               fill = color, alpha = 1/2) +
   geom_line(color = color) +
   geom_point(data = data_list %>% as_tibble(),
@@ -726,7 +726,7 @@ Note. The analyses in this document were done with:
 * rmarkdown   1.9
 * rstan       2.17.3
 * rethinking  1.59
-* brms        2.2.0
+* brms        2.3.1
 * bayesplot   1.5.0
 * viridis     0.4.0
 * tidyverse   1.2.1

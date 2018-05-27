@@ -188,7 +188,7 @@ d2 <-
 
 ### 4.3.2. The model. 
 
-Here's the shape of the prior for $\mu$ in *N*(178, 20)
+Here's the shape of the prior for $\mu$ in $N$(178, 20)
 
 ```{r, fig.width = 3, fig.height = 2.5}
 ggplot(data = tibble(x = seq(from = 100, to = 250, by = .1)), 
@@ -246,7 +246,7 @@ Note the warning message. [Stan](http://mc-stan.org), which is the [engine under
 McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covers in chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
 
 ```{r, message = F, warning = F}
-b4.1halfCaucy <- 
+b4.1_half_caucy <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
       prior = c(set_prior("normal(178, 20)", class = "Intercept"),
@@ -257,7 +257,7 @@ b4.1halfCaucy <-
 This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. McElreath covers this in chapter 8. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
-plot(b4.1halfCaucy)
+plot(b4.1_half_caucy)
 ```
 
 If you want detailed diagnostics for the HMC chains, call `launch_shiny(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
@@ -265,7 +265,7 @@ If you want detailed diagnostics for the HMC chains, call `launch_shiny(b4.1)`. 
 Here's how to get the model summary, the brms equivalent to rethinking's `precis()`.
 
 ```{r}
-print(b4.1halfCaucy)
+print(b4.1_half_caucy)
 ```
 
 The `summary()` function works in a similar way. 
@@ -273,13 +273,13 @@ The `summary()` function works in a similar way.
 You can also get a [Stan-like summary](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html) with this:
 
 ```{r}
-b4.1halfCaucy$fit
+b4.1_half_caucy$fit
 ```
 
 Whereas rethinking defaults to 89% intervals, using `print()` or `summary()` with brms models defaults to 95% intervals. Unless otherwise specified, I will stick with 95% intervals throughout. However, if you really want those 89% intervals, an easy way is with the `prob` argument within `brms::summary()` or `brms::print()`.
 
 ```{r}
-summary(b4.1halfCaucy, prob = .89)
+summary(b4.1_half_caucy, prob = .89)
 ```
 
 Anyways, here's the shockingly-narrow-$\mu$-prior model.
@@ -293,17 +293,20 @@ b4.2 <-
       chains = 4, iter = 3000, warmup = 2000, cores = 4)
 
 plot(b4.2)
-print(b4.2)
 ```
 
-I had to increase the warmup due to convergence issues. After doing so, everything looks to be on the up and up.
+I had to increase the warmup due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. Here's the model summary.
+
+```{r}
+summary(b4.2)
+```
 
 ### 4.3.6. Sampling from a ~~`map()`~~ `brm()` fit.
 
 brms doesn't seem to have a convenience function that works the way `vcov()` does for rethinking. For example:
 
 ```{r}
-vcov(b4.1halfCaucy)
+vcov(b4.1_half_caucy)
 ```
 
 This only returns the first element in the matrix it did for rethinking. 
@@ -311,7 +314,7 @@ This only returns the first element in the matrix it did for rethinking.
 However, if you really wanted this information, you could get it after putting the HMC chains in a data frame.
 
 ```{r}
-post <- posterior_samples(b4.1halfCaucy)
+post <- posterior_samples(b4.1_half_caucy)
 cov(post[, 1:2])
 ```
 
@@ -327,7 +330,7 @@ select(b_Intercept, sigma) %>%
   cor()
 ```
 
-With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()`. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 ```{r}
 head(post)
@@ -361,7 +364,19 @@ post %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-With respect to McElreath's "Overthinking: Getting $\sigma$ right.", there's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
+And you can always get pretty similar information by just putting the `brm()` fit object into `posterior_summary()`.
+
+```{r}
+posterior_summary(b4.1_half_caucy)
+```
+
+#### Overthinking: Under the hood with multivariate sampling.
+
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath covers all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
+
+#### Overthinking: Getting $\sigma$ right.
+
+There's no need to fret about this in brms. With HMC, we are not constraining the posteriors to the multivariate normal distribution. Here's our posterior density for $\sigma$.
 
 ```{r, fig.width = 3, fig.height = 3}
 ggplot(data = post, 
@@ -681,7 +696,7 @@ hdi(mu_at_50[,1], credMass = .89)
 hdi(mu_at_50[,1], credMass = .95)
 ```
 
-Bonus: If you wanted to express those sweet 95% HPDIs on your density plot, you might do it like this.
+**Bonus**: If you wanted to express those sweet 95% HPDIs on your density plot, you might do it like this.
 
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
@@ -702,7 +717,7 @@ mu <- fitted(b4.3, summary = F)
 str(mu)
 ```
 
-When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and *n* = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
+When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your analysis. Because we had 4000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
 
 Much like rethinking's `link()`, `fitted()` can accommodate custom predictor values with its `newdata` argument.
 
@@ -781,15 +796,20 @@ Here it is, our analogue to Figure 4.7.b:
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
   geom_ribbon(data = muSummary, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = muSummary, aes(y = Estimate)) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
+  coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
 ```
 
-And if you wanted to use intervals other than the defaullt 95% ones, you'd enter a `probs` argument like this: `fitted(b4.3, newdata = weight.seq, probs = c(.25, .75))`.
+And if you wanted to use intervals other than the default 95% ones, you'd enter a `probs` argument like this: `fitted(b4.3, newdata = weight.seq, probs = c(.25, .75))`. The resulting third and fourth vectors from the `fitted()` object would be named `Q25` and `Q75` instead of the default `Q2.5` and `Q97.5`. The [`Q` prefix](https://github.com/paul-buerkner/brms/issues/425) stands for quantile.
+
+##### Overthinking: How ~~link~~ `fitted()` works.
+
+Similar to `rethinking::link()`, `brms::fitted()` uses the formula from your model to compute the model expectations for a given set of predictor values. I use it a lot in this project. If you follow along, you'll get a good handle on it.
 
 #### 4.4.3.5. Prediction intervals.
 
@@ -820,13 +840,14 @@ This time the summary information in our data frame is for, as McElreath puts is
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
   geom_ribbon(data = pred.height, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = muSummary, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = muSummary, aes(y = Estimate)) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
+  coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
 ```
@@ -887,10 +908,10 @@ The code for our version of Figure 4.9.a. You'll notice how little the code chan
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = predquad, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitdquad, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitdquad, 
             aes(y = Estimate), size = 1/4) +
@@ -941,10 +962,10 @@ pred_cub <-
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_cub, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_cub, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_cub, 
             aes(y = Estimate), 
@@ -972,10 +993,10 @@ pred_line <-
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_line, 
             aes(y = Estimate), size = 1/4) +
@@ -994,10 +1015,10 @@ at <- c(-2, -1, 0, 1, 2)
 ggplot(data = d, 
        aes(x = weight.s, y = height)) +
   geom_ribbon(data = pred_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_ribbon(data = fitd_line, 
-              aes(y = Estimate, ymin = `2.5%ile`, ymax = `97.5%ile`),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey70") +
   geom_line(data = fitd_line, 
             aes(y = Estimate), size = 1/4) +
@@ -1011,12 +1032,12 @@ ggplot(data = d,
 
 Note. The analyses in this document were done with:
 
-* R           3.4.3
+* R           3.4.4
 * RStudio     1.1.442
 * rmarkdown   1.9
 * tidyverse   1.2.1 
 * rethinking  1.59
-* brms        2.1.2
+* brms        2.3.1
 * rstan       2.17.3
 * HDInterval  0.1.3
 
@@ -1024,6 +1045,6 @@ Note. The analyses in this document were done with:
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.
 
 ```{r, warning = F, echo = F}
-rm(pos, growth, big, small, d, d2, sample_mu, sample_sigma, b4.1, b4.1halfCaucy, b4.2, post, b4.3, b4.4, N, dN, post10, post50, post150, post352, b10, b50, b150, b352, p10, p150, p50, p352, multiplot, mu_at_50, weight.seq, mu, muSummary, pred.height, b4.5, b4.6, b4.7, fitdquad, predquad, fitd_cub, pred_cub, fitd_line, pred_line, at)
+rm(pos, growth, big, small, d, d2, sample_mu, sample_sigma, b4.1, b4.1_half_caucy, b4.2, post, b4.3, b4.4, N, dN, post10, post50, post150, post352, b10, b50, b150, b352, p10, p150, p50, p352, multiplot, mu_at_50, weight.seq, mu, muSummary, pred.height, b4.5, b4.6, b4.7, fitdquad, predquad, fitd_cub, pred_cub, fitd_line, pred_line, at)
 ```
 
