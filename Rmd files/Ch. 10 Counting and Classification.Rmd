@@ -3,9 +3,7 @@ title: "Ch. 10 Counting and Classification"
 author: "A Solomon Kurz"
 date: "`r format(Sys.Date())`"
 output:
-  html_document:
-    code_folding: show
-    keep_md: TRUE
+  github_document
 ---
 
 ```{r set-options, echo = FALSE, cache = FALSE}
@@ -22,7 +20,7 @@ data(chimpanzees)
 d <- chimpanzees
 ```
 
-Switching from rethinking to brms.
+Switch from rethinking to brms.
 
 ```{r, message = F, warning = F,}
 detach(package:rethinking)
@@ -62,7 +60,7 @@ fixef(b10.1) %>%
   invlogit()
 ```
 
-The next two chimp models add predictors.
+The next two chimp models add predictors in the usual way.
 
 ```{r, message = F, warning = F, results = "hide"}
 b10.2 <-
@@ -269,7 +267,7 @@ post %>%
        subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.")
 ```
 
-Figure 10.4., the idiographic trajectories for four of our chimps.
+Figure 10.4. shows the idiographic trajectories for four of our chimps.
 
 ```{r, fig.height = 4, fig.width = 6, warning = F, message = F}
 d_plot_4 <-
@@ -344,7 +342,7 @@ fixef(b10.3) %>% round(digits = 2)
 fixef(b10.5) %>% round(digits = 2)
 ```
 
-Close within rounding error.
+The two are close within rounding error.
 
 ### 10.1.3. Aggregated binomial: Graduate school admissions.
 
@@ -357,7 +355,7 @@ data(UCBadmit)
 d <- UCBadmit
 ```
 
-Switching from rethinking to brms.
+Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
 detach(package:rethinking)
@@ -482,7 +480,7 @@ fixef(b10.6)[2] %>%
   round(digits = 2)
 ```
 
-The difference in admission probabilities.
+The difference in admission probabilities:
 
 ```{r}
 post <- posterior_samples(b10.6)
@@ -662,7 +660,7 @@ data(Kline)
 d <- Kline
 ```
 
-Switching from rethinking to brms.
+Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
 detach(package:rethinking)
@@ -681,7 +679,7 @@ d <-
          contact_high = ifelse(contact == "high", 1, 0))
 ```
 
-Our first Poisson model!
+Behold, our first Poisson model!
 
 ```{r, message = F, warning = F, results = "hide"}
 b10.10 <-
@@ -808,39 +806,6 @@ b10.13 <-
 b10.14 <-
   update(b10.10, formula = total_tools ~ 1,
          iter = 3000, warmup = 1000, chains = 4, cores = 4)
-```
-
-```{r, eval = F, echo = F}
-# no interaction
-b10.11 <- 
-  brm(data = d, family = poisson,
-      total_tools ~ 1 + log_pop + contact_high,
-      prior = c(set_prior("normal(0, 100)", class = "Intercept"),
-                set_prior("normal(0, 1)", class = "b")),
-      iter = 3000, warmup = 1000, chains = 4, cores = 4)
-
-# no contact rate
-b10.12 <-
-  brm(data = d, family = poisson,
-      total_tools ~ 1 + log_pop,
-      prior = c(set_prior("normal(0, 100)", class = "Intercept"),
-                set_prior("normal(0, 1)", class = "b")),
-      iter = 3000, warmup = 1000, chains = 4, cores = 4)
-
-# no log-population
-b10.13 <-
-  brm(data = d, family = poisson,
-      total_tools ~ 1 + contact_high,
-      prior = c(set_prior("normal(0, 100)", class = "Intercept"),
-                set_prior("normal(0, 1)", class = "b")),
-      iter = 3000, warmup = 1000, chains = 4, cores = 4)
-
-# intercept only
-b10.14 <-
-  brm(data = d, family = poisson,
-      total_tools ~ 1,
-      prior = c(set_prior("normal(0, 100)", class = "Intercept")),
-      iter = 3000, warmup = 1000, chains = 4, cores = 4)
 ```
 
 I know we got all excited with the LOO, above. Let's just be lazy and go WAIC, here. [Though beware, the LOO opens up a similar can of worms, here, to what we dealt with above.]
@@ -1053,7 +1018,7 @@ posterior_samples(b10.15) %>%
 
 ### 10.3.1. Multinomial.
 
-More simulation.
+More simulation:
 
 ```{r, warning = F, message = F}
 detach(package:brms)

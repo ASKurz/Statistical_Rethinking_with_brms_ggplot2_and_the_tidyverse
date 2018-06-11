@@ -3,9 +3,7 @@ title: "Ch. 12 Multilevel Models"
 author: "A Solomon Kurz"
 date: "`r format(Sys.Date())`"
 output:
-  html_document:
-    code_folding: show
-    keep_md: TRUE
+  github_document
 ---
 
 ## 12.1. Example: Multilevel tadpoles
@@ -110,7 +108,7 @@ For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.c
 library(ggthemes) 
 ``` 
 
-Finally, our ggplot2 code to reproduce Figure 12.1
+Finally, here's the ggplot2 code to reproduce Figure 12.1.
 
 ```{r, fig.width = 5, fig.height = 4}
 postMdn %>%
@@ -244,15 +242,15 @@ dsim %>%
 
 ### 12.2.5. Compute the partial-pooling estimates.
 
-Our one-chain model in brms.
+Set `chains = 1, cores = 1` for a one-chain model in brms.
 
-```{r, message = F, warning = F}
+```{r, message = FALSE, warning = FALSE}
 b12.3 <- 
   brm(data = dsim, family = binomial,
       si | trials(ni) ~ 1 + (1 | pond),
       prior = c(set_prior("normal(0, 1)", class = "Intercept"),
                 set_prior("cauchy(0, 1)", class = "sd")),
-      chains = 1, iter = 10000, warmup = 1000, cores = 1)
+      iter = 10000, warmup = 1000, chains = 1, cores = 1)
 
 print(b12.3)
 ```
@@ -334,7 +332,7 @@ dsim %>%
 
 ### 12.3.1. Multilevel chimpanzees.
 
-Our two identical Gaussians in a tidy tibble.
+Behold our two identical Gaussians in a tidy tibble.
 
 ```{r}
 set.seed(241)
@@ -355,7 +353,7 @@ two_gaussians %>%
   geom_density(aes(x = y2), 
                size = 0, fill = "orange4", alpha = 1/3) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "My simulated Gaussians")
+  labs(title = "Our simulated Gaussians")
 ```
 
 Yep, those Gaussians look about the same.
@@ -376,7 +374,7 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-Our brms model with varying intercepts for `actor` but not `block`.
+For our brms model with varying intercepts for `actor` but not `block`, we employ the `pulled_left ~ 1 + ... + (1 | actor)` syntax, specifically omitting a `(1 | block)` section.
 
 ```{r, message = F, warning = F}
 b12.4 <- 
@@ -389,7 +387,7 @@ b12.4 <-
       control = list(adapt_delta = 0.95))
 ```
 
-The initial solutions came with a few divergent transitions. Increasing `adapt_delta` to `.95` solved the problem. You can also solve the problem with more strongly regularizing priors such as `normal(0, 2)` on the intercept and slope parameters (see https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). Consider trying both methods and comparing the results. They're similar. 
+The initial solutions came with a few divergent transitions. Increasing `adapt_delta` to `.95` solved the problem. You can also solve the problem with more strongly regularizing priors such as `normal(0, 2)` on the intercept and slope parameters (see [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)). Consider trying both methods and comparing the results. They're similar. 
 
 Here we add the `actor`-level deviations to the fixed intercept, the grand mean.
 
@@ -422,7 +420,7 @@ If you prefer the posterior median to the mean, just add a `robust = T` argument
 
 ### 12.3.2. Two types of cluster.
 
-Our brms model with varying intercepts for both `actor` and `block`.
+Our brms model with varying intercepts for both `actor` and `block` now employs the `... (1 | actor) + (1 | block)` syntax.
 
 ```{r, message = F, warning = F}
 b12.5 <- 
@@ -502,7 +500,7 @@ Anyways, the two models yield nearly-equivalent information criteria values. Yet
 
 ## 12.4. Multilevel posterior predictions
 
-### 12.4.2 Posterior prediction for new clusters. 
+### 12.4.2. Posterior prediction for new clusters. 
 
 It'll take a bit of prep work to make Figure 12.5. First, let's use `posterior_summary()` to survey at the posterior.
 
