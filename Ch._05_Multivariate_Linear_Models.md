@@ -1,19 +1,14 @@
----
-title: "Ch. 5 Multivariate Linear Models"
-author: "A Solomon Kurz"
-date: "2018-05-27"
-output:
-  html_document:
-    code_folding: show
-    keep_md: TRUE
----
+Ch. 5 Multivariate Linear Models
+================
+A Solomon Kurz
+2018-06-11
 
-## 5.1. Spurious associations
+5.1. Spurious associations
+--------------------------
 
 Load the Waffle House data.
 
-
-```r
+``` r
 library(rethinking)
 data(WaffleDivorce)
 d <- WaffleDivorce
@@ -21,8 +16,7 @@ d <- WaffleDivorce
 
 Unload rethinking and load brms and, while we're at it, the tidyverse.
 
-
-```r
+``` r
 rm(WaffleDivorce)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -31,17 +25,14 @@ library(tidyverse)
 
 I'm not going to show the output, but you might go ahead and investigate the data.
 
-
-```r
+``` r
 head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of Sate labels into the plot was with the `geom_text_repel()` function from 
-the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html).
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of Sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html).
 
-
-```r
+``` r
 # install.packages("ggrepel", depencencies = T)
 library(ggrepel)
 
@@ -63,12 +54,11 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 Here we standardize the predictor, `MedianAgeMarriage`, and fit the first univariable model.
 
-
-```r
+``` r
 d <-
   d %>%
   mutate(MedianAgeMarriage.s = (MedianAgeMarriage - mean(MedianAgeMarriage))/sd(MedianAgeMarriage))
@@ -84,32 +74,29 @@ b5.1 <-
 print(b5.1)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: Divorce ~ 1 + MedianAgeMarriage.s 
-##    Data: d (Number of observations: 50) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept               9.69      0.21     9.27    10.11       5123 1.00
-## MedianAgeMarriage.s    -1.04      0.21    -1.46    -0.61       5110 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.51      0.16     1.24     1.86       4673 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: Divorce ~ 1 + MedianAgeMarriage.s 
+    ##    Data: d (Number of observations: 50) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept               9.69      0.21     9.27    10.11       4911 1.00
+    ## MedianAgeMarriage.s    -1.04      0.21    -1.45    -0.63       6000 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.52      0.16     1.24     1.88       3949 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Here it is, Figure 5.2.b.
 
-
-```r
+``` r
 # First we determine the range of MedianAgeMarriage.s values we'd like to feed into fitted()
 nd <- tibble(MedianAgeMarriage.s = seq(from = -3, to = 3.5, 
                                        length.out = 30))
@@ -136,12 +123,11 @@ ggplot(data = fitd5.1,
   theme(panel.grid = element_blank())                   
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 After standardizing `Marriage`, we're ready to fit our second univariable model.
 
-
-```r
+``` r
 d <-
   d %>%
   mutate(Marriage.s = (Marriage - mean(Marriage))/sd(Marriage))
@@ -157,32 +143,29 @@ b5.2 <-
 print(b5.2)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: Divorce ~ 1 + Marriage.s 
-##    Data: d (Number of observations: 50) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept      9.68      0.25     9.18    10.17       4672 1.00
-## Marriage.s     0.64      0.25     0.14     1.13       5676 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.75      0.18     1.44     2.16       5048 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: Divorce ~ 1 + Marriage.s 
+    ##    Data: d (Number of observations: 50) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept      9.68      0.25     9.19    10.16       5677 1.00
+    ## Marriage.s     0.64      0.25     0.15     1.11       5004 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.75      0.18     1.44     2.14       5117 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 And now we prep for and plot our version of Figure 5.2.a.
 
-
-```r
+``` r
 nd <- tibble(Marriage.s = seq(from = -2.5, to = 3.5, 
                               length.out = 30))
 
@@ -206,15 +189,13 @@ ggplot(data = fitd5.2,
   theme(panel.grid = element_blank())                   
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ### 5.1.2. Fitting the model.
 
 Let's get both `Marriage.s` and `MedianAgeMarriage.s` in there with our very first multivariable model.
 
-
-```r
+``` r
 b5.3 <- 
   brm(data = d, family = gaussian,
       Divorce ~ 1 + Marriage.s + MedianAgeMarriage.s,
@@ -226,42 +207,38 @@ b5.3 <-
 print(b5.3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: Divorce ~ 1 + Marriage.s + MedianAgeMarriage.s 
-##    Data: d (Number of observations: 50) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept               9.68      0.22     9.25    10.10       5067 1.00
-## Marriage.s             -0.12      0.30    -0.70     0.47       4167 1.00
-## MedianAgeMarriage.s    -1.12      0.30    -1.71    -0.54       4002 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.52      0.16     1.24     1.89       5237 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: Divorce ~ 1 + Marriage.s + MedianAgeMarriage.s 
+    ##    Data: d (Number of observations: 50) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept               9.68      0.22     9.24    10.12       6000 1.00
+    ## Marriage.s             -0.12      0.30    -0.71     0.48       2310 1.00
+    ## MedianAgeMarriage.s    -1.12      0.30    -1.73    -0.52       2997 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.53      0.16     1.25     1.88       5221 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 The `stanplot()` function is an easy way to get a default coefficient plot. You just put the brmsfit object into the function.
 
-
-```r
+``` r
 stanplot(b5.3)
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/web/packages/bayesplot/index.html). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object. 
+There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/web/packages/bayesplot/index.html). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object.
 
-
-```r
+``` r
 # install.packages("bayesplot", dependencies = T)
 library(bayesplot)
 
@@ -278,7 +255,7 @@ mcmc_intervals(post[, 1:4],
         axis.ticks.y = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
 
@@ -288,8 +265,7 @@ Because bayesplot produces a ggplot2 object, the plot was adjustable with famili
 
 To get ready to make our residual plots, we'll predict `Marriage.s` with `MedianAgeMarriage.s`.
 
-
-```r
+``` r
 b5.4 <- 
   brm(data = d, family = gaussian,
       Marriage.s ~ 1 + MedianAgeMarriage.s,
@@ -301,32 +277,29 @@ b5.4 <-
 print(b5.4)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: Marriage.s ~ 1 + MedianAgeMarriage.s 
-##    Data: d (Number of observations: 50) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              -0.00      0.10    -0.20     0.20       4974 1.00
-## MedianAgeMarriage.s    -0.71      0.10    -0.91    -0.51       6000 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.72      0.08     0.59     0.89       4845 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: Marriage.s ~ 1 + MedianAgeMarriage.s 
+    ##    Data: d (Number of observations: 50) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept               0.00      0.11    -0.20     0.21       5308 1.00
+    ## MedianAgeMarriage.s    -0.71      0.10    -0.91    -0.51       5414 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.72      0.08     0.59     0.89       4516 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 With `fitted()`, we compute the expected values for each State.
 
-
-```r
+``` r
 fitd54 <- 
   fitted(b5.4) %>%
   as_tibble() %>%
@@ -335,8 +308,7 @@ fitd54 <-
 
 After a little data processing, we can make Figure 5.3.
 
-
-```r
+``` r
 df54 <- 
   d %>%
   select(MedianAgeMarriage.s, Marriage.s) %>%
@@ -357,14 +329,13 @@ ggplot(data = df54,
   theme(panel.grid = element_blank())     
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
-
-```r
+``` r
 res54 <- 
   residuals(b5.4) %>%
   # To use this in ggplot2, we need to make it a tibble or data frame
@@ -391,12 +362,11 @@ ggplot(data = df54,
   theme(panel.grid = element_blank())  
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 To get the `MedianAgeMarriage.s` residuals, we have to fit the corresponding model first.
 
-
-```r
+``` r
 b5.4.1 <- 
   brm(data = d, family = gaussian,
       MedianAgeMarriage.s ~ 1 + Marriage.s,
@@ -408,8 +378,7 @@ b5.4.1 <-
 
 And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
 
-
-```r
+``` r
 df541 <- 
   residuals(b5.4.1) %>%
   as_tibble() %>%
@@ -432,14 +401,13 @@ ggplot(data = df541,
   theme(panel.grid = element_blank())  
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 #### 5.1.3.2. Counterfactual plots.
 
 Making Figure 5.5.a. requires a little more data wrangling than before.
 
-
-```r
+``` r
 nd <- 
   tibble(Marriage.s = seq(from = -3, to = 3, length.out = 30),
          MedianAgeMarriage.s = rep(mean(d$MedianAgeMarriage.s, 
@@ -469,12 +437,11 @@ tibble(Divorce = fitd53.a[, 1],
   theme(panel.grid = element_blank())     
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 We follow the same process for Figure 5.5.b.
 
-
-```r
+``` r
 nd <- 
   tibble(MedianAgeMarriage.s = seq(from = -3, to = 3.5, length.out = 30),
          Marriage.s = rep(mean(d$Marriage.s), times = 30))
@@ -502,14 +469,13 @@ tibble(Divorce = fitd53.b[, 1],
   theme(panel.grid = element_blank())     
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 #### 5.1.3.3. Posterior prediction plots.
 
 In this version of Figure 5.6.a., the thin lines are the 95% intervals and the thicker lines are +/- the posterior *SD*, both of which are returned when you use `fitted()`.
 
-
-```r
+``` r
 fitted(b5.3) %>%
   as_tibble() %>%
   bind_cols(d %>% select(Divorce, Loc)) %>%
@@ -529,12 +495,11 @@ fitted(b5.3) %>%
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
-The legwork for and reproduction of Figure 5.6.b. 
+The legwork for and reproduction of Figure 5.6.b.
 
-
-```r
+``` r
 # This is for the average prediction error mean, +/- SD, and 95% intervals
 res53 <- 
   residuals(b5.3) %>%
@@ -571,12 +536,11 @@ ggplot(data = res53,
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 Compared to the ones above, Figure 5.6.c. is pretty simple.
 
-
-```r
+``` r
 res53 <-
   res53 %>%
   mutate(Wpc = d$WaffleHouses/d$Population)
@@ -597,12 +561,11 @@ ggplot(data = res53,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 #### Overthinking: Simulating spurious association.
 
-
-```r
+``` r
 N <- 100                             # number of cases
 
 set.seed(135)                        # setting the seed makes the results reproducible
@@ -612,17 +575,15 @@ d <-
          y = rnorm(N, x_real))       # y as Gaussian with mean = x_real
 ```
 
-Here are the quick `pairs()` plots. 
+Here are the quick `pairs()` plots.
 
-
-```r
+``` r
 pairs(d, col = "firebrick4")
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-24-1.png)
 
-
-```r
+``` r
 brm(data = d, family = gaussian,
     y ~ 1 + x_real + x_spur,
     prior = c(set_prior("normal(0, 10)", class = "Intercept"),
@@ -633,22 +594,17 @@ brm(data = d, family = gaussian,
   fixef() %>% round(digits = 2)
 ```
 
-```
-##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept    -0.05      0.10 -0.24  0.14
-## x_real        1.17      0.14  0.89  1.45
-## x_spur       -0.06      0.09 -0.23  0.11
-```
+    ##           Estimate Est.Error  Q2.5 Q97.5
+    ## Intercept    -0.05      0.10 -0.24  0.14
+    ## x_real        1.17      0.14  0.89  1.46
+    ## x_spur       -0.06      0.09 -0.23  0.12
 
-
-
-
-## 5.2. Masked relationship
+5.2. Masked relationship
+------------------------
 
 Let's load those tasty `milk` data.
 
-
-```r
+``` r
 library(rethinking)
 data(milk)
 d <- milk
@@ -656,25 +612,22 @@ d <- milk
 
 Unload rethinking and load brms.
 
-
-```r
+``` r
 rm(milk)
 detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-You might inspect the data like this. 
+You might inspect the data like this.
 
-
-```r
+``` r
 head(d)
 glimpse(d)
 ```
 
 McElreath has us start of with a simple univaraible `milk` model.
 
-
-```r
+``` r
 b5.5 <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 1 + neocortex.perc,
@@ -684,28 +637,25 @@ b5.5 <-
       iter = 2000, warmup = 500, chains = 4, cores = 4)
 ```
 
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But do see chapter 14 to learn how to do better. 
+The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But do see chapter 14 to learn how to do better.
 
 Here's how to explicitly drop the cases with missing values on the predictor.
 
-
-```r
+``` r
 d %>%
   select(neocortex.perc) %>%
   head()
 ```
 
-```
-##   neocortex.perc
-## 1          55.16
-## 2             NA
-## 3             NA
-## 4             NA
-## 5             NA
-## 6          64.54
-```
+    ##   neocortex.perc
+    ## 1          55.16
+    ## 2             NA
+    ## 3             NA
+    ## 4             NA
+    ## 5             NA
+    ## 6          64.54
 
-```r
+``` r
 dcc <- 
   d %>%
   filter(complete.cases(.))              
@@ -721,45 +671,39 @@ b5.5 <-
 print(b5.5, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + neocortex.perc 
-##    Data: dcc (Number of observations: 17) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept         0.345     0.561   -0.767    1.461       5018 1.000
-## neocortex.perc    0.005     0.008   -0.012    0.021       5356 1.000
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.193     0.040    0.134    0.290       2883 1.001
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + neocortex.perc 
+    ##    Data: dcc (Number of observations: 17) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept         0.367     0.561   -0.749    1.505       5034 1.000
+    ## neocortex.perc    0.004     0.008   -0.013    0.021       5071 1.000
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.192     0.039    0.134    0.289       3284 1.000
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 To get the brms answer to what McElreath did with `coef()`, we'll use the `fixef()` function.
 
-
-```r
+``` r
 fixef(b5.5)[2]*(76 - 55)
 ```
 
-```
-## [1] 0.09726075
-```
+    ## [1] 0.09078366
 
 Yes, indeed, "that's less than 0.1 kilocalories" (p. 137).
 
 Here's Figure 5.7., top left.
 
-
-```r
+``` r
 nd <- tibble(neocortex.perc = 54:80)
 
 dffitted.a <- 
@@ -786,12 +730,11 @@ ggplot(data = dffitted.a,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-33-1.png)
 
 Now we use `log.mass` as the new sole predictor.
 
-
-```r
+``` r
 dcc <-
   dcc %>%
   mutate(log.mass = log(mass))
@@ -808,43 +751,38 @@ b5.6 <-
 print(b5.6, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + log.mass 
-##    Data: dcc (Number of observations: 17) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept    0.705     0.057    0.593    0.819       4752 1.000
-## log.mass    -0.032     0.024   -0.079    0.014       4790 1.000
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.183     0.038    0.128    0.272       3337 1.002
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + log.mass 
+    ##    Data: dcc (Number of observations: 17) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept    0.706     0.058    0.594    0.817       4162 1.000
+    ## log.mass    -0.032     0.024   -0.079    0.014       3543 1.000
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.183     0.038    0.127    0.272       2712 1.000
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Figure 5.7., top right.
 
-
-```r
+``` r
 # Here we get the range we'll want for nd, below
 dcc %>%
   select(log.mass) %>%
   range()
 ```
 
-```
-## [1] -2.120264  4.374876
-```
+    ## [1] -2.120264  4.374876
 
-```r
+``` r
 nd <- 
   tibble(log.mass = seq(from = -2.5, to = 5,
                         length.out = 30))
@@ -873,12 +811,11 @@ ggplot(data = dffitted.b,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-35-1.png)
 
 Finally, we're ready to fit the "joint model" including both predictors. Note, to converge properly, the HMC chains required a longer warmup period and `adapt_delta` required an even higher setting. Life would be better if we ditched that uniform prior on sigma.
 
-
-```r
+``` r
 b5.7 <- 
   brm(data = dcc, family = gaussian,
       kcal.per.g ~ 1 + neocortex.perc + log.mass,
@@ -891,33 +828,30 @@ b5.7 <-
 print(b5.7, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + neocortex.perc + log.mass 
-##    Data: dcc (Number of observations: 17) 
-## Samples: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
-##          total post-warmup samples = 8000
-## 
-## Population-Level Effects: 
-##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept        -1.081     0.572   -2.221    0.031       3274 1.001
-## neocortex.perc    0.028     0.009    0.011    0.046       3145 1.001
-## log.mass         -0.096     0.027   -0.151   -0.043       3115 1.001
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.140     0.030    0.095    0.213       2993 1.000
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + neocortex.perc + log.mass 
+    ##    Data: dcc (Number of observations: 17) 
+    ## Samples: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
+    ##          total post-warmup samples = 8000
+    ## 
+    ## Population-Level Effects: 
+    ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept        -1.092     0.589   -2.286    0.095       3220 1.002
+    ## neocortex.perc    0.028     0.009    0.010    0.047       3144 1.002
+    ## log.mass         -0.097     0.028   -0.153   -0.040       3018 1.001
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.139     0.030    0.095    0.210       3553 1.000
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Preping for and reproducing Figure 5.7., bottom left.
 
-
-```r
+``` r
 nd <- 
   tibble(neocortex.perc = 54:80 %>% as.double(),
          log.mass = mean(dcc$log.mass))
@@ -945,12 +879,11 @@ ggplot(data = dffitted.c,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-37-1.png)
 
 Prepping for and reproducing Figure 5.7., bottom right.
 
-
-```r
+``` r
 nd <- 
   tibble(log.mass = seq(from = -2.5, to = 5,
                         length.out = 30),
@@ -979,12 +912,11 @@ ggplot(data = dffitted.d,
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-38-1.png)
 
 #### Overthinking: Simulating a masking relationship.
 
-
-```r
+``` r
 N   <- 100     # number of cases
 rho <- .7      # correlation between x_pos and x_neg
 
@@ -995,19 +927,17 @@ d <-
          y = rnorm(N, x_pos - x_neg))                   # y equally asssociated with x_pos and x_neg
 ```
 
-Here are the quick `pairs()` plots. 
+Here are the quick `pairs()` plots.
 
-
-```r
+``` r
 pairs(d, col = "firebrick4")
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-40-1.png)
 
 Here we fit the models with a little help from the `update()` function.
 
-
-```r
+``` r
 b5.O.both <- 
   brm(data = d, family = gaussian,
       y ~ 1 + x_pos + x_neg,
@@ -1026,48 +956,39 @@ b5.O.neg <-
 
 Compare the coefficients.
 
-
-```r
+``` r
 fixef(b5.O.pos) %>% round(digits = 2)
 ```
 
-```
-##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.01      0.13 -0.25  0.27
-## x_pos         0.32      0.14  0.04  0.59
-```
+    ##           Estimate Est.Error  Q2.5 Q97.5
+    ## Intercept     0.01      0.13 -0.25  0.27
+    ## x_pos         0.32      0.14  0.04  0.59
 
-```r
+``` r
 fixef(b5.O.neg) %>% round(digits = 2)
 ```
 
-```
-##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.07      0.12 -0.17  0.32
-## x_neg        -0.51      0.14 -0.79 -0.23
-```
+    ##           Estimate Est.Error  Q2.5 Q97.5
+    ## Intercept     0.07      0.12 -0.17  0.32
+    ## x_neg        -0.51      0.14 -0.79 -0.23
 
-```r
+``` r
 fixef(b5.O.both) %>% round(digits = 2)
 ```
 
-```
-##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.08      0.10 -0.13  0.28
-## x_pos         1.05      0.13  0.78  1.30
-## x_neg        -1.18      0.14 -1.45 -0.91
-```
+    ##           Estimate Est.Error  Q2.5 Q97.5
+    ## Intercept     0.08      0.10 -0.13  0.28
+    ## x_pos         1.05      0.13  0.78  1.30
+    ## x_neg        -1.18      0.14 -1.45 -0.91
 
-
-
-## 5.3. When adding variables hurts
+5.3. When adding variables hurts
+--------------------------------
 
 ### 5.3.1. Multicollinear legs.
 
 Let's simulate some leg data.
 
-
-```r
+``` r
 N <- 100
 set.seed(851)
 
@@ -1080,24 +1001,20 @@ d <-
 
 `leg_left` and `leg_right` are **highly** correlated.
 
-
-```r
+``` r
 d %>%
   select(leg_left:leg_right) %>%
   cor() %>%
   round(digits = 4)
 ```
 
-```
-##           leg_left leg_right
-## leg_left    1.0000    0.9997
-## leg_right   0.9997    1.0000
-```
+    ##           leg_left leg_right
+    ## leg_left    1.0000    0.9997
+    ## leg_right   0.9997    1.0000
 
 Here's our attempt to predict `height` with both legs.
 
-
-```r
+``` r
 b5.8 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + leg_left + leg_right,
@@ -1109,33 +1026,30 @@ b5.8 <-
 print(b5.8)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: height ~ 1 + leg_left + leg_right 
-##    Data: d (Number of observations: 100) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.55      0.32    -0.08     1.18       5635 1.00
-## leg_left      0.95      2.38    -3.76     5.61       1983 1.00
-## leg_right     1.15      2.36    -3.49     5.83       1989 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.68      0.05     0.59     0.78       3301 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: height ~ 1 + leg_left + leg_right 
+    ##    Data: d (Number of observations: 100) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept     0.54      0.31    -0.07     1.16       5480 1.00
+    ## leg_left      1.05      2.36    -3.54     5.74       1915 1.00
+    ## leg_right     1.05      2.35    -3.56     5.61       1914 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.68      0.05     0.59     0.79       3384 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Here's our coefficient plot using `brms::stanplot()` with a little help from `bayesplot::color_scheme_set()`.
 
-
-```r
+``` r
 color_scheme_set("red")
 
 stanplot(b5.8, 
@@ -1151,23 +1065,21 @@ stanplot(b5.8,
         axis.text.y = element_text(hjust = 0))
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-47-1.png)
 
 Note. You can use the `brms::stanplot()` function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with `color_scheme_set()`.
 
 This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 5.8.a.
 
-
-```r
+``` r
 pairs(b5.8, pars = parnames(b5.8)[2:3])
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-48-1.png)
 
 If you'd like a nicer and more focused attempt, you might have to revert to the `posterior_samples()` function and a little ggplot2 code.
 
-
-```r
+``` r
 posterior_samples(b5.8) %>%
   
   ggplot(aes(x = b_leg_left, y = b_leg_right)) +
@@ -1176,12 +1088,11 @@ posterior_samples(b5.8) %>%
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-49-1.png)
 
 While we're at it, you can make a similar plot with the `mcmc_scatter()` [function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
 
-
-```r
+``` r
 posterior_samples(b5.8) %>%
   
   mcmc_scatter(pars = c("b_leg_left", "b_leg_right"),
@@ -1191,12 +1102,11 @@ posterior_samples(b5.8) %>%
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-50-1.png)
 
 Here's the posterior of the sum of the two regression coefficients, Figure 5.8.b.
 
-
-```r
+``` r
 post <- posterior_samples(b5.8)
   
   ggplot(data = post,
@@ -1210,12 +1120,11 @@ post <- posterior_samples(b5.8)
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-51-1.png)
 
 Now we fit the model after ditching one of the leg lengths.
 
-
-```r
+``` r
 b5.9 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + leg_left,
@@ -1227,32 +1136,29 @@ b5.9 <-
 print(b5.9)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: height ~ 1 + leg_left 
-##    Data: d (Number of observations: 100) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.52      0.31    -0.08     1.12       6000 1.00
-## leg_left      2.11      0.07     1.98     2.24       6000 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.68      0.05     0.59     0.78       4250 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: height ~ 1 + leg_left 
+    ##    Data: d (Number of observations: 100) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept     0.52      0.30    -0.07     1.12       5731 1.00
+    ## leg_left      2.11      0.07     1.98     2.23       5822 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.68      0.05     0.59     0.78       5273 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Here's the density in Figure 5.8.b.
 
-
-```r
+``` r
 post <- posterior_samples(b5.9)
   
   ggplot(data = post,
@@ -1266,12 +1172,11 @@ post <- posterior_samples(b5.9)
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-53-1.png)
 
 ### 5.3.2. Multicollinear `milk`.
 
-
-```r
+``` r
 library(rethinking)
 data(milk)
 d <- milk
@@ -1279,8 +1184,7 @@ d <- milk
 
 Unload rethinking and load brms.
 
-
-```r
+``` r
 rm(milk)
 detach(package:rethinking, unload = TRUE)
 library(brms)
@@ -1288,8 +1192,7 @@ library(brms)
 
 Let's fit the two models in the text.
 
-
-```r
+``` r
 # kcal.per.g regressed on perc.fat
 b5.10 <- 
   brm(data = d, family = gaussian,
@@ -1311,79 +1214,69 @@ b5.11 <-
 print(b5.10, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + perc.fat 
-##    Data: d (Number of observations: 29) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept    0.301     0.039    0.226    0.378       6000 0.999
-## perc.fat     0.010     0.001    0.008    0.012       6000 1.000
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.080     0.012    0.061    0.107       2000 1.001
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + perc.fat 
+    ##    Data: d (Number of observations: 29) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept    0.301     0.040    0.222    0.381       6000 1.001
+    ## perc.fat     0.010     0.001    0.008    0.012       6000 1.000
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.080     0.012    0.061    0.109       2425 1.000
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
-```r
+``` r
 print(b5.11, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + perc.lactose 
-##    Data: d (Number of observations: 29) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept       1.166     0.048    1.072    1.260       6000 1.000
-## perc.lactose   -0.011     0.001   -0.012   -0.009       6000 1.000
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.067     0.010    0.052    0.090       2233 1.000
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + perc.lactose 
+    ##    Data: d (Number of observations: 29) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept       1.166     0.047    1.072    1.259       6000 1.000
+    ## perc.lactose   -0.011     0.001   -0.012   -0.009       6000 1.000
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.067     0.009    0.051    0.088       2257 1.000
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 If you'd like to get just the 95% intervals similar to the way McElreath reported them in the prose on page 146, you might use the handy `posterior_interval()` function.
 
-
-```r
+``` r
 posterior_interval(b5.10)[2, ] %>% round(digits = 3)
 ```
 
-```
-##  2.5% 97.5% 
-## 0.008 0.012
-```
+    ##  2.5% 97.5% 
+    ## 0.008 0.012
 
-```r
+``` r
 posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 ```
 
-```
-##   2.5%  97.5% 
-## -0.012 -0.009
-```
+    ##   2.5%  97.5% 
+    ## -0.012 -0.009
 
 As McElreath wrote, "watch what happens when we place both predictor varaibles in the same regression model" (p. 146)
 
-
-```r
+``` r
 b5.12 <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 1 + perc.fat + perc.lactose,
@@ -1395,33 +1288,30 @@ b5.12 <-
 print(b5.12, digits = 3)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + perc.fat + perc.lactose 
-##    Data: d (Number of observations: 29) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept       1.006     0.223    0.560    1.446       4488 1.000
-## perc.fat        0.002     0.003   -0.003    0.007       4548 1.000
-## perc.lactose   -0.009     0.003   -0.014   -0.003       4583 1.000
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.068     0.010    0.051    0.091       1699 1.002
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + perc.fat + perc.lactose 
+    ##    Data: d (Number of observations: 29) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## Intercept       1.006     0.221    0.582    1.442       4643 1.000
+    ## perc.fat        0.002     0.003   -0.003    0.007       4772 1.000
+    ## perc.lactose   -0.009     0.003   -0.014   -0.003       4645 1.000
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
+    ## sigma    0.068     0.010    0.052    0.091       2487 1.001
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 You can make custom pairs plots with [GGalley](https://cran.r-project.org/web/packages/GGally/index.html), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
-
-```r
+``` r
 #install.packages("GGally", dependencies = T)
 library(GGally)
 
@@ -1429,12 +1319,11 @@ ggpairs(data = d, columns = c(3:4, 6)) +
   theme_classic()
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-59-1.png)
 
 But you can customize [these](http://ggobi.github.io/ggally/), too. E.g.,
 
-
-```r
+``` r
 my_diag <- function(data, mapping, ...){
   pd <- ggplot(data = data, mapping = mapping) + 
     geom_density(fill = "firebrick4", size = 0)
@@ -1459,14 +1348,13 @@ ggpairs(data = d, columns = c(3:4, 6),
         strip.background = element_rect(fill = "white"))
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-60-1.png)
 
 #### Overthinking: Simulating collinearity.
 
 First we'll get the data and define the funcitons.
 
-
-```r
+``` r
 library(rethinking)
 data(milk)
 d <- milk
@@ -1487,8 +1375,7 @@ rep.sim.coll <- function(r = .9, n = 100) {
 
 Here we'll put the output of the functions directly into a tibble and then just feed the whole thing into our Figure 5.10.
 
-
-```r
+``` r
 tibble(r.seq = seq(from = 0, to = 0.99, by = 0.01),
        stddev = sapply(r.seq, function(z) rep.sim.coll(r = z, n = 100))) %>% 
   
@@ -1502,14 +1389,13 @@ tibble(r.seq = seq(from = 0, to = 0.99, by = 0.01),
   theme(panel.grid = element_blank())
 ```
 
-![](Ch._05_Multivariate_Linear_Models_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
+![](Ch._05_Multivariate_Linear_Models_files/figure-markdown_github/unnamed-chunk-62-1.png)
 
 ### 5.3.3. Post-treatment bias
 
 Once again, we'll simulate our data.
 
-
-```r
+``` r
 N <- 100
 
 set.seed(17)
@@ -1522,28 +1408,24 @@ d <-
 
 We'll use `head()` to peek at the data, which we put in a [tibble rather than a data frame](https://github.com/tidyverse/tibble).
 
-
-```r
+``` r
 d %>%
   head()
 ```
 
-```
-## # A tibble: 6 x 4
-##      h0 treatment fungus    h1
-##   <dbl>     <int>  <int> <dbl>
-## 1  7.97         0      1  12.9
-## 2  9.84         0      1  11.9
-## 3  9.53         0      0  15.8
-## 4  8.37         0      1  11.1
-## 5 11.5          0      1  13.1
-## 6  9.67         0      0  15.7
-```
+    ## # A tibble: 6 x 4
+    ##      h0 treatment fungus    h1
+    ##   <dbl>     <int>  <int> <dbl>
+    ## 1  7.97         0      1  12.9
+    ## 2  9.84         0      1  11.9
+    ## 3  9.53         0      0  15.8
+    ## 4  8.37         0      1  11.1
+    ## 5 11.5          0      1  13.1
+    ## 6  9.67         0      0  15.7
 
 These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = .99`.
 
-
-```r
+``` r
 b5.13 <- 
   brm(data = d, family = gaussian,
       h1 ~ 1 + h0 + treatment + fungus,
@@ -1556,34 +1438,31 @@ b5.13 <-
 print(b5.13)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: h1 ~ 1 + h0 + treatment + fungus 
-##    Data: d (Number of observations: 100) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-##          total post-warmup samples = 4000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     5.26      0.57     4.17     6.36       3835 1.00
-## h0            0.96      0.05     0.85     1.07       3780 1.00
-## treatment     0.22      0.24    -0.23     0.67       3480 1.00
-## fungus       -3.02      0.27    -3.53    -2.48       3480 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.08      0.08     0.94     1.24       3491 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: h1 ~ 1 + h0 + treatment + fungus 
+    ##    Data: d (Number of observations: 100) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 4000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept     5.26      0.55     4.18     6.32       3581 1.00
+    ## h0            0.96      0.05     0.86     1.06       4000 1.00
+    ## treatment     0.22      0.23    -0.24     0.68       2441 1.00
+    ## fungus       -3.02      0.26    -3.54    -2.51       3175 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.08      0.08     0.93     1.25       3109 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Fitting the model after excluding `fungus`, our post-treatment variable.
 
-
-```r
+``` r
 b5.14 <- 
   brm(data = d, family = gaussian,
       h1 ~ 1 + h0 + treatment,
@@ -1595,39 +1474,35 @@ b5.14 <-
 print(b5.14)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: h1 ~ 1 + h0 + treatment 
-##    Data: d (Number of observations: 100) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-##          total post-warmup samples = 4000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     4.43      0.87     2.73     6.11       2707 1.00
-## h0            0.90      0.08     0.75     1.06       2768 1.00
-## treatment     1.28      0.34     0.61     1.97       2084 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.67      0.12     1.45     1.92       4000 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: h1 ~ 1 + h0 + treatment 
+    ##    Data: d (Number of observations: 100) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 4000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept     4.46      0.82     2.90     6.10       2845 1.00
+    ## h0            0.90      0.08     0.74     1.05       2915 1.00
+    ## treatment     1.28      0.34     0.60     1.94       2292 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.66      0.12     1.45     1.93       4000 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
-
-
-## 5.4. Categorical varaibles
+5.4. Categorical varaibles
+--------------------------
 
 ### 5.4.1. Binary categories.
 
 Reload the `Howell1` data.
 
-
-```r
+``` r
 library(rethinking)
 data(Howell1)
 d <- Howell1
@@ -1635,8 +1510,7 @@ d <- Howell1
 
 Unload rethinking and load brms.
 
-
-```r
+``` r
 rm(Howell1)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -1644,27 +1518,23 @@ library(brms)
 
 Just in case you forgot what these data were like:
 
-
-```r
+``` r
 d %>%
   glimpse()
 ```
 
-```
-## Observations: 544
-## Variables: 4
-## $ height <dbl> 151.7650, 139.7000, 136.5250, 156.8450, 145.4150, 163.8...
-## $ weight <dbl> 47.82561, 36.48581, 31.86484, 53.04191, 41.27687, 62.99...
-## $ age    <dbl> 63.0, 63.0, 65.0, 41.0, 51.0, 35.0, 32.0, 27.0, 19.0, 5...
-## $ male   <int> 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1...
-```
+    ## Observations: 544
+    ## Variables: 4
+    ## $ height <dbl> 151.7650, 139.7000, 136.5250, 156.8450, 145.4150, 163.8...
+    ## $ weight <dbl> 47.82561, 36.48581, 31.86484, 53.04191, 41.27687, 62.99...
+    ## $ age    <dbl> 63.0, 63.0, 65.0, 41.0, 51.0, 35.0, 32.0, 27.0, 19.0, 5...
+    ## $ male   <int> 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1...
 
-Let's fit the first `height` model. 
+Let's fit the first `height` model.
 
-Note. The uniform prior McElreath used in the text in conjunction with his `map()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the prior did the trick. Anticipating chapter 8, I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
+Note. The uniform prior McElreath used in the text in conjunction with his `map()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the prior did the trick. Anticipating chapter 8, I recommend you use a weakly-regularizing half Cauchy for *σ*.
 
-
-```r
+``` r
 b5.15 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + male,
@@ -1676,46 +1546,40 @@ b5.15 <-
 print(b5.15)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: height ~ 1 + male 
-##    Data: d (Number of observations: 544) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   134.79      1.57   131.67   137.82       5992 1.00
-## male          7.28      2.23     2.88    11.61       6000 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    27.36      0.84    25.76    29.06       5303 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: height ~ 1 + male 
+    ##    Data: d (Number of observations: 544) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept   134.85      1.59   131.65   137.95       5458 1.00
+    ## male          7.24      2.28     2.78    11.68       5074 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma    27.38      0.82    25.80    29.03       4512 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Our samples from the posterior are already in the HMC iterations. All we need to do is put them in a data frame and then put them to work.
 
-
-```r
+``` r
 post <- posterior_samples(b5.15)
 
 quantile(post[ , 1] + post[ , 2], c(.025, .975))
 ```
 
-```
-##     2.5%    97.5% 
-## 138.7450 145.3581
-```
+    ##     2.5%    97.5% 
+    ## 138.7783 145.3766
 
 A more tidyverse-centric way to do this might be something like:
 
-
-```r
+``` r
 post <-
   b5.15 %>%
   posterior_samples()
@@ -1726,17 +1590,14 @@ post %>%
             UL = quantile(mu_male, .975) %>% round(digits = 2))
 ```
 
-```
-##       LL     UL
-## 1 138.75 145.36
-```
+    ##       LL     UL
+    ## 1 138.78 145.38
 
 ##### Overthinking: Re-parameterizing the model.
 
-Everyone has their own idiosyncratic way of coding. One of my quirks is that I always explicitly specify a model’s intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don’t have to do this, of course. You could just code `y ~ x` to get the same results. `brm()` assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: ` height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula. 
+Everyone has their own idiosyncratic way of coding. One of my quirks is that I always explicitly specify a model’s intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don’t have to do this, of course. You could just code `y ~ x` to get the same results. `brm()` assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: `height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
 
-
-```r
+``` r
 d <-
   d %>%
   mutate(female = 1 - male)
@@ -1751,36 +1612,34 @@ b5.15b <-
 print(b5.15b)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: height ~ 0 + male + female 
-##    Data: d (Number of observations: 544) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##        Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## male     142.35      1.69   138.98   145.65       6000 1.00
-## female   134.65      1.59   131.51   137.75       5151 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    27.37      0.84    25.80    29.06       5351 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: height ~ 0 + male + female 
+    ##    Data: d (Number of observations: 544) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##        Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## male     142.33      1.73   138.90   145.71       5519 1.00
+    ## female   134.59      1.60   131.49   137.68       6000 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma    27.35      0.83    25.74    29.05       6000 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Oh man, that sweet half Cauchy just keeps getting the job done.
 
-## 5.4.2. Many categories
+5.4.2. Many categories
+----------------------
 
 We just can't keep ourselves from picking that `milk` back up again and again.
 
-
-```r
+``` r
 library(rethinking)
 data(milk)
 d <- milk
@@ -1788,8 +1647,7 @@ d <- milk
 
 Unload rethinking and load brms.
 
-
-```r
+``` r
 rm(milk)
 detach(package:rethinking, unload = TRUE)
 library(brms)
@@ -1797,24 +1655,20 @@ library(brms)
 
 With the tidyverse, we can peek at `clade` with `distinct()` in the place of base R `unique()`.
 
-
-```r
+``` r
 d %>%
   distinct(clade)
 ```
 
-```
-##              clade
-## 1    Strepsirrhine
-## 2 New World Monkey
-## 3 Old World Monkey
-## 4              Ape
-```
+    ##              clade
+    ## 1    Strepsirrhine
+    ## 2 New World Monkey
+    ## 3 Old World Monkey
+    ## 4              Ape
 
 As `clade` has 4 categories, let's convert these to 4 dummy variables.
 
-
-```r
+``` r
 d <- 
   d %>%
   mutate(clade.NWM = ifelse(clade == "New World Monkey", 1, 0),
@@ -1825,8 +1679,7 @@ d <-
 
 Now we'll fit the model with three of the four dummies.
 
-
-```r
+``` r
 b5.16 <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 1 + clade.NWM + clade.OWM + clade.S,
@@ -1839,34 +1692,31 @@ b5.16 <-
 print(b5.16)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 1 + clade.NWM + clade.OWM + clade.S 
-##    Data: d (Number of observations: 29) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.55      0.04     0.46     0.63       4650 1.00
-## clade.NWM     0.17      0.06     0.04     0.29       4274 1.00
-## clade.OWM     0.24      0.07     0.10     0.38       4853 1.00
-## clade.S      -0.04      0.07    -0.18     0.11       4651 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.13      0.02     0.10     0.18       4947 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 1 + clade.NWM + clade.OWM + clade.S 
+    ##    Data: d (Number of observations: 29) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept     0.55      0.04     0.46     0.63       5267 1.00
+    ## clade.NWM     0.17      0.06     0.05     0.29       5444 1.00
+    ## clade.OWM     0.24      0.07     0.10     0.38       5536 1.00
+    ## clade.S      -0.04      0.07    -0.18     0.10       5648 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.13      0.02     0.10     0.17       4746 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 Here we grab the chains, our draws from the posterior.
 
-
-```r
+``` r
 post <- 
   b5.16 %>%
   posterior_samples()
@@ -1874,20 +1724,17 @@ post <-
 head(post)
 ```
 
-```
-##   b_Intercept b_clade.NWM b_clade.OWM   b_clade.S     sigma     lp__
-## 1   0.5070590   0.2346497   0.2202670  0.07580021 0.1301338 8.809004
-## 2   0.5839642   0.1673273   0.1378847 -0.02939607 0.1222938 9.070499
-## 3   0.5433036   0.1077862   0.2697220 -0.10840999 0.1232040 8.935261
-## 4   0.5636154   0.2042881   0.1820238  0.01877012 0.1462711 8.399285
-## 5   0.5534001   0.2156044   0.1634673 -0.01783461 0.1361122 8.944062
-## 6   0.5972395   0.1333488   0.1451123 -0.09438220 0.1111289 9.583005
-```
+    ##   b_Intercept b_clade.NWM b_clade.OWM    b_clade.S      sigma      lp__
+    ## 1   0.5297320   0.2372379   0.1939932 -0.077124264 0.13993161  8.653232
+    ## 2   0.5631689   0.1052023   0.2850707 -0.083952142 0.12435950  9.558050
+    ## 3   0.5354756   0.1908529   0.2749740 -0.026652965 0.09703078  9.866070
+    ## 4   0.5579731   0.1523795   0.2383950 -0.051142716 0.12568058 11.004428
+    ## 5   0.5315097   0.1847620   0.2422720 -0.028821973 0.09698681  9.971088
+    ## 6   0.5468288   0.2025798   0.2214001 -0.001323241 0.10940145 10.242456
 
 You might compute averages for each category and summarizing the results with the transpose of base R's `apply()` function, rounding to two digits of precision.
 
-
-```r
+``` r
 post$mu.Ape <- post$b_Intercept
 post$mu.NWM <- post$b_Intercept + post$b_clade.NWM
 post$mu.OWM <- post$b_Intercept + post$b_clade.OWM
@@ -1896,18 +1743,15 @@ post$mu.S   <- post$b_Intercept + post$b_clade.S
 round(t(apply(post[ ,7:10], 2, quantile, c(.5, .025, .975))), digits = 2)
 ```
 
-```
-##         50% 2.5% 97.5%
-## mu.Ape 0.55 0.46  0.63
-## mu.NWM 0.71 0.63  0.80
-## mu.OWM 0.79 0.68  0.89
-## mu.S   0.51 0.39  0.63
-```
+    ##         50% 2.5% 97.5%
+    ## mu.Ape 0.55 0.46  0.63
+    ## mu.NWM 0.71 0.63  0.80
+    ## mu.OWM 0.79 0.68  0.89
+    ## mu.S   0.51 0.40  0.63
 
 Here's a more tidyverse sort of way to get the same thing.
 
-
-```r
+``` r
 post %>%
   mutate(mu.Ape = b_Intercept,
          mu.NWM = b_Intercept + b_clade.NWM,
@@ -1921,30 +1765,25 @@ post %>%
             UL = quantile(value, probs = .975) %>% round(digits = 2))
 ```
 
-```
-## # A tibble: 4 x 4
-##   parameter median    LL    UL
-##   <chr>      <dbl> <dbl> <dbl>
-## 1 mu.Ape     0.550 0.460 0.630
-## 2 mu.NWM     0.710 0.630 0.800
-## 3 mu.OWM     0.790 0.680 0.890
-## 4 mu.S       0.510 0.390 0.630
-```
+    ## # A tibble: 4 x 4
+    ##   parameter median    LL    UL
+    ##   <chr>      <dbl> <dbl> <dbl>
+    ## 1 mu.Ape     0.550 0.460 0.630
+    ## 2 mu.NWM     0.710 0.630 0.800
+    ## 3 mu.OWM     0.790 0.680 0.890
+    ## 4 mu.S       0.510 0.400 0.630
 
 Getting summary statistics for the difference between `NWM` and `OWM`.
 
-
-```r
+``` r
 # Base R
 round(quantile(post$mu.NWM - post$mu.OWM, probs = c(.025, .5, .975)), digits = 2)
 ```
 
-```
-##  2.5%   50% 97.5% 
-## -0.21 -0.07  0.06
-```
+    ##  2.5%   50% 97.5% 
+    ## -0.21 -0.07  0.07
 
-```r
+``` r
 # tidyverse
 post %>%
   mutate(dif = mu.NWM - mu.OWM) %>%
@@ -1953,17 +1792,14 @@ post %>%
             UL = quantile(dif, probs = .975) %>% round(digits = 2))
 ```
 
-```
-##   median    LL   UL
-## 1  -0.07 -0.21 0.06
-```
+    ##   median    LL   UL
+    ## 1  -0.07 -0.21 0.07
 
 ### 5.4.3. Adding regular predictor variables.
 
 Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
 
-
-```r
+``` r
 b5.16_alt <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 0 + clade,
@@ -1974,33 +1810,30 @@ b5.16_alt <-
 print(b5.16_alt)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: kcal.per.g ~ 0 + clade 
-##    Data: d (Number of observations: 29) 
-## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-##          total post-warmup samples = 6000
-## 
-## Population-Level Effects: 
-##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## cladeApe                0.55      0.04     0.46     0.63       6000 1.00
-## cladeNewWorldMonkey     0.72      0.05     0.62     0.81       6000 1.00
-## cladeOldWorldMonkey     0.79      0.05     0.68     0.89       6000 1.00
-## cladeStrepsirrhine      0.51      0.06     0.39     0.62       6000 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.13      0.02     0.10     0.18       3965 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: kcal.per.g ~ 0 + clade 
+    ##    Data: d (Number of observations: 29) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
+    ##          total post-warmup samples = 6000
+    ## 
+    ## Population-Level Effects: 
+    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## cladeApe                0.54      0.04     0.46     0.63       6000 1.00
+    ## cladeNewWorldMonkey     0.71      0.04     0.63     0.80       6000 1.00
+    ## cladeOldWorldMonkey     0.79      0.05     0.68     0.90       6000 1.00
+    ## cladeStrepsirrhine      0.51      0.06     0.39     0.62       6000 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.13      0.02     0.10     0.18       6000 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
-
-
-## 5.5. ~~Ordinary least squares and `lm()`~~
+5.5. ~~Ordinary least squares and `lm()`~~
+------------------------------------------
 
 Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/web/packages/lme4/index.html) syntax for multilevel models.
 
@@ -2008,16 +1841,18 @@ Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with 
 
 Note. The analyses in this document were done with:
 
-* R           3.4.4
-* RStudio     1.1.442
-* rmarkdown   1.9
-* rethinking  1.59
-* brms        2.3.1
-* rstan       2.17.3
-* tidyverse   1.2.1
-* ggrepel     0.8.0
-* bayesplot   1.5.0
-* GGalley     1.3.0
+-   R 3.4.4
+-   RStudio 1.1.442
+-   rmarkdown 1.9
+-   rethinking 1.59
+-   brms 2.3.1
+-   rstan 2.17.3
+-   tidyverse 1.2.1
+-   ggrepel 0.8.0
+-   bayesplot 1.5.0
+-   GGalley 1.3.0
 
-## Reference
+Reference
+---------
+
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.

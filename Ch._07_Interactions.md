@@ -1,19 +1,14 @@
----
-title: "Ch. 7 Interactions"
-author: "A Solomon Kurz"
-date: "2018-05-26"
-output:
-  html_document:
-    code_folding: show
-    keep_md: TRUE
----
+Ch. 7 Interactions
+================
+A Solomon Kurz
+2018-06-11
 
-## 7.1. Building an interaction.
+7.1. Building an interaction.
+-----------------------------
 
 Here we load the `rugged` data.
 
-
-```r
+``` r
 library(rethinking)
 data(rugged)
 d <- rugged
@@ -21,8 +16,7 @@ d <- rugged
 
 And here we switch out rethinking for brms.
 
-
-```r
+``` r
 detach(package:rethinking, unload = T)
 library(brms)
 rm(rugged)
@@ -30,8 +24,7 @@ rm(rugged)
 
 We'll continue to use tidyverse-style syntax to wrangle the data.
 
-
-```r
+``` r
 library(tidyverse)
 
 # make log version of outcome
@@ -53,11 +46,10 @@ d.A0 <-
   dd %>%
   filter(cont_africa == 0)
 ```
- 
+
 Here are the first two univariable models, predicting `log_gdp`.
 
-
-```r
+``` r
 b7.1 <-
   brm(data = d.A1, family = gaussian,
       log_gdp ~ 1 + rugged,
@@ -75,10 +67,9 @@ b7.2 <-
       chains = 4, iter = 2000, warmup = 1000, cores = 4)
 ```
 
-In the text, McElreath more or less dares us to figure out how to make Figure 7.2. Here's the brms-relevant data processing.
+In the text, McElreath more or less dared us to figure out how to make Figure 7.2. Here's the brms-relevant data processing.
 
-
-```r
+``` r
 p7.1 <- posterior_samples(b7.1)
 p7.2 <- posterior_samples(b7.2)
 
@@ -105,16 +96,14 @@ fit.both <-
 
 For this chapter, we'll take our plot theme from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html), which you can learn more about [here](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
 
-
-```r
+``` r
 # install.packages("ggthemes", dependencies = T)
 library(ggthemes)
 ```
 
 Here's the plot code for our version of Figure 7.2.
 
-
-```r
+``` r
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
@@ -140,14 +129,13 @@ dd %>%
         legend.position = "none")
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ### 7.1.1. Adding a dummy variable doesn't work.
 
 Here's our model with all the countries, but without our `cont_africa` dummy.
 
-
-```r
+``` r
 b7.3 <-
   brm(data = dd, family = gaussian,
       log_gdp ~ 1 + rugged,
@@ -159,8 +147,7 @@ b7.3 <-
 
 Now we'll add the dummy.
 
-
-```r
+``` r
 b7.4 <-
   brm(data = dd, family = gaussian,
       log_gdp ~ 1 + rugged + cont_africa,
@@ -170,51 +157,42 @@ b7.4 <-
       iter = 2000, warmup = 1000, cores = 4, chains = 4)
 ```
 
-And here we can compare them with information criteria.
+And here we can compare the two models with information criteria.
 
-
-```r
+``` r
 waic(b7.3, b7.4)
 ```
 
-```
-##               WAIC    SE
-## b7.3        539.72 13.00
-## b7.4        475.90 14.87
-## b7.3 - b7.4  63.82 14.64
-```
+    ##               WAIC    SE
+    ## b7.3        539.43 12.95
+    ## b7.4        476.05 14.80
+    ## b7.3 - b7.4  63.39 14.56
 
-```r
+``` r
 loo(b7.3, b7.4)
 ```
 
-```
-##              LOOIC    SE
-## b7.3        539.73 13.00
-## b7.4        475.93 14.87
-## b7.3 - b7.4  63.81 14.65
-```
+    ##              LOOIC    SE
+    ## b7.3        539.45 12.95
+    ## b7.4        476.09 14.81
+    ## b7.3 - b7.4  63.36 14.57
 
 Happily, the WAIC and the LOO are in agreement. The model with the dummy, `b7.4`, fit the data much better. Here are the WAIC model weights.
 
-
-```r
+``` r
 model_weights(b7.3, b7.4,
               weights = "waic") %>% 
   round(digits = 3)
 ```
 
-```
-## b7.3 b7.4 
-##    0    1
-```
+    ## b7.3 b7.4 
+    ##    0    1
 
 As in the text, no contest.
 
 Here we'll plot the model for `b7.4`. First, we process the data.
 
-
-```r
+``` r
 p7.4 <- posterior_samples(b7.4)
 
 nd <- 
@@ -231,10 +209,9 @@ fit.7.4 <-
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa"))
 ```
 
-The plot.
+The plot:
 
-
-```r
+``` r
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
@@ -263,14 +240,13 @@ ggplot(aes(x = rugged)) +
         legend.direction = "horizontal")
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 ### 7.1.2. Adding a linear interaction does work.
 
 Yes, it sure does.
 
-
-```r
+``` r
 b7.5 <-
   brm(data = dd, family = gaussian,
       log_gdp ~ 1 + rugged*cont_africa,
@@ -282,42 +258,35 @@ b7.5 <-
 
 For kicks, we'll just use the LOO to compare the last three models.
 
-
-```r
+``` r
 loo(b7.3, b7.4, b7.5,
     cores = 4)  # We can speed things up using the `cores` argument
 ```
 
-```
-##              LOOIC    SE
-## b7.3        539.73 13.00
-## b7.4        475.93 14.87
-## b7.5        469.53 14.54
-## b7.3 - b7.4  63.81 14.65
-## b7.3 - b7.5  70.20 14.64
-## b7.4 - b7.5   6.39  5.83
-```
+    ##              LOOIC    SE
+    ## b7.3        539.45 12.95
+    ## b7.4        476.09 14.81
+    ## b7.5        469.53 14.62
+    ## b7.3 - b7.4  63.36 14.57
+    ## b7.3 - b7.5  69.92 14.71
+    ## b7.4 - b7.5   6.56  5.92
 
 And we can weigh the models based on the LOO rather than the WAIC, too.
 
-
-```r
+``` r
 model_weights(b7.3, b7.4, b7.5,
               weights = "loo") %>% 
   round(digits = 3)
 ```
 
-```
-##  b7.3  b7.4  b7.5 
-## 0.000 0.039 0.961
-```
+    ##  b7.3  b7.4  b7.5 
+    ## 0.000 0.036 0.964
 
 ##### Overthinking: Conventional form of interaction.
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this syntax.
 
-
-```r
+``` r
 b7.5b <-
   brm(data = dd, family = gaussian,
       log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
@@ -329,35 +298,29 @@ b7.5b <-
 
 Same model, same WAIC and LOO:
 
-
-```r
+``` r
 waic(b7.5, b7.5b)
 ```
 
-```
-##                WAIC    SE
-## b7.5         469.39 14.52
-## b7.5b        469.08 14.51
-## b7.5 - b7.5b   0.31  0.10
-```
+    ##                WAIC    SE
+    ## b7.5         469.39 14.61
+    ## b7.5b        469.25 14.56
+    ## b7.5 - b7.5b   0.14  0.11
 
-```r
+``` r
 loo(b7.5, b7.5b)
 ```
 
-```
-##               LOOIC    SE
-## b7.5         469.53 14.54
-## b7.5b        469.21 14.53
-## b7.5 - b7.5b   0.32  0.11
-```
+    ##               LOOIC    SE
+    ## b7.5         469.53 14.62
+    ## b7.5b        469.38 14.58
+    ## b7.5 - b7.5b   0.15  0.11
 
 ### 7.1.3. Plotting the interaction.
 
 Here's our prep work for the figure.
 
-
-```r
+``` r
 p7.5 <- posterior_samples(b7.5)
 
 nd <- 
@@ -376,8 +339,7 @@ fit.7.5 <-
 
 And here's the code for our version of Figure 7.4.
 
-
-```r
+``` r
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
@@ -405,14 +367,13 @@ ggplot(aes(x = rugged)) +
   facet_wrap(~cont_africa)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 #### 7.1.4.1. Parameters change meaning.
 
 We have already extracted samples from `b7.5`, but it doesn't hurt to repeat the code.
 
-
-```r
+``` r
 p7.5 <-
   posterior_samples(b7.5) 
 
@@ -425,18 +386,15 @@ p7.5 %>%
   summarise(mean = mean(value))
 ```
 
-```
-## # A tibble: 2 x 2
-##   key               mean
-##   <chr>            <dbl>
-## 1 gamma_Africa     0.161
-## 2 gamma_notAfrica -0.183
-```
+    ## # A tibble: 2 x 2
+    ##   key               mean
+    ##   <chr>            <dbl>
+    ## 1 gamma_Africa     0.163
+    ## 2 gamma_notAfrica -0.184
 
 And here is our version of Figure 7.5.
 
-
-```r
+``` r
 p7.5 %>%
   mutate(gamma_Africa = b_rugged + `b_rugged:cont_africa`,
          gamma_notAfrica = b_rugged) %>%
@@ -456,12 +414,11 @@ p7.5 %>%
         legend.position = "none")
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 What proportion of these differences is below zero?
 
-
-```r
+``` r
 p7.5 %>%
   mutate(gamma_Africa = b_rugged + `b_rugged:cont_africa`,
          gamma_notAfrica = b_rugged,
@@ -469,15 +426,12 @@ p7.5 %>%
   summarise(Proportion_of_the_difference_below_0 = sum(diff < 0)/length(diff))
 ```
 
-```
-##   Proportion_of_the_difference_below_0
-## 1                              0.00575
-```
+    ##   Proportion_of_the_difference_below_0
+    ## 1                                0.006
 
 Here is our version of McElreath's Figure 7.6.
 
-
-```r
+``` r
 nd <- 
   tibble(rugged = rep(range(dd$rugged),
                       times = 2),
@@ -520,34 +474,31 @@ ggplot(aes(x = cont_africa)) +
         legend.position = "none")
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-24-1.png)
 
-## 7.3. Continuous interactions
+7.3. Continuous interactions
+----------------------------
 
 ### 7.3.1. The data.
 
 Look at the `tulips`.
 
-
-```r
+``` r
 library(rethinking)
 data(tulips)
 d <- tulips
 str(d)
 ```
 
-```
-## 'data.frame':	27 obs. of  4 variables:
-##  $ bed   : Factor w/ 3 levels "a","b","c": 1 1 1 1 1 1 1 1 1 2 ...
-##  $ water : int  1 1 1 2 2 2 3 3 3 1 ...
-##  $ shade : int  1 2 3 1 2 3 1 2 3 1 ...
-##  $ blooms: num  0 0 111 183.5 59.2 ...
-```
+    ## 'data.frame':    27 obs. of  4 variables:
+    ##  $ bed   : Factor w/ 3 levels "a","b","c": 1 1 1 1 1 1 1 1 1 2 ...
+    ##  $ water : int  1 1 1 2 2 2 3 3 3 1 ...
+    ##  $ shade : int  1 2 3 1 2 3 1 2 3 1 ...
+    ##  $ blooms: num  0 0 111 183.5 59.2 ...
 
 Load brms.
 
-
-```r
+``` r
 detach(package:rethinking, unload = T)
 library(brms)
 rm(tulips)
@@ -555,8 +506,7 @@ rm(tulips)
 
 Here we continue with McElreath's very flat priors for the multivariable and interaction models.
 
-
-```r
+``` r
 b7.6 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water + shade,
@@ -566,40 +516,31 @@ b7.6 <-
       iter = 2000, warmup = 1000, cores = 4, chains = 4)
 ```
 
-```
-## Warning: It appears as if you have specified an upper bounded prior on a parameter that has no natural upper bound.
-## If this is really what you want, please specify argument 'ub' of 'set_prior' appropriately.
-## Warning occurred for prior 
-## sigma ~ uniform(0, 100)
-```
+    ## Warning: It appears as if you have specified an upper bounded prior on a parameter that has no natural upper bound.
+    ## If this is really what you want, please specify argument 'ub' of 'set_prior' appropriately.
+    ## Warning occurred for prior 
+    ## sigma ~ uniform(0, 100)
 
-```
-## Warning: There were 36 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
-## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-```
+    ## Warning: There were 40 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+    ## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 
-```
-## Warning: Examine the pairs() plot to diagnose sampling problems
-```
+    ## Warning: Examine the pairs() plot to diagnose sampling problems
 
-```r
+``` r
 b7.7 <- update(b7.6, 
                formula = blooms ~ 1 + water + shade + water:shade)
 ```
 
-```
-## Warning: There were 3 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
-## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+    ## Warning: There were 3 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+    ## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 
-## Warning: Examine the pairs() plot to diagnose sampling problems
-```
+    ## Warning: Examine the pairs() plot to diagnose sampling problems
 
 Note our use of the `update()` function. It can come in real handy when all you want is to make a mild adjustment to an existing model. Not only is it compact, it often cuts out the compilation time altogether.
 
-Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "[increase] adapt_delta above 0.8." While we're at it, we'll put better priors on $\sigma$.
+Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "\[increase\] adapt\_delta above 0.8." While we're at it, we'll put better priors on *σ*.
 
-
-```r
+``` r
 b7.6 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water + shade,
@@ -615,56 +556,47 @@ b7.7 <- update(b7.6,
 
 Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use `posterior_summary()`, which gets us most of the way there.
 
-
-```r
+``` r
 posterior_summary(b7.6) %>% round(digits = 2)
 ```
 
-```
-##             Estimate Est.Error    Q2.5   Q97.5
-## b_Intercept    60.44     43.79  -23.75  149.74
-## b_water        74.19     14.70   45.44  103.97
-## b_shade       -40.91     14.90  -69.89  -11.91
-## sigma          61.55      8.98   46.45   81.51
-## lp__         -169.82      1.51 -173.49 -167.87
-```
+    ##             Estimate Est.Error    Q2.5   Q97.5
+    ## b_Intercept    60.39     43.08  -24.20  144.83
+    ## b_water        74.32     14.65   44.95  103.13
+    ## b_shade       -41.15     14.79  -70.61  -12.61
+    ## sigma          61.67      9.24   46.83   82.25
+    ## lp__         -169.79      1.53 -173.49 -167.88
 
-```r
+``` r
 posterior_summary(b7.7) %>% round(digits = 2)
 ```
 
-```
-##               Estimate Est.Error    Q2.5   Q97.5
-## b_Intercept    -105.07     63.28 -225.41   24.96
-## b_water         159.07     29.08   96.04  214.21
-## b_shade          43.16     29.46  -18.08   99.20
-## b_water:shade   -42.82     13.49  -67.65  -14.47
-## sigma            49.87      7.49   37.47   66.81
-## lp__           -170.60      1.70 -174.99 -168.40
-```
+    ##               Estimate Est.Error    Q2.5   Q97.5
+    ## b_Intercept    -111.41     64.00 -232.97   15.89
+    ## b_water         161.70     29.65  101.80  218.20
+    ## b_shade          45.79     29.55  -15.46  102.34
+    ## b_water:shade   -44.00     13.76  -70.99  -16.10
+    ## sigma            50.17      7.97   37.57   68.11
+    ## lp__           -170.74      1.80 -175.23 -168.42
 
 This is an example where HMC yielded point estimates notably different from MAP. However, look at the size of those posterior standard deviations (i.e., Est.Error)! The MAP estimates are well within a fraction of those *SD*s.
 
 Anyway, let's look at WAIC.
 
-
-```r
+``` r
 waic(b7.6, b7.7)
 ```
 
-```
-##               WAIC   SE
-## b7.6        304.29 7.68
-## b7.7        293.30 7.92
-## b7.6 - b7.7  10.99 5.33
-```
+    ##               WAIC   SE
+    ## b7.6        304.07 7.62
+    ## b7.7        293.78 7.93
+    ## b7.6 - b7.7  10.29 5.48
 
 ### 7.3.3. Center and re-estimate.
 
 Here's a tidyverse way to center the predictors.
 
-
-```r
+``` r
 d <-
   d %>%
   mutate(shade.c = shade - mean(shade),
@@ -673,8 +605,7 @@ d <-
 
 Refitting the models with our shiny new centered predictors.
 
-
-```r
+``` r
 b7.8 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water.c + shade.c,
@@ -688,38 +619,32 @@ b7.9 <- update(b7.8,
                formula = blooms ~ 1 + water.c + shade.c + water.c:shade.c)
 ```
 
-
-```r
+``` r
 posterior_summary(b7.8) %>% round(digits = 2)
 ```
 
-```
-##             Estimate Est.Error    Q2.5   Q97.5
-## b_Intercept   129.17     12.21  104.70  152.53
-## b_water.c      74.00     14.59   45.05  102.27
-## b_shade.c     -41.08     14.44  -69.52  -12.87
-## sigma          61.57      9.07   46.84   82.47
-## lp__         -168.97      1.51 -172.79 -167.06
-```
+    ##             Estimate Est.Error    Q2.5   Q97.5
+    ## b_Intercept   128.82     11.81  104.93  152.11
+    ## b_water.c      73.96     14.22   46.40  101.69
+    ## b_shade.c     -40.59     14.49  -68.45  -11.89
+    ## sigma          61.35      8.88   46.91   81.53
+    ## lp__         -168.91      1.53 -172.94 -167.05
 
-```r
+``` r
 posterior_summary(b7.9) %>% round(digits = 2)
 ```
 
-```
-##                   Estimate Est.Error    Q2.5   Q97.5
-## b_Intercept         129.24      9.46  110.58  148.50
-## b_water.c            74.78     11.79   51.37   98.73
-## b_shade.c           -41.24     11.75  -63.99  -18.63
-## b_water.c:shade.c   -52.02     14.54  -80.56  -22.96
-## sigma                49.39      7.47   37.39   66.39
-## lp__               -168.59      1.76 -172.81 -166.25
-```
+    ##                   Estimate Est.Error    Q2.5   Q97.5
+    ## b_Intercept         129.03      9.60  110.35  148.03
+    ## b_water.c            74.84     11.71   51.70   97.51
+    ## b_shade.c           -40.89     12.09  -64.10  -16.90
+    ## b_water.c:shade.c   -51.47     14.47  -79.79  -22.80
+    ## sigma                49.62      7.46   37.68   66.86
+    ## lp__               -168.60      1.77 -172.96 -166.30
 
 And okay fine, if you really want a `coeftab()`-like summary, here's a grotesque way to do it.
 
-
-```r
+``` r
 # First, we reformat b7.8
 posterior_summary(b7.8) %>% 
   data.frame() %>% 
@@ -740,74 +665,62 @@ posterior_summary(b7.8) %>%
   mutate_if(is.double, round, digits = 2)
 ```
 
-```
-##           parameter   b7.8   b7.9
-## 1       b_Intercept 129.17 129.24
-## 2         b_shade.c -41.08 -41.24
-## 3         b_water.c  74.00  74.78
-## 4 b_water.c:shade.c     NA -52.02
-## 5             sigma  61.57  49.39
-```
+    ##           parameter   b7.8   b7.9
+    ## 1       b_Intercept 128.82 129.03
+    ## 2         b_shade.c -40.59 -40.89
+    ## 3         b_water.c  73.96  74.84
+    ## 4 b_water.c:shade.c     NA -51.47
+    ## 5             sigma  61.35  49.62
 
-Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the Est.Error values are uniformly smaller.
+Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the 'Est.Error' values are uniformly smaller.
 
 #### 7.3.3.2. Estimates changed less across models.
 
-
-```r
+``` r
 k <- fixef(b7.7)
 k[1] + k[2]*2 + k[3]*2 + k[4]*2*2
 ```
 
-```
-## [1] 128.0882
-```
+    ## [1] 127.566
 
-
-```r
+``` r
 k <- fixef(b7.9)
 k[1] + k[2]*0 + k[3]*0 + k[4]*0*0
 ```
 
-```
-## [1] 129.2438
-```
+    ## [1] 129.0295
 
-
-```r
+``` r
 print(b7.9)
 ```
 
-```
-##  Family: gaussian 
-##   Links: mu = identity; sigma = identity 
-## Formula: blooms ~ water.c + shade.c + water.c:shade.c 
-##    Data: d (Number of observations: 27) 
-## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-##          total post-warmup samples = 4000
-## 
-## Population-Level Effects: 
-##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept         129.24      9.46   110.58   148.50       4000 1.00
-## water.c            74.78     11.79    51.37    98.73       4000 1.00
-## shade.c           -41.24     11.75   -63.99   -18.63       4000 1.00
-## water.c:shade.c   -52.02     14.54   -80.56   -22.96       4000 1.00
-## 
-## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    49.39      7.47    37.39    66.39       4000 1.00
-## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
-## scale reduction factor on split chains (at convergence, Rhat = 1).
-```
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: blooms ~ water.c + shade.c + water.c:shade.c 
+    ##    Data: d (Number of observations: 27) 
+    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 4000
+    ## 
+    ## Population-Level Effects: 
+    ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## Intercept         129.03      9.60   110.35   148.03       4000 1.00
+    ## water.c            74.84     11.71    51.70    97.51       4000 1.00
+    ## shade.c           -40.89     12.09   -64.10   -16.90       4000 1.00
+    ## water.c:shade.c   -51.47     14.47   -79.79   -22.80       4000 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma    49.62      7.46    37.68    66.86       4000 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 ### 7.3.4. Plotting implied predictions.
 
 Now we're ready for the bottom row of Figure 7.7. Here's our variation on McElreath's tryptych loop code, adjusted for brms and ggplot2.
 
-
-```r
+``` r
 # loop over values of water.c and plot predictions
 shade.seq <- -1:1
 
@@ -845,12 +758,11 @@ for(w in -1:1){
 }
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-38-1.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-38-2.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-38-3.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-38-1.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-38-2.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-38-3.png)
 
-But we don't necessarily need a loop. We can achieve all of McElreath's Figure 7.7 with `fitted()`, a some data wrangling, and a little help from `ggplot2::facet_grid()`.
+But we don't necessarily need a loop. We can achieve all of McElreath's Figure 7.7 with `fitted()`, some data wrangling, and a little help from `ggplot2::facet_grid()`.
 
-
-```r
+``` r
 # fitted() for model b7.8
 fitted(b7.8) %>%
   as_tibble() %>%
@@ -885,88 +797,75 @@ fitted(b7.8) %>%
   facet_grid(y_grid ~ x_grid)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-39-1.png)
 
 ##### Bonus: `marginal_effects()`
 
 The brms package includes the `marginal_effects()` function as a convenient way to look at simple effects and two-way interactions. Recall the simple univariable model, `b7.3`:
 
-
-```r
+``` r
 b7.3$formula
 ```
 
-```
-## log_gdp ~ 1 + rugged
-```
+    ## log_gdp ~ 1 + rugged
 
 We can look at the regression line and its percentile-based intervals like so:
 
-
-```r
+``` r
 marginal_effects(b7.3)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-41-1.png)
 
 If we nest `marginal_effects()` within `plot()` with a `points = T` argument, we can add the original data to the figure.
 
-
-```r
+``` r
 plot(marginal_effects(b7.3), points = T)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-42-1.png)
 
 We can further customize the plot. For example, we can replace the intervals with a spaghetti plot. While we're at it, we can use `point_args` to adjust the `geom_jitter()` parameters.
 
-
-```r
+``` r
 plot(marginal_effects(b7.3,
                       spaghetti = T, nsamples = 200),
      points = T,
      point_args = c(alpha = 1/2, size = 1))
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-43-1.png)
 
 With multiple predictors, things get more complicated. Consider our multivariable, non-interaction model, `b7.4`.
 
-
-```r
+``` r
 b7.4$formula
 ```
 
-```
-## log_gdp ~ 1 + rugged + cont_africa
-```
+    ## log_gdp ~ 1 + rugged + cont_africa
 
-```r
+``` r
 marginal_effects(b7.4)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-44-1.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-44-2.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-44-1.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-44-2.png)
 
 We got one plot for each predictor, controlling the other predictor at zero. Note how the plot for `cont_africa` treated it as a continuous variable. This is because the variable was saved as an integer in the original data set:
 
-
-```r
+``` r
 b7.4$data %>% 
   glimpse()
 ```
 
-```
-## Observations: 170
-## Variables: 3
-## $ log_gdp     <dbl> 7.492609, 8.216929, 9.933263, 9.407032, 7.792343, ...
-## $ rugged      <dbl> 0.858, 3.427, 0.769, 0.775, 2.688, 0.006, 0.143, 3...
-## $ cont_africa <int> 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0,...
-```
+    ## Observations: 170
+    ## Variables: 3
+    ## $ log_gdp     <dbl> 7.492609, 8.216929, 9.933263, 9.407032, 7.792343, ...
+    ## $ rugged      <dbl> 0.858, 3.427, 0.769, 0.775, 2.688, 0.006, 0.143, 3...
+    ## $ cont_africa <int> 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0,...
 
-One way to fix that is to adjust the data set and refit the model. 
+One way to fix that is to adjust the data set and refit the model.
 
-
-```r
+``` r
 d_factor <-
   b7.4$data %>% 
   mutate(cont_africa = factor(cont_africa))
@@ -976,36 +875,31 @@ b7.4_factor <- update(b7.4, newdata = d_factor)
 
 Using the `update()` syntax often speeds up the re-fitting process.
 
-
-```r
+``` r
 marginal_effects(b7.4_factor)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-47-1.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-47-2.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-47-1.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-47-2.png)
 
 Now our second marginal plot more clearly expresses the `cont_africa` predictor as categorical.
 
 Things get more complicated with the interaction model, `b7.5`.
 
-
-```r
+``` r
 b7.5$formula
 ```
 
-```
-## log_gdp ~ 1 + rugged * cont_africa
-```
+    ## log_gdp ~ 1 + rugged * cont_africa
 
-```r
+``` r
 marginal_effects(b7.5)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-48-1.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-48-2.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-48-3.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-48-1.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-48-2.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-48-3.png)
 
 The `marginal_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean +/- one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
 
-
-```r
+``` r
 d_factor <-
   b7.5$data %>% 
   mutate(cont_africa = factor(cont_africa))
@@ -1015,18 +909,16 @@ b7.5_factor <- update(b7.5, newdata = d_factor)
 
 Just for kicks, we'll use `probs = c(.25, .75)` to return [50% intervals](http://andrewgelman.com/2016/11/05/why-i-prefer-50-to-95-intervals/), rather than the conventional 95%.
 
-
-```r
+``` r
 marginal_effects(b7.5_factor,
                  probs = c(.25, .75))
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-50-1.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-50-2.png)<!-- -->![](Ch._07_Interactions_files/figure-html/unnamed-chunk-50-3.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-50-1.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-50-2.png)![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-50-3.png)
 
 With the `effects` argument, we can just return the interaction effect, which is where all the action's at. While we're at it, we'll use `plot()` to change some of the settings.
 
-
-```r
+``` r
 plot(marginal_effects(b7.5_factor,
                       effects = "rugged:cont_africa", 
                       spaghetti = T, nsamples = 150),
@@ -1034,42 +926,37 @@ plot(marginal_effects(b7.5_factor,
      point_args = c(alpha = 2/3, size = 1), mean = F)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-51-1.png)
 
 Note, the ordering of the variables matters for the interaction term. Consider our interaction model for the tulips data.
 
-
-```r
+``` r
 b7.9$formula
 ```
 
-```
-## blooms ~ water.c + shade.c + water.c:shade.c
-```
+    ## blooms ~ water.c + shade.c + water.c:shade.c
 
 The plot tells a slightly different story, depending on whether you specify `effects = "shade.c:water.c"` or `effects = "water.c:shade.c"`.
 
-
-```r
+``` r
 plot(marginal_effects(b7.9, 
                       effects = "shade.c:water.c"),
      points = T)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-53-1.png)
 
-```r
+``` r
 plot(marginal_effects(b7.9, 
                       effects = "water.c:shade.c"),
      points = T)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-53-2.png)<!-- -->
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-53-2.png)
 
 One might want to evaluate the effects of the second term in the interaction--`water.c`, in this case--at values other than the mean and the mean +/- one standard deviation. When we reproduced the bottom row of Figure 7.7, we expressed the interaction based on values -1, 0, and 1 for `water.c`. We can do that, here, by using the `int_conditions` argument. It expects a list, so we'll put our desired `water.c` values in just that.
 
-
-```r
+``` r
 ic <- 
   list(water.c = c(-1, 0, 1))
 
@@ -1079,21 +966,20 @@ plot(marginal_effects(b7.9,
      points = T)
 ```
 
-![](Ch._07_Interactions_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
-
-
+![](Ch._07_Interactions_files/figure-markdown_github/unnamed-chunk-54-1.png)
 
 Note. The analyses in this document were done with:
 
-* R           3.4.4
-* RStudio     1.1.442
-* rmarkdown   1.9
-* rethinking  1.59
-* brms        2.3.1
-* rstan       2.17.3
-* tidyverse   1.2.1 
-* ggthemes    3.5.0
+-   R 3.4.4
+-   RStudio 1.1.442
+-   rmarkdown 1.9
+-   rethinking 1.59
+-   brms 2.3.1
+-   rstan 2.17.3
+-   tidyverse 1.2.1
+-   ggthemes 3.5.0
 
-## Reference
+Reference
+---------
 
 McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.

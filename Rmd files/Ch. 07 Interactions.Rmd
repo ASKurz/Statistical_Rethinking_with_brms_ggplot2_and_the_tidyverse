@@ -3,9 +3,7 @@ title: "Ch. 7 Interactions"
 author: "A Solomon Kurz"
 date: "`r format(Sys.Date())`"
 output:
-  html_document:
-    code_folding: show
-    keep_md: TRUE
+  github_document
 ---
 
 ## 7.1. Building an interaction.
@@ -71,7 +69,7 @@ b7.2 <-
       chains = 4, iter = 2000, warmup = 1000, cores = 4)
 ```
 
-In the text, McElreath more or less dares us to figure out how to make Figure 7.2. Here's the brms-relevant data processing.
+In the text, McElreath more or less dared us to figure out how to make Figure 7.2. Here's the brms-relevant data processing.
 
 ```{r, message = F}
 p7.1 <- posterior_samples(b7.1)
@@ -159,7 +157,7 @@ b7.4 <-
       iter = 2000, warmup = 1000, cores = 4, chains = 4)
 ```
 
-And here we can compare them with information criteria.
+And here we can compare the two models with information criteria.
 
 ```{r}
 waic(b7.3, b7.4)
@@ -196,7 +194,7 @@ fit.7.4 <-
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa"))
 ```
 
-The plot.
+The plot:
 
 ```{r, fig.height = 2.75, fig.width = 3}
 dd %>%
@@ -547,7 +545,7 @@ posterior_summary(b7.8) %>%
   mutate_if(is.double, round, digits = 2)
 ```
 
-Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the Est.Error values are uniformly smaller.
+Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the 'Est.Error' values are uniformly smaller.
 
 #### 7.3.3.2. Estimates changed less across models.
 
@@ -607,7 +605,7 @@ for(w in -1:1){
 }
 ```
 
-But we don't necessarily need a loop. We can achieve all of McElreath's Figure 7.7 with `fitted()`, a some data wrangling, and a little help from `ggplot2::facet_grid()`.
+But we don't necessarily need a loop. We can achieve all of McElreath's Figure 7.7 with `fitted()`, some data wrangling, and a little help from `ggplot2::facet_grid()`.
 
 ```{r, fig.height = 4, fig.width = 6.5}
 # fitted() for model b7.8
