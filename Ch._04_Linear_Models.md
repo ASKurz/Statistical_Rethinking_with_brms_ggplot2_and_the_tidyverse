@@ -25,7 +25,7 @@ pos <-
   replicate(100, runif(16, -1, 1)) %>%        # Here's the simulation
   as_tibble() %>%                             # For data manipulation, we'll make this a tibble
   rbind(0, .) %>%                             # Here we add a row of zeros above the simulation results
-  mutate(step = 0:16) %>%                     # This adds our step intex
+  mutate(step = 0:16) %>%                     # This adds our step index
   gather(key, value, -step) %>%               # Here we convert the data to the long format
   mutate(person = rep(1:100, each = 17)) %>%  # This adds a person id index
   # The next two lines allows us to make culmulative sums within each person
