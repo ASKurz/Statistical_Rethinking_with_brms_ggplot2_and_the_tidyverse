@@ -311,7 +311,7 @@ plot(b4.1_half_caucy)
 
 ![](Ch._04_Linear_Models_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
-If you want detailed diagnostics for the HMC chains, call `launch_shiny(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
+If you want detailed diagnostics for the HMC chains, call `launch_shinystan(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
 
 Here's how to get the model summary, the brms equivalent to rethinking's `precis()`.
 
