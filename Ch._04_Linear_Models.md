@@ -731,7 +731,7 @@ post %>%
     ## 4         116    0.854  4.73 -1085
     ## 5         116    0.853  4.75 -1085
 
-Here are the four models leading up to McElreaths Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on *σ*. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
+Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on *σ*. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
 
 ``` r
 N <- 10
