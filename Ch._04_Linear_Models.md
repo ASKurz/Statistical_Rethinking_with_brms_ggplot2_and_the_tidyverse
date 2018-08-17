@@ -25,7 +25,7 @@ pos <-
   replicate(100, runif(16, -1, 1)) %>%        # Here's the simulation
   as_tibble() %>%                             # For data manipulation, we'll make this a tibble
   rbind(0, .) %>%                             # Here we add a row of zeros above the simulation results
-  mutate(step = 0:16) %>%                     # This adds our step intex
+  mutate(step = 0:16) %>%                     # This adds our step index
   gather(key, value, -step) %>%               # Here we convert the data to the long format
   mutate(person = rep(1:100, each = 17)) %>%  # This adds a person id index
   # The next two lines allows us to make culmulative sums within each person
@@ -295,7 +295,7 @@ Note the warning message. [Stan](http://mc-stan.org), which is the [engine under
 McElreath's uniform prior for *σ* was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covers in chapter 8, HMC tends to work better when you default to a half Cauchy for *σ*. Here's how to do so.
 
 ``` r
-b4.1_half_caucy <- 
+b4.1_half_cauchy <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
       prior = c(set_prior("normal(178, 20)", class = "Intercept"),
@@ -306,17 +306,17 @@ b4.1_half_caucy <-
 This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. McElreath covers this in chapter 8. Here's a typical way to do so in brms.
 
 ``` r
-plot(b4.1_half_caucy)
+plot(b4.1_half_cauchy)
 ```
 
 ![](Ch._04_Linear_Models_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
-If you want detailed diagnostics for the HMC chains, call `launch_shiny(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
+If you want detailed diagnostics for the HMC chains, call `launch_shinystan(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
 
 Here's how to get the model summary, the brms equivalent to rethinking's `precis()`.
 
 ``` r
-print(b4.1_half_caucy)
+print(b4.1_half_cauchy)
 ```
 
     ##  Family: gaussian 
@@ -343,7 +343,7 @@ The `summary()` function works in a similar way.
 You can also get a [Stan-like summary](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html) with this:
 
 ``` r
-b4.1_half_caucy$fit
+b4.1_half_cauchy$fit
 ```
 
     ## Inference for Stan model: gaussian brms-model.
@@ -363,7 +363,7 @@ b4.1_half_caucy$fit
 Whereas rethinking defaults to 89% intervals, using `print()` or `summary()` with brms models defaults to 95% intervals. Unless otherwise specified, I will stick with 95% intervals throughout. However, if you really want those 89% intervals, an easy way is with the `prob` argument within `brms::summary()` or `brms::print()`.
 
 ``` r
-summary(b4.1_half_caucy, prob = .89)
+summary(b4.1_half_cauchy, prob = .89)
 ```
 
     ##  Family: gaussian 
@@ -430,7 +430,7 @@ summary(b4.2)
 brms doesn't seem to have a convenience function that works the way `vcov()` does for rethinking. For example:
 
 ``` r
-vcov(b4.1_half_caucy)
+vcov(b4.1_half_cauchy)
 ```
 
     ##           Intercept
@@ -441,7 +441,7 @@ This only returns the first element in the matrix it did for rethinking.
 However, if you really wanted this information, you could get it after putting the HMC chains in a data frame.
 
 ``` r
-post <- posterior_samples(b4.1_half_caucy)
+post <- posterior_samples(b4.1_half_cauchy)
 cov(post[, 1:2])
 ```
 
@@ -470,7 +470,7 @@ select(b_Intercept, sigma) %>%
     ## b_Intercept  1.000000000 -0.003830392
     ## sigma       -0.003830392  1.000000000
 
-With our `post <- posterior_samples(b4.1halfCaucy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame.
+With our `post <- posterior_samples(b4.1_half_cauchy)` code, a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame.
 
 ``` r
 head(post)
@@ -533,7 +533,7 @@ post %>%
 And you can always get pretty similar information by just putting the `brm()` fit object into `posterior_summary()`.
 
 ``` r
-posterior_summary(b4.1_half_caucy)
+posterior_summary(b4.1_half_cauchy)
 ```
 
     ##                 Estimate Est.Error         Q2.5        Q97.5
@@ -731,7 +731,7 @@ post %>%
     ## 4         116    0.854  4.73 -1085
     ## 5         116    0.853  4.75 -1085
 
-Here are the four models leading up to McElreaths Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on *σ*. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
+Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on *σ*. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
 
 ``` r
 N <- 10
