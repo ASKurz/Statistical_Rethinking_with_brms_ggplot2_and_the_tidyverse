@@ -26,11 +26,19 @@ Gelman and Loken wrote a [great paper by this name](http://www.stat.columbia.edu
 
 ### Counting possibilities.
 
-If we're willing to code the marbles as 0 = "white" 1 = "blue", we can arrange the possibility data in a tibble as follows.
+Throughout this project, we'll use the [tidyverse](https://www.tidyverse.org) for data wrangling.
 
 ```{r, warning = F, message = F}
 library(tidyverse)
+```
 
+If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
+
+Other than the pipe, the other big thing to be aware of is [tibbles](https://tibble.tidyverse.org). For our purposes, think of a tibble as a data object with two dimensions defined by rows and columns. And importantly, tibbles are just special types of data frames. So whenever we talk about data frames, we’re also talking about tibbles. For more on the topic, check out chapter 4 of [*R4SD*](http://r4ds.had.co.nz/tibbles.html).
+
+So, if we're willing to code the marbles as 0 = "white" 1 = "blue", we can arrange the possibility data in a tibble as follows.
+
+```{r, warning = F, message = F}
 d <-
   tibble(p_1 = 0,
          p_2 = rep(1:0, times = c(1, 3)),
@@ -62,7 +70,7 @@ d %>%
 Here's the basic structure of the possibilities per marble draw.
 
 ```{r}
-tibble(draw = 1:3,
+tibble(draw    = 1:3,
        marbles = 4) %>% 
   mutate(possibilities = marbles ^ draw)
 ```
@@ -81,7 +89,9 @@ If you walk that out a little, you can structure the data required to approach F
   )
 ```
 
-Here's the base plot.
+See what I did there with the parentheses? If you assign a value to an object in R (e.g., `dog <- 1`) and just hit return, nothing will immediately pop up in the console. You have to actually execute `dog` before R will return `1`. But if you wrap the code within parentheses (e.g., `(dog <- 1)`), R will perform the assignment and return the value as if you had executed `dog`.
+
+But we digress. Here's the initial plot.
 
 ```{r, fig.width = 8, fig.height = 2}
 d %>% 
@@ -137,7 +147,7 @@ d %>%
         legend.position = "none")
 ```
 
-We've generated the values for `position` (i.e., the x-axis), in such a way that they're all justified to the right, so to speak. But we'd like to center them. For `draw == 1`, we'll need to subtract 0.5 form each. For `draw == 2`, we need to reduce the scale by a factor of 4 and we'll then need to reduce the scale by another factor of 4 for `draw == 3`. The `ifelse()` function will be of use for that.
+We've generated the values for `position` (i.e., the x-axis), in such a way that they're all justified to the right, so to speak. But we'd like to center them. For `draw == 1`, we'll need to subtract 0.5 from each. For `draw == 2`, we need to reduce the scale by a factor of 4 and we'll then need to reduce the scale by another factor of 4 for `draw == 3`. The `ifelse()` function will be of use for that.
 
 ```{r}
 d <-
@@ -189,7 +199,7 @@ d %>%
         legend.position = "none")
 ```
 
-For the final step, we'll use `coord_polar()` to change the coordinate system, giving the plot a mandala-like feel.
+For the final step, we'll use `coord_polar()` to change the [coordinate system](http://sape.inf.usi.ch/quick-reference/ggplot2/coord), giving the plot a mandala-like feel.
 
 ```{r, fig.width = 4, fig.height = 4}
 d %>% 
@@ -321,7 +331,7 @@ d <-
   )
 ```
 
-Both `lines_1` and `lines_2` require adjustments for `x` and `xend`. Our current approach is a nested `ifelse()`. Rather than copying and pasting that multi-line `ifelse()` code for all four, let's wrap it in a compact function, which we'll call `move_over()`.
+Both `lines_1` and `lines_2` require adjustments for `x` and `xend`. Our current approach is a nested `ifelse()`. Rather than copy and paste that multi-line `ifelse()` code for all four, let's wrap it in a compact function, which we'll call `move_over()`.
 
 ```{r}
 move_over <- function(position, index){
@@ -332,7 +342,7 @@ move_over <- function(position, index){
   }
 ```
 
-Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_over()` to adjust their `x` and `xend` positions to the right spots.
+Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_over()` to adjust their `x` and `xend` positions to the correct spots.
 
 ```{r}
 (
@@ -757,7 +767,7 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-Here it is with just 5 points, the right hand panel of Figure 2.7.
+Here it is with just 5 points, the left hand panel of Figure 2.7.
 
 ```{r, fig.width = 3, fig.height = 2.75}
 tibble(p_grid            = seq(from = 0, to = 1, length.out = 5),
@@ -845,7 +855,7 @@ tibble(p_grid                  = seq(from = 0, to = 1, length.out = n_grid) %>% 
 
 ### Markov chain Monte Carlo.
 
-Since the main goal of this project is to highlight brms, we may as well warm it up and fit a model. This seems like an appropriately names subsection to do so. First we’ll have to load the package.
+Since the main goal of this project is to highlight brms, we may as fit a model. This seems like an appropriately named subsection to do so. First we’ll have to load the package.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -862,7 +872,7 @@ globe_qa_brms <-
       control = list(adapt_delta = 0.9))
 ```
 
-With brms, the `posterior_summary()` function is an analogue to `rethinking::precis()`. We will, however, need to use `round()` to round to a reasonable number of decimal places.
+With brms, the `posterior_summary()` function is an analogue to `rethinking::precis()`. We will, however, need to use `round()` to reduce the output to a reasonable number of decimal places.
 
 ```{r}
 posterior_summary(globe_qa_brms) %>% 
