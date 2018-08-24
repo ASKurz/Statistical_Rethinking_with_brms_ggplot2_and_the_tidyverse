@@ -8,7 +8,7 @@ output:
 
 # Big Entropy and the Generalized Linear Model
 
-## 9.1. Maximum entropy
+## Maximum entropy
 
 > In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. Ahe resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
 >
@@ -61,11 +61,11 @@ d %>%
   geom_col(width = 1/5, fill = ghibli_palette("MarnieMedium1")[2]) +
   geom_text(aes(y = pebbles + 1, label = pebbles)) +
   geom_text(data = tibble(
-    letter = letters[1:5],
-    bucket = 5.5,
+    letter  = letters[1:5],
+    bucket  = 5.5,
     pebbles = 10,
-    label = str_c(c(1, 90, 1260, 37800, 113400), 
-                  rep(c(" way", " ways"), times = c(1, 4)))),
+    label   = str_c(c(1, 90, 1260, 37800, 113400), 
+                    rep(c(" way", " ways"), times = c(1, 4)))),
     aes(label = label), hjust = 1) +
   scale_y_continuous(breaks = c(0, 5, 10)) +
   theme(panel.grid = element_blank(),
@@ -103,7 +103,7 @@ d %>%
 
 "The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution" (p. 271). Among the pebbles, `e` (i.e., the uniform) was the maximum entropy distribution.
 
-### 9.1.1. Gaussian.
+### Gaussian.
 
 Behold the probability distribution for the generalized normal distribution:
 
@@ -179,7 +179,7 @@ But getting back on track:
 
 > The take-home lesson from all of this is that, if all we are willing to assume about a collection of measurements is that they have a finite variance, then the Gaussian distribution represents the most conservative probability distribution to assign to those measurements. But very often we are comfortable assuming something more. And in those cases, provided our assumptions are good ones, the principle of maximum entropy leads to distributions other than the Gaussian. (p. 274)
 
-### 9.1.2. Binomial.
+### Binomial.
 
 The binomial likelihood entials 
 
@@ -269,17 +269,17 @@ d %>%
   summarise(entropy = -sum(probability * log(probability)))
 ```
 
-Like in the text, `distribution == "a"` had the largest `entropy` of the four. In the next example, the expected value $= 1.4$ and $p = .7$.
+Like in the text, `distribution == "a"` had the largest `entropy` of the four. In the next example, the expected value $ = 1.4$ and $p = .7$.
 
 ```{r}
 p <- 0.7
 
 (
   a <- 
-    c((1 - p)^2, 
-      p * (1 - p), 
-      (1 - p) * p, 
-      p^2)
+  c((1 - p)^2, 
+    p * (1 - p), 
+    (1 - p) * p, 
+    p^2)
 )
 ```
 
@@ -296,13 +296,13 @@ sim_p <- function(seed, g = 1.4) {
   
   set.seed(seed)
   
-    x_123 <- runif(3)
-    x_4   <- ((g) * sum(x_123) - x_123[2] - x_123[3]) / (2 - g)
-    z     <- sum(c(x_123, x_4))
-    p     <- c(x_123, x_4) / z
-    tibble(h   = -sum(p * log(p)), 
-           p   = p,
-           key = factor(c("ww", "bw", "wb", "bb"), levels = c("ww", "bw", "wb", "bb")))
+  x_123 <- runif(3)
+  x_4   <- ((g) * sum(x_123) - x_123[2] - x_123[3]) / (2 - g)
+  z     <- sum(c(x_123, x_4))
+  p     <- c(x_123, x_4) / z
+  tibble(h   = -sum(p * log(p)), 
+         p   = p,
+         key = factor(c("ww", "bw", "wb", "bb"), levels = c("ww", "bw", "wb", "bb")))
 }
 ```
 
@@ -409,7 +409,7 @@ That maximum `h` value matched up nicely with the one in the text. If you look a
 a
 ```
 
-## 9.2. Generalized linear models
+## Generalized linear models
 
 > For an outcome variable that is continuous and far from any theoretical maximum or minimum, [a simple] Gaussian model has maximum entropy.  But when the outcome variable is either discrete or bounded, a Gaussian likelihood is not the most powerful choice. (p. 280)
 
@@ -451,7 +451,7 @@ The $f()$ portion of the second line represents the link function. We need the l
 
 Let's get more general.
 
-### 9.2.1. Meet the family.
+### Meet the family.
 
 Here are the Gamma and Exponential panels for Figure 9.6.
 
@@ -535,7 +535,7 @@ tibble(x = 0:10) %>%
   facet_wrap(~strip, labeller = label_parsed)
 ```
 
-### 9.2.2. Linking linear models to distributions.
+### Linking linear models to distributions.
 
 > To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)
 
@@ -626,18 +626,97 @@ grid.arrange(p1, p2, ncol = 2)
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
  
-This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Given a Gaussian criterion `y` and a predictor `x`, we might specify the model with the following `brm()` code:
+This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
 
-```{r, eval = F}
-fit <- 
+```{r}
+set.seed(100)
+(
+  d <-
+  tibble(x = rep(0:1, each = 100)) %>% 
+  mutate(y = rnorm(n = n(), mean = 100, sd = 10 + x * 10))
+  )
+```
+
+We can view what data like these look like with aid from `tidybayes::geom_halfeyeh()`.
+
+```{r, fig.width = 3.5, fig.height = 3, message = F, warning = F}
+library(tidybayes)
+
+d %>% 
+  mutate(x = x %>% as.character()) %>% 
+  
+  ggplot(aes(x = y, y = x, fill = x)) +
+  geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
+                point_interval = mean_qi, .width = .68) +
+  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
+                                   ghibli_palette("KikiMedium")[6])) +
+  theme(panel.grid       = element_blank(),
+        axis.ticks.y     = element_blank(),
+        legend.position  = "none",
+        panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
+```
+
+Even though the means of `y` are the same for both levels of the `x` dummy, the variance for `x == 1` is substantially larger than that for `x == 0`. Let's open brms.
+
+```{r, warning = F, message = F}
+library(brms)
+```
+
+For such a model, we have two formulas: one for $\mu$ and one for $\sigma$. We wrap both within the `bf()` function. In this case, I’m just going to be lazy and rely on brms-default priors. If you’re curious what they are, execute `get_prior(data = d, family = gaussian, bf(y ~ 1, sigma ~ 1 + x))`.
+
+```{r b9.1, cache = T, warning = F, message = F, results = 'hide'}
+b9.1 <- 
   brm(data = d, 
       family = gaussian,
       bf(y ~ 1, sigma ~ 1 + x))
 ```
 
-As mentioned in the vignette, the brms default is to model the log of $\sigma$. But anyways, 
+The summary:
 
-> hat the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving $\text{log} (\sigma_i) = \alpha + \beta x_i$ for $\sigma_i$ yields the inverse link:
+```{r}
+print(b9.1)
+```
+
+Now we get an intercept for both $\mu$ and $\sigma$, with the intercept for sigma identified as `sigma_Intercept`. And note the coefficient for $\sigma$ was names `sigma_x`. Also notice the scale the `sigma_` coefficients are on. These are not in the original metric, but rather based on `log()`. You can confirm that by the second line of the `print()` output: `Links: mu = identity; sigma = log`. So if you want to get a sense of the effects of `x` on the $\sigma$ for `y`, you have to exponentiate the formula. Here we'll do so with the `posterior_samples()`
+
+```{r}
+post <- posterior_samples(b9.1)
+
+head(post)
+```
+
+With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of `y` based on the `x` dummy and then examine them in a plot.
+
+```{r, fig.width = 3.5, fig.height = 3}
+post %>% 
+  transmute(`x == 0` = exp(b_sigma_Intercept + b_sigma_x * 0),
+            `x == 1` = exp(b_sigma_Intercept + b_sigma_x * 1)) %>% 
+  gather(key, sd) %>% 
+  
+  ggplot(aes(x = sd, y = key, fill = key)) +
+  geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
+                point_interval = median_qi, .width = .95) +
+  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
+                                   ghibli_palette("KikiMedium")[6])) +
+  labs(x = NULL, y = NULL,
+       subtitle = "Model-implied SDs by group x") +
+  theme(panel.grid       = element_blank(),
+        axis.ticks.y     = element_blank(),
+        legend.position  = "none",
+        panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
+```
+
+And if we looked back at the data, those $SD$ estimates are just what we'd expect.
+
+```{r}
+d %>% 
+  group_by(x) %>% 
+  summarise(sd = sd(y) %>% round(digits = 1)) 
+```
+
+But back to the text,
+
+> what the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving $\text{log} (\sigma_i) = \alpha + \beta x_i$ for $\sigma_i$ yields the inverse link:
 >
 > $$\sigma_i = \text{exp} (\alpha + \beta x_i)$$
 >
@@ -697,7 +776,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, warning = F, message = F}
-rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, ranked_d, subset_d, length_out, alpha, beta, lines, p1, p2)
+rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, ranked_d, subset_d, length_out, alpha, beta, lines, p1, p2, b9.1, post)
 ```
 
 
