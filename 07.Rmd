@@ -129,7 +129,7 @@ dd %>%
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
 
-```{r b7.3, cache = T, message = F, warning = F}
+```{r b7.3, cache = T, message = F, warning = F, results = 'hide'}
 b7.3 <-
   update(b7.1, 
          newdata = dd)
@@ -137,7 +137,7 @@ b7.3 <-
 
 Now we'll add the dummy.
 
-```{r b7.4, cache = T, message = F, warning = F}
+```{r b7.4, cache = T, message = F, warning = F, results = 'hide'}
 b7.4 <-
   update(b7.3, 
          newdata = dd,
@@ -160,9 +160,7 @@ model_weights(b7.3, b7.4,
   round(digits = 3)
 ```
 
-As in the text, almost all the weight goes to the multivariable model, `b7.4`.
-
-Here we'll plot the model for `b7.4`. First, we process the data.
+As in the text, almost all the weight goes to the multivariable model, `b7.4`. Before we can plot that model, we need to wrangle a bit.
 
 ```{r}
 nd <- 
@@ -177,7 +175,7 @@ fitd_b7.4 <-
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa"))
 ```
 
-The plot:
+Behold our Figure 7.3.
 
 ```{r, fig.height = 2.75, fig.width = 3}
 dd %>%
@@ -219,7 +217,7 @@ $$\gamma_i = \beta_1 + \beta_3 \text{cont_africa}_i$$
 
 Fit the model.
 
-```{r b7.5, cache = T, message = F, warning = F}
+```{r b7.5, cache = T, message = F, warning = F, results = 'hide'}
 b7.5 <-
   update(b7.4,
          formula = log_gdp ~ 1 + rugged*cont_africa)
@@ -250,7 +248,7 @@ $$\mu_i = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \bet
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
-```{r b7.5b, cache = T, message = F, warning = F}
+```{r b7.5b, cache = T, message = F, warning = F, results = 'hide'}
 b7.5b <-
   update(b7.5,
          formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa)
@@ -816,6 +814,6 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, dd, d.A1, d.A2, b7.1, b7.2, nd, fitd_b7.1, fitd_b7.2, fitd_both, b7.3, b7.4, fitd_b7.4, b7.5, b7.5b, fitd_b7.5, post, b7.6, b7.7, b7.8, b7.9, k, shade_seq, fig, d_factor, ic)
+rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, fitd_b7.1, fitd_b7.2, fitd_both, b7.3, b7.4, fitd_b7.4, b7.5, b7.5b, fitd_b7.5, post, b7.6, b7.7, b7.8, b7.9, k, shade_seq, fig, d_factor, ic)
 ```
 
