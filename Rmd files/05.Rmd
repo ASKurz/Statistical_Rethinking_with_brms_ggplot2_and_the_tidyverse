@@ -35,7 +35,7 @@ library(brms)
 library(tidyverse)
 ```
 
-I'm not going to show the output, but you might go ahead and investigate the data with the typical functions.
+I'm not going to show the output, but you might go ahead and investigate the data with the typical functions. E.g.,
 
 ```{r, results = "hide"}
 head(d)
@@ -43,7 +43,7 @@ glimpse(d)
 ```
 
 Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from 
-the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
 ```{r, fig.width = 3, fig.height = 3}
 # install.packages("ggrepel", depencencies = T)
@@ -377,7 +377,7 @@ res_b5.4 %>%
   theme(panel.grid = element_blank())
 ```
 
-To get the `MedianAgeMarriage.s` residuals, we have to fit the corresponding model first.
+To get the `MedianAgeMarriage_s` residuals, we have to fit the corresponding model first.
 
 ```{r b5.4b, cache = T, message = F, warning = F}
 b5.4b <- 
@@ -724,7 +724,7 @@ fitted(b5.5,
   theme(panel.grid = element_blank())
 ```
 
-Do note the `probs` argument in the `fitted()` code, above. Just for kicks and giggles, we’ll superimpose 50% intervals atop 95% intervals for this series of plots. Let's make the `log_mass` variable.
+Do note the `probs` argument in the `fitted()` code, above. Let's make the `log_mass` variable.
 
 ```{r}
 dcc <-
@@ -1063,7 +1063,7 @@ posterior_samples(b5.9) %>%
   theme(panel.grid = element_blank())
 ```
 
-> *When two predictor variables are very strongly correlates, including both in a model may lead to confusion.* The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, *emphasis* in the original)
+> *When two predictor variables are very strongly correlated, including both in a model may lead to confusion.* The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, *emphasis* in the original)
 
 ### Multicollinear `milk`.
 
@@ -1083,7 +1083,7 @@ detach(package:rethinking, unload = TRUE)
 library(brms)
 ```
 
-We'll follow the text and fit the two univariable model, first. Note our use of `update()`.
+We'll follow the text and fit the two univariable models, first. Note our use of `update()`.
 
 ```{r b5.10_and_b5.11, cache = T, message = F, warning = F, results = 'hide'}
 # kcal.per.g regressed on perc.fat
@@ -1542,7 +1542,7 @@ If we wanted to fit the model including `perc.fat` as an additional predictor,
 
 $$\mu_i = \alpha + \beta_{\text{clade_nwm}} \text{clade_nwm}_i + \beta_{\text{clade_owm}} \text{clade_owm}_i + \beta_{\text{clade_s}} \text{clade_s}_i + \beta_{\text{perc.fat}} \text{perc.fat}_i$$
 
-the `formula` code would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`
+the `formula` code would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`.
 
 ### Another approach: Unique intercepts.
 
