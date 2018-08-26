@@ -396,7 +396,7 @@ d %>%
   summarise(`expected loss` = sum(loss))
 ```
 
-What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-names functions (e.g,. `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about using the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
+What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-named functions (e.g., `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is itself part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about how to use the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
 
 ```{r}
 make_loss <- function(our_d){
@@ -508,7 +508,7 @@ tibble(n           = 2,
   mutate(density   = dbinom(w, size = n, prob = probability))
 ```
 
-If we're going to simulate, we should probably set our seed. Doing so makes the results reproducible.
+If we're going to simulate, we should probably [set our seed](https://stackoverflow.com/questions/13605271/reasons-for-using-the-set-seed-function). Doing so makes the results reproducible.
 
 ```{r}
 set.seed(331)
@@ -560,7 +560,7 @@ n_draws <- 1e5
 
 simulate_binom <- function(n, probability){
   set.seed(331)
- rbinom(n_draws, size = n, prob = probability) 
+  rbinom(n_draws, size = n, prob = probability) 
 }
 
 d <-
@@ -630,7 +630,7 @@ n_tirals  <- 9
 
 d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
-       prior        = 1) %>% 
+         prior      = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
   mutate(posterior  = likelihood * prior) %>% 
   mutate(posterior  = posterior / sum(posterior))
