@@ -36,7 +36,7 @@ library(tidyverse)
   )
 ```
 
-Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/web/packages/rcartocolor/index.html), which provides color schemes and [designed by 'CARTO'](https://carto.com/carto-colors/).
+Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/web/packages/rcartocolor/index.html), which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
 
 ```{r}
 # install.packages("rcartocolor", dependencies = T)
@@ -108,7 +108,7 @@ fits %>%
        y = NULL) +
   scale_x_continuous(limits = 0:1, breaks = 0:1) +
   theme_classic() +
-  theme(axis.text.y = element_text(hjust = 0),
+  theme(axis.text.y  = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
         text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
@@ -126,7 +126,7 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot, `p`.
+For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as, `p`.
 
 ```{r}
 p <-
@@ -267,7 +267,7 @@ make_lines <- function(row){
 }
 ```
 
-Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We’ll them feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
+Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We’ll then feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
 
 ```{r}
 (
@@ -422,7 +422,7 @@ The formula for information entropy is:
 
 $$H(p) = - \text{E log} (p_i) = - \sum_{i = 1}^n p_i \text{log} (p_i)$$
 
-McElreath put it in words as "the uncertainty contained in a probability distribution is the average log-probability of the event" (p. 178). We'll compute the information entropy for weather at the first unnamed location, which we'll call `McElreath's house` and `Abu Dhabi` at once.
+McElreath put it in words as "the uncertainty contained in a probability distribution is the average log-probability of the event" (p. 178). We'll compute the information entropy for weather at the first unnamed location, which we'll call `McElreath's house`, and `Abu Dhabi` at once.
 
 ```{r}
 tibble(place  = c("McElreath's house", "Abu Dhabi"),
@@ -432,7 +432,7 @@ tibble(place  = c("McElreath's house", "Abu Dhabi"),
   mutate(H_p = (p_rain * log(p_rain) + p_shine * log(p_shine)) %>% mean() * -1)
 ```
 
-The uncertainty is less in Abu Dhabi because it rarely rains, there. If you have sun, rain, and snow, the entropy for weather is:
+The uncertainty is less in Abu Dhabi because it rarely rains, there. If you have sun, rain and snow, the entropy for weather is:
 
 ```{r}
 p <- c(.7, .15, .15)
@@ -464,7 +464,7 @@ tibble(p_1    = .3,
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity know $q_2 = 1 - q_1$. Therefore we can write the tibble for the next example of when $p = q$ like this:
+Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity $q_2 = 1 - q_1$. Therefore we can code the tibble for the next example of when $p = q$ like this:
 
 ```{r}
 tibble(p_1    = .3) %>% 
@@ -505,7 +505,7 @@ t %>%
 
 #### Rethinking: Divergence depends upon direction.
 
-Here we see $H(p, q) \neq H(q, p)$. That is direction matters.
+Here we see $H(p, q) \neq H(q, p)$. That is, direction matters.
 
 ```{r}
 tibble(direction = c("Earth to Mars", "Mars to Earth"),
@@ -606,7 +606,7 @@ dfLL <-
 
 Because we used HMC, deviance is a distribution rather than a single number.
 
-```{r, fig.width = 3.75, fig.height = 2.5}
+```{r, fig.width = 3.75, fig.height = 2.5, warning = F, message = F}
 library(tidybayes)
 
 dfLL %>%
@@ -632,7 +632,7 @@ In the next subsection, we'll see this in a simulation.
 
 #### Overthinking: Simulated training and testing.
 
-I find the `rethinking::sim.train.test()` function entirely opaque. If you're curious, you can find McElreath's code [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/sim_train_test.R). Let's simulate and see what happens.
+I find the `rethinking::sim.train.test()` function opaque. If you're curious, you can find McElreath's code [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/sim_train_test.R). Let's simulate and see what happens.
 
 ```{r sim_1, cache = T, warning = F, message = F, results = 'hide'}
 library(rethinking)
@@ -806,7 +806,7 @@ s %>%
 
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
-For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
+For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
 
 #### Rethinking: Ridge regression.
 
@@ -863,7 +863,7 @@ Again, out numbers aren't the exact same as McElreath's because a) this is a sim
 >
 > This is the phenomenon behind information criteria. (p. 189)
 
-In the text, McElreach focuses on the DIC and WAIC. As you'll see, the LOO has increased in popularity since he published the text. Going forward, we’ll juggle the WAIC and the LOO in this project. But we will respect the text and work in a little DIC talk.
+In the text, McElreach focused on the DIC and WAIC. As you'll see, the LOO has increased in popularity since he published the text. Going forward, we’ll juggle the WAIC and the LOO in this project. But we will respect the text and work in a little DIC talk.
 
 ### DIC.
 
@@ -875,7 +875,7 @@ And $p_D$ is the number of effective parameters in the model, which is also some
 
 ### WAIC.
 
-It's okay that brms and loo don't yield the DIC because 
+It's okay that the brms and loo packages don't yield the DIC because 
 
 > even better than the DIC is the Widely Applicable Information Criterion (WAIC)...
 >
@@ -980,7 +980,7 @@ dfmean %>%
 
 ### DIC and WAIC as estimates of deviance.
 
-Once again, we'll wrap McElreath's `sim.train.test()`-based simulation code within a custom function, `make_sim()`. This time we've adjusted `make_sim()` to take one argument, `b_sigma`, the value of which will be fed into the same-names argument within `sim.train.test()`. Also notice that within `sim.train.test()`, we've specified `TRUE` for the information criteria and deviance arguments. Be warned: it takes extra time to compute the WAIC. Because we do that for every model, this simulation takes longer than the previous ones. To get a taste, try running it with something like `n_sim <- 5` first.
+Once again, we'll wrap McElreath's `sim.train.test()`-based simulation code within a custom function, `make_sim()`. This time we've adjusted `make_sim()` to take one argument, `b_sigma`. We will then feed that value into the same-named argument within `sim.train.test()`. Also notice that within `sim.train.test()`, we've specified `TRUE` for the information criteria and deviance arguments. Be warned: it takes extra time to compute the WAIC. Because we do that for every model, this simulation takes longer than the previous ones. To get a taste, try running it with something like `n_sim <- 5` first.
 
 ```{r sim_3, cache = T, results = 'hide'}
 n_sim <- 1e3
@@ -1532,7 +1532,7 @@ Within the current brms framework, you can do model-averaged predictions with th
 # we need new data for both the `fitted()` and `pp_average()` functions
 nd <- 
   tibble(neocortex = seq(from = .5, to = .8, length.out = 30),
-         mass = rep(4.5, times = 30))
+         mass      = rep(4.5, times = 30))
 
 # we'll get the `b6.14`-implied trajectory with `fitted()`
 fitd_b6.14 <-
@@ -1567,9 +1567,9 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-##### Bonus: $R^2$ talk
+## ~~Summary~~ Bonus: $R^2$ talk
 
-At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, SD, and 95% intervals. For example:
+At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
 
 ```{r}
 bayes_R2(b6.14) %>% round(digits = 3)
