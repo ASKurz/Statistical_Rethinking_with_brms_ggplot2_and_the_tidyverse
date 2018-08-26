@@ -18,7 +18,7 @@ options(width = 100)
 
 After laying out his soccer field coin toss shuffle premise, McElreath wrote:
 
-> It's hard to say where any individual person will end up, but you can say with great confidence what the collection of positions will be. The distances will be distributed in approximately normal, or Gaussian, fashion. This is true even through the underlying distribution is binomial. It does this because there are some many more possible ways to realize a sequence of left-right steps that sums to zero. There are slightly fewer ways to realize a sequence that ends up one step left or right of zero, and so on, with the number of possible sequences declining in the characteristic bell curve of the normal distribution. (p. 72)
+> It's hard to say where any individual person will end up, but you can say with great confidence what the collection of positions will be. The distances will be distributed in approximately normal, or Gaussian, fashion. This is true even though the underlying distribution is binomial. It does this because there are so many more possible ways to realize a sequence of left-right steps that sums to zero. There are slightly fewer ways to realize a sequence that ends up one step left or right of zero, and so on, with the number of possible sequences declining in the characteristic bell curve of the normal distribution. (p. 72)
 
 ### Normal by addition.
 
@@ -549,7 +549,7 @@ b4.1 <-
       height ~ 1,
       prior = c(prior(normal(178, 20), class = Intercept),
                 prior(uniform(0, 50), class = sigma)),
-      chains = 4, iter = 31000, warmup = 30000, cores = 4)
+      iter = 31000, warmup = 30000, chains = 4, cores = 4)
 ```
 
 Note the warning message. [Stan](http://mc-stan.org), which is the [engine under the hood of our brms vehicle](https://github.com/paul-buerkner/brms), gets concerned when you use priors with hard bounds on parameters for which we wouldn't expect hard bounds. There's no reason to expect a hard upper bound on $\sigma$, so Stan barks. Beware of unneeded hard bounds.
@@ -565,15 +565,15 @@ b4.1_half_cauchy <-
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
 ```
 
-This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. McElreath covers this in chapter 8. Here's a typical way to do so in brms.
+This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in chapter 8. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 plot(b4.1_half_cauchy)
 ```
 
-If you want detailed diagnostics for the HMC chains, call `launch_shinystan(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results
+If you want detailed diagnostics for the HMC chains, call `launch_shinystan(b4.1)`. That'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results.
 
-Here's how to get the model summary, the brms equivalent to rethinking's `precis()`.
+Here's how to get the model summary of our `brm()` object.
 
 ```{r}
 print(b4.1_half_cauchy)
@@ -695,7 +695,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath covers all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -713,8 +713,7 @@ ggplot(data = post,
 See? HMC handled the mild skew just fine. 
 
 But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner
- calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms
- *](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances.
+ calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances.
 
 ## Adding a predictor
 
@@ -723,8 +722,8 @@ Here's our scatter plot of `weight` and `height`.
 ```{r, fig.width = 3, fig.height = 2.8}
 ggplot(data = d2, 
        aes(x = weight, y = height)) +
-  theme_bw() +
   geom_point(shape = 1, size = 2) +
+  theme_bw() +
   theme(panel.grid = element_blank())
 ```
 
@@ -836,10 +835,10 @@ Here is the code for Figure 4.4. Note our use of the `fixef()` function.
 ```{r, fig.width = 3, fig.height = 2.8}
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
-  theme_bw() +
   geom_abline(intercept = fixef(b4.3)[1], 
               slope     = fixef(b4.3)[2]) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
+  theme_bw() +
   theme(panel.grid = element_blank())
 ```
 
@@ -935,7 +934,6 @@ Here is the code for the four individual plots.
 p10 <- 
   ggplot(data =  d2[1:10 , ], 
          aes(x = weight, y = height)) +
-  theme_bw() +
   geom_abline(intercept = post10[1:20, 1], 
               slope     = post10[1:20, 2],
               size = 1/3, alpha = .3) +
@@ -943,12 +941,12 @@ p10 <-
   coord_cartesian(xlim = quantile(d2$weight, c(0, 1)),
                   ylim = quantile(d2$height, c(0, 1))) +
   labs(subtitle = "N = 10") +
+  theme_bw() +
   theme(panel.grid = element_blank())
 
 p50 <-
   ggplot(data =  d2[1:50 , ], 
          aes(x = weight, y = height)) +
-  theme_bw() +
   geom_abline(intercept = post50[1:20, 1], 
               slope     = post50[1:20, 2],
               size = 1/3, alpha = .3) +
@@ -956,12 +954,12 @@ p50 <-
   coord_cartesian(xlim = quantile(d2$weight, c(0, 1)),
                   ylim = quantile(d2$height, c(0, 1))) +
   labs(subtitle = "N = 50") +
+  theme_bw() +
   theme(panel.grid = element_blank())
 
 p150 <-
   ggplot(data =  d2[1:150 , ], 
          aes(x = weight, y = height)) +
-  theme_bw() +
   geom_abline(intercept = post150[1:20, 1], 
               slope     = post150[1:20, 2],
               size = 1/3, alpha = .3) +
@@ -969,12 +967,12 @@ p150 <-
   coord_cartesian(xlim = quantile(d2$weight, c(0, 1)),
                   ylim = quantile(d2$height, c(0, 1))) +
   labs(subtitle = "N = 150") +
+  theme_bw() +
   theme(panel.grid = element_blank())
 
 p352 <- 
   ggplot(data =  d2[1:352 , ], 
          aes(x = weight, y = height)) +
-  theme_bw() +
   geom_abline(intercept = post352[1:20, 1], 
               slope     = post352[1:20, 2],
               size = 1/3, alpha = .3) +
@@ -982,6 +980,7 @@ p352 <-
   coord_cartesian(xlim = quantile(d2$weight, c(0, 1)),
                   ylim = quantile(d2$height, c(0, 1))) +
   labs(subtitle = "N = 352") +
+  theme_bw() +
   theme(panel.grid = element_blank())
 ```
 
@@ -1052,10 +1051,10 @@ And here is a version McElreath's Figure 4.6 density plot.
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
   ggplot(aes(x = mu_at_50)) +
-  theme_classic() +
   geom_density(size = 0, fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = expression(mu["height | weight = 50"]))
+  labs(x = expression(mu["height | weight = 50"])) +
+  theme_classic()
 ```
 
 We'll use `mean_hdi()` to get both 89% and 95% HPDIs along with the mean.
@@ -1069,12 +1068,12 @@ If you wanted to express those sweet 95% HPDIs on your density plot, you might u
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
   ggplot(aes(x = mu_at_50)) +
-  theme_classic() +
   geom_density(size = 0, fill = "royalblue") +
   stat_pointintervalh(aes(y = 0), 
                       point_interval = mode_hdi, .width = .95) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = expression(mu["height | weight = 50"]))
+  labs(x = expression(mu["height | weight = 50"])) +
+  theme_classic()
 ```
 
 In brms, you would use `fitted()` to do what McElreath accomplished with `link()`.
