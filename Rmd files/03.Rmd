@@ -251,8 +251,6 @@ quantile(samples$samples, prob = c(.25, .75))
 rethinking::PI(samples$samples, prob = .5)
 ```
 
-
-
 Now's a good time to introduce Matthew Kay's [tidybayes package](https://github.com/mjskay/tidybayes), which offers an [array of convenience functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
 
 ```{r, message = F, warning = F}
@@ -281,7 +279,7 @@ The reason I introduce tidybayes now is that the functions of the brms package o
 mode_hdi(samples$samples, .width = .5)
 ```
 
-This time we used the mode as the measure of central tendency. with this family of tidybayes functions, you specify the measure of central tendency in the prefix (i.e., `mean`, `median`, or `mode`) and then the type of interval you'd like (i.e., `qi` or `hdi`).
+This time we used the mode as the measure of central tendency. With this family of tidybayes functions, you specify the measure of central tendency in the prefix (i.e., `mean`, `median`, or `mode`) and then the type of interval you'd like (i.e., `qi` or `hdi`).
 
 If you just want to extract a quick value out of, say, `mode_hdi()`, you could do so with brackets. E.g., here we pull the lower bound of the 50% HPDI.
 
@@ -398,7 +396,7 @@ d %>%
   summarise(`expected loss` = sum(loss))
 ```
 
-What McElreath did with `sapply()`, we'll do with `map()`.
+What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-names functions (e.g,. `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about using the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
 
 ```{r}
 make_loss <- function(our_d){
@@ -683,7 +681,7 @@ samples %>%
   theme(panel.grid = element_blank())
 ```
 
-And the bottom panel is the histogram if `w` without faceting by levels of `samples`.
+And the bottom panel is the histogram of `w` without faceting by levels of `samples`.
 
 ```{r, fig.width = 3, fig.height = 2}
 samples %>% 
@@ -715,7 +713,7 @@ would be the disaggregated version of just one of the numerals returned by `rbin
 ```{r}
 simulate_disaggregated_binom <- function(samples){
   set.seed(37)
- rbinom(9, size = 1, prob = samples)
+  rbinom(9, size = 1, prob = samples)
 }
 
 (
@@ -728,7 +726,7 @@ simulate_disaggregated_binom <- function(samples){
   )
 ```
 
-Now we have to count the longest sequences. The `rle()` function will help with that. Consider McElreathls sequence of tosses.
+Now we have to count the longest sequences. The base R [`rle()` function](https://www.rdocumentation.org/packages/base/versions/3.3/topics/rle) will help with that. Consider McElreath's sequence of tosses.
 
 ```{r}
 tosses <- c("w", "l", "w", "w", "w", "l", "w", "l", "w")
@@ -766,7 +764,7 @@ disaggregated_samples %>%
         legend.position = "none")
 ```
 
-Let's look at `rlr()` again.
+Let's look at `rle()` again.
 
 ```{r}
 rle(tosses)
@@ -859,7 +857,7 @@ Looks a lot like the posterior probability density at the top of Figure 3.6, doe
 set.seed(33.22)
 fitted_samples <-
   fitted_samples %>% 
-  mutate(w = rbinom(n(), size =  n_trials,  prob = V1)) %>%
+  mutate(w   = rbinom(n(), size =  n_trials,  prob = V1)) %>%
   mutate(key = str_c("p = ", round(V1, digits = 1)))
 
 # the plot
@@ -891,7 +889,7 @@ fitted_samples %>%
   theme(panel.grid = element_blank())
 ```
 
-As you might imagine, we can use the output from `fitted()` to return disaggregated batches of 0s and 1s, too. And we could even use those disaggregated 0s and 1s to examine longest run lengths and numbers of switches as in the analyses for Figure 3.7. I’ll leave that as an exercise for the interested reader.
+As you might imagine, we can use the output from `fitted()` to return disaggregated batches of 0s and 1s, too. And we could even use those disaggregated 0s and 1s to examine longest run lengths and numbers of switches as in the analyses for Figure 3.7. I’ll leave those as exercises for the interested reader.
 
 ## Reference {-}
 
