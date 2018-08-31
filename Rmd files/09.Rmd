@@ -144,8 +144,8 @@ tibble(mu       = 0,
   scale_size_manual(values = c(1/4, 1.25)) +
   ggtitle(NULL, subtitle = "Guess which color is the Gaussian") +
   coord_cartesian(xlim = -4:4) +
-  theme(panel.grid = element_blank(),
-        legend.position = "none",
+  theme(panel.grid       = element_blank(),
+        legend.position  = "none",
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
@@ -434,8 +434,8 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(xlim = 0:2,
                   ylim = c(0, 1.2)) +
-  theme(panel.grid = element_blank(),
-        legend.position = "none",
+  theme(panel.grid       = element_blank(),
+        legend.position  = "none",
         panel.background = element_rect(fill = ghibli_palette("MononokeMedium")[1]))
 ```
 
@@ -443,9 +443,12 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
 
 The binomial model follows the basic form
 
-$$y_i \sim \text{Binomial} (n, p_i)$$
-
-$$f(p_i) = \alpha + \beta x_i$$
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Binomial} (n, p_i) \\
+f(p_i) & = & \alpha + \beta x_i
+\end{eqnarray}
+$$
 
 The $f()$ portion of the second line represents the link function. We need the link function because, though the shape of the Binomial distribution is determined by two parameters--$n$ and $p$--, neither is equivalent to the Gaussian mean $\mu$. The mean outcome, rather, is $np$--a function of both. The link function also ensures the model doesn't make probability predictions outside of the boundary $[0, 1]$.
 
@@ -541,9 +544,12 @@ tibble(x = 0:10) %>%
 
 These models generally follow the form:
 
-$$y_i \sim \text{Some distribution} (\theta_i, \phi)$$
-
-$$f(\theta_i) = \alpha + \beta x_i$$
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Some distribution} (\theta_i, \phi) \\
+f(\theta_i) & = & \alpha + \beta x_i
+\end{eqnarray}
+$$
 
 where $\theta_i$ is a parameter of central interest (e.g., the probability of 1 in a Binomial distribution) and $\phi$ is a placeholder for any other parameters necessary for the likelihood but not of primary substantive interest (e.g., $\sigma$ in work-a-day Gaussian models). And as stated earlier, $f()$ is the link function.
 
@@ -620,9 +626,12 @@ grid.arrange(p1, p2, ncol = 2)
 > The second very common link function is the log link. This link function maps a parameter that is defined over only positive real values onto a linear model. For example, suppose we want to model the standard deviation of $\sigma$ of a Gaussian distribution so it is a function of a predictor variable $x$. The parameter $\sigma$ must be positive, because a standard deviation cannot be negative no can it be zero. The model might look like:
 >
 >
-> $$y_i \sim \text{Normal} (\mu, \sigma_i)$$
->
-> $$\text{log} (\sigma_i) = \alpha + \beta x_i$$ 
+> $$
+> \begin{eqnarray}
+> y_i & \sim & \text{Normal} (\mu, \sigma_i) \\
+> \text{log} (\sigma_i) & = & \alpha + \beta x_i
+> \end{eqnarray}
+> $$ 
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
  
