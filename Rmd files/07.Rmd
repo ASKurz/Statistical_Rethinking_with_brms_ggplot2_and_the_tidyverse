@@ -209,11 +209,13 @@ ggplot(aes(x = rugged)) +
 
 Yes, it sure does. But before we fit, here's the equation:
 
-$$\text{log_gdp}_i = \text{Normal} (\mu_i, \sigma)$$
-
-$$\mu_i = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i$$
-
-$$\gamma_i = \beta_1 + \beta_3 \text{cont_africa}_i$$
+$$
+\begin{eqnarray}
+\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = & \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i & = & \beta_1 + \beta_3 \text{cont_africa}_i
+\end{eqnarray}
+$$
 
 Fit the model.
 
@@ -242,9 +244,12 @@ model_weights(b7.3, b7.4, b7.5,
 
 The conventional equation for the interaction model might look like:
 
-$$\text{log_gdp}_i = \text{Normal} (\mu_i, \sigma)$$
-
-$$\mu_i = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_2 \text{rugged}_i \times \text{cont_africa}_i$$
+$$
+\begin{eqnarray}
+\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i
+\end{eqnarray}
+$$
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
@@ -258,7 +263,7 @@ From here on, I will default to this style of syntax for interactions.
 
 Since this is the same model, it yields the same information criteria estimates within simulation error.
 
-```{r}
+```{r ics_b7.5_and_b7.5b, cache = T}
 waic(b7.5, b7.5b)
 
 loo(b7.5, b7.5b)
@@ -370,17 +375,22 @@ post %>%
 
 Recall the original equation.
 
-$$\text{log_gdp}_i = \text{Normal} (\mu_i, \sigma)$$
-
-$$\mu_i = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i$$
-
-$$\gamma_i = \beta_1 + \beta_3 \text{cont_africa}_i$$
+$$
+\begin{eqnarray}
+\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = & \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i & = & \beta_1 + \beta_3 \text{cont_africa}_i
+\end{eqnarray}
+$$
 
 Next McElreath replaced $\gamma_i$ with the expression for $\mu_i$.
 
-$$\mu_i = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i$$
-
-$$\mu_i = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i$$
+$$
+\begin{eqnarray}
+\mu_i & = & \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+& = & \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i
+\end{eqnarray}
+$$
 
 And new we'll factor together the terms containing $\text{cont_africa}_i$.
 
@@ -502,13 +512,13 @@ This is an example where HMC yielded point estimates notably different from MAP.
 
 Anyway, let's look at WAIC.
 
-```{r}
+```{r waic_b7.6_and_b7.7, cache = T}
 waic(b7.6, b7.7)
 ```
 
 Why not compute the WAIC weights?
 
-```{r}
+```{r model_weights_b7.6_and_b7.7, cache = T}
 model_weights(b7.6, b7.7, weights = "waic")
 ```
 
