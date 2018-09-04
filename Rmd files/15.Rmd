@@ -104,6 +104,20 @@ So, when I'm working on a project, I fit one or a few simplified models before f
 
 Which leads to my next point:
 
+## Use the `0 + intercept` syntax
+
+We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered your predictors. When you put an informative prior in a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.4.0), we read:
+
+> Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 142) 
+
+We get a little more information from the *Parameterization of the population-level intercept* subsection of the *brmsformula* section:
+
+> This behavior can be avoided by using the reserved (and internally generated) variable `intercept`. Instead of `y ~ x`, you may write `y ~ 0 + intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on b will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 30)
+
+We didn’t bother with this for most of the project because our priors on the `Intercept` were often vague and the predictors were often on small enough scales (e.g., the mean of a dummy variable is close to 0) that it just didn’t matter. But this will not always be the case. Set your `Intercept` priors with care.
+
+There’s also the flip side of the issue. If there’s no strong reason not to, consider mean-centering or even standardizing your predictors. Not only will that solve the `Intercept` prior issue, but it often results in more meaningful parameter estimates.
+
 ## Annotate your workflow
 
 In a typical model-fitting file, I'll load my data, perhaps transform the data a bit, fit several models, and examine the output of each with trace plots, model summaries, information criteria, and the like. In my early days, I just figured each of these steps were self-explanatory. 
