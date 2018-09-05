@@ -49,7 +49,7 @@ fit1 <-
       chains = 2, cores = 2)
 ```
 
-Five minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another five minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here, I'll save my `fit1` object outside of R with the `save()` function.
+Five minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another five minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `fit1` object outside of R with the `save()` function.
 
 ```{r}
 save(fit1, file = "fit1.rda")
@@ -76,7 +76,7 @@ fit1$data %>%
   head()
 ```
 
-I believe Bürkner recently added an arbument in `brms:brm()` that will help you do this, too. I haven’t played with it, yet. But if you’re curious, you can find out more [here](https://github.com/paul-buerkner/brms/issues/472).
+I believe Bürkner recently added an argument in `brms:brm()` that will help you do this, too. I haven’t played with it, yet. But if you’re curious, you can find out more [here](https://github.com/paul-buerkner/brms/issues/472).
 
 ## Build your models slowly
 
@@ -98,11 +98,9 @@ print(fit0)
 
 If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$s at 1). If that wasn't what I intended, I'd rather catch it here than spend five minutes fitting the more complicated `fit1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
 
-Note, this is not the same as [$p$-hacking](http://journals.sagepub.com/doi/abs/10.1177/0956797611417632) or [wandering aimlessly down the garden of forking paths](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf). We are not chasing the flashiest model to put in a paper. Rather, this is just good pragmatic data science. If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch mistakes, like data cleaning failures, coding goofs, and the like.
+Note, this is not the same as [$p$-hacking](http://journals.sagepub.com/doi/abs/10.1177/0956797611417632) or [wandering aimlessly down the garden of forking paths](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf). We are not chasing the flashiest model to put in a paper. Rather, this is just good pragmatic data science. If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch mistakes like data cleaning failures, coding goofs, and the like.
 
 So, when I'm working on a project, I fit one or a few simplified models before fitting my complicated model of theoretical interest. This is especially the case when I'm working with model types that are new to me or that I haven't worked with in a while. I document each step in my R Notebook files and I save the fit objects for each in external files. I have caught surprises, this way. Hopefully this will help you catch your mistakes, too.
-
-Which leads to my next point:
 
 ## Use the `0 + intercept` syntax
 
@@ -112,7 +110,7 @@ We covered this a little in the last couple chapters, but it’s easy to miss. I
 
 We get a little more information from the *Parameterization of the population-level intercept* subsection of the *brmsformula* section:
 
-> This behavior can be avoided by using the reserved (and internally generated) variable `intercept`. Instead of `y ~ x`, you may write `y ~ 0 + intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on b will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 30)
+> This behavior can be avoided by using the reserved (and internally generated) variable `intercept`. Instead of `y ~ x`, you may write `y ~ 0 + intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on `b` will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 30)
 
 We didn’t bother with this for most of the project because our priors on the `Intercept` were often vague and the predictors were often on small enough scales (e.g., the mean of a dummy variable is close to 0) that it just didn’t matter. But this will not always be the case. Set your `Intercept` priors with care.
 
