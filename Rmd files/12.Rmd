@@ -575,7 +575,7 @@ b12.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sd)),
-      iter = 5000, warmup = 1000, chains = 4, cores = 4,  # I'm using 4 cores, in stead of the `cores=3` in McElreath's code
+      iter = 5000, warmup = 1000, chains = 4, cores = 4,  # I'm using 4 cores, instead of the `cores=3` in McElreath's code
       control = list(adapt_delta = 0.95))
 ```
 
@@ -785,7 +785,7 @@ chimp_2_fitted %>%
   theme(plot.subtitle = element_text(size = 10))
 ```
 
-Okay, now let's do things by hand. We'll need to extract the posterior samples and look at the structure of the data.
+Do note how severely we’ve restricted the y-axis range. But okay, now let's do things by hand. We'll need to extract the posterior samples and look at the structure of the data.
 
 ```{r}
 post <- posterior_samples(b12.4)
@@ -990,6 +990,123 @@ For the finale, we'll stitch the three plots together.
 library(gridExtra)
 
 grid.arrange(p1, p2, p3, ncol = 3)
+```
+
+
+#### Bonus: Let's use `fitted()` this time. 
+
+We just made those plots using various wrangled versions of `post`, the data frame returned by `posterior_samples(b.12.4)`. If you followed along closely, part of what made that a great exercise is that it forced you to consider what the various vectors in `post` meant with respect to the model formula. But it’s also handy to see how to do that from a different perspective. So in this section, we’ll repeat that process by relying on the `fitted()` function, instead. We'll go in the same order, starting with the average actor.
+
+```{r, warning = F, message = F}
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1))
+
+(
+  fitd_b12.4 <-
+  fitted(b12.4,
+       newdata = nd,
+       re_formula = NA,
+       probs = c(.1, .9)) %>% 
+  as_tibble() %>% 
+  bind_cols(nd) %>% 
+  mutate(condition = str_c(prosoc_left, "/", condition) %>% 
+           factor(., levels = c("0/0", "1/0", "0/1", "1/1")))
+  )
+```
+
+You should notice a few things. Since `b12.4` is a multilevel model, it had three predictors: `prosoc_left`, `condition`, and `actor`. However, our `nd` data only included the first two of those predictors. The reason `fitted()` permitted that was because we set `re_formula = NA`. When you do that, you tell `fitted()` to ignore group-level effects (i.e., focus only on the fixed effects). This was our `fitted()` version of ignoring the `r_` vectors returned by `posterior_samples()`. Here's the plot.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p4 <-
+  fitd_b12.4 %>%
+  ggplot(aes(x = condition, y = Estimate, group = 1)) +
+  geom_ribbon(aes(ymin = Q10, ymax = Q90), fill = "blue") +
+  geom_line(color = "orange1") +
+  ggtitle("Average actor") +
+  coord_cartesian(ylim = 0:1) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p4
+```
+
+For marginal of actor, we can continue using the same `nd` data. This time we’ll be sticking with the default `re_formula` setting, which will accommodate the multilevel nature of the model. However, we’ll also be adding `allow_new_levels = T` and `sample_new_levels = "gaussian"`. The former will allow us to marginalize across the specific actors in our data and the latter will instruct `fitted()` to use the multivariate normal distribution implied by the random effects. It’ll make more sense why I say *multivariate* normal by the end of the next chapter. For now, just go with it.
+
+```{r, warning = F, message = F}
+(
+  fitd_b12.4 <-
+  fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian") %>% 
+  as_tibble() %>% 
+  bind_cols(nd) %>% 
+  mutate(condition = str_c(prosoc_left, "/", condition) %>% 
+           factor(., levels = c("0/0", "1/0", "0/1", "1/1")))
+  )
+```
+
+Here's our `fitted()`-based marginal of `actor` plot.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p5 <-
+  fitd_b12.4 %>%
+  ggplot(aes(x = condition, y = Estimate, group = 1)) +
+  geom_ribbon(aes(ymin = Q10, ymax = Q90), fill = "blue") +
+  geom_line(color = "orange1") +
+  ggtitle("Marginal of actor") +
+  coord_cartesian(ylim = 0:1) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p5
+```
+
+For the simulated actors plot, we’ll just amend our process from the last one. This time we’re setting `summary = F`, in order to keep the iteration-specific results, and setting `nsamples = n_sim`. `n_sim` is just a name for the number of actors we’d like to simulate (i.e., 50, as in the text).
+
+```{r, warning = F, message = F}
+# how many simulated actors would you like?
+n_sim <- 50
+
+(
+  fitd_b12.4 <-
+  fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F,
+         nsamples = n_sim) %>% 
+  as_tibble() %>% 
+  mutate(iter = 1:n_sim) %>% 
+  gather(key, value, -iter) %>% 
+  bind_cols(nd %>% 
+              transmute(condition = str_c(prosoc_left, "/", condition) %>% 
+                          factor(., levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+              expand(condition, iter = 1:n_sim))
+  )
+```
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p6 <-
+  fitd_b12.4 %>%
+  
+  ggplot(aes(x = condition, y = value, group = iter)) +
+  theme_fivethirtyeight() +
+  geom_line(alpha = 1/2, color = "blue") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = 0:1) +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p6
+```
+
+Here they are altogether.
+
+```{r, fig.width = 7.5, fig.height = 3.25}
+grid.arrange(p4, p5, p6, ncol = 3)
 ```
 
 ### Focus and multilevel prediction.
