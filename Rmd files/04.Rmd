@@ -95,7 +95,7 @@ pos %>%
   geom_density(color = "transparent", fill = "dodgerblue3", alpha = 1/2) +
   coord_cartesian(xlim = -6:6) +
   labs(title = "16 steps",
-       y = "density")
+       y     = "density")
 ```
 
 While we were at it, we explored a few ways to express densities. The main action was with the `geom_line()` and `geom_density()` functions.
@@ -172,9 +172,9 @@ replicate(10000, log(prod(1 + runif(12, 0, 0.5)))) %>%
 What we did was really compact. Walking it out a bit, here’s what we all did within the second argument within `replicate()` (i.e., everything within `log()`). 
 
 ```{r}
-tibble(a      = runif(12, 0, 0.5),
-       b      = 1) %>% 
-  mutate(c    = a + b) %>% 
+tibble(a   = runif(12, 0, 0.5),
+       b   = 1) %>% 
+  mutate(c = a + b) %>% 
   summarise(p = prod(c) %>% log())
 ```
 
@@ -347,7 +347,7 @@ tibble(sample_mu    = rnorm(n, mean = 178,       sd = 20),
   geom_density(fill = "black", size = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = expression(paste("Prior predictive distribution for ", italic(h[i]))),
-       x = NULL) +
+       x        = NULL) +
   theme(panel.grid = element_blank())
 ```
 
@@ -558,7 +558,7 @@ b4.1 <-
 
 Note the warning message. [Stan](http://mc-stan.org), which is the [engine under the hood of our brms vehicle](https://github.com/paul-buerkner/brms), gets concerned when you use priors with hard bounds on parameters for which we wouldn't expect hard bounds. There's no reason to expect a hard upper bound on $\sigma$, so Stan barks. Beware of unneeded hard bounds.
 
-McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
+McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in Chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
 
 ```{r b4.1_half_cauchy, cache = T, message = F, warning = F}
 b4.1_half_cauchy <- 
@@ -569,7 +569,7 @@ b4.1_half_cauchy <-
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
 ```
 
-This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in chapter 8. Here's a typical way to do so in brms.
+This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in Chapter 8. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 plot(b4.1_half_cauchy)
@@ -603,8 +603,8 @@ Anyways, here's the shockingly-narrow-$\mu$-prior model.
 b4.2 <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
-      prior = c(set_prior("normal(178, .1)", class = "Intercept"),
-                set_prior("uniform(0, 50)", class = "sigma")),
+      prior = c(prior(normal(178, .1), class = Intercept),
+                prior(uniform(0, 50), class = sigma)),
       chains = 4, iter = 3000, warmup = 2000, cores = 4)
 ```
 
@@ -716,8 +716,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine. 
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner
- calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
 
 ## Adding a predictor
 
@@ -1203,7 +1202,7 @@ pred_height %>%
   slice(1:6)
 ```
 
-This time the summary information in our data frame is for, as McElreath puts is, "simulated heights, not distributions of plausible average height, $\mu$" (p. 108). Another way of saying that is that these simulations are the joint consequence of both $\mu$ and $\sigma$, unlike the results of `fitted()`, which only reflect $\mu$. Our plot for Figure 4.8:
+This time the summary information in our data frame is for, as McElreath put it, "simulated heights, not distributions of plausible average height, $\mu$" (p. 108). Another way of saying that is that these simulations are the joint consequence of both $\mu$ and $\sigma$, unlike the results of `fitted()`, which only reflect $\mu$. Our plot for Figure 4.8:
 
 ```{r, warning = F, fig.width = 3, fig.height = 2.8}
 d2 %>%
@@ -1308,9 +1307,9 @@ Fit it like so.
 b4.6 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + weight_s + I(weight_s^2) + I(weight_s^3),
-      prior = c(set_prior("normal(178, 100)", class = "Intercept"),
-                set_prior("normal(0, 10)", class = "b"),
-                set_prior("cauchy(0, 1)", class = "sigma")),
+      prior = c(prior(normal(178, 100), class = Intercept),
+                prior(normal(0, 10), class = b),
+                prior(cauchy(0, 1), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
 ```
 
@@ -1320,13 +1319,13 @@ And now we'll fit the good old linear model.
 b4.7 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + weight_s,
-      prior = c(set_prior("normal(178, 100)", class = "Intercept"),
-                set_prior("normal(0, 10)", class = "b"),
-                set_prior("cauchy(0, 1)", class = "sigma")),
+      prior = c(prior(normal(178, 100), class = Intercept),
+                prior(normal(0, 10), class = b),
+                prior(cauchy(0, 1), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
 ```
 
-Here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.c., the cubic model.
+Here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.c, the cubic model.
 
 ```{r, warning = F, fig.width = 3, fig.height = 3}
 fitd_cub <-
@@ -1358,7 +1357,7 @@ ggplot(data = d,
         panel.grid = element_blank())
 ```
 
-And here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.a., the linear model.
+And here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.a, the linear model.
 
 ```{r, warning = F, fig.width = 3, fig.height = 3}
 fitd_line <-
