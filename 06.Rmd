@@ -1,30 +1,31 @@
-Ch. 6 Overfitting, Regularization, and Information Criteria
-================
-A Solomon Kurz
-2018-09-12
+---
+title: "Ch. 6 Overfitting, Regularization, and Information Criteria"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  github_document
+---
 
-Overfitting, Regularization, and Information Criteria
-=====================================================
+# Overfitting, Regularization, and Information Criteria
 
 In this chapter we contend with two contrasting kinds of statistical error:
 
--   overfitting, "which leads to poor prediction by learning too *much* from the data"
--   underfitting, "which leads to poor prediction by learning too *little* from the data" (p. 166, *emphasis* added)
+* overfitting, "which leads to poor prediction by learning too *much* from the data"
+* underfitting, "which leads to poor prediction by learning too *little* from the data" (p. 166, *emphasis* added) 
 
-The problem with parameters
----------------------------
+## The problem with parameters
 
-The *R*<sup>2</sup> is a popular way to measure how well you can retrodict the data. It traditionally follows the form
+The $R^2$ is a popular way to measure how well you can retrodict the data. It traditionally follows the form
 
-$$R^2 = \\frac{\\text{var(outcome)} - \\text{var(residuals)}}{\\text{var(outcome)}} = 1 - \\frac{\\text{var(residuals)}}{\\text{var(outcome)}}$$
+$$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} = 1 - \frac{\text{var(residuals)}}{\text{var(outcome)}}$$
 
-McElreath's not a fan, but we will cover the Bayesian version of *R*<sup>2</sup> and how to use it in brms at the end of the chapter.
+McElreath's not a fan, but we will cover the Bayesian version of $R^2$ and how to use it in brms at the end of the chapter.
 
 ### More parameters always improve fit.
 
 We'll start of by making the data with brain size and body size for seven `species`.
 
-``` r
+```{r, warning = F, message = F}
 library(tidyverse)
 
 (
@@ -35,41 +36,23 @@ library(tidyverse)
   )
 ```
 
-    ## # A tibble: 7 x 3
-    ##   species     brain  mass
-    ##   <chr>       <dbl> <dbl>
-    ## 1 afarensis     438  37  
-    ## 2 africanus     452  35.5
-    ## 3 habilis       612  34.5
-    ## 4 boisei        521  41.5
-    ## 5 rudolfensis   752  55.5
-    ## 6 ergaster      871  61  
-    ## 7 sapiens      1350  53.5
-
 Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/web/packages/rcartocolor/index.html), which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
 
-``` r
+```{r}
 # install.packages("rcartocolor", dependencies = T)
 library(rcartocolor)
 ```
 
 The specific palette we'll be using is "BurgYl." In addition to palettes, the rcartocolor package offers a few convenience functions to make it easier to use their palettes. The `carto_pal()` function will return the HEX numbers associated with a given palette's colors and the `display_carto_pal()` function will display the actual colors.
 
-``` r
+```{r, fig.width = 6, fig.height = 2.5}
 carto_pal(7, "BurgYl")
-```
-
-    ## [1] "#fbe6c5" "#f5ba98" "#ee8a82" "#dc7176" "#c8586c" "#9c3f5d" "#70284a"
-
-``` r
 display_carto_pal(7, "BurgYl")
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-3-1.png)
-
 We'll be using a diluted version of the third color for the panel background (i.e., `theme(panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))`) and the darker purples for other plot elements. Here's the plot.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3, message = F, warning = F}
 library(ggrepel)
 
 d %>%
@@ -85,11 +68,9 @@ d %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
 Let's fit the first six models in bulk. First we'll make a custom function, `fit_lm()`, into which we'll feed the desired names and formulas of our models. We'll make a tibble initially composed of those names (i.e., `model`) and formulas (i.e., `formula`). Via `purrr::map2()` within `mutate()`, we'll then fit the models and save the model objects within the tibble. The [broom package](https://cran.r-project.org/web/packages/broom/index.html) provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We'll employ `broom::tidy()` and `broom::glance()` to extract information from the model fits.
 
-``` r
+```{r, message = F, warning = F}
 library(broom)
 
 fit_lm <- function(model, formula){
@@ -112,19 +93,9 @@ fits <-
 print(fits)
 ```
 
-    ## # A tibble: 6 x 5
-    ##   model formula                            fit    tidy        glance      
-    ##   <chr> <chr>                              <list> <list>      <list>      
-    ## 1 b6.1  brain ~ mass                       <S3: … <data.fram… <data.frame…
-    ## 2 b6.2  brain ~ mass + I(mass^2)           <S3: … <data.fram… <data.frame…
-    ## 3 b6.3  brain ~ mass + I(mass^2) + I(mass… <S3: … <data.fram… <data.frame…
-    ## 4 b6.4  brain ~ mass + I(mass^2) + I(mass… <S3: … <data.fram… <data.frame…
-    ## 5 b6.5  brain ~ mass + I(mass^2) + I(mass… <S3: … <data.fram… <data.frame…
-    ## 6 b6.6  brain ~ mass + I(mass^2) + I(mass… <S3: … <data.fram… <data.frame…
+Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). For more in this bulk approach to fitting models, check out Hadley Wickham's talk [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2339s&frags=pl%2Cwn). As you might learn in the talk, we can extract the $R^2$ from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
 
-Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). For more in this bulk approach to fitting models, check out Hadley Wickham's talk [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2339s&frags=pl%2Cwn). As you might learn in the talk, we can extract the *R*<sup>2</sup> from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
-
-``` r
+```{r, fig.width = 8, fig.height = 1.5}
 fits <-
   fits %>% 
   mutate(r2      = glance %>% map_dbl("r.squared")) %>% 
@@ -143,11 +114,9 @@ fits %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-6-1.png)
+If we wanted to look at the model coefficients, we could `unnest(tidy)` and wrangle a bit.  
 
-If we wanted to look at the model coefficients, we could `unnest(tidy)` and wrangle a bit.
-
-``` r
+```{r}
 fits %>% 
   unnest(tidy) %>% 
   select(model, term:estimate) %>% 
@@ -157,20 +126,9 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-    ## # A tibble: 6 x 8
-    ##   model `(Intercept)`       mass `I(mass^2)` `I(mass^3)` `I(mass^4)`
-    ##   <chr>         <dbl>      <dbl>       <dbl>       <dbl>       <dbl>
-    ## 1 b6.1          -228.       20.7        NA          NA          NA  
-    ## 2 b6.2         -2618.      127.         -1.1        NA          NA  
-    ## 3 b6.3         21990.    -1474.         32.8        -0.2        NA  
-    ## 4 b6.4        322887.   -27946.        892.        -12.4         0.1
-    ## 5 b6.5      -1535342.   180049       -8325.        190.         -2.1
-    ## 6 b6.6      10849891. -1473228.      82777       -2463.         40.9
-    ## # ... with 2 more variables: `I(mass^5)` <dbl>, `I(mass^6)` <dbl>
-
 For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
-``` r
+```{r}
 p <-
   d %>% 
   ggplot(aes(x = mass, y = brain)) +
@@ -186,7 +144,7 @@ p <-
 
 Now for each subplot, we'll tack the subplot-specific components onto `p`. The main action is in `stat_smooth()`. For each subplot, the first three lines in `stat_smooth()` are identical, with only the bottom `formula` line differing. Like McElreath did in the text, we also adjusted the y-axis range for the last two plots.
 
-``` r
+```{r, warning = F, message = F}
 # linear
 p1 <- 
   p +
@@ -247,55 +205,32 @@ p6 <-
 
 Okay, now we're ready to stitch the six subplots together and produce our version of Figure 6.3.
 
-``` r
+```{r, fig.width = 6, fig.height = 8, warning = F, message = F}
 library(gridExtra)
 
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 2)
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-10-1.png)
-
 ### Too few parameters hurts, too.
 
 Fit the intercept only model, `b6.7`.
 
-``` r
+```{r}
 b6.7 <- lm(data = d, 
            brain ~ 1)
 
 summary(b6.7)
 ```
 
-    ## 
-    ## Call:
-    ## lm(formula = brain ~ 1, data = d)
-    ## 
-    ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -275.71 -227.21 -101.71   97.79  636.29 
-    ## 
-    ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)   
-    ## (Intercept)    713.7      121.8    5.86  0.00109 **
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 322.2 on 6 degrees of freedom
+With the intercept-only model, we didn't even get an $R^2$ value in the summary.`broom::glance()` offers a quick way to get one.
 
-With the intercept-only model, we didn't even get an *R*<sup>2</sup> value in the summary.`broom::glance()` offers a quick way to get one.
-
-``` r
+```{r}
 glance(b6.7)
 ```
 
-    ##   r.squared adj.r.squared    sigma statistic p.value df    logLik      AIC
-    ## 1         0             0 322.2477        NA      NA  1 -49.82029 103.6406
-    ##        BIC deviance df.residual
-    ## 1 103.5324 623061.4           6
+Zero. Our intercept-only `b6.7` explained exactly zero variance in `brain`. All it did was tell us what the unconditional mean and variance (i.e., 'Residual standard error') were. I hope that makes sense. They were the only things in the model: $v_i \sim \text{Normal}(\mu = \alpha, \sigma)$. To get the intercept-only model for Figure 6.4, we plug `formula = y ~ 1` into the `stat_smooth()` function.
 
-Zero. Our intercept-only `b6.7` explained exactly zero variance in `brain`. All it did was tell us what the unconditional mean and variance (i.e., 'Residual standard error') were. I hope that makes sense. They were the only things in the model: *v*<sub>*i*</sub> ∼ Normal(*μ* = *α*, *σ*). To get the intercept-only model for Figure 6.4, we plug `formula = y ~ 1` into the `stat_smooth()` function.
-
-``` r
+```{r, fig.width = 3, fig.height = 2.67} 
 p +
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
@@ -304,30 +239,18 @@ p +
   ggtitle(NULL, subtitle = expression(paste(italic(R)^2, " = 0")))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-13-1.png)
-
 #### Overthinking: Dropping rows.
 
 You can `filter()` by `row_number()` to drop rows in a [tidyverse kind of way](https://dplyr.tidyverse.org/reference/slice.html). For example, we can drop the second row of `d` like this.
 
-``` r
+```{r}
  d %>%
     filter(row_number() != 2)
 ```
 
-    ## # A tibble: 6 x 3
-    ##   species     brain  mass
-    ##   <chr>       <dbl> <dbl>
-    ## 1 afarensis     438  37  
-    ## 2 habilis       612  34.5
-    ## 3 boisei        521  41.5
-    ## 4 rudolfensis   752  55.5
-    ## 5 ergaster      871  61  
-    ## 6 sapiens      1350  53.5
-
 We can then extend that logic into a custom function, `make_lines()`, that will drop a row from `d`, fit the simple model `brain ~ mass`, and then use base R `predict()` to return the model-implied trajectory over new data values.
 
-``` r
+```{r}
 # because these lines are straight, we only need new data over twom points of `mass`
 nd <- tibble(mass = c(30, 70))
 
@@ -346,7 +269,7 @@ make_lines <- function(row){
 
 Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We’ll then feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
 
-``` r
+```{r}
 (
   lines <-
   tibble(row = 1:7) %>% 
@@ -355,27 +278,9 @@ Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the 
   )
 ```
 
-    ## # A tibble: 14 x 3
-    ##      row brain  mass
-    ##    <int> <dbl> <dbl>
-    ##  1     1  436.    30
-    ##  2     1 1201.    70
-    ##  3     2  421.    30
-    ##  4     2 1205.    70
-    ##  5     3  323.    30
-    ##  6     3 1264.    70
-    ##  7     4  423.    30
-    ##  8     4 1221.    70
-    ##  9     5  376.    30
-    ## 10     5 1335.    70
-    ## 11     6  332.    30
-    ## 12     6 1433.    70
-    ## 13     7  412.    30
-    ## 14     7  964.    70
-
 Now we're ready to plot the left panel of Figure 6.5.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 2.75, warning = F, message = F}
 p + 
   scale_x_continuous(expand = c(0, 0)) +
   geom_line(data = lines, 
@@ -383,11 +288,9 @@ p +
             color = carto_pal(7, "BurgYl")[6], alpha = 1/2, size = 1/2)
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-17-1.png)
-
 To make the right panel for Figure 6.5, we’ll need to increase the number of `mass` points in our `nd` data and redefine the `make_lines()` function to fit the sixth-order-polynomial model.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 2.75, message = F, warning = F}
 # because these lines will be very curvy, we'll need new data over many points of `mass`
 nd <- tibble(mass = seq(from = 30, to = 65, length.out = 200))
 
@@ -418,10 +321,7 @@ p +
   coord_cartesian(ylim = -300:2000)
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-18-1.png)
-
-Information theory and model performance
-----------------------------------------
+## Information theory and model performance
 
 > Whether you end up using regularization or information criteria or both, the first thing you must do is pick a criterion of model performance. What do you want the model to do well at? We’ll call this criterion the *target*, and in this section you’ll see how information theory provides a common and useful target, the out-of-sample *deviance*. (p. 174, *emphasis* in the original)
 
@@ -429,7 +329,7 @@ Information theory and model performance
 
 If you let rain = 1 and sun = 0, here's a way to make a plot of the first table of page 175, the weatherperson's predictions.
 
-``` r
+```{r, fig.width = 6, fig.height = 1.5}
 weatherperson <-
   tibble(day        = 1:10,
          prediction = rep(c(1, 0.6), times = c(3, 7)),
@@ -450,11 +350,9 @@ weatherperson %>%
         text = element_text(family = "Courier"))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-19-1.png)
-
 Here's how the newcomer faired:
 
-``` r
+```{r, fig.width = 6, fig.height = 1.5}
 newcomer <-
   tibble(day        = 1:10,
          prediction = 0,
@@ -475,11 +373,9 @@ newcomer %>%
         text = element_text(family = "Courier"))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-20-1.png)
-
 If we do the math entailed in the tibbles, we'll see why the newcomer could boast "I'm the best person for the job" (p. 175).
 
-``` r
+```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
   mutate(person = rep(c("weatherperson", "newcomer"), each = n()/2),
@@ -488,17 +384,11 @@ weatherperson %>%
   summarise(hit_rate = mean(hit))
 ```
 
-    ## # A tibble: 2 x 2
-    ##   person        hit_rate
-    ##   <chr>            <dbl>
-    ## 1 newcomer          0.7 
-    ## 2 weatherperson     0.58
-
 ### Costs and benefits.
 
 Our new `points` variable doesn't fit into the nice color-based `geom_tile()` plots from above. But we can still do the math.
 
-``` r
+```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
   mutate(person = rep(c("weatherperson", "newcomer"), each = n()/2),
@@ -509,15 +399,9 @@ weatherperson %>%
   summarise(happiness = sum(points))
 ```
 
-    ## # A tibble: 2 x 2
-    ##   person        happiness
-    ##   <chr>             <dbl>
-    ## 1 newcomer          -15  
-    ## 2 weatherperson      -7.2
-
 #### Measuring accuracy.
 
-``` r
+```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
   mutate(person = rep(c("weatherperson", "newcomer"), each = n()/2),
@@ -532,21 +416,15 @@ weatherperson %>%
   mutate(probability_correct_sequence = a * b)
 ```
 
-    ## # A tibble: 2 x 4
-    ##   person              a     b probability_correct_sequence
-    ##   <chr>           <dbl> <dbl>                        <dbl>
-    ## 1 newcomer      0           1                      0      
-    ## 2 weatherperson 0.00164     1                      0.00164
-
 ### Information and uncertainty.
 
 The formula for information entropy is:
 
-$$H(p) = - \\text{E log} (p\_i) = - \\sum\_{i = 1}^n p\_i \\text{log} (p\_i)$$
+$$H(p) = - \text{E log} (p_i) = - \sum_{i = 1}^n p_i \text{log} (p_i)$$
 
 McElreath put it in words as "the uncertainty contained in a probability distribution is the average log-probability of the event" (p. 178). We'll compute the information entropy for weather at the first unnamed location, which we'll call `McElreath's house`, and `Abu Dhabi` at once.
 
-``` r
+```{r}
 tibble(place  = c("McElreath's house", "Abu Dhabi"),
        p_rain = c(.3, .01)) %>% 
   mutate(p_shine = 1 - p_rain) %>% 
@@ -554,40 +432,31 @@ tibble(place  = c("McElreath's house", "Abu Dhabi"),
   mutate(H_p = (p_rain * log(p_rain) + p_shine * log(p_shine)) %>% mean() * -1)
 ```
 
-    ## # A tibble: 2 x 4
-    ## # Groups:   place [2]
-    ##   place             p_rain p_shine    H_p
-    ##   <chr>              <dbl>   <dbl>  <dbl>
-    ## 1 McElreath's house   0.3     0.7  0.611 
-    ## 2 Abu Dhabi           0.01    0.99 0.0560
-
 The uncertainty is less in Abu Dhabi because it rarely rains, there. If you have sun, rain and snow, the entropy for weather is:
 
-``` r
+```{r}
 p <- c(.7, .15, .15)
 -sum(p * log(p))
 ```
-
-    ## [1] 0.8188085
 
 ### From entropy to accuracy.
 
 The formula for the Kullback-Leibler divergence (i.e., K-L divergence) is
 
-$$D\_{\\text{KL}} (p, q) = \\sum\_i p\_i \\big ( \\text{log} (p\_i) - \\text{log} (q\_i) \\big ) = \\sum\_i p\_i \\text{log} \\Bigg ( \\frac{p\_i}{q\_i} \\Bigg )$$
+$$D_{\text{KL}} (p, q) = \sum_i p_i \big ( \text{log} (p_i) - \text{log} (q_i) \big ) = \sum_i p_i \text{log} \Bigg ( \frac{p_i}{q_i} \Bigg )$$
 
 which, in plainer language, is what McElreath described as "the average difference in log probability between the target (p) and model (q)" (p. 179).
 
 Based on McElreath's example
 
--   *p*<sub>1</sub> = .3
--   *p*<sub>2</sub> = .7
--   *q*<sub>1</sub> = .25
--   *q*<sub>2</sub> = .75
+* $p_1 = .3$
+* $p_2 = .7$
+* $q_1 = .25$
+* $q_2 = .75$
 
-we can compute *D*<sub>KL</sub>(*p*, *q*) within a tibble like so:
+we can compute $D_{\text{KL}} (p, q)$ within a tibble like so:
 
-``` r
+```{r}
 tibble(p_1    = .3,
        p_2    = .7,
        q_1    = .25,
@@ -595,14 +464,9 @@ tibble(p_1    = .3,
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-    ## # A tibble: 1 x 5
-    ##     p_1   p_2   q_1   q_2    d_kl
-    ##   <dbl> <dbl> <dbl> <dbl>   <dbl>
-    ## 1   0.3   0.7  0.25  0.75 0.00640
+Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity $q_2 = 1 - q_1$. Therefore we can code the tibble for the next example of when $p = q$ like this:
 
-Our systems in this section are binary (e.g., *q* = {*q*<sub>*i*</sub>, *q*<sub>2</sub>}). Thus if you know *q*<sub>1</sub> = .3 you know of a necessity *q*<sub>2</sub> = 1 − *q*<sub>1</sub>. Therefore we can code the tibble for the next example of when *p* = *q* like this:
-
-``` r
+```{r}
 tibble(p_1    = .3) %>% 
   mutate(p_2  = 1 - p_1,
          q_1  = p_1) %>% 
@@ -610,14 +474,9 @@ tibble(p_1    = .3) %>%
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-    ## # A tibble: 1 x 5
-    ##     p_1   p_2   q_1   q_2  d_kl
-    ##   <dbl> <dbl> <dbl> <dbl> <dbl>
-    ## 1   0.3   0.7   0.3   0.7     0
-
 Building off of that, you can make the data required for Figure 6.6 like this.
 
-``` r
+```{r}
 t <- 
   tibble(p_1  = .3,
          p_2  = .7,
@@ -628,19 +487,9 @@ t <-
 head(t)
 ```
 
-    ## # A tibble: 6 x 5
-    ##     p_1   p_2   q_1   q_2  d_kl
-    ##   <dbl> <dbl> <dbl> <dbl> <dbl>
-    ## 1   0.3   0.7  0.01  0.99 0.778
-    ## 2   0.3   0.7  0.02  0.98 0.577
-    ## 3   0.3   0.7  0.03  0.97 0.462
-    ## 4   0.3   0.7  0.04  0.96 0.383
-    ## 5   0.3   0.7  0.05  0.95 0.324
-    ## 6   0.3   0.7  0.06  0.94 0.276
-
 Now we have the data, plotting Figure 6.6 is a just `geom_line()` with stylistic flourishes.
 
-``` r
+```{r, fig.width = 3, fig.height = 2.75}
 t %>% 
   ggplot(aes(x = q_1, y = d_kl)) +
   geom_vline(xintercept = .3, color = carto_pal(7, "BurgYl")[5], linetype = 2) +
@@ -654,13 +503,11 @@ t %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-29-1.png)
-
 #### Rethinking: Divergence depends upon direction.
 
-Here we see *H*(*p*, *q*)≠*H*(*q*, *p*). That is, direction matters.
+Here we see $H(p, q) \neq H(q, p)$. That is, direction matters.
 
-``` r
+```{r}
 tibble(direction = c("Earth to Mars", "Mars to Earth"),
        p_1    = c(.01, .7),
        q_1    = c(.7, .01)) %>% 
@@ -669,43 +516,35 @@ tibble(direction = c("Earth to Mars", "Mars to Earth"),
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-    ## # A tibble: 2 x 6
-    ##   direction       p_1   q_1   p_2   q_2  d_kl
-    ##   <chr>         <dbl> <dbl> <dbl> <dbl> <dbl>
-    ## 1 Earth to Mars  0.01  0.7   0.99  0.3   1.14
-    ## 2 Mars to Earth  0.7   0.01  0.3   0.99  2.62
-
-The *D*<sub>KL</sub> was double when applying Martian estimates to Terran estimates.
+The $D_{\text{KL}}$ was double when applying Martian estimates to Terran estimates.
 
 ### From divergence to deviance.
 
 > The point of all the preceding material about information theory and divergence is to establish both:
 >
-> 1.  How to measure the distance of a model from our target. Information theory dives us the distance measure we need, the K-L divergence.
+> 1. How to measure the distance of a model from our target. Information theory dives us the distance measure we need, the K-L divergence.
 >
-> 2.  How to estimate the divergence. Having identified the right measure of distance, we now need a way to estimate it in real statistical modeling tasks. (p. 181)
->
-Now we'll start working on item \#2.
+> 2. How to estimate the divergence. Having identified the right measure of distance, we now need a way to estimate it in real statistical modeling tasks. (p. 181)
+
+Now we'll start working on item #2.
 
 We define deviance as:
 
-*D*(*q*)= − 2∑<sub>*i*</sub>log(*p*<sub>*i*</sub>)
+$$D(q) = -2 \sum_i \text{log}(p_i)$$
 
-In the formula, *i* indexes each case and *q*<sub>*i*</sub> is the likelihood for each case. Here's the deviance from model `b6.1`.
+In the formula, $i$ indexes each case and $q_i$ is the likelihood for each case. Here's the deviance from model `b6.1`.
 
-``` r
+```{r}
 lm(data = d,
    brain ~ mass) %>% 
   logLik() * -2
 ```
 
-    ## 'log Lik.' 94.92499 (df=3)
-
 ##### Overthinking: Computing deviance.
 
 To follow along with the text, we'll need to standardize `mass` before we compute deviance.
 
-``` r
+```{r}
 d <-
   d %>%
   mutate(mass_s = (mass - mean(mass)) / sd(mass))
@@ -713,13 +552,13 @@ d <-
 
 Open brms.
 
-``` r
+```{r, message = F, warning = F}
 library(brms)
 ```
 
 Now we'll specify the initial values and fit the model.
 
-``` r
+```{r b6.8, cache = T, message = F, warning = F}
 # Here we specify our starting values
 inits <- list(Intercept = mean(d$brain),
               mass_s    = 0,
@@ -738,35 +577,15 @@ b6.8 <-
       inits = inits_list)  # Here we put our start values in the `brm()` function
 ```
 
-``` r
+```{r}
 print(b6.8)
 ```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: brain ~ 1 + mass_s 
-    ##    Data: d (Number of observations: 7) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept   706.95    111.71   474.91   921.78       2249 1.00
-    ## mass_s      224.77    115.27    -2.55   460.95       2387 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma   267.43    100.00   146.82   504.47       1386 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
 
 **Details about `inits`**: You don’t have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains—four in this example. And then you put your—in this case—four lists inside a list. Lists within lists. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
 
 Anyway, the brms function `log_lik()` returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row.
 
-``` r
+```{r}
 dfLL <-
   b6.8 %>%
   log_lik() %>%
@@ -776,19 +595,9 @@ dfLL %>%
   glimpse()
 ```
 
-    ## Observations: 4,000
-    ## Variables: 7
-    ## $ V1 <dbl> -6.978306, -6.752367, -6.294693, -6.427823, -6.328336, -6.5...
-    ## $ V2 <dbl> -6.974498, -6.508536, -6.300813, -6.374505, -6.321416, -6.6...
-    ## $ V3 <dbl> -7.082449, -6.153440, -6.747431, -6.585829, -6.726711, -7.1...
-    ## $ V4 <dbl> -6.988055, -6.840964, -6.294329, -6.477758, -6.344969, -6.5...
-    ## $ V5 <dbl> -7.082036, -7.373620, -6.306312, -6.833221, -6.518276, -6.6...
-    ## $ V6 <dbl> -7.106798, -7.374687, -6.295593, -6.905589, -6.537822, -6.7...
-    ## $ V7 <dbl> -7.533680, -7.907590, -10.145786, -8.027860, -8.909898, -8....
-
 Deviance is the sum of the occasion-level LLs multiplied by -2.
 
-``` r
+```{r}
 dfLL <-
   dfLL %>%
   mutate(sums     = rowSums(.),
@@ -797,7 +606,7 @@ dfLL <-
 
 Because we used HMC, deviance is a distribution rather than a single number.
 
-``` r
+```{r, fig.width = 3.75, fig.height = 2.5, warning = F, message = F}
 library(tidybayes)
 
 dfLL %>%
@@ -813,13 +622,11 @@ dfLL %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-37-1.png)
-
 But notice our deviance distribution was centered right around the sole value McElreath reported in the text.
 
 ### From deviance to out-of-sample.
 
-> Deviance is a principled way to measure distance from the target. But deviance as computed in the previous section has the same flaw as *R*<sup>2</sup>: It always improves as the model gets more complex, at least for the types of models we have considered so far. Just like *R*<sup>2</sup>, deviance in-sample is a measure of retrodictive accuracy, not predictive accuracy.
+> Deviance is a principled way to measure distance from the target. But deviance as computed in the previous section has the same flaw as $R^2$: It always improves as the model gets more complex, at least for the types of models we have considered so far. Just like $R^2$, deviance in-sample is a measure of retrodictive accuracy, not predictive accuracy.
 
 In the next subsection, we'll see this in a simulation.
 
@@ -827,7 +634,7 @@ In the next subsection, we'll see this in a simulation.
 
 I find the `rethinking::sim.train.test()` function opaque. If you're curious, you can find McElreath's code [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/sim_train_test.R). Let's simulate and see what happens.
 
-``` r
+```{r sim_1, cache = T, warning = F, message = F, results = 'hide'}
 library(rethinking)
 
 N       <- 20
@@ -857,7 +664,7 @@ dev_100 <-
 
 If you didn't quite catch it, the simulation yields `dev_20` and `dev_100`. We'll want to convert them to tibbles, bind them together, and wrangle extensively before we're ready to plot.
 
-``` r
+```{r}
 dev_tibble <-
   dev_20 %>% 
   as_tibble() %>% 
@@ -877,19 +684,9 @@ dev_tibble <-
 head(dev_tibble)
 ```
 
-    ## # A tibble: 6 x 5
-    ##   N       sample n_par  mean    sd
-    ##   <fct>   <chr>  <dbl> <dbl> <dbl>
-    ## 1 N = 100 in     0.925  283.  14.2
-    ## 2 N = 100 in     1.92   280.  13.5
-    ## 3 N = 100 in     2.92   263.  11.9
-    ## 4 N = 100 in     3.92   263.  11.5
-    ## 5 N = 100 in     4.92   262.  11.0
-    ## 6 N = 100 out    1.08   284.  14.5
-
 Now we're ready to make Figure 6.7.
 
-``` r
+```{r, fig.width = 6, fig.height = 3}
 # this intermediary tibble will make `geom_text()` easier
 dev_text <-
   dev_tibble %>% 
@@ -919,18 +716,15 @@ dev_tibble %>%
   facet_wrap(~N, scale = "free_y")
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-39-1.png)
+Even with a substantially smaller $N$, our simulation results matched up well with those in the text.
 
-Even with a substantially smaller *N*, our simulation results matched up well with those in the text.
-
-Regularization
---------------
+## Regularization
 
 > The root of overfitting is a model's tendency to get overexcited by the training sample... One way to prevent a model from getting too excited by the training sample is to give it a skeptical prior. By "skeptical," I mean a prior that slows the rate of learning from the sample. (p. 186)
 
 In case you were curious, here's how you might do Figure 6.8 with ggplot2. All the action is in the `geom_ribbon()` portions.
 
-``` r
+```{r, fig.width = 3, fig.height = 3}
 tibble(x = seq(from = - 3.5, 
                to   = 3.5, 
                by   = .01)) %>%
@@ -950,13 +744,11 @@ tibble(x = seq(from = - 3.5,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-40-1.png)
-
 In our version of the plot, darker purple = more regularizing.
 
-But to prepare for Figure 6.9, let's simulate. This time we'll wrap the basic simulation code we used before into a function we'll call `make_sim()`. Our `make_sim()` function has two parameters, `N` and `b_sigma`, both of which come from McElreath's simulation code. So you'll note that instead of hard coding the values for `N` and `b_sigma` within the simulation, we're leaving them adjustable (i.e., `sim.train.test(N = N, k = k, b_sigma = b_sigma)`). Also notice that instead of saving the simulation results as objects, like before, we're just converting them to tibbles with the `as_tibble()` function at the bottom. Our goal is to use `make_sim()` within a `purrr::map2()` statement. The result will be a nested tibble into which we've saved the results of 6 simulations based off of two sample sizes (i.e., `N = c(20, 100)`) and three values of *σ* for our Gaussian *β* prior (i.e., `b_sigma = c(1, .5, .2)`).
+But to prepare for Figure 6.9, let's simulate. This time we'll wrap the basic simulation code we used before into a function we'll call `make_sim()`. Our `make_sim()` function has two parameters, `N` and `b_sigma`, both of which come from McElreath's simulation code. So you'll note that instead of hard coding the values for `N` and `b_sigma` within the simulation, we're leaving them adjustable (i.e., `sim.train.test(N = N, k = k, b_sigma = b_sigma)`). Also notice that instead of saving the simulation results as objects, like before, we're just converting them to tibbles with the `as_tibble()` function at the bottom. Our goal is to use `make_sim()` within a `purrr::map2()` statement. The result will be a nested tibble into which we've saved the results of 6 simulations based off of two sample sizes (i.e., `N = c(20, 100)`) and three values of $\sigma$ for our Gaussian $\beta$ prior (i.e., `b_sigma = c(1, .5, .2)`).
 
-``` r
+```{r sim_2, cache = T, warning = F, message = F, results = "hide"}
 library(rethinking)
 
 n_sim <- 1e3  # I've reduced this number by one order of magnitude to reduce computation time
@@ -981,7 +773,7 @@ s <-
 
 We'll follow the same principles for wrangling these data as we did those from the previous simulation, `dev_tibble`. And after wrangling, we'll feed the data directly into the code for our version of Figure 6.9.
 
-``` r
+```{r, fig.width = 6, fig.height = 3}
 # wrangle the simulation data
 s %>% 
   mutate(statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 3 * 2),
@@ -1012,8 +804,6 @@ s %>%
   facet_wrap(~N, scale = "free_y")
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-41-1.png)
-
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
 For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog post [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
@@ -1024,12 +814,11 @@ Within the brms framework, you can do something like this with the horseshoe pri
 
 > The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is nonzero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 67)
 
-Information criteria
---------------------
+## Information criteria
 
 The data from our initial simulation isn't formatted well to plot Figure 6.10. We'll have to wrangle a little.
 
-``` r
+```{r}
 (
   dev_tibble <-
   dev_tibble%>% 
@@ -1041,23 +830,9 @@ The data from our initial simulation isn't formatted well to plot Figure 6.10. W
 )
 ```
 
-    ## # A tibble: 10 x 6
-    ##    N       n_par  `in`   out height  dash
-    ##    <fct>   <dbl> <dbl> <dbl> <chr>  <dbl>
-    ##  1 N = 20      1  55.9  57.9 2       57.9
-    ##  2 N = 20      2  54.3  58.6 4.3     58.3
-    ##  3 N = 20      3  50.6  56.0 5.4     56.6
-    ##  4 N = 20      4  49.7  57.4 7.6     57.7
-    ##  5 N = 20      5  49.1  58.8 9.7     59.1
-    ##  6 N = 100     1 283.  284.  1.5    285. 
-    ##  7 N = 100     2 280.  284.  4.4    284. 
-    ##  8 N = 100     3 263.  268.  4.5    269. 
-    ##  9 N = 100     4 263.  270.  7.1    271. 
-    ## 10 N = 100     5 262.  269.  7.4    272.
-
 Now we're ready to plot.
 
-``` r
+```{r, fig.width = 6, fig.height = 3}
 dev_tibble  %>% 
   ggplot(aes(x = n_par)) +
   geom_line(aes(y = dash),
@@ -1082,11 +857,9 @@ dev_tibble  %>%
   facet_wrap(~N, scale = "free_y")
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-43-1.png)
+Again, our numbers aren't the exact same as McElreath's because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points 
 
-Again, our numbers aren't the exact same as McElreath's because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points
-
-> are nearly the same, for each model, at both *N* = 20 (left) and *N* = 100 (right). Each distance is nearly twice the number of parameters, as labeled on the horizontal axis. The dashed lines show exactly the \[dark purple\] points plus twice the number of parameters, tracing closely along the average out-of-sample deviance for each model.
+> are nearly the same, for each model, at both $N = 20$ (left) and $N = 100$ (right). Each distance is nearly twice the number of parameters, as labeled on the horizontal axis. The dashed lines show exactly the [dark purple] points plus twice the number of parameters, tracing closely along the average out-of-sample deviance for each model.
 >
 > This is the phenomenon behind information criteria. (p. 189)
 
@@ -1094,43 +867,43 @@ In the text, McElreach focused on the DIC and WAIC. As you'll see, the LOO has i
 
 ### DIC.
 
-The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://www.youtube.com/watch?v=H-59eqmHuuQ&frags=pl%2Cwn). If we define *D* as the deviance's posterior distribution, $\\bar{D}$ as its mean and $\\hat{D}$ as the deviance when computed at the posterior mean, then we define the DIC as
+The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://www.youtube.com/watch?v=H-59eqmHuuQ&frags=pl%2Cwn). If we define $D$ as the deviance's posterior distribution, $\bar{D}$ as its mean and $\hat{D}$ as the deviance when computed at the posterior mean, then we define the DIC as
 
-$$\\text{DIC} = \\bar{D} + (\\bar{D} + \\hat{D}) + \\bar{D} + p\_D$$
+$$\text{DIC} = \bar{D} + (\bar{D} + \hat{D}) + \bar{D} + p_D$$
 
-And *p*<sub>*D*</sub> is the number of effective parameters in the model, which is also sometimes referred to as the penalty term. As you'll see, you can get the *p*<sub>*D*</sub> for `brms::brm()` models. However, I'm not aware of a way to that brms or the loo package--to be introduced shortly--offer convenience functions that yield the DIC.
+And $p_D$ is the number of effective parameters in the model, which is also sometimes referred to as the penalty term. As you'll see, you can get the $p_D$ for `brms::brm()` models. However, I'm not aware of a way to that brms or the loo package--to be introduced shortly--offer convenience functions that yield the DIC.
 
 ### WAIC.
 
-It's okay that the brms and loo packages don't yield the DIC because
+It's okay that the brms and loo packages don't yield the DIC because 
 
 > even better than the DIC is the Widely Applicable Information Criterion (WAIC)...
 >
-> Define Pr(*y*<sub>*i*</sub>) as the average likelihood of observation *i* in the training sample. This means we compute the likelihood of *y*<sub>*i*</sub> for each set of parameters sampled from the posterior distribution. Then we average the likelihoods for each observation *i* and finally sum over all observations. This produces the first part of WAIC, the log-pointwise-predictive-density, lppd:
+> Define $\text{Pr} (y_i)$ as the average likelihood of observation $i$ in the training sample. This means we compute the likelihood of $y_i$ for each set of parameters sampled from the posterior distribution. Then we average the likelihoods for each observation $i$ and finally sum over all observations. This produces the first part of WAIC, the log-pointwise-predictive-density, lppd:
 >
-> $$\\text{lppd} = \\sum\_{i = 1}^N \\text{log Pr} (y\_i)$$
+> $$\text{lppd} = \sum_{i = 1}^N \text{log Pr} (y_i)$$
 >
 > You might say this out loud as:
 >
-> > *The log-pointwise-predictive-density is the total across observations of the logarithm of the average likelihood of each observation.*
+>> *The log-pointwise-predictive-density is the total across observations of the logarithm of the average likelihood of each observation.*
 >
-> ... The second piece of WAIC is the effect number of parameters *p*<sub>WAIC</sub>. Define *V*(*y*<sub>*i*</sub>) as the variance in log-likelihood for observation *i* in the training sample. This means we compute the log-likelihood for observation *y*<sub>*i*</sub> for each sample from the posterior distribution. Then we take the variance of those values. This is *V*(*y*<sub>*i*</sub>). Now *p*<sub>WAIC</sub> is defined as:
->
-> $$p\_{\\text{WAIC}} = \\sum\_{i=1}^N V (y\_i)$$
+>... The second piece of WAIC is the effect number of parameters $p_{\text{WAIC}}$. Define $V(y_i)$ as the variance in log-likelihood for observation $i$ in the training sample. This means we compute the log-likelihood for observation $y_i$ for each sample from the posterior distribution. Then we take the variance of those values. This is $V(y_i)$. Now $p_{\text{WAIC}}$ is defined as:
+> 
+> $$p_{\text{WAIC}} = \sum_{i=1}^N V (y_i)$$
 >
 > Now WAIC is defined as:
 >
-> WAIC = −2(lppd − *p*<sub>WAIC</sub>)
+> $$\text{WAIC} = -2 (\text{lppd} - p_{\text{WAIC}})$$
 >
 > And this value is yet another estimate of out-of-sample deviance. (pp. 191--192)
 
 You'll see how to compute the WAIC in brms in just a bit.
 
-##### Overthinking: WAIC calculation.
+##### Overthinking: WAIC calculation. 
 
 Here is how to fit the pre-WAIC model in brms.
 
-``` r
+```{r b, cache = T, message = F, warning = F}
 data(cars)
 
 b <- 
@@ -1142,33 +915,13 @@ b <-
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
 ```
 
-``` r
+```{r}
 print(b) 
 ```
 
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: dist ~ 1 + speed 
-    ##    Data: cars (Number of observations: 50) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept   -17.60      6.89   -30.70    -3.92       1621 1.00
-    ## speed         3.93      0.42     3.13     4.75       1547 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma    15.80      1.63    12.99    19.29       1894 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
 In brms, you return the loglikelihood with `log_lik()`.
 
-``` r
+```{r, results = "hide"}
 dfLL <-
   b %>%
   log_lik() %>%
@@ -1177,7 +930,7 @@ dfLL <-
 
 Computing the lppd, the "Bayesian deviance", takes a bit of leg work.
 
-``` r
+```{r}
 dfmean <-
   dfLL %>%
   exp() %>%
@@ -1193,11 +946,9 @@ dfmean <-
 )
 ```
 
-    ## [1] -206.6968
+Comupting the effective number of parameters, $p_{\text{WAIC}}$, isn't much better.
 
-Comupting the effective number of parameters, *p*<sub>WAIC</sub>, isn't much better.
-
-``` r
+```{r}
 dfvar <-
   dfLL %>%
   summarise_all(var) %>%
@@ -1211,46 +962,27 @@ pwaic <-
 pwaic
 ```
 
-    ## [1] 3.179054
-
 Finally, here's what we've been working so hard for: our hand calculated WAIC value. Compare it to the value returned by the brms `waic()` function.
 
-``` r
+```{r, message = F, warning = F}
 -2 * (lppd - pwaic)
-```
 
-    ## [1] 419.7517
-
-``` r
 waic(b)
 ```
 
-    ## 
-    ## Computed from 4000 by 50 log-likelihood matrix
-    ## 
-    ##           Estimate   SE
-    ## elpd_waic   -209.9  6.3
-    ## p_waic         3.2  1.1
-    ## waic         419.8 12.6
-
 Here's how we get the WAIC standard error.
 
-``` r
+```{r}
 dfmean %>%
   mutate(waic_vec   = -2*(means - dfvar$vars)) %>%
   summarise(waic_se = (var(waic_vec) * nrow(dfmean)) %>% sqrt())
 ```
 
-    ## # A tibble: 1 x 1
-    ##   waic_se
-    ##     <dbl>
-    ## 1    12.6
-
 ### DIC and WAIC as estimates of deviance.
 
 Once again, we'll wrap McElreath's `sim.train.test()`-based simulation code within a custom function, `make_sim()`. This time we've adjusted `make_sim()` to take one argument, `b_sigma`. We will then feed that value into the same-named argument within `sim.train.test()`. Also notice that within `sim.train.test()`, we've specified `TRUE` for the information criteria and deviance arguments. Be warned: it takes extra time to compute the WAIC. Because we do that for every model, this simulation takes longer than the previous ones. To get a taste, try running it with something like `n_sim <- 5` first.
 
-``` r
+```{r sim_3, cache = T, results = 'hide'}
 n_sim <- 1e3
 
 make_sim <- function(b_sigma){
@@ -1287,7 +1019,7 @@ s <-
 
 Here we wrangle and plot.
 
-``` r
+```{r, fig.height = 4.5, fig.width = 3.25}
 s %>% 
   gather(n_par, value, -b_sigma, -statistic) %>% 
   mutate(n_par = str_remove(n_par, "X") %>% as.double()) %>% 
@@ -1315,18 +1047,15 @@ s %>%
   facet_wrap(~ic, ncol = 1)
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-50-1.png)
-
-Using information criteria
---------------------------
+## Using information criteria
 
 In contrast to model selection, "this section provides a brief example of model *comparison* and *averaging*" (p. 196).
 
-### Model comparison.
+### Model comparison. 
 
 Load the `milk` data from earlier in the text.
 
-``` r
+```{r, message = F}
 library(rethinking)
 data(milk)
 
@@ -1342,22 +1071,20 @@ d <-
 
 The dimensions of `d` are:
 
-``` r
+```{r}
 dim(d)
 ```
 
-    ## [1] 17  9
-
 Load brms.
 
-``` r
+```{r, message = F, warning = F}
 detach(package:rethinking, unload = T)
 library(brms)
 ```
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-``` r
+```{r b6.11_through_b6.14, cache = T, message = F, warning = F, results = 'hide'}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
@@ -1407,59 +1134,23 @@ b6.14 <-
 
 In brms, you can get a model's WAIC value with either `WAIC()` or `waic()`.
 
-``` r
+```{r}
 WAIC(b6.14)
-```
 
-    ## 
-    ## Computed from 4000 by 17 log-likelihood matrix
-    ## 
-    ##           Estimate  SE
-    ## elpd_waic      8.2 2.6
-    ## p_waic         3.3 0.9
-    ## waic         -16.4 5.2
-
-    ## Warning: 2 (11.8%) p_waic estimates greater than 0.4. We recommend trying
-    ## loo instead.
-
-``` r
 waic(b6.14)
 ```
 
-    ## 
-    ## Computed from 4000 by 17 log-likelihood matrix
-    ## 
-    ##           Estimate  SE
-    ## elpd_waic      8.2 2.6
-    ## p_waic         3.3 0.9
-    ## waic         -16.4 5.2
-
-    ## Warning: 2 (11.8%) p_waic estimates greater than 0.4. We recommend trying
-    ## loo instead.
-
-Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO). In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
+Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
 
 There are two basic ways to compare WAIC values from multiple models. In the first, you add more model names into the `waic()` function.
 
-``` r
+```{r waic, cache = T, message = F, warning = F}
 waic(b6.11, b6.12, b6.13, b6.14)
 ```
 
-    ##                 WAIC   SE
-    ## b6.11          -8.81 3.67
-    ## b6.12          -7.20 3.24
-    ## b6.13          -8.73 4.22
-    ## b6.14         -16.42 5.20
-    ## b6.11 - b6.12  -1.61 1.15
-    ## b6.11 - b6.13  -0.08 2.29
-    ## b6.11 - b6.14   7.60 4.97
-    ## b6.12 - b6.13   1.53 2.97
-    ## b6.12 - b6.14   9.22 5.11
-    ## b6.13 - b6.14   7.69 3.62
-
 Alternatively, you first save each model's `waic()` output in its own object, and then feed to those objects into `compare_ic()`.
 
-``` r
+```{r w_b6.11_throughw_b6.14, cache = T, message = F, warning = F}
 w_b6.11 <- waic(b6.11)
 w_b6.12 <- waic(b6.12)
 w_b6.13 <- waic(b6.13)
@@ -1468,32 +1159,17 @@ w_b6.14 <- waic(b6.14)
 compare_ic(w_b6.11, w_b6.12, w_b6.13, w_b6.14)
 ```
 
-    ##                 WAIC   SE
-    ## b6.11          -8.81 3.67
-    ## b6.12          -7.20 3.24
-    ## b6.13          -8.73 4.22
-    ## b6.14         -16.42 5.20
-    ## b6.11 - b6.12  -1.61 1.15
-    ## b6.11 - b6.13  -0.08 2.29
-    ## b6.11 - b6.14   7.60 4.97
-    ## b6.12 - b6.13   1.53 2.97
-    ## b6.12 - b6.14   9.22 5.11
-    ## b6.13 - b6.14   7.69 3.62
-
 If you want to get those WAIC weights, you can use the `brms::model_weights()` function like so:
 
-``` r
+```{r waic_weights, cache = T}
 model_weights(b6.11, b6.12, b6.13, b6.14, 
               weights = "waic") %>% 
   round(digits = 2)
 ```
 
-    ## b6.11 b6.12 b6.13 b6.14 
-    ##  0.02  0.01  0.02  0.95
-
 That last `round()` line was just to limit the decimal-place precision. If you really wanted to go through the trouble, you could make yourself a little table like this:
 
-``` r
+```{r waic_weights_tibble, cache = T}
 model_weights(b6.11, b6.12, b6.13, b6.14, 
               weights = "waic") %>%
   as_tibble() %>% 
@@ -1505,16 +1181,9 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
   knitr::kable()
 ```
 
-| model |  weight|
-|:------|-------:|
-| b6.14 |    0.95|
-| b6.11 |    0.02|
-| b6.13 |    0.02|
-| b6.12 |    0.01|
-
 Our table didn't quite reproduce the table McElreath's `compare()` function returns. However, José Roberto has [provided the code](http://jroberayalas.netlify.com/post/notes-on-statistical-rethinking-chapter-6-overfitting-regularization-and-information-criteria/) that replicates McElreath's `compare()`. It gives us a new function, which he calls `compare_waic()`
 
-``` r
+```{r, warning = F, message = F}
 # ... are the fitted models
 compare_waic <- function (..., sort = "WAIC", func = "WAIC") 
 {
@@ -1590,59 +1259,27 @@ compare_waic <- function (..., sort = "WAIC", func = "WAIC")
 
 Our new `compare_waic()` returns the following:
 
-``` r
+```{r demo_compare_waic}
 compare_waic(b6.11, b6.12, b6.13, b6.14)
 ```
 
-    ##        WAIC pWAIC dWAIC weight   SE  dSE
-    ## b6.14 -16.4   3.3   0.0   0.95 5.20   NA
-    ## b6.13  -8.7   2.1   7.7   0.02 4.22 3.62
-    ## b6.11  -8.7   1.4   7.7   0.02 3.77 5.01
-    ## b6.12  -7.1   2.0   9.3   0.01 3.21 5.07
-
 Without Roberto's `compare_waic()`, I'm not aware of a convenient way to plot the WAIC comparisons of brms models the way McElreath does with rethinking. However, one can get the basic comparison plot with a little data processing. It helps to examine the structure of your WAIC objects. For example:
 
-``` r
+```{r}
 glimpse(w_b6.11)
 ```
 
-    ## List of 9
-    ##  $ estimates   : num [1:3, 1:2] 4.407 1.283 -8.813 1.834 0.289 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
-    ##   .. ..$ : chr [1:2] "Estimate" "SE"
-    ##  $ pointwise   : num [1:17, 1:3] 0.267 0.149 0.569 -0.16 -0.422 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : NULL
-    ##   .. ..$ : chr [1:3] "elpd_waic" "p_waic" "waic"
-    ##  $ elpd_waic   : num 4.41
-    ##  $ p_waic      : num 1.28
-    ##  $ waic        : num -8.81
-    ##  $ se_elpd_waic: num 1.83
-    ##  $ se_p_waic   : num 0.289
-    ##  $ se_waic     : num 3.67
-    ##  $ model_name  : chr "b6.11"
-    ##  - attr(*, "dims")= int [1:2] 4000 17
-    ##  - attr(*, "class")= chr [1:3] "ic" "waic" "loo"
-    ##  - attr(*, "yhash")= chr "1a471e77d65d7aa4da83df3672e7305b2621b59a"
-
 We can index the point estimate for model `b6.11`'s WAIC as `w.b6.11$estimates["waic", "Estimate"]` and the standard error as `w.b6.11$estimates["waic", "SE"]`.
 
-``` r
+```{r}
 w_b6.11$estimates["waic", "Estimate"]
-```
 
-    ## [1] -8.813101
-
-``` r
 w_b6.11$estimates["waic", "SE"]
 ```
 
-    ## [1] 3.66768
-
 Alternatively, you could do `w.b6.11$estimates[3, 1]` and `w.b6.11$estimates[3, 2]`. But instead of indexing the elements piecemeal, we might make a function that converts `waic()$estimates` to a tidy tibble formatted towards the end of making plotting easy. We'll call the function `waic_tibble()`.
 
-``` r
+```{r}
 waic_tibble <- function(...){
   tibble(model_name = rep(waic(...)$model_name, times = 3)) %>% 
     bind_cols(
@@ -1659,16 +1296,9 @@ waic_tibble <- function(...){
 waic_tibble(b6.11)
 ```
 
-    ## # A tibble: 3 x 4
-    ##   model_name statistic estimate    se
-    ##   <chr>      <chr>        <dbl> <dbl>
-    ## 1 b6.11      elpd_waic     4.36 1.88 
-    ## 2 b6.11      p_waic        1.37 0.323
-    ## 3 b6.11      waic         -8.72 3.77
-
 Now we'll use `waic_tibble()` and `bind_rows()` to make a multi-model tibble suitable for plotting the WAIC estimates.
 
-``` r
+```{r, fig.width = 4.5, fig.height = 1.25}
 waic_tibble(b6.11) %>% 
   bind_rows(
     waic_tibble(b6.12),
@@ -1691,20 +1321,16 @@ waic_tibble(b6.11) %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-59-1.png)
-
 However, with Roberto's `compare_waic()`, you can simply do:
 
-``` r
+```{r, fig.width = 4.5, fig.height = 2, warning = F}
 compare_waic(b6.14, b6.13, b6.12, b6.11) %>% 
   plot()
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-60-1.png)
-
 That yielded a base R plot. If you're stubborn and would like to stick with ggplot2, you could do something like:
 
-``` r
+```{r, fig.width = 4.5, fig.height = 1.25, warning = F, message = F}
 compare_waic(b6.11, b6.12, b6.13, b6.14)@output %>% 
   rownames_to_column() %>% 
   mutate(model = rowname) %>% 
@@ -1723,60 +1349,25 @@ compare_waic(b6.11, b6.12, b6.13, b6.14)@output %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-61-1.png)
-
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
 
-``` r
+```{r, message = F, warning = F}
 LOO(b6.11)
-```
 
-    ## 
-    ## Computed from 4000 by 17 log-likelihood matrix
-    ## 
-    ##          Estimate  SE
-    ## elpd_loo      4.3 1.9
-    ## p_loo         1.4 0.3
-    ## looic        -8.7 3.8
-    ## ------
-    ## Monte Carlo SE of elpd_loo is 0.0.
-    ## 
-    ## All Pareto k estimates are good (k < 0.5).
-    ## See help('pareto-k-diagnostic') for details.
-
-``` r
 loo(b6.11)
 ```
 
-    ## 
-    ## Computed from 4000 by 17 log-likelihood matrix
-    ## 
-    ##          Estimate  SE
-    ## elpd_loo      4.3 1.9
-    ## p_loo         1.4 0.3
-    ## looic        -8.7 3.8
-    ## ------
-    ## Monte Carlo SE of elpd_loo is 0.0.
-    ## 
-    ## All Pareto k estimates are good (k < 0.5).
-    ## See help('pareto-k-diagnostic') for details.
-
-The Pareto *k* values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t).
 
 Before we forget, McElreath gave some perspective difference between the models with the highest and lowest WAIC values (p. 200).
 
-``` r
+```{r}
 (w_d <- waic(b6.11, b6.14))
 ```
 
-    ##                 WAIC   SE
-    ## b6.11          -8.72 3.77
-    ## b6.14         -16.42 5.20
-    ## b6.11 - b6.14   7.70 5.01
-
 If you use `str()` to look at the structure of our `w_d` object, you'll see we can subset to the difference score portion with `w_d$ic_diffs__`. And since `w_d$ic_diffs__` is a numeric vector, we can extract the two numerals with the `[]` notation.
 
-``` r
+```{r}
 set.seed(6.26)
 
 diff <-
@@ -1788,14 +1379,9 @@ diff %>%
   summarise(the_probability_a_difference_is_negative = sum(diff < 0) / n())
 ```
 
-    ## # A tibble: 1 x 1
-    ##   the_probability_a_difference_is_negative
-    ##                                      <dbl>
-    ## 1                                   0.0618
-
 In case you're curious, this is a graphic version of what we just did.
 
-``` r
+```{r, fig.width = 3, fig.height = 2.25}
 ggplot(data = tibble(diff = -20:30),
        aes(x = diff)) +
   geom_ribbon(aes(ymin = 0, ymax = dnorm(diff, w_d$ic_diffs__[1], w_d$ic_diffs__[2])),
@@ -1811,26 +1397,17 @@ ggplot(data = tibble(diff = -20:30),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-65-1.png)
-
 #### Comparing estimates.
 
 The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `broom::tidy()` function, which will save the summary statistics for our model parameters. For example, this is what it will produce for the full model, `b6.14`.
 
-``` r
+```{r}
 tidy(b6.14)
 ```
 
-    ##          term     estimate  std.error        lower        upper
-    ## 1 b_Intercept  -1.10778838 0.59753389  -2.07797336  -0.11671016
-    ## 2 b_neocortex   2.82815806 0.92990864   1.27706360   4.31866798
-    ## 3   b_logmass  -0.09724996 0.02888818  -0.14293482  -0.04860256
-    ## 4       sigma   0.13995088 0.03072319   0.09899014   0.19629633
-    ## 5        lp__ -19.26708438 1.64611968 -22.48058767 -17.30314877
+Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a `rbind()` and a little indexing, we can save the summaries for all four models in a single tibble.
 
-Note, `tidy()` also grabs the log posterior (i.e., "lp\_\_"), which we'll exclude for our purposes. With a `rbind()` and a little indexing, we can save the summaries for all four models in a single tibble.
-
-``` r
+```{r}
 my_coef_tab <-
   rbind(tidy(b6.11), tidy(b6.12), tidy(b6.13), tidy(b6.14)) %>%
   mutate(model = c(rep("b6.11", times = nrow(tidy(b6.11))),
@@ -1844,17 +1421,9 @@ my_coef_tab <-
 head(my_coef_tab)
 ```
 
-    ##   model        term  estimate  std.error      lower     upper
-    ## 1 b6.11 b_Intercept 0.6581803 0.04658873  0.5793781 0.7358810
-    ## 2 b6.11       sigma 0.1870833 0.03609066  0.1387462 0.2521853
-    ## 3 b6.12 b_Intercept 0.3691132 0.57842997 -0.5571976 1.3206441
-    ## 4 b6.12 b_neocortex 0.4286958 0.85432909 -0.9837590 1.8014423
-    ## 5 b6.12       sigma 0.1938700 0.04107265  0.1410413 0.2670935
-    ## 6 b6.13 b_Intercept 0.7036371 0.05920601  0.6071793 0.8007512
-
 Just a little more work and we'll have a table analogous to the one McElreath produced with his `coef_tab()` function.
 
-``` r
+```{r}
 my_coef_tab %>%
   # Learn more about dplyr::complete() here: https://rdrr.io/cran/tidyr/man/expand.html
   complete(term = distinct(., term), model) %>%
@@ -1863,15 +1432,9 @@ my_coef_tab %>%
   spread(key = model, value = estimate)
 ```
 
-    ##          term b6.11 b6.12 b6.13 b6.14
-    ## 1 b_Intercept  0.66  0.37  0.70 -1.11
-    ## 2   b_logmass    NA    NA -0.03 -0.10
-    ## 3 b_neocortex    NA  0.43    NA  2.83
-    ## 4       sigma  0.19  0.19  0.18  0.14
-
 I'm also not aware of an efficient way in brms to reproduce Figure 6.12 for which McElreath nested his `coeftab()` argument in a `plot()` argument. However, one can build something similar by hand with a little data wrangling.
 
-``` r
+```{r, fig.width = 4, fig.height = 3, warning = F}
 p11 <- posterior_samples(b6.11)
 p12 <- posterior_samples(b6.12)
 p13 <- posterior_samples(b6.13)
@@ -1914,11 +1477,9 @@ tibble(mdn = c(NA, median(p11[, 1]), median(p12[, 1]), median(p13[, 1]), median(
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-69-1.png)
-
 Making that plot entailed a lot of hand typing values in the tibble, which just begs for human error. If possible, it's better to use functions in a principled way to produce the results. Below is such an attempt.
 
-``` r
+```{r, message = F, warning = F, fig.height = 3, fig.width = 4}
 # data wrangling
 my_coef_tab <-
   my_coef_tab %>%
@@ -1957,8 +1518,6 @@ ggplot(data = my_coef_tab,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-70-1.png)
-
 I'm sure there are better ways to do this. Have at it--but do [share you code](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues) when you figure it out.
 
 #### Rethinking: Barplots suck.
@@ -1969,7 +1528,7 @@ Man, I agree. "The only problem with barplots is that they have bars" (p. 203). 
 
 Within the current brms framework, you can do model-averaged predictions with the `pp_average()` function. The default weighting scheme is with the LOO. Here we'll use the `weights = "waic"` argument to match McElreath's method in the text. Because `pp_average()` yields a matrix, we'll want to convert it to a tibble before feeding it into ggplot2.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 # we need new data for both the `fitted()` and `pp_average()` functions
 nd <- 
   tibble(neocortex = seq(from = .5, to = .8, length.out = 30),
@@ -2008,23 +1567,17 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-71-1.png)
+## ~~Summary~~ Bonus: $R^2$ talk
 
-~~Summary~~ Bonus: *R*<sup>2</sup> talk
----------------------------------------
+At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
 
-At the beginning of the chapter (pp. 167--168), McElreath briefly introduced *R*<sup>2</sup> as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where *R*<sup>2</sup> suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, *S**D*, and 95% intervals. For example:
-
-``` r
+```{r}
 bayes_R2(b6.14) %>% round(digits = 3)
 ```
 
-    ##    Estimate Est.Error  Q2.5 Q97.5
-    ## R2    0.502     0.133 0.163 0.669
+With just a little data processing, you can get a tibble table of each of models' $R^2$ 'Estimate'.
 
-With just a little data processing, you can get a tibble table of each of models' *R*<sup>2</sup> 'Estimate'.
-
-``` r
+```{r}
 rbind(bayes_R2(b6.11), 
       bayes_R2(b6.12), 
       bayes_R2(b6.13), 
@@ -2035,31 +1588,18 @@ rbind(bayes_R2(b6.11),
   select(model, r_square_posterior_mean)
 ```
 
-    ## # A tibble: 4 x 2
-    ##   model r_square_posterior_mean
-    ##   <chr>                   <dbl>
-    ## 1 b6.11                    0   
-    ## 2 b6.12                    0.08
-    ## 3 b6.13                    0.15
-    ## 4 b6.14                    0.5
+If you want the full distribution of the $R^2$, you’ll need to add a `summary = F` argument. Note how this returns a numeric vector.
 
-If you want the full distribution of the *R*<sup>2</sup>, you’ll need to add a `summary = F` argument. Note how this returns a numeric vector.
-
-``` r
+```{r}
 r2_b6.13 <- bayes_R2(b6.13, summary = F)
 
 r2_b6.13 %>%
   glimpse()
 ```
 
-    ##  num [1:4000, 1] 0.20441 0.00859 0.01229 0.39208 0.21113 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : NULL
-    ##   ..$ : chr "R2"
-
 If you want to use these in ggplot2, you’ll need to put them in tibbles or data frames. Here we do so for two of our model fits.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 # model b6.13
 r2_b6.13 <- 
   bayes_R2(b6.13, summary = F) %>%
@@ -2094,11 +1634,9 @@ r2_combined %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-75-1.png)
+If you do your work in a field where folks use $R^2$ change, you might do that with a simple difference score, which we computed above with `mutate(dif = R2.14 - R2.13)`. Here's the $\Delta R^2$ (i.e., `dif`) plot:
 
-If you do your work in a field where folks use *R*<sup>2</sup> change, you might do that with a simple difference score, which we computed above with `mutate(dif = R2.14 - R2.13)`. Here's the *Δ**R*<sup>2</sup> (i.e., `dif`) plot:
-
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 r2_combined %>%
   ggplot(aes(x = dif, y = 0)) +
   geom_halfeyeh(fill  = carto_pal(7, "BurgYl")[5], 
@@ -2112,90 +1650,18 @@ r2_combined %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-![](06_files/figure-markdown_github/unnamed-chunk-76-1.png)
+The brms package did not get these $R^2$ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian $R^2$ sausage is made, check out the paper by [Gelman, Goodrich, Gabry, and Ali](https://github.com/jgabry/bayes_R2/blob/master/bayes_R2.pdf).
 
-The brms package did not get these *R*<sup>2</sup> values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian *R*<sup>2</sup> sausage is made, check out the paper by [Gelman, Goodrich, Gabry, and Ali](https://github.com/jgabry/bayes_R2/blob/master/bayes_R2.pdf).
-
-Reference
----------
+## Reference {-}
 
 [McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
-Session info
-------------
+## Session info {-}
 
-``` r
+```{r}
 sessionInfo()
 ```
 
-    ## R version 3.5.1 (2018-07-02)
-    ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-    ## Running under: macOS High Sierra 10.13.6
-    ## 
-    ## Matrix products: default
-    ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-    ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## attached base packages:
-    ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-    ## [8] base     
-    ## 
-    ## other attached packages:
-    ##  [1] rstan_2.17.3       StanHeaders_2.17.2 tidybayes_1.0.1   
-    ##  [4] brms_2.4.0         Rcpp_0.12.18       gridExtra_2.3     
-    ##  [7] bindrcpp_0.2.2     broom_0.4.5        ggrepel_0.8.0     
-    ## [10] rcartocolor_0.0.22 forcats_0.3.0      stringr_1.3.1     
-    ## [13] dplyr_0.7.6        purrr_0.2.5        readr_1.1.1       
-    ## [16] tidyr_0.8.1        tibble_1.4.2       ggplot2_3.0.0     
-    ## [19] tidyverse_1.2.1   
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] nlme_3.1-137              matrixStats_0.54.0       
-    ##  [3] xts_0.10-2                lubridate_1.7.4          
-    ##  [5] threejs_0.3.1             httr_1.3.1               
-    ##  [7] LaplacesDemon_16.1.1      rprojroot_1.3-2          
-    ##  [9] tools_3.5.1               backports_1.1.2          
-    ## [11] utf8_1.1.4                R6_2.2.2                 
-    ## [13] DT_0.4                    lazyeval_0.2.1           
-    ## [15] colorspace_1.3-2          withr_2.1.2              
-    ## [17] tidyselect_0.2.4          mnormt_1.5-5             
-    ## [19] Brobdingnag_1.2-5         compiler_3.5.1           
-    ## [21] cli_1.0.0                 rvest_0.3.2              
-    ## [23] arrayhelpers_1.0-20160527 shinyjs_1.0              
-    ## [25] xml2_1.2.0                colourpicker_1.0         
-    ## [27] labeling_0.3              scales_0.5.0             
-    ## [29] dygraphs_1.1.1.5          mvtnorm_1.0-8            
-    ## [31] psych_1.8.4               ggridges_0.5.0           
-    ## [33] digest_0.6.15             foreign_0.8-70           
-    ## [35] rmarkdown_1.10            rethinking_1.59          
-    ## [37] base64enc_0.1-3           pkgconfig_2.0.1          
-    ## [39] htmltools_0.3.6           htmlwidgets_1.2          
-    ## [41] rlang_0.2.1               readxl_1.1.0             
-    ## [43] rstudioapi_0.7            shiny_1.1.0              
-    ## [45] svUnit_0.7-12             bindr_0.1.1              
-    ## [47] zoo_1.8-2                 jsonlite_1.5             
-    ## [49] gtools_3.8.1              crosstalk_1.0.0          
-    ## [51] inline_0.3.15             magrittr_1.5             
-    ## [53] loo_2.0.0                 bayesplot_1.6.0          
-    ## [55] Matrix_1.2-14             munsell_0.5.0            
-    ## [57] abind_1.4-5               stringi_1.2.3            
-    ## [59] yaml_2.1.19               MASS_7.3-50              
-    ## [61] ggstance_0.3              plyr_1.8.4               
-    ## [63] grid_3.5.1                promises_1.0.1           
-    ## [65] crayon_1.3.4              miniUI_0.1.1.1           
-    ## [67] lattice_0.20-35           haven_1.1.2              
-    ## [69] hms_0.4.2                 knitr_1.20               
-    ## [71] pillar_1.2.3              igraph_1.2.1             
-    ## [73] markdown_0.8              shinystan_2.5.0          
-    ## [75] reshape2_1.4.3            stats4_3.5.1             
-    ## [77] rstantools_1.5.0          glue_1.2.0               
-    ## [79] evaluate_0.10.1           modelr_0.1.2             
-    ## [81] httpuv_1.4.4.2            cellranger_1.1.0         
-    ## [83] gtable_0.2.0              assertthat_0.2.0         
-    ## [85] mime_0.5                  xtable_1.8-2             
-    ## [87] coda_0.19-1               later_0.7.3              
-    ## [89] rsconnect_0.8.8           viridisLite_0.3.0        
-    ## [91] shinythemes_1.1.1         bridgesampling_0.4-0
+```{r, echo = F}
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, N, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, make_sim, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, p11, p12, p13, p14, fitd_b6.14, r2_b6.13, r2_b6.14, r2_combined)
+```
