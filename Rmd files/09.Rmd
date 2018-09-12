@@ -10,7 +10,7 @@ output:
 
 ## Maximum entropy
 
-> In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. Ahe resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
+> In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
 >
 >$$H(p) = - \sum_i p_i \text{ log } p_i$$
 > This function is known as *information entropy*. (p. 268)
@@ -101,7 +101,7 @@ d %>%
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium1")[6]))
 ```
 
-"The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution" (p. 271). Among the pebbles, `e` (i.e., the uniform) was the maximum entropy distribution.
+"The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution" (p. 271). Among the pebbles, the maximum entropy distribution was `e` (i.e., the uniform).
 
 ### Gaussian.
 
@@ -109,7 +109,7 @@ Behold the probability distribution for the generalized normal distribution:
 
 $$\text{Pr} (y | \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma \bigg (\frac{1}{\beta} \bigg )} e ^ {- \bigg (\frac{|y - \mu|}{\alpha} \bigg ) ^ {\beta}}$$
 
-In this formulation, $\alpha =$ the scale, $\beta =$ the shape, $\mu =$ the location, and $\Gamma =$ the gamma distribution. If you read closely in the text, you'll discover that the densities in the right panel of Figure 9.2 were all created with the constraint $\sigma^2 = 1$. But $\sigma^2 \neq \alpha$ and there's no $\sigma$ in the equations in the text. However, it appears the variance for the generalized normal distribution follows the form:
+In this formulation, $\alpha =$ the scale, $\beta =$ the shape, $\mu =$ the location, and $\Gamma =$ the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you read closely in the text, you'll discover that the densities in the right panel of Figure 9.2 were all created with the constraint $\sigma^2 = 1$. But $\sigma^2 \neq \alpha$ and there's no $\sigma$ in the equations in the text. However, it appears the variance for the generalized normal distribution follows the form:
 
 $$\sigma^2 = \frac{\alpha^2 \Gamma (3/\beta)}{\Gamma (1/\beta)}$$
 
@@ -142,7 +142,7 @@ tibble(mu       = 0,
   scale_color_manual(values = c(ghibli_palette("MarnieMedium2")[2],
                                 ghibli_palette("MarnieMedium2")[4])) +
   scale_size_manual(values = c(1/4, 1.25)) +
-  ggtitle(NULL, subtitle = "Guess which color is the Gaussian") +
+  ggtitle(NULL, subtitle = "Guess which color denotes the Gaussian.") +
   coord_cartesian(xlim = -4:4) +
   theme(panel.grid       = element_blank(),
         legend.position  = "none",
@@ -253,7 +253,7 @@ If we go step by step, we might count the expected value for each `distribution`
 ```{r}
 d %>% 
   gather(sequence, probability, -distribution) %>% 
-  # `str_count()` sill count the number of times "b" occurs within a given row of `sequence`
+  # `str_count()` will count the number of times "b" occurs within a given row of `sequence`
   mutate(n_b     = str_count(sequence, "b")) %>% 
   mutate(product = probability * n_b) %>% 
   group_by(distribution) %>% 
@@ -269,7 +269,7 @@ d %>%
   summarise(entropy = -sum(probability * log(probability)))
 ```
 
-Like in the text, `distribution == "a"` had the largest `entropy` of the four. In the next example, the expected value $ = 1.4$ and $p = .7$.
+Like in the text, `distribution == "a"` had the largest `entropy` of the four. In the next example, the expected value $= 1.4$ and $p = .7$.
 
 ```{r}
 p <- 0.7
@@ -575,7 +575,7 @@ $$p_i = \frac{\text{exp} (\alpha + \beta x_i)}{1 + \text{exp} (\alpha + \beta x_
 As we'll see later, we will make great use of this formula via the `brms::inv_logit_scaled()` when making sense of logistic regression models. Now we have that last formula in hand, we can make the data necessary for Figure 9.7.
 
 ```{r, fig.width = 6, fig.height = 2.5, message = F, warning = F}
-# first, we'll make data that'll be make the horizontal lines
+# first, we'll make data that'll be the horizontal lines
 alpha <- 0
 beta  <- 4
 
@@ -635,6 +635,13 @@ grid.arrange(p1, p2, ncol = 2)
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
  
+$$
+\begin{eqnarray}
+y_i & \sim & \text{Normal} (\mu, \sigma_i) \\
+\text{log} (\sigma_i) & = & \alpha + \beta x_i
+\end{eqnarray}
+$$
+
 This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
 
 ```{r}
@@ -708,7 +715,7 @@ post %>%
   scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
                                    ghibli_palette("KikiMedium")[6])) +
   labs(x = NULL, y = NULL,
-       subtitle = "Model-implied SDs by group x") +
+       subtitle = expression(paste("Model-implied ", italic(SD), "s by group x"))) +
   theme(panel.grid       = element_blank(),
         axis.ticks.y     = element_blank(),
         legend.position  = "none",
@@ -722,6 +729,8 @@ d %>%
   group_by(x) %>% 
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
+
+For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright).
 
 But back to the text,
 
