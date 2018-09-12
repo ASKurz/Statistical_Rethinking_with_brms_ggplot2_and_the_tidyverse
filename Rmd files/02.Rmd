@@ -32,9 +32,9 @@ Throughout this project, we'll use the [tidyverse](https://www.tidyverse.org) fo
 library(tidyverse)
 ```
 
-If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
+If you are new to tidyverse-style syntax, possibly the oddest component is the pipe (i.e., `%>%`). I’m not going to explain the `%>%` in this project, but you might learn more about in [this brief clip](https://www.youtube.com/watch?v=9yjhxvu-pDg), starting around [minute 21:25 in this talk by Wickham](https://www.youtube.com/watch?v=K-ss_ag2k9E&t=1285s), or in [section 5.6.1 from Grolemund and Wickham’s *R for Data Science*](http://r4ds.had.co.nz/transform.html#combining-multiple-operations-with-the-pipe). Really, all of Chapter 5 of *R4DS* is just great for new R and new tidyverse users. And *R4DS* Chapter 3 is a nice introduction to plotting with ggplot2.
 
-Other than the pipe, the other big thing to be aware of is [tibbles](https://tibble.tidyverse.org). For our purposes, think of a tibble as a data object with two dimensions defined by rows and columns. And importantly, tibbles are just special types of data frames. So whenever we talk about data frames, we’re also talking about tibbles. For more on the topic, check out chapter 4 of [*R4SD*](http://r4ds.had.co.nz/tibbles.html).
+Other than the pipe, the other big thing to be aware of is [tibbles](https://tibble.tidyverse.org). For our purposes, think of a tibble as a data object with two dimensions defined by rows and columns. And importantly, tibbles are just special types of data frames. So whenever we talk about data frames, we’re also talking about tibbles. For more on the topic, check out [*R4SD*, Chapter 10](http://r4ds.had.co.nz/tibbles.html).
 
 So, if we're willing to code the marbles as 0 = "white" 1 = "blue", we can arrange the possibility data in a tibble as follows.
 
@@ -166,14 +166,14 @@ We'll follow the same logic for the `lines_1` and `lines_2` data.
 (
   lines_1 <-
   lines_1 %>% 
-  mutate(x = x - .5,
+  mutate(x    = x - .5,
          xend = xend - .5 / 4^1)
 )
 
 (
   lines_2 <-
   lines_2 %>% 
-  mutate(x = x - .5 / 4^1,
+  mutate(x    = x - .5 / 4^1,
          xend = xend - .5 / 4^2)
 )
 ```
@@ -305,7 +305,7 @@ d <-
   tibble(position = c((1:4^1) / 4^0, 
                       (1:4^2) / 4^1, 
                       (1:4^3) / 4^2),
-         draw = rep(1:3, times = c(4^1, 4^2, 4^3)))
+         draw     = rep(1:3, times = c(4^1, 4^2, 4^3)))
 
 (
   d <-
@@ -351,7 +351,7 @@ Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_o
          xend = ((1:4^2) / 4)        %>% rep(., times = 3),
          y    = 1,
          yend = 2) %>% 
-  mutate(x = x - .5,
+  mutate(x    = x - .5,
          xend = xend - .5 / 4^1) %>% 
   # here we'll add an index for which pie wedge we're working with
   mutate(pie_index = rep(letters[1:3], each = n()/3)) %>% 
@@ -366,7 +366,7 @@ Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_o
          xend = (1:4^3 / 4^2)                 %>% rep(., times = 3),
          y    = 2,
          yend = 3) %>% 
-  mutate(x = x - .5 / 4^1,
+  mutate(x    = x - .5 / 4^1,
          xend = xend - .5 / 4^2) %>% 
   # here we'll add an index for which pie wedge we're working with
   mutate(pie_index = rep(letters[1:3], each = n()/3)) %>% 
@@ -486,9 +486,9 @@ We might update to reproduce the table a the top of page 26, like this.
   t <-
     t %>% 
     select(p_1:p_4, `new count`) %>% 
-    rename(`prior count` = `new count`) %>% 
+    rename(`prior count`   = `new count`) %>% 
     mutate(`factory count` = c(0, 3:0)) %>% 
-    mutate(`new count` = `prior count` * `factory count`)
+    mutate(`new count`     = `prior count` * `factory count`)
   )
 ```
 
@@ -529,9 +529,9 @@ You might make the table in the middle of page 27 like this.
 ```{r}
 t %>% 
   select(p_1:p_4) %>% 
-  mutate(p = seq(from = 0, to = 1, by = .25),
+  mutate(p                      = seq(from = 0, to = 1, by = .25),
          `ways to produce data` = c(0, 3, 8, 9, 0)) %>% 
-  mutate(plausibility = `ways to produce data` / sum(`ways to produce data`))
+  mutate(plausibility           = `ways to produce data` / sum(`ways to produce data`))
 ```
 
 We just computed the plausibilities, but here's McElreath's R code 2.1.
@@ -539,7 +539,7 @@ We just computed the plausibilities, but here's McElreath's R code 2.1.
 ```{r}
 ways <- c(0, 3, 8, 9, 0)
 
-ways/sum(ways)
+ways / sum(ways)
 ```
 
 ## Building a model
@@ -547,9 +547,7 @@ ways/sum(ways)
 We might save our globe-tossing data like in a tibble.
 
 ```{r}
-(
-  d <- tibble(toss = c("w", "l", "w", "w", "w", "l", "w", "l", "w"))
-  )
+(d <- tibble(toss = c("w", "l", "w", "w", "w", "l", "w", "l", "w")))
 ```
 
 ### A data story.
@@ -558,13 +556,13 @@ We might save our globe-tossing data like in a tibble.
 
 ### Bayesian updating.
 
-Here we'll add the cumulative number of trials, `n_trials`, and the cumulative number of successes, `n_successes (i.e., `toss == "w"`), to the data.
+Here we'll add the cumulative number of trials, `n_trials`, and the cumulative number of successes, `n_successes` (i.e., `toss == "w"`), to the data.
 
 ```{r}
 (
   d <-
   d %>% 
-  mutate(n_trials = 1:9,
+  mutate(n_trials  = 1:9,
          n_success = cumsum(toss == "w"))
   )
 ```
@@ -580,8 +578,8 @@ d %>%
   left_join(d, by = "n_trials") %>%
   group_by(p_water) %>% 
   # you can learn more about lagging here: https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lag or here: https://dplyr.tidyverse.org/reference/lead-lag.html
-  mutate(lagged_n_success  = lag(n_success, k = 1),
-         lagged_n_trials   = lag(n_trials,  k = 1)) %>% 
+  mutate(lagged_n_success = lag(n_success, k = 1),
+         lagged_n_trials  = lag(n_trials,  k = 1)) %>% 
   ungroup() %>% 
   mutate(prior = ifelse(n_trials == 1, .5,
                                      dbinom(x    = lagged_n_success, 
