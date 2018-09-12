@@ -1,17 +1,18 @@
-Ch. 11 Monsters and Mixtures
-================
-A Solomon Kurz
-2018-09-12
+---
+title: "Ch. 11 Monsters and Mixtures"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  github_document
+---
 
-Monsters and Mixtures
-=====================
+# Monsters and Mixtures
 
-> \[Of these majestic creatures\], we’ll consider two common and useful examples. The first type is the ordered categorical model, useful for categorical outcomes with a fixed ordering. This model is built by merging a categorical likelihood function with a special kind of link function, usually a cumulative link. The second type is a family of zero-inflated and zero-augmented models, each of which mixes a binary event within an ordinary GLM likelihood like a Poisson or binomial.
+> [Of these majestic creatures], we’ll consider two common and useful examples. The first type is the ordered categorical model, useful for categorical outcomes with a fixed ordering. This model is built by merging a categorical likelihood function with a special kind of link function, usually a cumulative link. The second type is a family of zero-inflated and zero-augmented models, each of which mixes a binary event within an ordinary GLM likelihood like a Poisson or binomial.
 >
 > Both types of models help us transform our modeling to cope with the inconvenient realities of measurement, rather than transforming measurements to cope with the constraints of our models. (p. 331)
 
-Ordered categorical outcomes
-----------------------------
+## Ordered categorical outcomes
 
 > It is very common in the social sciences, and occasional in the natural sciences, to have an outcome variable that is discrete, like a count, but in which the values merely indicate different ordered *levels* along some dimension. For example, if I were to ask you how much you like to eat fish, on a scale from 1 to 7, you might say 5. If I were to ask 100 people the same question, I’d end up with 100 values between 1 and 7. In modeling each outcome value, I’d have to keep in mind that these values are *ordered* because 7 is greater than 6, which is greater than 5, and so on. But unlike a count, the differences in values are not necessarily equal.
 >
@@ -23,7 +24,7 @@ Ordered categorical outcomes
 
 Let's get the `Trolley` data from rethinking.
 
-``` r
+```{r, message = F}
 library(rethinking)
 data(Trolley)
 d <- Trolley
@@ -31,7 +32,7 @@ d <- Trolley
 
 Unload rethinking and load brms.
 
-``` r
+```{r, message = F}
 rm(Trolley)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -39,71 +40,40 @@ library(brms)
 
 Use the tidyverse to get a sense of the dimensions of the data.
 
-``` r
+```{r, warning = F, message = F}
 library(tidyverse)
 
 glimpse(d)
 ```
 
-    ## Observations: 9,930
-    ## Variables: 12
-    ## $ case      <fct> cfaqu, cfbur, cfrub, cibox, cibur, cispe, fkaqu, fkb...
-    ## $ response  <int> 4, 3, 4, 3, 3, 3, 5, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4...
-    ## $ order     <int> 2, 31, 16, 32, 4, 9, 29, 12, 23, 22, 27, 19, 14, 3, ...
-    ## $ id        <fct> 96;434, 96;434, 96;434, 96;434, 96;434, 96;434, 96;4...
-    ## $ age       <int> 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, ...
-    ## $ male      <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
-    ## $ edu       <fct> Middle School, Middle School, Middle School, Middle ...
-    ## $ action    <int> 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0...
-    ## $ intention <int> 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
-    ## $ contact   <int> 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
-    ## $ story     <fct> aqu, bur, rub, box, bur, spe, aqu, boa, box, bur, ca...
-    ## $ action2   <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0...
-
 Though we have 9,930 rows, we only have 331 unique individuals.
 
-``` r
+```{r}
 d %>% 
   distinct(id) %>% 
   count()
 ```
 
-    ## # A tibble: 1 x 1
-    ##       n
-    ##   <int>
-    ## 1   331
-
 ### Describing an ordered distribution with intercepts.
 
 Before we get to plotting, in this chapter we'll use theme settings and a color palette from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html), which you might learn more about [here](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
 
-``` r
+```{r, warning = F, message = F}
 library(ggthemes)
 ```
 
 We'll take our basic theme settings from the `theme_hc()` function. We'll use the "Green fields" color palette, which we can inspect with the `canva_pal()` function and a little help from `scales::show_col()`.
 
-``` r
+```{r, fig.height = 2.5}
 scales::show_col(canva_pal("Green fields")(4))
-```
 
-![](11_files/figure-markdown_github/unnamed-chunk-6-1.png)
-
-``` r
 canva_pal("Green fields")(4)
-```
-
-    ## [1] "#919636" "#524a3a" "#fffae1" "#5a5f37"
-
-``` r
 canva_pal("Green fields")(4)[3]
 ```
 
-    ## [1] "#fffae1"
-
 Now we're ready to make our ggplot2 version of the simple histogram, Figure 11.1.a.
 
-``` r
+```{r, fig.width = 2.5, fig.height = 3}
 ggplot(data = d, aes(x = response, fill = ..x..)) +
   geom_histogram(binwidth = 1/4, size = 0) +
   scale_x_continuous(breaks = 1:7) +
@@ -115,11 +85,9 @@ ggplot(data = d, aes(x = response, fill = ..x..)) +
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-7-1.png)
-
 Our cumulative proportion plot, Figure 11.1.b, will require some pre-plot wrangling.
 
-``` r
+```{r, fig.width = 2.5, fig.height = 3}
 d %>%
   group_by(response) %>% 
   count() %>%
@@ -144,11 +112,9 @@ d %>%
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
 In order to make the next plot, we'll need McElreath's `logit()` function. Here it is, the logarithm of cumulative odds plot, Figure 11.1.c.
 
-``` r
+```{r, fig.width = 2.5, fig.height = 3}
 # McElreath's convenience function from page 335
 logit <- function(x) log(x / (1 - x))
 
@@ -177,11 +143,9 @@ d %>%
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-9-1.png)
-
 The code for Figure 11.2 is itself something of a monster.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 d_plot <-
   d %>%
   group_by(response) %>% 
@@ -226,23 +190,21 @@ ggplot(data = d_plot,
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-10-1.png)
-
 McElreath's convention for this first statistical models is
 
 $$
-\\begin{eqnarray} 
-R\_i & \\sim & \\text{Ordered} (\\mathbf p) \\\\
-\\text{logit} (p\_k) & = & \\alpha\_k \\\\
-\\alpha\_k & \\sim & \\text{Normal} (0, 10)
-\\end{eqnarray}
+\begin{eqnarray} 
+R_i & \sim & \text{Ordered} (\mathbf p) \\
+\text{logit} (p_k) & = & \alpha_k \\
+\alpha_k & \sim & \text{Normal} (0, 10)
+\end{eqnarray}
 $$
 
-> The Ordered distribution is really just a categorical distribution that takes a vector $\\mathbf p = {p\_1, p\_2, p\_3, p\_4, p\_5, p\_6}$ of probabilities of each response value below the maximum response (7 in this example). Each response value *k* in this vector is defined by its link to an intercept parameter, *α*<sub>*k*</sub>. Finally, some weakly regularizing priors are placed on these intercepts. (p. 335)
+> The Ordered distribution is really just a categorical distribution that takes a vector $\mathbf p = {p_1, p_2, p_3, p_4, p_5, p_6}$ of probabilities of each response value below the maximum response (7 in this example). Each response value $k$ in this vector is defined by its link to an intercept parameter, $\alpha_k$. Finally, some weakly regularizing priors are placed on these intercepts. (p. 335)
 
 Whereas in `rethinking::map()` you indicate the likelihood by `<criterion> ~ dordlogit(phi , c(<the thresholds>)`, in `brms::brm()` you code `family = cumulative`. Here's the intercepts-only model:
 
-``` r
+```{r b11.1, cache = T, message = F, warning = F}
 # Here are our starting values, which we specify with the `inits` argument in brm()
 inits <- list(`Intercept[1]` = -2,
               `Intercept[2]` = -1,
@@ -263,51 +225,23 @@ b11.1 <-
 
 McElreath needed to include the `depth=2` argument in the `rethinking::precis()` function to show the threshold parameters from his `m11.1stan` model. With a `brm()` fit, we just use `print()` or `summary()` as usual.
 
-``` r
+```{r}
 print(b11.1)
 ```
 
-    ##  Family: cumulative 
-    ##   Links: mu = logit; disc = identity 
-    ## Formula: response ~ 1 
-    ##    Data: d (Number of observations: 9930) 
-    ## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 2000
-    ## 
-    ## Population-Level Effects: 
-    ##              Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept[1]    -1.92      0.03    -1.97    -1.86       1465 1.00
-    ## Intercept[2]    -1.27      0.02    -1.31    -1.22       1921 1.00
-    ## Intercept[3]    -0.72      0.02    -0.76    -0.68       2000 1.00
-    ## Intercept[4]     0.25      0.02     0.21     0.29       2000 1.00
-    ## Intercept[5]     0.89      0.02     0.85     0.93       2000 1.00
-    ## Intercept[6]     1.77      0.03     1.72     1.82       2000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the *α*<sub>*k*</sub> parameters from the equations, above. The summaries look like those in the text, number of effective samples are high, and the $\\hat{R}$ values are great. The model looks good.
+What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above. The summaries look like those in the text, number of effective samples are high, and the $\hat{R}$ values are great. The model looks good.
 
 Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `logistic()` function to get these into the probability metric.
 
-``` r
+```{r}
 b11.1 %>% 
   fixef() %>% 
   inv_logit_scaled()
 ```
 
-    ##               Estimate Est.Error      Q2.5     Q97.5
-    ## Intercept[1] 0.1282796 0.5072011 0.1223043 0.1346397
-    ## Intercept[2] 0.2198455 0.5060679 0.2116626 0.2277104
-    ## Intercept[3] 0.3277774 0.5052418 0.3187913 0.3368960
-    ## Intercept[4] 0.5617511 0.5049103 0.5520498 0.5712386
-    ## Intercept[5] 0.7090694 0.5054172 0.7002331 0.7177735
-    ## Intercept[6] 0.8544677 0.5069440 0.8476807 0.8609778
+But recall that the posterior $SD$ (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `posterior_samples()`.
 
-But recall that the posterior *S**D* (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `posterior_samples()`.
-
-``` r
+```{r}
 posterior_samples(b11.1) %>% 
   select(starts_with("b_")) %>% 
   mutate_all(inv_logit_scaled) %>% 
@@ -319,30 +253,20 @@ posterior_samples(b11.1) %>%
             ul   = quantile(value, probs = .975))
 ```
 
-    ## # A tibble: 6 x 5
-    ##   key             mean      sd    ll    ul
-    ##   <chr>          <dbl>   <dbl> <dbl> <dbl>
-    ## 1 b_Intercept[1] 0.128 0.00322 0.122 0.135
-    ## 2 b_Intercept[2] 0.220 0.00416 0.212 0.228
-    ## 3 b_Intercept[3] 0.328 0.00462 0.319 0.337
-    ## 4 b_Intercept[4] 0.562 0.00484 0.552 0.571
-    ## 5 b_Intercept[5] 0.709 0.00447 0.700 0.718
-    ## 6 b_Intercept[6] 0.854 0.00346 0.848 0.861
-
 ### Adding predictor variables.
 
-Now we define the linear model as *ϕ*<sub>*i*</sub> = *β**x*<sub>*i*</sub>. Accordingly, the formula for our cumulative logit model becomes
+Now we define the linear model as $\phi_i = \beta x_i$. Accordingly, the formula for our cumulative logit model becomes
 
 $$
-\\begin{eqnarray}
-\\text{log} \\frac{\\text{Pr} (y\_i \\leq k)}{1 - \\text{Pr} (y\_i \\leq k)} & = & \\alpha\_k - \\phi\_i\\\\
-\\phi\_i & = & \\beta x\_i
-\\end{eqnarray}
+\begin{eqnarray}
+\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} & = & \alpha_k - \phi_i\\
+\phi_i & = & \beta x_i
+\end{eqnarray}
 $$
 
 I'm not aware that brms has an equivalent to the `rethinking::dordlogit()` function. So here we'll make it by hand. The code comes from McElreath's [GitHub page](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/distributions.r).
 
-``` r
+```{r}
 # First, we needed to specify the `logistic()` function, which is apart of the `dordlogit()` function
 logistic <- function(x) {
     p <- 1 / (1 + exp(-x))
@@ -365,60 +289,37 @@ dordlogit <-
 
 The `dordlogit()` function works like this:
 
-``` r
+```{r}
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1]))
 ```
-
-    ## [1] 0.12827960 0.09156588 0.10793196 0.23397365 0.14731831 0.14539829
-    ## [7] 0.14553231
 
 Note the slight difference in how we used `dordlogit()` with a `brm()` fit summarized by `fixef()` than the way McElreath did with a `map2stan()` fit summarized by `coef()`. McElreath just put `coef(m11.1)` into `dordlogit()`. We, however, more specifically placed `fixef(b11.1)[, 1]` into the function. With the `[, 1]` part, we specified that we were working with the posterior means (i.e., `Estimate`) and neglecting the other summaries (i.e., the posterior *SD*s and 95% intervals). If you forget to subset, chaos ensues.
 
 Next, as McElreath further noted in the text, "these probabilities imply an average outcome of:"
 
-``` r
+```{r}
 sum(pk * (1:7))
 ```
-
-    ## [1] 4.198809
-
+ 
 I found that a bit abstract. Here's the thing in a more elaborate tibble format.
 
-``` r
+```{r}
 (
   explicit_example <-
   tibble(probability_of_a_response = pk) %>%
   mutate(the_response  = 1:7) %>%
   mutate(their_product = probability_of_a_response * the_response)
 )
-```
 
-    ## # A tibble: 7 x 3
-    ##   probability_of_a_response the_response their_product
-    ##                       <dbl>        <int>         <dbl>
-    ## 1                    0.128             1         0.128
-    ## 2                    0.0916            2         0.183
-    ## 3                    0.108             3         0.324
-    ## 4                    0.234             4         0.936
-    ## 5                    0.147             5         0.737
-    ## 6                    0.145             6         0.872
-    ## 7                    0.146             7         1.02
-
-``` r
 explicit_example %>%
   summarise(average_outcome_value = sum(their_product))
 ```
-
-    ## # A tibble: 1 x 1
-    ##   average_outcome_value
-    ##                   <dbl>
-    ## 1                  4.20
 
 **Side note**
 
 This made me wonder how this would compare if we were lazy and ignored the categorical nature of the `response`. Here we refit the model with the typical Gaussian likelihood.
 
-``` r
+```{r lazy_model, cache = T, message = F, warning = F}
 brm(data = d, family = gaussian,
     response ~ 1,
     # In this case, 4 (i.e., the middle response) seems to be the conservative place to put the mean
@@ -428,49 +329,23 @@ brm(data = d, family = gaussian,
   print()
 ```
 
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: response ~ 1 
-    ##    Data: d (Number of observations: 9930) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     4.20      0.02     4.16     4.24       3002 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.91      0.01     1.88     1.93       4000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
 Happily, this yielded a mean estimate of 4.2, much like our `average_outcome_value`, above.
 
 **End side note**
 
 Now we'll try it by subtracting .5 from each.
-
-``` r
+ 
+```{r}
 # The probabilities of a given response
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1] - .5))
-```
 
-    ## [1] 0.08194143 0.06402834 0.08227398 0.20915443 0.15909361 0.18426475
-    ## [7] 0.21924346
-
-``` r
 # The average rating
 sum(pk * (1:7))
 ```
 
-    ## [1] 4.729199
-
 So the rule is we *subtract the linear model from each interecept*. Let's fit our multivariable models.
 
-``` r
+```{r b11.2_and_b11.3, cache = T, message = F, results = "hide"}
 # Start values for b11.2
 inits <- list(`Intercept[1]` = -1.9,
               `Intercept[2]` = -1.2,
@@ -511,7 +386,7 @@ b11.3 <-
 
 We don't have a `coeftab()` function in brms like for rethinking. But as we did for Chapter 6, we can reproduce it with help from the [broom package](https://cran.r-project.org/web/packages/broom/index.html) and a bit of data wrangling.
 
-``` r
+```{r, message = F}
 library(broom)
 
 tidy(b11.1) %>% mutate(model = "b11.1") %>% 
@@ -526,46 +401,22 @@ tidy(b11.1) %>% mutate(model = "b11.1") %>%
   slice(c(6:11, 1, 4, 3, 2, 5))
 ```
 
-    ##                   term b11.1 b11.2 b11.3
-    ## 1       b_Intercept[1] -1.92 -2.84 -2.64
-    ## 2       b_Intercept[2] -1.27 -2.16 -1.94
-    ## 3       b_Intercept[3] -0.72 -1.57 -1.34
-    ## 4       b_Intercept[4]  0.25 -0.55 -0.31
-    ## 5       b_Intercept[5]  0.89  0.12  0.37
-    ## 6       b_Intercept[6]  1.77  1.02  1.27
-    ## 7             b_action    NA -0.71 -0.47
-    ## 8          b_intention    NA -0.72 -0.28
-    ## 9            b_contact    NA -0.96 -0.33
-    ## 10  b_action:intention    NA    NA -0.45
-    ## 11 b_intention:contact    NA    NA -1.28
-
 If you really wanted that last `nobs` row at the bottom, you could elaborate on this code: `b11.1$data %>% count()`. Also, if you want a proper `coeftab()` function for brms, McElreath's code lives [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r). Give it a whirl.
 
 Anyway, here are the WAIC comparisons. *Caution: This took some time to compute.*
 
-``` r
+```{r waic_b11.1_through_b11.3, cache = T}
 waic(b11.1, b11.2, b11.3)
 ```
 
-    ##                   WAIC    SE
-    ## b11.1         37855.02 57.70
-    ## b11.2         37089.65 76.29
-    ## b11.3         36929.21 81.23
-    ## b11.1 - b11.2   765.37 55.97
-    ## b11.1 - b11.3   925.81 62.67
-    ## b11.2 - b11.3   160.44 25.79
-
-``` r
+```{r model_weights_b11.1_through_b11.3, cache = T}
 model_weights(b11.1, b11.2, b11.3,
               weights = "waic")
 ```
 
-    ##         b11.1         b11.2         b11.3 
-    ## 9.183989e-202  1.449358e-35  1.000000e+00
-
 McElreath made Figure 11.3 by extracting the samples of his `m11.3`, saving them as `post`, and working some hairy base R `plot()` code. We'll take a different route and use `brms::fitted()`. This will take substantial data wrangling, but hopefully it'll be instructive. Let's first take a look at the initial `fitted()` output for the beginnings of Figure 11.3.a.
 
-``` r
+```{r}
 nd <-
   tibble(action    = 0,
          contact   = 0, 
@@ -581,28 +432,11 @@ fitted(b11.3,
   glimpse()
 ```
 
-    ## Observations: 100
-    ## Variables: 14
-    ## $ `1.1` <dbl> 0.06313852, 0.06283124, 0.06435566, 0.06768808, 0.069860...
-    ## $ `2.1` <dbl> 0.08871318, 0.09069638, 0.09220311, 0.08911945, 0.093081...
-    ## $ `1.2` <dbl> 0.05357344, 0.05578208, 0.05733856, 0.05547247, 0.060313...
-    ## $ `2.2` <dbl> 0.07156131, 0.07611750, 0.07764564, 0.07003780, 0.076701...
-    ## $ `1.3` <dbl> 0.08080566, 0.07102942, 0.07415837, 0.08363751, 0.086584...
-    ## $ `2.3` <dbl> 0.10201030, 0.09143617, 0.09466540, 0.10083440, 0.104619...
-    ## $ `1.4` <dbl> 0.2166648, 0.2078150, 0.2139199, 0.2159099, 0.2185414, 0...
-    ## $ `2.4` <dbl> 0.2429783, 0.2370451, 0.2417050, 0.2366725, 0.2385946, 0...
-    ## $ `1.5` <dbl> 0.1669983, 0.1679290, 0.1674436, 0.1712502, 0.1643067, 0...
-    ## $ `2.5` <dbl> 0.1618990, 0.1640332, 0.1622212, 0.1667790, 0.1587474, 0...
-    ## $ `1.6` <dbl> 0.1857227, 0.1957803, 0.1930540, 0.1871729, 0.1877328, 0...
-    ## $ `2.6` <dbl> 0.1589994, 0.1664988, 0.1635251, 0.1644250, 0.1632188, 0...
-    ## $ `1.7` <dbl> 0.2330965, 0.2388330, 0.2297299, 0.2188689, 0.2126616, 0...
-    ## $ `2.7` <dbl> 0.1738385, 0.1741728, 0.1680346, 0.1721319, 0.1650369, 0...
-
 Hopefully by now it’s clear why we needed the `nd` tibble, which we made use of in the `newdata = nd` argument. Because we set `summary = F`, we get draws from the posterior instead of summaries. With `max_iter`, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by `brms::fitted()` default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two `intention` values the draw is based on (i.e., 1 stands for `intention == 0`, 2, stands for `intention == 1`). The numbers on the right of the decimals are the seven response options for `response`. For each posterior draw, you get one of those for each value of `intention`. Finally, it might not be immediately apparent, but the values are in the probability scale, just like `pk` on page 338.
 
 Now we know what we have in hand, it’s just a matter of careful wrangling to get those probabilities into a more useful format to insert into ggplot2. I’ve extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.
 
-``` r
+```{r, fig.width = 2.5, fig.height = 3.5}
 nd <-
   tibble(action    = 0,
          contact   = 0, 
@@ -664,13 +498,11 @@ fitted(b11.3,
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-21-1.png)
-
 Boom!
 
-Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, `make_Figure_11.3_data()`.
+Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, `make_Figure_11.3_data()`. 
 
-``` r
+```{r}
 make_Figure_11.3_data <- function(action, contact, max_iter){
   
   nd <-
@@ -703,7 +535,7 @@ make_Figure_11.3_data <- function(action, contact, max_iter){
 
 Now we'll use our sweet homemade function to make our plots.
 
-``` r
+```{r, fig.width = 7, fig.height = 3.5, warning = F, message = F}
 # Figure 11.3.a
 p1 <-
   make_Figure_11.3_data(action   = 0, 
@@ -791,13 +623,11 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-23-1.png)
-
 ### Bonus: Figure 11.3 alternative.
 
 I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody’s got time for that. We’ve have clients to serve! Happily, we can go further. Look back at McElreath’s R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here’s the adjusted function:
 
-``` r
+```{r}
 make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
   
   nd <-
@@ -831,7 +661,7 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
 
 Our handy homemade but monstrously-named `make_data_for_an_alternative_fiture()` function works very much like its predecessor. You’ll see.
 
-``` r
+```{r, fig.width = 7, fig.height = 3.5}
 # Alternative to Figure 11.3.a
 p1 <-
   make_data_for_an_alternative_fiture(action   = 0, 
@@ -889,12 +719,9 @@ p3 <-
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-25-1.png)
-
 Finally; now those are plots I can sell in a clinical psychology journal!
 
-Zero-inflated outcomes
-----------------------
+## Zero-inflated outcomes
 
 > Very often, the things we can measure are not emissions from any pure process. Instead, they are *mixtures* of multiple processes. Whenever there are different causes for the same observation, then a mixture model may be useful. A mixture model uses more than one simple probability distribution to model a mixture of causes. In effect, these models use more than one likelihood for the same outcome variable.
 >
@@ -906,7 +733,7 @@ In his **Rethinking: Breaking the law** box, McElreath discussed how advances in
 
 Here we simulate our drunk monk data.
 
-``` r
+```{r}
 # define parameters
 prob_drink <- 0.2  # 20% of days
 rate_work  <- 1    # average 1 manuscript per day
@@ -924,7 +751,7 @@ y <- (1 - drink) * rpois(N, rate_work)
 
 We'll put those data in a tidy tibble before plotting.
 
-``` r
+```{r, fig.width = 5, fig.height = 3}
 d <-
   tibble(Y = y) %>%
   arrange(Y) %>% 
@@ -945,47 +772,45 @@ d <-
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-27-1.png)
-
 With these data, the likelihood of observing zero on `y`, (i.e., the likelihood zero manuscripts were completed on a given occasion) is
 
 $$
-\\begin{eqnarray}
-\\text{Pr} (0 | p, \\lambda) & = & \\text{Pr} (\\text{drink} | p) + \\text{Pr} (\\text{work} | p) \\times \\text{Pr} (0 | \\lambda) \\\\
-& = & p + (1 - p) \\text{ exp} (- \\lambda)
-\\end{eqnarray}
+\begin{eqnarray}
+\text{Pr} (0 | p, \lambda) & = & \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
+& = & p + (1 - p) \text{ exp} (- \lambda)
+\end{eqnarray}
 $$
 
-And
+And 
 
-> since the Poisson likelihood of *y* is Pr(*y*|*λ*)=*λ*<sup>*y*</sup>exp(−*λ*)/*y*!, the likelihood of *y* = 0 is just exp(−*λ*). The above is just the mathematics for:
+> since the Poisson likelihood of $y$ is $\text{Pr} (y | \lambda) = \lambda^y \text{exp} (- \lambda) / y!$, the likelihood of $y = 0$ is just $\text{exp} (- \lambda)$. The above is just the mathematics for:
 >
-> > *The probability of observing a zero is the probability that the monks didn't drink OR (+) the probability that the monks worked AND (×) failed to finish anything*.
+>> *The probability of observing a zero is the probability that the monks didn't drink OR ($+$) the probability that the monks worked AND ($\times$) failed to finish anything*. 
 >
-> And the likelihood of a non-zero value *y* is:
+> And the likelihood of a non-zero value $y$ is:
 >
 > $$
-> \\begin{eqnarray}
-> \\text{Pr} (y | p, \\lambda) & = & \\text{Pr} (\\text{drink} | p) (0) + \\text{Pr} (\\text{work} | p) \\text{Pr} (y | \\lambda) \\\\
-> & = & (1 - p) \\frac {\\lambda^y \\text{ exp} (- \\lambda)}{y!}
-> \\end{eqnarray}
-> $$
+\begin{eqnarray}
+\text{Pr} (y | p, \lambda) & = & \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
+& = & (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
+\end{eqnarray}
+$$
 >
-> Since drinking monks never produce *y* &gt; 0, the expression above is just the chance the monks both work 1 − *p*, and finish *y* manuscripts. (p. 344, *emphasis* in the original)
+> Since drinking monks never produce $y > 0$, the expression above is just the chance the monks both work $1 - p$, and finish $y$ manuscripts. (p. 344, *emphasis* in the original)
 
-So letting *p* be the probability *y* is zero and *λ* be the shape of the distribution, the zero-inflated Poisson (ZIPoisson) regression model takes the basic form
+So letting $p$ be the probability $y$ is zero and $\lambda$ be the shape of the distribution, the zero-inflated Poisson (ZIPoisson) regression model takes the basic form
 
 $$
-\\begin{eqnarray}
-y\_i & \\sim & \\text{ZIPoisson} (p\_i, \\lambda\_i)\\\\
-\\text{logit} (p\_i) & = & \\alpha\_p + \\beta\_p x\_i \\\\
-\\text{log} (\\lambda\_i) & = & \\alpha\_\\lambda + \\beta\_\\lambda x\_i
-\\end{eqnarray}
+\begin{eqnarray}
+y_i & \sim & \text{ZIPoisson} (p_i, \lambda_i)\\
+\text{logit} (p_i) & = & \alpha_p + \beta_p x_i \\
+\text{log} (\lambda_i) & = & \alpha_\lambda + \beta_\lambda x_i
+\end{eqnarray}
 $$
 
-One last thing to note is that in brms, *p*<sub>*i*</sub> is denoted `zi`. So the intercept \[and zi\] only zero-inflated Poisson model in brms looks like this.
+One last thing to note is that in brms, $p_i$ is denoted `zi`. So the intercept [and zi] only zero-inflated Poisson model in brms looks like this.
 
-``` r
+```{r b11.4, cache = T, warning = F, message = F}
 b11.4 <- 
   brm(data = d, family = zero_inflated_poisson,
       Y ~ 1,
@@ -994,34 +819,15 @@ b11.4 <-
       cores = 4)
 ```
 
-``` r
+```{r}
 print(b11.4)
 ```
 
-    ##  Family: zero_inflated_poisson 
-    ##   Links: mu = log; zi = identity 
-    ## Formula: Y ~ 1 
-    ##    Data: d (Number of observations: 365) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     0.07      0.08    -0.08     0.22       1292 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## zi     0.17      0.05     0.07     0.27       1427 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, *λ*. In both here and in the text, *λ* was about 0.06. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of 0.171. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
+The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about 0.06. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of `r round(posterior_summary(b11.4)[2, 1], 3)`. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
 
 In the `prior` argument, we used `beta(2, 2)` for `zi` and also mentioned in the margin that the brms default is `beta(1, 1)`. To give you a sense of the priors, let's plot them.
 
-``` r
+```{r, fig.width = 6, fig.height = 2.5}
 tibble(`zi prior`= seq(from = 0, to = 1, length.out = 50)) %>%
   mutate(`beta(1, 1)` = dbeta(`zi prior`, 1, 1),
          `beta(2, 2)` = dbeta(`zi prior`, 2, 2))  %>% 
@@ -1041,21 +847,16 @@ tibble(`zi prior`= seq(from = 0, to = 1, length.out = 50)) %>%
   facet_wrap(~prior)
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-29-1.png)
+Hopefully this clarifies that the brms default is flat, whereas our prior regularized a bit toward .5. Anyway, here's that exponentiated $\lambda$.
 
-Hopefully this clarifies that the brms default is flat, whereas our prior regularized a bit toward .5. Anyway, here's that exponentiated *λ*.
-
-``` r
+```{r}
 fixef(b11.4)[1, ] %>%
   exp()
 ```
 
-    ##  Estimate Est.Error      Q2.5     Q97.5 
-    ## 1.0748832 1.0827558 0.9211994 1.2484866
-
 #### Overthinking: Zero-inflated Poisson distribution function.
 
-``` r
+```{r}
 dzip <- function(x, p, lambda, log = TRUE) {
     ll <- ifelse(
         x == 0,
@@ -1067,9 +868,9 @@ dzip <- function(x, p, lambda, log = TRUE) {
 }
 ```
 
-We can use McElreath's `dzip()` to do a posterior predictive check for our model. To work with our estimates for *p* and *l**a**m**b**d**a* directly, we'll set `log = F`.
+We can use McElreath's `dzip()` to do a posterior predictive check for our model. To work with our estimates for $p$ and $lambda$ directly, we'll set `log = F`.
 
-``` r
+```{r, fig.width = 5, fig.height = 3}
 p_b11.4      <- posterior_summary(b11.4)[2, 1]
 lambda_b11.4 <- posterior_summary(b11.4)[1, 1] %>% exp()
 
@@ -1086,14 +887,11 @@ tibble(x = 0:4) %>%
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-32-1.png)
-
 If you look up to the histogram we made at the beginning of this section, you'll see this isn't a terrible approximation.
 
-Over-dispersed outcomes
------------------------
+## Over-dispersed outcomes
 
-> All statistical models omit something. The question is only whether that something is necessary for making useful inferences. One symptom that something important has been omitted from a count model is over-dispersion. The variance of a variable is sometimes called its *dispersion*. For a counting process like a binomial, the variance is a function of the same parameters as the expected value. For example, the expected value of a binomial is *n**p* and its variance is *n**p*(1 − *p*). When the observed variance exceeds this amount—after conditioning on all the predictor variables—this implies that some omitted variable is producing additional dispersion in the observed counts.
+> All statistical models omit something. The question is only whether that something is necessary for making useful inferences. One symptom that something important has been omitted from a count model is over-dispersion. The variance of a variable is sometimes called its *dispersion*. For a counting process like a binomial, the variance is a function of the same parameters as the expected value. For example, the expected value of a binomial is $np$ and its variance is $np (1 - p)$. When the observed variance exceeds this amount—after conditioning on all the predictor variables—this implies that some omitted variable is producing additional dispersion in the observed counts.
 >
 > What could go wrong, if we ignore the over-dispersion? Ignoring it can lead to all of the same problems as ignoring any predictor variable. Heterogeneity in counts can be a confound, hiding effects of interest or producing spurious inferences. (p, 346, *emphasis* in the original)
 
@@ -1103,29 +901,29 @@ In this chapter we’ll cope with the problem using continuous mixture models—
 
 > A beta-binomial model assumes that each binomial count observation has its own probability of success. The model estimates the *distribution* of probabilities of success across cases, instead of a single probability of success. And predictor variables change the shape of this distribution, instead of directly determining the probability of each success. (p, 347, *emphasis* in the original)
 
-Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\\overline{p}$ and a shape parameter *θ*. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` argument is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
+Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\overline{p}$ and a shape parameter $\theta$. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` argument is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
 
-However, the beta density is typically defined in terms of *α* and *β*. If you denote the data as *y*, this follows the form
+However, the beta density is typically defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
 
-$$\\text{Beta} (y | \\alpha, \\beta) = \\frac{y^{\\alpha - 1} (1 - y)^{\\beta - 1}}{\\text B (\\alpha, \\beta)}$$
+$$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)}$$
 
-which you can verify in the *Continuous Distributions on \[0, 1\]* section of the [Stan reference manual](http://mc-stan.org/users/documentation/index.html). In the formula, $\\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same *α* and *β* from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()`.
+which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan reference manual](http://mc-stan.org/users/documentation/index.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()`.
 
-McElreath had good reason for using `dbeta2()`. Beta's typical *α* and *β* parameters aren't the most intuitive to use, but McElreath's `dbeta2()` are. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of *α* and *β* like this
+McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use, but McElreath's `dbeta2()` are. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
 
-$$\\mu = \\frac{\\alpha}{\\alpha + \\beta}$$
+$$\mu = \frac{\alpha}{\alpha + \beta}$$
 
-We can talk about the spread of the distribution, sometimes called *κ*, in terms *α* and *β* like this
+We can talk about the spread of the distribution, sometimes called $\kappa$, in terms $\alpha$ and $\beta$ like this
 
-*κ* = *α* + *β*
+$$\kappa = \alpha + \beta$$
 
-With *μ* and *κ* in hand, we can even find the *S**D* of a beta distribution with
+With $\mu$ and $\kappa$ in hand, we can even find the $SD$ of a beta distribution with
 
-$$\\sigma = \\sqrt{\\mu (1 - \\mu) / (\\kappa + 1)}$$
+$$\sigma = \sqrt{\mu (1 - \mu) / (\kappa + 1)}$$
 
-The reason I explicate this is because McElreath's `pbar` is $\\mu = \\frac{\\alpha}{\\alpha + \\beta}$ and his `theta` is *κ* = *α* + *β*. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
+The reason I explicate this is because McElreath's `pbar` is $\mu = \frac{\alpha}{\alpha + \beta}$ and his `theta` is $\kappa = \alpha + \beta$. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
 
-``` r
+```{r, fig.width = 4, fig.height = 3}
 pbar  <- 0.5
 theta <- 5
 
@@ -1144,11 +942,9 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-33-1.png)
+In his 2014 text, [*Doing Bayesian Data Analysis*](https://sites.google.com/site/doingbayesiandataanalysis/), Kruschke provided code for a convenience function that will take `pbar` and `theta` as inputs and return the corresponding $\alpha$ and $\beta$ values. Here's the function:
 
-In his 2014 text, [*Doing Bayesian Data Analysis*](https://sites.google.com/site/doingbayesiandataanalysis/), Kruschke provided code for a convenience function that will take `pbar` and `theta` as inputs and return the corresponding *α* and *β* values. Here's the function:
-
-``` r
+```{r}
 betaABfromMeanKappa <- function(mean, kappa) {
   if (mean <= 0 | mean >= 1) stop("must have 0 < mean < 1")
   if (kappa <= 0) stop("kappa must be > 0")
@@ -1158,21 +954,15 @@ betaABfromMeanKappa <- function(mean, kappa) {
 }
 ```
 
-Now we can use Kruschke's `betaABfromMeanKappa()` to find the *α* and *β* values corresponding to `pbar` and `theta`.
+Now we can use Kruschke's `betaABfromMeanKappa()` to find the $\alpha$ and $\beta$ values corresponding to `pbar` and `theta`.
 
-``` r
+```{r}
 betaABfromMeanKappa(mean = pbar, kappa = theta)
 ```
 
-    ## $a
-    ## [1] 2.5
-    ## 
-    ## $b
-    ## [1] 2.5
+And finally, we can double check that all of this works. Here's the same distribution but defined in terms of $\alpha$ and $\beta$.
 
-And finally, we can double check that all of this works. Here's the same distribution but defined in terms of *α* and *β*.
-
-``` r
+```{r, fig.width = 4, fig.height = 3}
 ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   geom_ribbon(aes(x    = x, 
                   ymin = 0, 
@@ -1188,11 +978,9 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-36-1.png)
-
 McElreath encouraged us to "explore different values for `pbar` and `theta`" (p. 348). Here’s a grid of plots with `pbar = c(.25, .5, .75)` and `theta = c(5, 10, 15)`
 
-``` r
+```{r, fig.width = 5, fig.height = 5}
 # data
 tibble(pbar = c(.25, .5, .75)) %>% 
   expand(pbar, theta = c(5, 15, 30)) %>% 
@@ -1218,28 +1006,26 @@ tibble(pbar = c(.25, .5, .75)) %>%
   facet_grid(kappa ~ mu, labeller = label_parsed)
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-37-1.png)
+If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [the chapter 6 document](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse/blob/master/06.md) of my project [recoding Kruschke's text into tidyverse and brms code](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse).
 
-If you'd like to see how to make a similar plot in terms of *α* and *β*, see [the chapter 6 document](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse/blob/master/06.md) of my project [recoding Kruschke's text into tidyverse and brms code](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse).
-
-But remember, we’re not fitting a beta model. We’re using the beta-binomial. "We’re going to bind our linear model to $\\overline p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
+But remember, we’re not fitting a beta model. We’re using the beta-binomial. "We’re going to bind our linear model to $\overline p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
 
 $$
-\\begin{eqnarray}
-\\text{admit}\_i & \\sim & \\text{BetaBinomial} (n\_i, \\overline p\_i, \\theta)\\\\
-\\text{logit} (\\overline p\_i) & = & \\alpha \\\\
-\\alpha & \\sim & \\text{Normal} (0, 2) \\\\
-\\theta & \\sim & \\text{Exponential} (1)
-\\end{eqnarray}
+\begin{eqnarray}
+\text{admit}_i & \sim & \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
+\text{logit} (\overline p_i) & = & \alpha \\
+\alpha & \sim & \text{Normal} (0, 2) \\
+\theta & \sim & \text{Exponential} (1)
+\end{eqnarray}
 $$
 
-Here the size *n* = applications.
+Here the size $n = \text{applications}$.
 
 Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
 Before we get carried away, let's load the data.
 
-``` r
+```{r, warning = F, message = F}
 library(rethinking)
 data(UCBadmit)
 d <- UCBadmit
@@ -1247,7 +1033,7 @@ d <- UCBadmit
 
 Unload rethinking and load brms.
 
-``` r
+```{r, message = F}
 rm(UCBadmit)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -1255,7 +1041,7 @@ library(brms)
 
 I’m not going to go into great detail explaining the ins and outs of making custom distributions for `brm()`. You've got Bürkner's vignette for that. For our purposes, we need two preparatory steps. First, we need to use the `custom_family()` function to define the name and parameters of the beta-binomial distribution for use in `brm()`. Second, we have to define some relevant Stan functions.
 
-``` r
+```{r}
 beta_binomial2 <- 
   custom_family(
     "beta_binomial2", dpars = c("mu", "phi"),
@@ -1273,9 +1059,9 @@ stan_funs <- "
 "
 ```
 
-With that out of the way, we’re ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, *θ*, Bürkner called the precision parameter, *ϕ*. In our exposition, above, we followed Kruschke's convention and called it *κ*. These are all the same thing. *θ*, *ϕ*, and *κ* are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\\bar{p}$, Bürkner simply called *μ*.
+With that out of the way, we’re ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing. $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
 
-``` r
+```{r b11.5, cache = T, warning = F, message = F}
 b11.5 <-
   brm(data = d, 
       family = beta_binomial2,  # Here's our custom likelihood
@@ -1288,59 +1074,30 @@ b11.5 <-
 
 Success, our results look a lot like those in the text!
 
-``` r
+```{r}
 print(b11.5)
 ```
 
-    ##  Family: beta_binomial2 
-    ##   Links: mu = logit; phi = identity 
-    ## Formula: admit | trials(applications) ~ 1 
-    ##    Data: d (Number of observations: 12) 
-    ## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept    -0.37      0.31    -0.97     0.25       4091 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## phi     2.79      0.99     1.27     5.08       4526 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
 Here's what the corresponding `posterior_samples()` data object looks like.
 
-``` r
+```{r}
 post <- posterior_samples(b11.5)
 
 head(post)
 ```
 
-    ##   b_Intercept      phi      lp__
-    ## 1 -1.19360486 1.902688 -74.02409
-    ## 2 -1.14313094 2.363172 -73.24744
-    ## 3 -0.05028738 2.865837 -70.72731
-    ## 4 -0.34927052 2.789088 -70.04128
-    ## 5 -0.25667295 4.129842 -70.95650
-    ## 6 -0.21965837 3.630509 -70.60020
-
 Here's our median and percentile-based 95% interval.
 
-``` r
+```{r}
 post %>% 
   tidybayes::median_qi(inv_logit_scaled(b_Intercept)) %>% 
   mutate_if(is.double, round, digits = 3)
 ```
 
-    ##   inv_logit_scaled(b_Intercept) .lower .upper .width .point .interval
-    ## 1                         0.407  0.276  0.563   0.95 median        qi
 
 With our `post` object in hand, here's our Figure 11.5.a.
 
-``` r
+```{r, fig.width = 4, fig.height = 3.5}
 tibble(x = 0:1) %>%
   ggplot(aes(x = x)) + 
   stat_function(fun = rethinking::dbeta2,
@@ -1364,13 +1121,11 @@ tibble(x = 0:1) %>%
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-44-1.png)
-
 I got the idea to nest `stat_function()` within `mapply()` from [shadow's answer to this Stack Overflow question](http://stackoverflow.com/questions/27009641/plot-multiple-normal-curves-in-same-plot).
 
 Before we can do our variant of Figure 11.5.b, we'll need to specify a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
-``` r
+```{r, results = 'hide', warning = F, message = F}
 expose_functions(b11.5, vectorize = TRUE)
 
 # Required to use `predict()`
@@ -1403,7 +1158,7 @@ fitted_beta_binomial2 <-
 
 With those intermediary steps out of the way, we're ready to make Figure 11.5.b.
 
-``` r
+```{r, fig.width = 4, fig.height = 3.5}
 # The prediction intervals
 predict(b11.5) %>%
   as_tibble() %>% 
@@ -1443,17 +1198,15 @@ predict(b11.5) %>%
         legend.position = "none")
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-46-1.png)
-
 As in the text, the raw data are consistent with the prediction intervals. But those intervals are so incredibly wide, they're hardly an endorsement of the model. Once we learn about hierarchical models, we'll be able to do much better.
 
 ### Negative-binomial or gamma-Poisson.
 
-Recall the Poisson distribution presumes *σ*<sup>2</sup> scales with *μ*. The negative binomial distribution relaxes this assumption and presumes "each Poisson count observation has its own rate. It estimates the shape of a gamma distribution to describe the Poisson rates across cases" (p. 350).
+Recall the Poisson distribution presumes $\sigma^2$ scales with $\mu$. The negative binomial distribution relaxes this assumption and presumes "each Poisson count observation has its own rate. It estimates the shape of a gamma distribution to describe the Poisson rates across cases" (p. 350).
 
-Here's a look at the *γ* distribution.
+Here's a look at the $\gamma$ distribution. 
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 mu    <- 3
 theta <- 1
 
@@ -1473,13 +1226,11 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-47-1.png)
-
 ##### Bonus: Let's fit a negative-binomial model.
 
 McElreath didn't give an example of negative-binomial regression in the text. Here's one with the `UCBadmit` data.
 
-``` r
+```{r nb_model, cache = T, warning = F, message = F}
 brm(data = d, family = negbinomial,
     admit ~ 1 + applicant.gender,
     prior = c(prior(normal(0, 10), class = Intercept),
@@ -1490,37 +1241,15 @@ brm(data = d, family = negbinomial,
   print()
 ```
 
-    ##  Family: negbinomial 
-    ##   Links: mu = log; shape = identity 
-    ## Formula: admit ~ 1 + applicant.gender 
-    ##    Data: d (Number of observations: 12) 
-    ## Samples: 2 chains, each with iter = 4000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                      Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept                4.69      0.41     3.97     5.60       3589 1.00
-    ## applicant.gendermale     0.58      0.49    -0.41     1.51       4274 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## shape     1.24      0.48     0.50     2.38       4103 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
 Since the negative-binomial model uses the log link, you need to exponentiate to get the estimates back into the count metric. E.g.,
 
-``` r
+```{r}
 exp(4.69)
 ```
 
-    ## [1] 108.8532
-
 Also, you may have noticed we used the brms default `prior(gamma(0.01, 0.01), class = shape)` for the shape parameter. Here's what that prior looks like.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
        aes(x = x)) +
   geom_ribbon(aes(ymin = 0, 
@@ -1535,92 +1264,20 @@ ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-![](11_files/figure-markdown_github/unnamed-chunk-49-1.png)
-
 ### Over-dispersion, entropy, and information criteria.
 
 > Both the beta-binomial and the gamma-Poisson models are maximum entropy for the same constraints as the regular binomial and Poisson. They just try to account for unobserved heterogeneity in probabilities and rates. So while they can be a lot harder to fit to data, they can be usefully conceptualized much like ordinary binomial and Poisson GLMs. So in terms of model comparison using information criteria, a beta-binomial model is a binomial model, and a gamma-Poisson (negative-binomial) is a Poisson model. (pp. 350--351)
 
-Reference
----------
+## Reference {-}
 
 [McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
-Session info
-------------
+## Session info {-}
 
-``` r
+```{r}
 sessionInfo()
 ```
 
-    ## R version 3.5.1 (2018-07-02)
-    ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-    ## Running under: macOS High Sierra 10.13.6
-    ## 
-    ## Matrix products: default
-    ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-    ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## attached base packages:
-    ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-    ## [8] base     
-    ## 
-    ## other attached packages:
-    ##  [1] gridExtra_2.3      broom_0.4.5        bindrcpp_0.2.2    
-    ##  [4] ggthemes_3.5.0     forcats_0.3.0      stringr_1.3.1     
-    ##  [7] dplyr_0.7.6        purrr_0.2.5        readr_1.1.1       
-    ## [10] tidyr_0.8.1        tibble_1.4.2       tidyverse_1.2.1   
-    ## [13] brms_2.4.0         Rcpp_0.12.18       rstan_2.17.3      
-    ## [16] StanHeaders_2.17.2 ggplot2_3.0.0     
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] nlme_3.1-137              matrixStats_0.54.0       
-    ##  [3] xts_0.10-2                lubridate_1.7.4          
-    ##  [5] threejs_0.3.1             httr_1.3.1               
-    ##  [7] LaplacesDemon_16.1.1      rprojroot_1.3-2          
-    ##  [9] tools_3.5.1               backports_1.1.2          
-    ## [11] utf8_1.1.4                R6_2.2.2                 
-    ## [13] DT_0.4                    lazyeval_0.2.1           
-    ## [15] colorspace_1.3-2          withr_2.1.2              
-    ## [17] tidyselect_0.2.4          mnormt_1.5-5             
-    ## [19] Brobdingnag_1.2-5         compiler_3.5.1           
-    ## [21] cli_1.0.0                 rvest_0.3.2              
-    ## [23] arrayhelpers_1.0-20160527 xml2_1.2.0               
-    ## [25] shinyjs_1.0               labeling_0.3             
-    ## [27] colourpicker_1.0          scales_0.5.0             
-    ## [29] dygraphs_1.1.1.5          mvtnorm_1.0-8            
-    ## [31] psych_1.8.4               ggridges_0.5.0           
-    ## [33] digest_0.6.15             foreign_0.8-70           
-    ## [35] rmarkdown_1.10            rethinking_1.59          
-    ## [37] base64enc_0.1-3           pkgconfig_2.0.1          
-    ## [39] htmltools_0.3.6           htmlwidgets_1.2          
-    ## [41] rlang_0.2.1               readxl_1.1.0             
-    ## [43] rstudioapi_0.7            shiny_1.1.0              
-    ## [45] svUnit_0.7-12             bindr_0.1.1              
-    ## [47] zoo_1.8-2                 jsonlite_1.5             
-    ## [49] crosstalk_1.0.0           gtools_3.8.1             
-    ## [51] inline_0.3.15             magrittr_1.5             
-    ## [53] loo_2.0.0                 bayesplot_1.6.0          
-    ## [55] Matrix_1.2-14             munsell_0.5.0            
-    ## [57] abind_1.4-5               stringi_1.2.3            
-    ## [59] yaml_2.1.19               MASS_7.3-50              
-    ## [61] ggstance_0.3              plyr_1.8.4               
-    ## [63] grid_3.5.1                promises_1.0.1           
-    ## [65] crayon_1.3.4              miniUI_0.1.1.1           
-    ## [67] lattice_0.20-35           haven_1.1.2              
-    ## [69] hms_0.4.2                 knitr_1.20               
-    ## [71] pillar_1.2.3              igraph_1.2.1             
-    ## [73] markdown_0.8              shinystan_2.5.0          
-    ## [75] codetools_0.2-15          reshape2_1.4.3           
-    ## [77] stats4_3.5.1              rstantools_1.5.0         
-    ## [79] glue_1.2.0                evaluate_0.10.1          
-    ## [81] modelr_0.1.2              httpuv_1.4.4.2           
-    ## [83] cellranger_1.1.0          gtable_0.2.0             
-    ## [85] assertthat_0.2.0          mime_0.5                 
-    ## [87] xtable_1.8-2              coda_0.19-1              
-    ## [89] later_0.7.3               rsconnect_0.8.8          
-    ## [91] shinythemes_1.1.1         tidybayes_1.0.1          
-    ## [93] bridgesampling_0.4-0
+```{r, echo = F}
+rm(d, logit, d_plot, inits, inits_list, b11.1, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, N, drink, y, b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, stan_funs, b11.5, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
+```
