@@ -126,7 +126,7 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as, `p`.
+For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
 ```{r}
 p <-
@@ -278,7 +278,7 @@ Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the 
   )
 ```
 
-Now we're ready to plot the left panel of Figure 6.5
+Now we're ready to plot the left panel of Figure 6.5.
 
 ```{r, fig.width = 3.5, fig.height = 2.75, warning = F, message = F}
 p + 
@@ -441,7 +441,7 @@ p <- c(.7, .15, .15)
 
 ### From entropy to accuracy.
 
-The formula for the Kullback-Leibler divergence (i.e,. K-L divergence) is
+The formula for the Kullback-Leibler divergence (i.e., K-L divergence) is
 
 $$D_{\text{KL}} (p, q) = \sum_i p_i \big ( \text{log} (p_i) - \text{log} (q_i) \big ) = \sum_i p_i \text{log} \Bigg ( \frac{p_i}{q_i} \Bigg )$$
 
@@ -806,11 +806,11 @@ s %>%
 
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
-For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
+For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog post [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the horseshoe section of the [brms reference manual (version 2.4.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.4.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
 
 > The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is nonzero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 67)
 
@@ -857,7 +857,7 @@ dev_tibble  %>%
   facet_wrap(~N, scale = "free_y")
 ```
 
-Again, out numbers aren't the exact same as McElreath's because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points 
+Again, our numbers aren't the exact same as McElreath's because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points 
 
 > are nearly the same, for each model, at both $N = 20$ (left) and $N = 100$ (right). Each distance is nearly twice the number of parameters, as labeled on the horizontal axis. The dashed lines show exactly the [dark purple] points plus twice the number of parameters, tracing closely along the average out-of-sample deviance for each model.
 >
@@ -1140,7 +1140,7 @@ WAIC(b6.14)
 waic(b6.14)
 ```
 
-Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms, this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
+Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
 
 There are two basic ways to compare WAIC values from multiple models. In the first, you add more model names into the `waic()` function.
 
