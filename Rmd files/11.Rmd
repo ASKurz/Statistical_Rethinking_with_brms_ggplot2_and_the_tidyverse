@@ -213,7 +213,7 @@ inits <- list(`Intercept[1]` = -2,
               `Intercept[5]` = 2,
               `Intercept[6]` = 2.5)
 
-inits_list <-list(inits, inits)
+inits_list <- list(inits, inits)
 
 b11.1 <- 
   brm(data = d, family = cumulative,
@@ -237,6 +237,20 @@ Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `l
 b11.1 %>% 
   fixef() %>% 
   inv_logit_scaled()
+```
+
+But recall that the posterior $SD$ (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `posterior_samples()`.
+
+```{r}
+posterior_samples(b11.1) %>% 
+  select(starts_with("b_")) %>% 
+  mutate_all(inv_logit_scaled) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  summarise(mean = mean(value),
+            sd   = sd(value),
+            ll   = quantile(value, probs = .025),
+            ul   = quantile(value, probs = .975))
 ```
 
 ### Adding predictor variables.
@@ -294,7 +308,7 @@ I found that a bit abstract. Here's the thing in a more elaborate tibble format.
   explicit_example <-
   tibble(probability_of_a_response = pk) %>%
   mutate(the_response  = 1:7) %>%
-  mutate(their_product = probability_of_a_response*the_response)
+  mutate(their_product = probability_of_a_response * the_response)
 )
 
 explicit_example %>%
@@ -326,7 +340,7 @@ Now we'll try it by subtracting .5 from each.
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1] - .5))
 
 # The average rating
-sum(pk*(1:7))
+sum(pk * (1:7))
 ```
 
 So the rule is we *subtract the linear model from each interecept*. Let's fit our multivariable models.
@@ -732,7 +746,7 @@ set.seed(0.2)
 drink <- rbinom(N, 1, prob_drink)
 
 # simulate manuscripts completed
-y <- (1 - drink)*rpois(N, rate_work)
+y <- (1 - drink) * rpois(N, rate_work)
 ```
 
 We'll put those data in a tidy tibble before plotting.
@@ -887,7 +901,7 @@ In this chapter we’ll cope with the problem using continuous mixture models—
 
 > A beta-binomial model assumes that each binomial count observation has its own probability of success. The model estimates the *distribution* of probabilities of success across cases, instead of a single probability of success. And predictor variables change the shape of this distribution, instead of directly determining the probability of each success. (p, 347, *emphasis* in the original)
 
-Unfortunately, we need to digress. As it turns out, there are multiple way to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\overline{p}$ and a shape parameter $\theta$. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` argument is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
+Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\overline{p}$ and a shape parameter $\theta$. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` argument is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
 
 However, the beta density is typically defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
 
