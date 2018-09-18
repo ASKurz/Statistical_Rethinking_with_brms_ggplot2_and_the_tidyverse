@@ -14,7 +14,7 @@ McElreath's listed reasons for multivaraiable regression include:
 * multiple causation
 * interactions
 
-We'll approach the first two in this chapter. Interactions are reserved for chapter 6.
+We'll approach the first two in this chapter. Interactions are reserved for Chapter 6.
 
 ## Spurious associations
 
@@ -42,8 +42,7 @@ head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from 
-the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
 ```{r, fig.width = 3, fig.height = 3}
 # install.packages("ggrepel", depencencies = T)
@@ -113,7 +112,7 @@ Now we're ready to fit the first univariable model.
 b5.1 <- 
   brm(data = d, family = gaussian,
       Divorce ~ 1 + MedianAgeMarriage_s,
-      prior = c(prior(normal(0, 10), class = Intercept),
+      prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4)
@@ -168,7 +167,7 @@ We're ready to fit our second univariable model.
 b5.2 <- 
   brm(data = d, family = gaussian,
       Divorce ~ 1 + Marriage_s,
-      prior = c(prior(normal(0, 10), class = Intercept),
+      prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4)
@@ -227,7 +226,7 @@ Much like we used the `+` operator to add single predictors to the intercept, we
 b5.3 <- 
   brm(data = d, family = gaussian,
       Divorce ~ 1 + Marriage_s + MedianAgeMarriage_s,
-      prior = c(prior(normal(0, 10), class = Intercept),
+      prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4)
@@ -304,9 +303,9 @@ To get ready to make our residual plots, we'll predict `Marriage_s` with `Median
 b5.4 <- 
   brm(data = d, family = gaussian,
       Marriage_s ~ 1 + MedianAgeMarriage_s,
-      prior = c(set_prior("normal(0, 10)", class = "Intercept"),
-                set_prior("normal(0, 1)", class = "b"),
-                set_prior("uniform(0, 10)", class = "sigma")),
+      prior = c(prior(normal(0, 10), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4)
 ```
 
