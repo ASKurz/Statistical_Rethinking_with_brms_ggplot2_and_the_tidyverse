@@ -1,0 +1,740 @@
+---
+title: "Ch. 5 Multivariate Linear Models"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  html_document
+---
+
+```{r set-options, echo = F, cache = F}
+options(width = 100)
+```
+
+Let's get the data from McElreath's [rethinking package](http://xcelab.net/rm/statistical-rethinking/).
+
+```{r, message = F, warning = F}
+library(rethinking)
+library(tidyverse)
+
+data(WaffleDivorce)
+d <- WaffleDivorce
+rm(WaffleDivorce)
+```
+
+The data look like so:
+
+```{r}
+glimpse(d)
+```
+
+## `b5.1`
+
+Here we'll officially standardize the predictor, `MedianAgeMarriage`.
+
+```{r}
+d <-
+  d %>%
+  mutate(MedianAgeMarriage_s = (MedianAgeMarriage - mean(MedianAgeMarriage)) /
+           sd(MedianAgeMarriage))
+```
+
+The likelihood for model `b5.1` is 
+
+$$
+\begin{eqnarray}
+\text{Divorce}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{MedianAgeMarriage_s}_i \\
+\alpha & \sim & \text{Normal}(0, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.1)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, Divorce, MedianAgeMarriage_s), index = letters[1:4]) %>% 
+  mutate(alpha       = rnorm(n = n(), mean = 0, sd = 10),
+         beta        = rnorm(n = n(), mean = 0, sd = 1),
+         sigma       = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_Divorce = rnorm(n = n(),
+                             mean = alpha + beta * MedianAgeMarriage_s,
+                             sd   = sigma)) %>% 
+  
+  ggplot(aes(x = Divorce, y = sim_Divorce)) +
+  geom_abline(color = "white") +
+  geom_point(alpha = 1/2, size = 1/2) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~index, scales = "free_y", ncol = 4)
+```
+
+We're going to be making a lot of plots of that same structure, just with different variables on the x and the y. To streamline our code, let's make a custom plotting function, `make_scatter()`.
+
+```{r}
+make_scatter <- function(data, mapping, ...){
+  ggplot(data, mapping) +
+  geom_abline(color = "white") +
+  geom_point(alpha = 1/2, size = 1/2) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~index, scales = "free_y", ncol = 4)
+}
+```
+
+We'll put it to use in subsequent plots. To learn more about wrapping custom plots into custom functions, check out Chapter 12 of Wickham's [*ggplot2, Elegant graphics for data analysis*](https://github.com/hadley/ggplot2-book).
+
+## `b5.2`
+
+Here we'll officially standardize the predictor, `MedianAgeMarriage`.
+
+```{r}
+d <-
+  d %>%
+  mutate(Marriage_s = (Marriage - mean(Marriage)) / sd(Marriage))
+```
+
+The likelihood for model `b5.2` is 
+
+$$
+\begin{eqnarray}
+\text{Divorce}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{Marriage_s}_i \\
+\alpha & \sim & \text{Normal}(0, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.2)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, Divorce, Marriage_s), index = letters[1:4]) %>% 
+  mutate(alpha       = rnorm(n = n(), mean = 0, sd = 10),
+         beta        = rnorm(n = n(), mean = 0, sd = 1),
+         sigma       = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_Divorce = rnorm(n = n(), 
+                             mean = alpha + beta * Marriage_s, 
+                             sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = Divorce, y = sim_Divorce))
+```
+
+## `b5.3`
+
+Here's the likelihood for `b5.3`, the first multivariable model:
+
+$$
+\begin{eqnarray}
+\text{Divorce}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{Marriage_s}_i + \beta_2 \text{MedianAgeMarriage_s}_i \\
+\alpha & \sim & \text{Normal}(0, 10) \\
+\beta_1 & \sim & \text{Normal}(0, 1) \\
+\beta_2 & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.3)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, Divorce, Marriage_s, MedianAgeMarriage_s), index = letters[1:4]) %>% 
+  mutate(alpha       = rnorm(n = n(), mean = 0, sd = 10),
+         beta_1      = rnorm(n = n(), mean = 0, sd = 1),
+         beta_2      = rnorm(n = n(), mean = 0, sd = 1),
+         sigma       = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_Divorce = rnorm(n = n(),
+                             mean = alpha + beta_1 * Marriage_s + beta_2 * MedianAgeMarriage_s,
+                             sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = Divorce, y = sim_Divorce))
+```
+
+## `b5.4`
+
+The next model, `b5.4`, was for the first predictor residual plot. So the criterion has changed. Here's the likelihood:
+
+$$
+\begin{eqnarray}
+\text{Marriage_s}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{MedianAgeMarriage_s}_i \\
+\alpha & \sim & \text{Normal}(0, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.4)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, Marriage_s, MedianAgeMarriage_s), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = 0, sd = 10),
+         beta           = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_Marriage_s = rnorm(n = n(),
+                                mean = alpha + beta * MedianAgeMarriage_s, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = Marriage_s, y = sim_Marriage_s))
+```
+
+## `b5.4b`
+
+We do the reverse for model `b5.4b`.
+
+$$
+\begin{eqnarray}
+\text{MedianAgeMarriage_s}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{Marriage_s}_i \\
+\alpha & \sim & \text{Normal}(0, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.4)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, Marriage_s, MedianAgeMarriage_s), index = letters[1:4]) %>% 
+  mutate(alpha                   = rnorm(n = n(), mean = 0, sd = 10),
+         beta                    = rnorm(n = n(), mean = 0, sd = 1),
+         sigma                   = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_MedianAgeMarriage_s = rnorm(n = n(), 
+                                         mean = alpha + beta * Marriage_s,
+                                         sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = MedianAgeMarriage_s, y = sim_MedianAgeMarriage_s))
+```
+
+## `b5.5`
+
+```{r, message = F}
+data(milk)
+d <- milk
+rm(milk)
+```
+
+Here are the new `milk` data.
+
+```{r}
+glimpse(d)
+```
+
+The likelihood for `b5.5` is
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{neocortex.perc}_i \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{HalfCauchy}(0, 1)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
+set.seed(5.5)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, neocortex.perc), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = 0, sd = 10),
+         beta           = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = rcauchy(n = n(), location = 0, scale = 10) %>% abs()) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(),
+                                mean = alpha + beta * neocortex.perc,
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.6`
+
+The next model requires a new variable.
+
+```{r}
+d <-
+  d %>%
+  mutate(log_mass = log(mass))
+```
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{log_mass}_i \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 1)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.6)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, log_mass), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = 0, sd = 10),
+         beta           = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta * log_mass, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.7`
+
+The likelihood for `b5.7`, the multivariable `milk` model, is:
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log_mass}_i \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta_1 & \sim & \text{Normal}(0, 1) \\
+\beta_2 & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 1)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
+set.seed(5.7)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, neocortex.perc, log_mass), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = 0, sd = 10),
+         beta_1         = rnorm(n = n(), mean = 0, sd = 1),
+         beta_2         = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta_1 * neocortex.perc + beta_2 * log_mass, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.8`
+
+For the next few models, let's simulate some leg data.
+
+```{r}
+N <- 100
+set.seed(531)
+
+d <- 
+  tibble(height    = rnorm(N, mean = 10, sd = 2),
+         leg_prop  = runif(N, min = 0.4, max = 0.5)) %>% 
+  mutate(leg_left  = leg_prop*height + rnorm(N, mean = 0, sd = 0.02),
+         leg_right = leg_prop*height + rnorm(N, mean = 0, sd = 0.02))
+```
+
+The likelihood for `b5.8` is
+
+$$
+\begin{eqnarray}
+\text{height}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{leg_left}_i + \beta_2 \text{leg_right}_i \\
+\alpha & \sim & \text{Normal}(10, 100) \\
+\beta_1 & \sim & \text{Normal}(2, 10) \\
+\beta_2 & \sim & \text{Normal}(2, 10) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.8)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, height, leg_left, leg_right), index = letters[1:4]) %>% 
+  mutate(alpha      = rnorm(n = n(), mean = 10, sd = 100),
+         beta_1     = rnorm(n = n(), mean = 2, sd = 10),
+         beta_2     = rnorm(n = n(), mean = 2, sd = 10),
+         sigma      = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_height = rnorm(n = n(),
+                            mean = alpha + beta_1 * leg_left + beta_2 * leg_right,
+                            sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = height, y = sim_height))
+```
+
+## `b5.9`
+
+Now we ditch one of the leg lengths, here's the likelihood for the simplified univariable model, `b5.9`
+
+$$
+\begin{eqnarray}
+\text{height}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{leg_left}_i \\
+\alpha & \sim & \text{Normal}(10, 100) \\
+\beta & \sim & \text{Normal}(2, 10) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.9)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, height, leg_left), index = letters[1:4]) %>% 
+  mutate(alpha      = rnorm(n = n(), mean = 10, sd = 100),
+         beta       = rnorm(n = n(), mean = 2, sd = 10),
+         sigma      = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_height = rnorm(n = n(),
+                            mean = alpha + beta * leg_left,
+                            sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = height, y = sim_height))
+```
+
+## `b5.10`
+
+Return to the `milk` data.
+
+```{r, message = F}
+data(milk)
+d <- milk
+rm(milk)
+```
+
+Here's the likelihood for `b5.10`, the univariable model with `perc.fat`
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{perc.fat}_i \\
+\alpha & \sim & \text{Normal}(0.6, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.10)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, perc.fat), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = .6, sd = 10),
+         beta           = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta * perc.fat, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.11`
+
+The likelihood for the alternative univariable model, `b5.11`, is
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{perc.lactose}_i \\
+\alpha & \sim & \text{Normal}(0.6, 10) \\
+\beta & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.11)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, perc.lactose), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = .6, sd = 10),
+         beta           = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta * perc.lactose, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.12`
+
+The likelihood for `b5.12`, the multivariable model, is
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{perc.fat}_i + \beta_2 \text{perc.lactose}_i \\
+\alpha & \sim & \text{Normal}(0.6, 10) \\
+\beta_1 & \sim & \text{Normal}(0, 1) \\
+\beta_2 & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.12)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, perc.fat, perc.lactose), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = .6, sd = 10),
+         beta_1         = rnorm(n = n(), mean = 0, sd = 1),
+         beta_2         = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta_1 * perc.fat + beta_2 * perc.lactose, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.13`
+
+Let's simulate data, again.
+
+```{r}
+N <- 100
+
+set.seed(17)
+d <- 
+  tibble(h0        = rnorm(N, mean = 10, sd = 2), 
+         treatment = rep(0:1, each = N / 2),
+         fungus    = rbinom(N, size = 1, prob = .5 - treatment * 0.4),
+         h1        = h0 + rnorm(N, mean = 5 - 3 * fungus, sd = 1))
+```
+
+The likelihood for the first multivariable `h1` model is
+
+$$
+\begin{eqnarray}
+\text{h1}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{h0}_i + \beta_2 \text{treatment}_i + \beta_3 \text{fungus}_i \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta_1 & \sim & \text{Normal}(0, 10) \\
+\beta_2 & \sim & \text{Normal}(0, 10) \\
+\beta_3 & \sim & \text{Normal}(0, 10) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.13)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, h1, h0, treatment, fungus), index = letters[1:4]) %>% 
+  mutate(alpha  = rnorm(n = n(), mean = 0, sd = 100),
+         beta_1 = rnorm(n = n(), mean = 0, sd = 10),
+         beta_2 = rnorm(n = n(), mean = 0, sd = 10),
+         beta_3 = rnorm(n = n(), mean = 0, sd = 10),
+         sigma  = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_h1 = rnorm(n = n(),
+                        mean = alpha + beta_1 * h0 + beta_2 * treatment + beta_3 * fungus,
+                        sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = h1, y = sim_h1))
+```
+
+## `b5.14`
+
+The likelihood for the more-reasonable multivariable model is
+
+$$
+\begin{eqnarray}
+\text{h1}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{h0}_i + \beta_2 \text{treatment}_i \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta_1 & \sim & \text{Normal}(0, 10) \\
+\beta_2 & \sim & \text{Normal}(0, 10) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.14)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, h1, h0, treatment), index = letters[1:4]) %>% 
+  mutate(alpha  = rnorm(n = n(), mean = 0, sd = 100),
+         beta_1 = rnorm(n = n(), mean = 0, sd = 10),
+         beta_2 = rnorm(n = n(), mean = 0, sd = 10),
+         sigma  = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_h1 = rnorm(n = n(),
+                        mean = alpha + beta_1 * h0 + beta_2 * treatment,
+                        sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = h1, y = sim_h1))
+```
+
+## `b5.15`
+
+Now load the `Howell1` data.
+
+```{r, message = F}
+data(Howell1)
+d <- Howell1
+rm(Howell1)
+```
+
+The likelihood for `5.15`, the univariable `height` model, is
+
+$$
+\begin{eqnarray}
+\text{height}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{male}_i \\
+\alpha & \sim & \text{Normal}(178, 100) \\
+\beta & \sim & \text{Normal}(0, 10) \\
+\sigma & \sim & \text{HalfCauchy}(0, 2)
+\end{eqnarray}
+$$
+
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.15)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, height, male), index = letters[1:4]) %>% 
+  mutate(alpha      = rnorm(n = n(), mean = 178, sd = 100),
+         beta       = rnorm(n = n(), mean = 0, sd = 10),
+         sigma      = rcauchy(n = n(), location = 0, scale = 2) %>% abs()) %>% 
+  mutate(sim_height = rnorm(n = n(),
+                            mean = alpha + beta * male,
+                            sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = height, y = sim_height))
+```
+
+## `b5.15b`
+
+Here's the likelihood for the reparameterized `b5.15b` model
+
+$$
+\begin{eqnarray}
+\text{height}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \beta_1 \text{male}_i + \beta_2 \text{female}_i \\
+\beta_1 & \sim & \text{Normal}(178, 100) \\
+\beta_2 & \sim & \text{Normal}(178, 100) \\
+\sigma & \sim & \text{HalfCauchy}(0, 2)
+\end{eqnarray}
+$$
+
+The model requires us to make a `female` dummy.
+
+```{r}
+d <-
+  d %>%
+  mutate(female = 1 - male)
+```
+
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.15)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, height, male, female), index = letters[1:4]) %>% 
+  mutate(beta_1     = rnorm(n = n(), mean = 178, sd = 100),
+         beta_2     = rnorm(n = n(), mean = 178, sd = 100),
+         sigma      = rcauchy(n = n(), location = 0, scale = 2) %>% abs()) %>% 
+  mutate(sim_height = rnorm(n = n(),
+                            mean =  beta_1 * male + beta_2 * female,
+                            sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = height, y = sim_height))
+```
+
+## `b5.16`
+
+Reload the `milk` data.
+
+```{r, message = F}
+data(milk)
+d <- milk
+rm(milk)
+```
+
+As `clade` has 4 categories, let's convert these to 4 dummy variables.
+
+```{r}
+d <- 
+  d %>%
+  mutate(clade_nwm = ifelse(clade == "New World Monkey", 1, 0),
+         clade_owm = ifelse(clade == "Old World Monkey", 1, 0),
+         clade_s   = ifelse(clade == "Strepsirrhine", 1, 0),
+         clade_ape = ifelse(clade == "Ape", 1, 0))
+```
+
+Here's the likelihood using three of those dummies
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{clade_nwm}_i + \beta_2 \text{clade_owm}_i + \beta_3 \text{clade_s}_i  \\
+\alpha & \sim & \text{Normal}(0.6, 10) \\
+\beta_1 & \sim & \text{Normal}(0, 1) \\
+\beta_2 & \sim & \text{Normal}(0, 1) \\
+\beta_3 & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.16)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, clade_nwm, clade_owm, clade_s), index = letters[1:4]) %>% 
+  mutate(alpha          = rnorm(n = n(), mean = 0.6, sd = 10),
+         beta_1         = rnorm(n = n(), mean = 0, sd = 1),
+         beta_2         = rnorm(n = n(), mean = 0, sd = 1),
+         beta_3         = rnorm(n = n(), mean = 0, sd = 1),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta_1 * clade_nwm + beta_2 * clade_owm + beta_3 * clade_s, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## `b5.17`
+
+The likelihood for the alternative parameterization is
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \beta_1 \text{clade_nwm}_i + \beta_2 \text{clade_owm}_i + \beta_3 \text{clade_s}_i + \beta_4 \text{clade_ape}_i  \\
+\beta_1 & \sim & \text{Normal}(0.6, 10) \\
+\beta_2 & \sim & \text{Normal}(0.6, 10) \\
+\beta_3 & \sim & \text{Normal}(0.6, 10) \\
+\beta_4 & \sim & \text{Normal}(0.6, 10) \\
+\sigma & \sim & \text{Uniform}(0, 10)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(5.17)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, clade_nwm, clade_owm, clade_s, clade_ape), index = letters[1:4]) %>% 
+  mutate(beta_1         = rnorm(n = n(), mean = 0.6, sd = 10),
+         beta_2         = rnorm(n = n(), mean = 0.6, sd = 10),
+         beta_3         = rnorm(n = n(), mean = 0.6, sd = 10),
+         beta_4         = rnorm(n = n(), mean = 0.6, sd = 10),
+         sigma          = runif(n = n(), 0, 10)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = beta_1 * clade_nwm + beta_2 * clade_owm + beta_3 * clade_s + beta_4 * clade_ape, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## Reference {-}
+
+[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+
+## Session info {-}
+
+```{r}
+sessionInfo()
+```
+
+```{r, warning = F, echo = F}
+rm(d, N, make_scatter)
+```
+

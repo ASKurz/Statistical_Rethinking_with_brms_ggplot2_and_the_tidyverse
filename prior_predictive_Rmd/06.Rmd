@@ -1,0 +1,205 @@
+---
+title: "Ch. 6 Overfitting, Regularization, and Information Criteria"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  html_document
+---
+
+```{r set-options, echo = F, cache = F}
+options(width = 100)
+```
+
+Let's start of by making the data with brain size and body size for seven `species`.
+
+```{r, warning = F, message = F}
+library(tidyverse)
+
+(
+  d <- 
+  tibble(species = c("afarensis", "africanus", "habilis", "boisei", "rudolfensis", "ergaster", "sapiens"), 
+         brain   = c(438, 452, 612, 521, 752, 871, 1350), 
+         mass    = c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5)) %>%
+  mutate(mass_s  = (mass - mean(mass)) / sd(mass))
+  )
+```
+
+Models `b6.1` through `b6.7` were fit with the frequentist `lm()`. Since there are no prior distributions for those models, they leave us on prior predictive distributions to plot. 
+
+## `b6.8`
+
+Here's the likelihood for `b6.8`:
+
+$$
+\begin{eqnarray}
+\text{brain}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{mass_s}_i \\
+\alpha & \sim & \text{Normal}(0, 1000) \\
+\beta & \sim & \text{Normal}(0, 1000) \\
+\sigma & \sim & \text{HalfCauchy}(0, 10)
+\end{eqnarray}
+$$
+
+Before we plot, let's make our custom plotting function, `make_scatter()`.
+
+```{r}
+make_scatter <- function(data, mapping, ...){
+  ggplot(data, mapping) +
+  geom_abline(color = "white") +
+  geom_point(alpha = 1/2, size = 1/2) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~index, scales = "free_y", ncol = 4)
+}
+```
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(6.8)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, brain, mass_s), index = letters[1:4]) %>% 
+  mutate(alpha     = rnorm(n = n(), mean = 0, sd = 1000),
+         beta      = rnorm(n = n(), mean = 0, sd = 1000),
+         sigma     = rcauchy(n = n(), location = 0, scale = 10) %>% abs()) %>% 
+  mutate(sim_brain = rnorm(n = n(), 
+                           mean = alpha + beta * mass_s, 
+                           sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = brain, y = sim_brain))
+```
+
+
+
+
+Load the `milk` data from earlier in the text.
+
+```{r, message = F, warning = F}
+library(rethinking)
+
+data(milk)
+d <- 
+  milk %>%
+  filter(complete.cases(.)) %>%
+  mutate(neocortex = neocortex.perc / 100)
+
+rm(milk)
+```
+
+The likelihood for model `b6.11` is 
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu, \sigma) \\
+\mu & \sim & \text{Uniform}(-1000, 1000) \\
+\sigma & \sim & \text{Uniform}(0, 100)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(6.11)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g), index = letters[1:4]) %>% 
+  mutate(alpha          = runif(n = n(), -1000, 1000),
+         sigma          = runif(n = n(), 0, 100)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), mean = alpha, sd = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+Here's the likelihood for `b6.12`, the univariable model with `neocortex` as the predictor:
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{neocortex}_i \\
+\alpha & \sim & \text{Uniform}(-1000, 1000) \\
+\beta & \sim & \text{Uniform}(-1000, 1000) \\
+\sigma & \sim & \text{Uniform}(0, 100)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(6.12)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, neocortex), index = letters[1:4]) %>% 
+  mutate(alpha          = runif(n = n(), -1000, 1000),
+         beta           = runif(n = n(), -1000, 1000),
+         sigma          = runif(n = n(), 0, 100)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta * neocortex, 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+Now here's the likelihood for `b6.13`, the univariable model with `log(mass)` as the predictor:
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta \text{log(mass)}_i \\
+\alpha & \sim & \text{Uniform}(-1000, 1000) \\
+\beta & \sim & \text{Uniform}(-1000, 1000) \\
+\sigma & \sim & \text{Uniform}(0, 100)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(6.13)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, mass), index = letters[1:4]) %>% 
+  mutate(alpha          = runif(n = n(), -1000, 1000),
+         beta           = runif(n = n(), -1000, 1000),
+         sigma          = runif(n = n(), 0, 100)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta * log(mass), 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+Finally, here's the multivariable likelihood, model `b6.14`:
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{neocortex}_i + \beta_2 \text{log(mass)}_i \\
+\alpha & \sim & \text{Uniform}(-1000, 1000) \\
+\beta_1 & \sim & \text{Uniform}(-1000, 1000) \\
+\beta_2 & \sim & \text{Uniform}(-1000, 1000) \\
+\sigma & \sim & \text{Uniform}(0, 100)
+\end{eqnarray}
+$$
+
+```{r, fig.width = 8, fig.height = 2}
+set.seed(6.14)
+d %>% 
+  mutate(row = 1:n()) %>% 
+  expand(nesting(row, kcal.per.g, neocortex, mass), index = letters[1:4]) %>% 
+  mutate(alpha          = runif(n = n(), -1000, 1000),
+         beta_1         = runif(n = n(), -1000, 1000),
+         beta_2         = runif(n = n(), -1000, 1000),
+         sigma          = runif(n = n(), 0, 100)) %>% 
+  mutate(sim_kcal.per.g = rnorm(n = n(), 
+                                mean = alpha + beta_1 * neocortex + beta_2 * log(mass), 
+                                sd   = sigma)) %>% 
+  
+  make_scatter(aes(x = kcal.per.g, y = sim_kcal.per.g))
+```
+
+## Reference {-}
+
+[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+
+## Session info {-}
+
+```{r}
+sessionInfo()
+```
+
+```{r, warning = F, echo = F}
+rm(d, make_scatter)
+```
+
