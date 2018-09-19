@@ -67,11 +67,13 @@ d %>%
   theme(legend.position = "none")
 ```
 
+As a quick aside, check out Suzan Baert's blog post [*Data Wrangling Part 2: Transforming your columns into the right shape*](https://suzan.rbind.io/2018/02/dplyr-tutorial-2/) for an extensive discussion on `dplyr::mutate()` and `dplyr::gather()`.
+
 Here's the basic structure of the possibilities per marble draw.
 
 ```{r}
-tibble(draw    = 1:3,
-       marbles = 4) %>% 
+tibble(draw            = 1:3,
+       marbles         = 4) %>% 
   mutate(possibilities = marbles ^ draw)
 ```
 
@@ -83,8 +85,8 @@ If you walk that out a little, you can structure the data required to approach F
   tibble(position = c((1:4^1) / 4^0, 
                       (1:4^2) / 4^1, 
                       (1:4^3) / 4^2),
-         draw = rep(1:3, times = c(4^1, 4^2, 4^3)),
-         fill = rep(c("b", "w"), times = c(1, 3)) %>% 
+         draw     = rep(1:3, times = c(4^1, 4^2, 4^3)),
+         fill     = rep(c("b", "w"), times = c(1, 3)) %>% 
            rep(., times = c(4^0 + 4^1 + 4^2)))
   )
 ```
@@ -155,7 +157,7 @@ d <-
   mutate(denominator = ifelse(draw == 1, .5,
                               ifelse(draw == 2, .5 / 4,
                                      .5 / 4^2))) %>% 
-  mutate(position = position - denominator)
+  mutate(position    = position - denominator)
 
 d
 ```
@@ -276,6 +278,7 @@ d %>%
 Letting "w" = a white dot and "b" = a blue dot, we might recreate the table in the middle of page 23 like so.
 
 ```{r}
+# If we make two custom functions, here, it will simplify the code within `mutate()`, below
 n_blue <- function(x){
   rowSums(x == "b")
 }
@@ -315,7 +318,7 @@ d <-
   ) %>% 
   # here are the fill colors
   mutate(fill = c(rep(c("w", "b"), times = c(1, 3)) %>% rep(., times = c(4^0 + 4^1 + 4^2)),
-                  rep(c("w", "b"), each  = 2      ) %>% rep(., times = c(4^0 + 4^1 + 4^2)),
+                  rep(c("w", "b"), each  = 2)       %>% rep(., times = c(4^0 + 4^1 + 4^2)),
                   rep(c("w", "b"), times = c(3, 1)) %>% rep(., times = c(4^0 + 4^1 + 4^2)))) %>% 
   # now we need to shift the positions over in accordance with draw, like before
   mutate(denominator = ifelse(draw == 1, .5,
@@ -492,6 +495,8 @@ We might update to reproduce the table a the top of page 26, like this.
   )
 ```
 
+To learn more about `dplyr::select()` and `dplyr::rename()`, check out Baert's exhaustive blog post [*Data Wrangling Part 1: Basic to Advanced Ways to Select Columns*](https://suzan.rbind.io/2018/01/dplyr-tutorial-1/).
+
 ### From counts to probability.
 
 The opening sentences are important: "It is helpful to think of this strategy as adhering to a principle of honest ignorance: *When we don't know what caused the data, potential causes that may produce the data in more ways are more plausible*" (p. 26, *emphasis* in the original).
@@ -606,6 +611,8 @@ d %>%
 
 If it wasn't clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don't normalize (i.e., divide the density by the sum of the density), their respective heights don't match up with those in the text. Furthermore, it’s the normalization that makes them directly comparable. 
 
+To learn more about `dplyr::group_by()` and its opposite `dplyr::ungroup()`, check out [*R4DS*, Chapter 5](http://r4ds.had.co.nz/transform.html). For more on `left_join()`, check out *R4DS* Chapters [12.3](http://r4ds.had.co.nz/tidy-data.html#spreading-and-gathering) and [13.4](http://r4ds.had.co.nz/relational-data.html#mutating-joins). And to learn about `tidyr::expand()`, go [here](https://tidyr.tidyverse.org/reference/expand.html).
+
 ### Evaluate.
 
 It's worth repeating the **Rethinking: Deflationary statistics** box, here.
@@ -689,6 +696,8 @@ d <-
          row = factor(row, levels = c("flat", "stepped", "Laplace"))) 
 ```
 
+To learn more about `dplyr::arrange`, chech out [*R4DS*, Chapter 5.3](http://r4ds.had.co.nz/transform.html#arrange-rows-with-arrange).
+
 In order to avoid unnecessary facet labels for the rows, it was easier to just make each column of the plot separately and then recombine them with `gridExtra::grid.arrange()`.
 
 ```{r, fig.width = 6, fig.height = 5, warning = F, message = F}
@@ -737,6 +746,8 @@ grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
 I'm not sure if it's the same McElreath used in the text, but the formula I used for the tirangle-shaped prior is the [Laplace distribution](http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html) with a location of .5 and a dispersion of .25.
+
+Also, to learn all about `dplyr::filter()`, check out Baert's [*Data Wrangling Part 3: Basic and more advanced ways to filter rows*](https://suzan.rbind.io/2018/02/dplyr-tutorial-3/).
 
 ### Grid approximation.
 
