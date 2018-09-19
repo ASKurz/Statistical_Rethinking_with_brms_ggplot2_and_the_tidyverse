@@ -52,7 +52,7 @@ n_tirals  <- 9
   d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
        # note we're still using a flat uniform prior
-       prior        = 1) %>% 
+         prior      = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
   mutate(posterior  = likelihood * prior) %>% 
   mutate(posterior  = posterior / sum(posterior))
@@ -115,6 +115,8 @@ d %>%
   filter(p_grid < .5) %>% 
   summarise(sum = sum(posterior))
 ```
+
+To learn more about `dplyr::summarise()` and related functions, check out Baert's [*Data Wrangling Part 4: Summarizing and slicing your data*](https://suzan.rbind.io/2018/04/dplyr-tutorial-4/) and [Chapter 5.6](http://r4ds.had.co.nz/transform.html#grouped-summaries-with-summarise) of *R4DS*.
 
 If what you want is a frequency based on filtering by `samples`, then you might use `n()` within `summarise()`.
 
@@ -532,7 +534,7 @@ d <- tibble(draws = rbinom(n_draws, size = 2, prob = .7))
 d %>% 
   group_by(draws) %>% 
   count() %>% 
-  mutate(proportion = n/nrow(d))
+  mutate(proportion = n / nrow(d))
 ```
 
 Here's the simulation updated so $n = 9$.
@@ -566,9 +568,9 @@ simulate_binom <- function(n, probability){
 d <-
   tibble(n = c(3, 6, 9)) %>% 
   expand(n, probability = c(.3, .6, .9)) %>% 
-  mutate(draws = map2(n, probability, simulate_binom)) %>% 
+  mutate(draws       = map2(n, probability, simulate_binom)) %>% 
   ungroup() %>% 
-  mutate(n = str_c("n = ", n),
+  mutate(n           = str_c("n = ", n),
          probability = str_c("p = ", probability)) %>% 
   unnest()
 
@@ -650,8 +652,8 @@ Let's use it to simulate and make the middle panels of Figure 3.6.
 set.seed(3322)
 samples <-
   samples %>% 
-  mutate(w = rbinom(n_draws, size =  n_trials,  prob = samples)) %>%
-  mutate(key = str_c("p = ", round(samples, digits = 1)))
+  mutate(w   = rbinom(n_draws, size =  n_trials,  prob = samples),
+         key = str_c("p = ", round(samples, digits = 1)))
 
 # the plot
 samples  %>% 
@@ -804,7 +806,7 @@ Open brms.
 library(brms)
 ```
 
-In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for chapter 2.
+In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
 
 ```{r fit1, cache = T, message = F, warning = F, results = 'hide'}
 fit1 <-
@@ -836,7 +838,6 @@ glimpse(fitted_samples)
 ```
 
 By default, we have a generically-named vector `V1` of 4000 samples. We'll explain the defaults in later chapters. For now, notice we can view these in a density.
-
 
 ```{r, fig.width = 7, fig.height = 2}
 fitted_samples %>% 
