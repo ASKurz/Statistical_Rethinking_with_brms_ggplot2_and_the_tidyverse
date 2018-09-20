@@ -113,9 +113,9 @@ In the `runif()` part of that code, we generated 12 random draws from the unifor
 
 ```{r}
 set.seed(1)
-tibble(a      = 1,
-       b      = runif(12, 0, 0.1)) %>% 
-  mutate(c    = a + b) %>% 
+tibble(a   = 1,
+       b   = runif(12, 0, 0.1)) %>% 
+  mutate(c = a + b) %>% 
   summarise(p = prod(c))
 ```
 
@@ -194,11 +194,11 @@ The Gaussian is
 
 But they can still be useful.
 
-## A Gaussian model of height
+#### Epistemological justification.
 
-> Another route to justifying the Gaussian as our choice of skeleton, and a route that will help us appreciate later why it is often a poor choice, is that it represents a particular state of ignorance. When all we know or are willing to say about a distribution of measures (measures are contiguous values on the real number line) is their mean and variance, then the Gaussian distribution arises as the most consistent with our assumptions. 
+> Another route to justifying the Gaussian as our choice of skeleton, and a route that will help us appreciate later why it is often a poor choice, is that it represents a particular state of ignorance. When all we know or are willing to say about a distribution of measures (measures are continuous values on the real number line) is their mean and variance, then the Gaussian distribution arises as the most consistent with our assumptions.
 >
-> If you don’t think the distribution should be Gaussian, then that implies that you know something else that you should tell your golem about, something that would improve inference. (pp. 75--76)
+> That is to say that the Gaussian distribution is the most natural expression of our state of ignorance, because if all we are willing to assume is that a measure has finite variance, the Gaussian distribution is the shape that can be realized in the largest number of ways and does not introduce any new assumptions. It is the least surprising and least informative assumption to make. In this way, the Gaussian is the distribution most consistent with our assumptions… If you don’t think the distribution should be Gaussian, then that implies that you know something else that you should tell your golem about, something that would improve inference. (pp. 75--76)
 
 In the **Overthinking: Gaussian distribution** box that follows, McElreath gave the formula. Let $y$ be the criterion, $\mu$ be the mean, and $\sigma$ be the standard deviation. Then the probability density of some Gaussian value $y$ is
 
@@ -236,15 +236,37 @@ We can break McElreath's R code 4.6 down a little bit with a tibble like so.
 # how many `p_grid` points would you like?
 n_points <- 100
 
-tibble(w = 6, 
-       n = 9,
-       p_grid       = seq(from = 0, to = 1, length.out = n_points)) %>% 
+d <-
+  tibble(w          = 6, 
+         n          = 9,
+         p_grid     = seq(from = 0, to = 1, length.out = n_points)) %>% 
   mutate(prior      = dunif(p_grid, 0, 1),
          likelihood = dbinom(w, n, p_grid)) %>% 
   mutate(posterior  = likelihood * prior) %>% 
   # this last bit converts the posterior to the probability scale
   mutate(posterior  = posterior / sum(posterior))
+
+head(d)
 ```
+
+In case you were curious, here's what they look like:
+
+```{r, fig.width = 8, fig.height = 2.25}
+d %>% 
+  select(-w, -n) %>% 
+  gather(key, value, -p_grid) %>% 
+  # this line allows us to dictate the order the panels will appear in
+  mutate(key = factor(key, levels = c("prior", "likelihood", "posterior"))) %>% 
+  
+  ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
+  geom_ribbon() +
+  scale_fill_manual(values = c("blue", "red", "purple")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(legend.position = "none") +
+  facet_wrap(~key, scales = "free")
+```
+
+The posterior is a combination of the prior and the likelihood. And when the prior is flat across the parameter space, the posterior is just the likelihood re-expressed as a probability.
 
 ## A Gaussian model of height
 
@@ -355,7 +377,7 @@ As McElreath wrote, we've made a "vaguely bell-shaped density with thick tails" 
 
 ### Grid approximation of the posterior distribution. 
 
-As McElreath explained, you'll never use this for practical data analysis. But let's play along.
+As McElreath explained, you'll never use this for practical data analysis. But I found this useful for understanding what exactly we're doing with Bayesian estimation. So let's play along.
 
 ```{r}
 n <- 200
@@ -556,8 +578,6 @@ b4.1 <-
       iter = 31000, warmup = 30000, chains = 4, cores = 4)
 ```
 
-Note the warning message. [Stan](http://mc-stan.org), which is the [engine under the hood of our brms vehicle](https://github.com/paul-buerkner/brms), gets concerned when you use priors with hard bounds on parameters for which we wouldn't expect hard bounds. There's no reason to expect a hard upper bound on $\sigma$, so Stan barks. Beware of unneeded hard bounds.
-
 McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in Chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
 
 ```{r b4.1_half_cauchy, cache = T, message = F, warning = F}
@@ -605,7 +625,7 @@ b4.2 <-
       height ~ 1,
       prior = c(prior(normal(178, .1), class = Intercept),
                 prior(uniform(0, 50), class = sigma)),
-      chains = 4, iter = 3000, warmup = 2000, cores = 4)
+      iter = 3000, warmup = 2000, chains = 4, cores = 4)
 ```
 
 ```{r, fig.width = 6, fig.height = 2.5}
@@ -861,7 +881,7 @@ N <- 10
 
 b10 <- 
   brm(data = d2 %>%
-        slice(1:N), 
+        slice(1:N),  # note our tricky use of `N` and `slice()`
       family = gaussian,
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
@@ -1409,6 +1429,7 @@ ggplot(data = d,
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank()) +
+  
   # Here it is!
   scale_x_continuous("standardized weight converted back",
                      breaks = at,
