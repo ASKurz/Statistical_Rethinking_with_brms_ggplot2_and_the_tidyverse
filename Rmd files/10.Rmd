@@ -56,7 +56,7 @@ $$
 \end{eqnarray}
 $$
 
-```{r b10.1, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.1, cache = T, message = F, results = "hide"}
 b10.1 <-
   brm(data = d, family = binomial,
       pulled_left ~ 1,
@@ -84,7 +84,7 @@ fixef(b10.1) %>%
 
 The next two chimp models add predictors in the usual way.
 
-```{r b10.2_and b10.3, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.2_and b10.3, cache = T, message = F, results = "hide"}
 b10.2 <-
   brm(data = d, family = binomial,
       pulled_left ~ 1 + prosoc_left,
@@ -109,7 +109,7 @@ w_b10.3 <- waic(b10.3)
 compare_ic(w_b10.1, w_b10.2, w_b10.3)
 ```
 
-For this chapter, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s *Moonrise2* palette.
+For this chapter, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s `Moonrise2` palette.
 
 ```{r, message = F, fig.width = 3, fig.height = 1}
 # install.packages("wesanderson", dependencies = T)
@@ -267,7 +267,7 @@ b10.4 <-
   brm(data = d, family = binomial,
       pulled_left ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left ,
       prior(normal(0, 10), class = b),
-      chains = 2, iter = 2500, warmup = 500, cores = 2,
+      iter = 2500, warmup = 500, chains = 2, cores = 2,
       control = list(adapt_delta = 0.9))
 ```
 
@@ -349,7 +349,7 @@ ftd %>%
   facet_wrap(~actor)
 ```
 
-#### Overthinking: Using the ~~by~~ [`group_by()`] function.
+#### Overthinking: Using the ~~by~~ `group_by()` function.
 
 Let's work within the tidyverse, instead. If you wanted to compute the proportion of trials `pulled_left == 1` for each combination of `prosoc_left`, `condition`, and chimp `actor`, you'd put those last three variables within `group_by()` and then compute the `mean()` of `pulled_left` within `summarise()`.
 
@@ -376,9 +376,9 @@ d_aggregated %>%
   filter(actor %in% c(1, 2))
 ```
 
-To fit an aggregated binomial model in brms, we use the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or an index variable.
+To fit an aggregated binomial model in brms, we use the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. We'll see an example of the latter in just a bit.
 
-```{r b10.5, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.5, cache = T, message = F, results = "hide"}
 b10.5 <-
   brm(data = d_aggregated, family = binomial,
       x | trials(18) ~ 1 + prosoc_left + condition:prosoc_left ,
@@ -417,7 +417,7 @@ rm(UCBadmit)
 d
 ```
 
-Now compute our newly-constructed predictor, `male`.
+Now compute our newly-constructed dummy variable, `male`.
 
 ```{r}
 d <- 
@@ -438,7 +438,7 @@ $$
 
 The second model omits the `male` predictor.
 
-```{r b10.6_and_b10.7, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.6_and_b10.7, cache = T, message = F, results = "hide"}
 b10.6 <-
   brm(data = d, family = binomial,
       admit | trials(applications) ~ 1 + male ,
@@ -660,7 +660,7 @@ predict(b10.9) %>%
   as_tibble() %>% 
   bind_cols(d) %>% 
 
-  ggplot(aes(x = case, y   = admit    / applications)) +
+  ggplot(aes(x = case, y = admit / applications)) +
   geom_pointrange(aes(y    = Estimate / applications,
                       ymin = Q2.5     / applications ,
                       ymax = Q97.5    / applications),
@@ -1087,7 +1087,7 @@ Let's make them tidy and add `log_days`.
   tibble(y         = c(y, y_new), 
          days      = c(rep(1, num_days), rep(7, num_weeks)),
          monastery = c(rep(0, num_days), rep(1, num_weeks))) %>%
-  mutate(log_days = log(days))
+  mutate(log_days  = log(days))
 )
 ```
 
@@ -1301,9 +1301,8 @@ post %>%
   ggplot(aes(x = value, y = key, fill = key)) +
   geom_halfeyeh(point_interval = median_qi, .width = .95,
                 color = wes_palette("Moonrise2")[4]) +
-  # scale_y_continuous(NULL, breaks = NULL) +
   scale_fill_manual(values = c(wes_palette("Moonrise2")[1],
-                                wes_palette("Moonrise2")[2])) +
+                               wes_palette("Moonrise2")[2])) +
   labs(title = " Mean admit/reject rates across departments",
        x     = "# applications",
        y     = NULL) +
@@ -1332,7 +1331,7 @@ k <-
   fixef(b_pois) %>%
   as.numeric()
 
-exp(k[1])/(exp(k[1]) + exp(k[2]))
+exp(k[1]) / (exp(k[1]) + exp(k[2]))
 ```
 
 The formula for what we just did in code is
