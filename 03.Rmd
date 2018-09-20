@@ -1,18 +1,24 @@
-Chapter 03. Sampling the Imaginary
-================
-A Solomon Kurz
-2018-09-20
+---
+title: "Chapter 03. Sampling the Imaginary"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  github_document
+---
 
-Sampling the Imaginary
-======================
+```{r set-options, echo = FALSE, cache = FALSE}
+options(width = 100)
+```
+
+# Sampling the Imaginary
 
 If you would like to know the probability someone is a vampire given they test positive to the blood-based vampire test, you compute
 
-$$\\text{Pr(vampire|positive)} = \\frac{\\text{Pr(positive|vampire) Pr(vampire)}}{\\text{Pr(positive)}}$$
+$$\text{Pr(vampire|positive)} = \frac{\text{Pr(positive|vampire) Pr(vampire)}}{\text{Pr(positive)}}$$
 
 We'll do so within a tibble.
 
-``` r
+```{r, message = F, warning = F}
 library(tidyverse)
 
 tibble(pr_positive_vampire   = .95,
@@ -23,17 +29,9 @@ tibble(pr_positive_vampire   = .95,
   glimpse()
 ```
 
-    ## Observations: 1
-    ## Variables: 5
-    ## $ pr_positive_vampire <dbl> 0.95
-    ## $ pr_positive_mortal  <dbl> 0.01
-    ## $ pr_vampire          <dbl> 0.001
-    ## $ pr_positive         <dbl> 0.01094
-    ## $ pr_vampire_positive <dbl> 0.08683729
-
 Here's the other way of tackling the vampire problem, this time useing the frequency format.
 
-``` r
+```{r}
 tibble(pr_vampire            = 100 / 100000,
        pr_positive_vampire   = 95 / 100,
        pr_positive_mortal    = 99 / 99900) %>% 
@@ -42,18 +40,9 @@ tibble(pr_vampire            = 100 / 100000,
   glimpse()
 ```
 
-    ## Observations: 1
-    ## Variables: 5
-    ## $ pr_vampire          <dbl> 0.001
-    ## $ pr_positive_vampire <dbl> 0.95
-    ## $ pr_positive_mortal  <dbl> 0.000990991
-    ## $ pr_positive         <dbl> 1094
-    ## $ pr_vampire_positive <dbl> 0.08683729
+## Sampling from a grid-like approximate posterior
 
-Sampling from a grid-like approximate posterior
------------------------------------------------
-
-``` r
+```{r}
 # how many grid points would you like?
 n <- 1000
 n_success <- 6
@@ -70,32 +59,15 @@ n_tirals  <- 9
   )
 ```
 
-    ## # A tibble: 1,000 x 4
-    ##     p_grid prior likelihood posterior
-    ##      <dbl> <dbl>      <dbl>     <dbl>
-    ##  1 0           1   0.        0.      
-    ##  2 0.00100     1   8.43e-17  8.43e-19
-    ##  3 0.00200     1   5.38e-15  5.38e-17
-    ##  4 0.00300     1   6.11e-14  6.11e-16
-    ##  5 0.00400     1   3.42e-13  3.42e-15
-    ##  6 0.00501     1   1.30e-12  1.30e-14
-    ##  7 0.00601     1   3.87e-12  3.88e-14
-    ##  8 0.00701     1   9.73e-12  9.74e-14
-    ##  9 0.00801     1   2.16e-11  2.16e-13
-    ## 10 0.00901     1   4.37e-11  4.38e-13
-    ## # ... with 990 more rows
-
-``` r
+```{r}
 samples <- sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)
 
 glimpse(samples)
 ```
 
-    ##  num [1:10000] 0.604 0.68 0.432 0.663 0.407 ...
-
 We'll plot the zigzagging left panel of Figure 3.1 with `geom_line()`. But before we do, we'll need to add a variable numbering the samples. And even before that, perhaps you noticed that `glimpse(samples)` told us `samples` is a numeric vector. Since ggplot2 requires we use data frames, of which tibbles are special case, we'll use `as_tibble()` to convert `samples` to a tibble.
 
-``` r
+```{r}
 samples <-
   samples %>% 
   as_tibble() %>% 
@@ -104,19 +76,9 @@ samples <-
 head(samples)
 ```
 
-    ## # A tibble: 6 x 2
-    ##   value sample_number
-    ##   <dbl>         <int>
-    ## 1 0.604             1
-    ## 2 0.680             2
-    ## 3 0.432             3
-    ## 4 0.663             4
-    ## 5 0.407             5
-    ## 6 0.632             6
-
 But notice what happened. When we simply converted the `samples` vector with `as_tibble()`, that vector was renamed quite generically as `value`. One way around this is with `rename()` (i.e., `rename(samples = value)`). But this is already becoming cumbersome. Here's a more compact way.
 
-``` r
+```{r}
 samples <-
   tibble(samples = sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)) %>% 
   mutate(sample_number = 1:n())
@@ -124,14 +86,9 @@ samples <-
 glimpse(samples)
 ```
 
-    ## Observations: 10,000
-    ## Variables: 2
-    ## $ samples       <dbl> 0.6276276, 0.5675676, 0.4944945, 0.5375375, 0.6266266, 0.7587588, 0.72072...
-    ## $ sample_number <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21...
-
 This time we just made `samples` a vector within a tibble from the start. Anyway, here's the right panel for Figure 3.1.
 
-``` r
+```{r, fig.width = 4, fig.height = 3}
 samples %>% 
   ggplot(aes(x = sample_number, y = samples)) +
   geom_line(size = 1/10) +
@@ -139,11 +96,9 @@ samples %>%
        y = "proportion of water (p)")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-7-1.png)
-
 We'll make the density in the right panel with `geom_density()`.
 
-``` r
+```{r, fig.width = 4, fig.height = 3}
 samples %>% 
   ggplot(aes(x = samples)) +
   geom_density(fill = "black") +
@@ -151,57 +106,39 @@ samples %>%
   xlab("proportion of water (p)")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
-Sampling to summarize
----------------------
+## Sampling to summarize
 
 To get the proportion of water less than some value of `p_grid` within the tidyverse, you'd first `filter()` by that value and then take the `sum()` within `summarise()`.
 
-``` r
+```{r}
 d %>% 
   filter(p_grid < .5) %>% 
   summarise(sum = sum(posterior))
 ```
 
-    ## # A tibble: 1 x 1
-    ##     sum
-    ##   <dbl>
-    ## 1 0.172
-
 To learn more about `dplyr::summarise()` and related functions, check out Baert's [*Data Wrangling Part 4: Summarizing and slicing your data*](https://suzan.rbind.io/2018/04/dplyr-tutorial-4/) and [Chapter 5.6](http://r4ds.had.co.nz/transform.html#grouped-summaries-with-summarise) of *R4DS*.
 
 If what you want is a frequency based on filtering by `samples`, then you might use `n()` within `summarise()`.
 
-``` r
+```{r}
 samples %>% 
   filter(samples < .5) %>% 
   summarise(sum = n() / 1e4)
 ```
 
-    ## # A tibble: 1 x 1
-    ##     sum
-    ##   <dbl>
-    ## 1 0.172
-
 You can use `&` within `filter()`, too.
 
-``` r
+```{r}
 samples %>% 
   filter(samples > .5 & samples < .75) %>% 
   summarise(sum = n() / 1e4)
 ```
 
-    ## # A tibble: 1 x 1
-    ##     sum
-    ##   <dbl>
-    ## 1 0.600
-
 ### Intervals of defined mass.
 
 We'll create the upper two panels for Figure 3.2 with `geom_line()`, `geom_ribbon()`, and a some careful filtering.
 
-``` r
+```{r, fig.width = 3, fig.height = 2.5}
 # upper left panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -210,11 +147,7 @@ d %>%
               aes(ymin = 0, ymax = posterior)) +
   labs(x = "proportion of water (p)",
        y = "density")
-```
 
-![](03_files/figure-markdown_github/unnamed-chunk-12-1.png)
-
-``` r
 # upper right panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -226,68 +159,47 @@ d %>%
        y = "density")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-12-2.png)
-
 We'll come back for the lower two panels in a bit.
 
 Since we've saved our `samples` vector within the well-named `samples` tibble, we'll have to index with `$` within `quantile`.
 
-``` r
+```{r}
 (q_80 <- quantile(samples$samples, prob = .8))
 ```
 
-    ##       80% 
-    ## 0.7617618
-
 That value will come in handy for the lower left panel of Figure 3.2, so we saved it. But anyways, we could `select()` the `samples` vector, extract it from the tibble with `pull()`, and then pump it into `quantile()`:
 
-``` r
+```{r}
 samples %>% 
   select(samples) %>% 
   pull() %>% 
   quantile(prob = .8)
 ```
 
-    ##       80% 
-    ## 0.7617618
-
 And we might also use `quantile()` within `summarise()`.
 
-``` r
+```{r}
 samples %>% 
   summarise(`80th percentile` = quantile(samples, p = .8))
 ```
 
-    ## # A tibble: 1 x 1
-    ##   `80th percentile`
-    ##               <dbl>
-    ## 1             0.762
-
 Here's the `summarise()` approach with two probabilities:
 
-``` r
+```{r}
 samples %>% 
   summarise(`10th percentile` = quantile(samples, p = .1),
             `90th percentile` = quantile(samples, p = .9))
 ```
 
-    ## # A tibble: 1 x 2
-    ##   `10th percentile` `90th percentile`
-    ##               <dbl>             <dbl>
-    ## 1             0.449             0.813
-
 The tydiverse approach is nice in that that family of functions typically returns a data frame. But sometimes you just want your values in a numeric vector for the sake of quick indexing. In that case, base R `quantile()` shines.
 
-``` r
+```{r}
 (q_10_and_90 <- quantile(samples$samples, prob = c(.1, .9)))
 ```
 
-    ##       10%       90% 
-    ## 0.4494494 0.8128128
-
 Now we have our cutoff values saved as `q_80` and `q_10_and_90`, we're ready to make the bottom panels of Figure 3.2.
 
-``` r
+```{r, fig.width = 3, fig.height = 2.5}
 # lower left panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -299,11 +211,7 @@ d %>%
            label = "lower 80%") +
   labs(x = "proportion of water (p)",
        y = "density")
-```
 
-![](03_files/figure-markdown_github/unnamed-chunk-18-1.png)
-
-``` r
 # lower right panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -317,11 +225,9 @@ d %>%
        y = "density")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-18-2.png)
-
 We've already defined `p_grid` and `prior` within `d`, above. Here we'll reuse them and update the rest of the columns.
 
-``` r
+```{r}
 # here we update the `dbinom()` parameters
 n_success <- 3
 n_tirals  <- 3
@@ -339,92 +245,53 @@ d <-
 )
 ```
 
-    ## # A tibble: 10,000 x 1
-    ##    samples
-    ##      <dbl>
-    ##  1   0.773
-    ##  2   0.577
-    ##  3   0.752
-    ##  4   0.706
-    ##  5   0.594
-    ##  6   0.883
-    ##  7   0.918
-    ##  8   0.987
-    ##  9   0.875
-    ## 10   0.865
-    ## # ... with 9,990 more rows
-
 The `rethinking::PI()` function works like a nice shorthand for `quantile()`.
 
-``` r
+```{r}
 quantile(samples$samples, prob = c(.25, .75))
-```
 
-    ##       25%       75% 
-    ## 0.7097097 0.9319319
-
-``` r
 rethinking::PI(samples$samples, prob = .5)
 ```
 
-    ##       25%       75% 
-    ## 0.7097097 0.9319319
-
 Now's a good time to introduce Matthew Kay's [tidybayes package](https://github.com/mjskay/tidybayes), which offers an [array of convenience functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
 
-``` r
+```{r, message = F, warning = F}
 library(tidybayes)
 
 median_qi(samples$samples, .width = .5)
 ```
 
-    ##           y      ymin      ymax .width .point .interval
-    ## 1 0.8408408 0.7097097 0.9319319    0.5 median        qi
-
 The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency and intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
-``` r
+```{r}
 median_qi(samples$samples, .width = c(.5, .8, .99))
 ```
-
-    ##           y      ymin      ymax .width .point .interval
-    ## 1 0.8408408 0.7097097 0.9319319   0.50 median        qi
-    ## 2 0.8408408 0.5675676 0.9749750   0.80 median        qi
-    ## 3 0.8408408 0.2642593 0.9989990   0.99 median        qi
 
 The `.width` column in the output indexed which line presented which interval.
 
 Now let's use the `rethinking::HPDI()` function to return 50% highest posterior density intervals (HPDIs).
 
-``` r
+```{r}
 rethinking::HPDI(samples$samples, prob = .5)
 ```
 
-    ##      |0.5      0.5| 
-    ## 0.8408408 1.0000000
-
 The reason I introduce tidybayes now is that the functions of the brms package only support percentile-based intervals of the type we computed with `quantile()` and `median_qi()`. But tidybayes also supports HPDIs.
 
-``` r
+```{r}
 mode_hdi(samples$samples, .width = .5)
 ```
-
-    ##           y      ymin ymax .width .point .interval
-    ## 1 0.9583591 0.8408408    1    0.5   mode       hdi
 
 This time we used the mode as the measure of central tendency. With this family of tidybayes functions, you specify the measure of central tendency in the prefix (i.e., `mean`, `median`, or `mode`) and then the type of interval you'd like (i.e., `qi` or `hdi`).
 
 If you just want to extract a quick value out of, say, `mode_hdi()`, you could do so with brackets. E.g., here we pull the lower bound of the 50% HPDI.
 
-``` r
+```{r}
 median_qi(samples$samples, .width = .5)[, "ymin"]
 ```
 
-    ## [1] 0.7097097
-
 Now we have that skill, we can use it to make Figure 3.3.
 
-``` r
+```{r, fig.width = 3, fig.height = 2.5}
 # lower left panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -436,11 +303,7 @@ d %>%
   labs(subtitle = "50% Percentile Interval",
        x = "proportion of water (p)",
        y = "density")
-```
 
-![](03_files/figure-markdown_github/unnamed-chunk-26-1.png)
-
-``` r
 # lower right panel
 d %>% 
   ggplot(aes(x = p_grid)) +
@@ -454,89 +317,47 @@ d %>%
        y = "density")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-26-2.png)
-
 ### Point estimates.
 
 We've been calling point estimates measures of central tendency. If we `arrange()` our `d` tibble in descending order by `posterior`, we'll see the corresponding `p_grid` value for its MAP estimate.
 
-``` r
+```{r}
 d %>% 
   arrange(desc(posterior))
 ```
 
-    ## # A tibble: 1,000 x 4
-    ##    p_grid prior likelihood posterior
-    ##     <dbl> <dbl>      <dbl>     <dbl>
-    ##  1  1         1      1       0.00400
-    ##  2  0.999     1      0.997   0.00398
-    ##  3  0.998     1      0.994   0.00397
-    ##  4  0.997     1      0.991   0.00396
-    ##  5  0.996     1      0.988   0.00395
-    ##  6  0.995     1      0.985   0.00394
-    ##  7  0.994     1      0.982   0.00392
-    ##  8  0.993     1      0.979   0.00391
-    ##  9  0.992     1      0.976   0.00390
-    ## 10  0.991     1      0.973   0.00389
-    ## # ... with 990 more rows
-
 To emphasize it, we can use `slice()` to select the top row.
-
-``` r
+ 
+```{r}
 d %>% 
   arrange(desc(posterior)) %>% 
   slice(1)
 ```
 
-    ## # A tibble: 1 x 4
-    ##   p_grid prior likelihood posterior
-    ##    <dbl> <dbl>      <dbl>     <dbl>
-    ## 1      1     1          1   0.00400
-
 Here's the `rethinking::chainmode()` method.
 
-``` r
+```{r}
 rethinking::chainmode(samples$samples, adj = 0.01)
 ```
 
-    ## [1] 0.9971142
-
 And you can also do whis with `mode_hdi()` or `mode_qi()`.
 
-``` r
+```{r}
 samples %>% mode_hdi(samples)
-```
-
-    ## # A tibble: 1 x 6
-    ##   samples .lower .upper .width .point .interval
-    ##     <dbl>  <dbl>  <dbl>  <dbl> <chr>  <chr>    
-    ## 1   0.958  0.474      1   0.95 mode   hdi
-
-``` r
 samples %>% mode_qi(samples)
 ```
 
-    ## # A tibble: 1 x 6
-    ##   samples .lower .upper .width .point .interval
-    ##     <dbl>  <dbl>  <dbl>  <dbl> <chr>  <chr>    
-    ## 1   0.958  0.399  0.995   0.95 mode   qi
-
 But medians and means are typical, too.
 
-``` r
+```{r}
 samples %>% 
   summarise(mean   = mean(samples),
             median = median(samples))
 ```
 
-    ## # A tibble: 1 x 2
-    ##    mean median
-    ##   <dbl>  <dbl>
-    ## 1 0.802  0.841
-
 We can inspect the three types of point estimate in the left panel of Figure 3.4. First we'll bundle the three point estimates together in a tibble.
 
-``` r
+```{r}
 (
   point_estimates <-
   samples %>% mean_qi(samples) %>% 
@@ -551,16 +372,9 @@ We can inspect the three types of point estimate in the left panel of Figure 3.4
 )
 ```
 
-    ## # A tibble: 3 x 4
-    ##   samples .point     x       y
-    ##     <dbl> <chr>  <dbl>   <dbl>
-    ## 1   0.802 mean   0.772 0.0005 
-    ## 2   0.841 median 0.871 0.00125
-    ## 3   0.958 mode   0.928 0.002
-
 The plot:
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 d %>% 
   ggplot(aes(x = p_grid)) +
   geom_ribbon(aes(ymin = 0, ymax = posterior),
@@ -574,26 +388,19 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-33-1.png)
-
 As it turns out "*different loss functions imply different point estimates*" (p. 59, *emphasis* in the original).
 
-Let *p* be the proportion of the Earth covered by water and *d* be our guess. If McElreath pays us $100 if we guess exactly right but subtracts money from the prize proportional to how far off we are, then our loss is proportional to *p* − *d*. If we decide *d* = .5, then our expected loss will be:
+Let $p$ be the proportion of the Earth covered by water and $d$ be our guess. If McElreath pays us \$100 if we guess exactly right but subtracts money from the prize proportional to how far off we are, then our loss is proportional to $p - d$. If we decide $d = .5$, then our expected loss will be:
 
-``` r
+```{r}
 d %>% 
   mutate(loss = posterior * abs(0.5 - p_grid)) %>% 
   summarise(`expected loss` = sum(loss))
 ```
 
-    ## # A tibble: 1 x 1
-    ##   `expected loss`
-    ##             <dbl>
-    ## 1           0.313
-
 What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-named functions (e.g., `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is itself part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about how to use the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
 
-``` r
+```{r}
 make_loss <- function(our_d){
   d %>% 
   mutate(loss = posterior * abs(our_d - p_grid)) %>% 
@@ -610,24 +417,9 @@ make_loss <- function(our_d){
 )
 ```
 
-    ## # A tibble: 1,000 x 2
-    ##    decision weighted_average_loss
-    ##       <dbl>                 <dbl>
-    ##  1  0                       0.800
-    ##  2  0.00100                 0.799
-    ##  3  0.00200                 0.798
-    ##  4  0.00300                 0.797
-    ##  5  0.00400                 0.796
-    ##  6  0.00501                 0.795
-    ##  7  0.00601                 0.794
-    ##  8  0.00701                 0.793
-    ##  9  0.00801                 0.792
-    ## 10  0.00901                 0.791
-    ## # ... with 990 more rows
-
 Now we're ready for the right panel of Figure 3.4.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 # this will help us find the x and y coordinates for the minimum value
 min_loss <-
   l %>% 
@@ -645,23 +437,16 @@ l %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-36-1.png)
+We saved the exact minimum value as `min_loss[1]`, which is `r min_loss[1]`. Within sampling error, this is the posterior median as depicted by our `samples`.
 
-We saved the exact minimum value as `min_loss[1]`, which is 0.8408408. Within sampling error, this is the posterior median as depicted by our `samples`.
-
-``` r
+```{r}
 samples %>% 
   summarise(posterior_median = median(samples))
 ```
 
-    ## # A tibble: 1 x 1
-    ##   posterior_median
-    ##              <dbl>
-    ## 1            0.841
+The quadratic loss $(d - p)^2$ suggests we should use the mean instead. Let's investigate.
 
-The quadratic loss (*d* − *p*)<sup>2</sup> suggests we should use the mean instead. Let's investigate.
-
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 # ammend our loss function
 make_loss <- function(our_d){
   d %>% 
@@ -694,71 +479,52 @@ l %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-38-1.png)
+Based on quadratic loss $(d - p)^2$, the exact minimum value is `r min_loss[1]`. Within sampling error, this is the posterior mean of our `samples`.
 
-Based on quadratic loss (*d* − *p*)<sup>2</sup>, the exact minimum value is 0.8008008. Within sampling error, this is the posterior mean of our `samples`.
-
-``` r
+```{r}
 samples %>% 
   summarise(posterior_meaan = mean(samples))
 ```
 
-    ## # A tibble: 1 x 1
-    ##   posterior_meaan
-    ##             <dbl>
-    ## 1           0.802
-
-Sampling to simulate prediction
--------------------------------
+## Sampling to simulate prediction
 
 McElreath’s four good reasons for posterior simulation were:
 
-1.  Model checking
-2.  Software validation
-3.  Research design
-4.  Forecasting
+1. Model checking
+2. Software validation
+3. Research design
+4. Forecasting
 
 ### Dummy data.
 
-Dummy data for the globe tossing model arise from the binomial likelihood. If you let *w* be a count of water and *n* be the number of tosses, the binomial likelihood is
+Dummy data for the globe tossing model arise from the binomial likelihood. If you let $w$ be a count of water and $n$ be the number of tosses, the binomial likelihood is
 
-$$\\text{Pr} (w|n, p) = \\frac{n!}{w!(n - w)!} p^w (1 - p)^{n - w}$$
+$$\text{Pr} (w|n, p) = \frac{n!}{w!(n - w)!} p^w (1 - p)^{n - w}$$
 
-Letting *n* = 2, *p*(*w*)=.7, and *w*<sub>*o**b**s**e**r**v**e**d*</sub> = 0 through 2, the denisties are:
+Letting $n = 2$, $p(w) = .7$, and $w_{observed} = 0 \text{ through }2$, the denisties are:
 
-``` r
+```{r}
 tibble(n           = 2,
        probability = .7,
        w           = 0:2) %>% 
   mutate(density   = dbinom(w, size = n, prob = probability))
 ```
 
-    ## # A tibble: 3 x 4
-    ##       n probability     w density
-    ##   <dbl>       <dbl> <int>   <dbl>
-    ## 1     2         0.7     0   0.09 
-    ## 2     2         0.7     1   0.42 
-    ## 3     2         0.7     2   0.490
-
 If we're going to simulate, we should probably [set our seed](https://stackoverflow.com/questions/13605271/reasons-for-using-the-set-seed-function). Doing so makes the results reproducible.
 
-``` r
+```{r}
 set.seed(331)
 rbinom(1, size = 2, prob = .7)
 ```
 
-    ## [1] 0
-
 Here are ten reproducible draws.
 
-``` r
+```{r}
 set.seed(331)
 rbinom(10, size = 2, prob = .7)
 ```
 
-    ##  [1] 0 0 1 1 2 2 1 2 1 2
-
-``` r
+```{r}
 # how many would you like?
 n_draws <- 1e5
 
@@ -771,17 +537,9 @@ d %>%
   mutate(proportion = n / nrow(d))
 ```
 
-    ## # A tibble: 3 x 3
-    ## # Groups:   draws [3]
-    ##   draws     n proportion
-    ##   <int> <int>      <dbl>
-    ## 1     0  9059     0.0906
-    ## 2     1 41949     0.419 
-    ## 3     2 48992     0.490
+Here's the simulation updated so $n = 9$.
 
-Here's the simulation updated so *n* = 9.
-
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 set.seed(331)
 d <- tibble(draws = rbinom(n_draws, size = 9, prob = .7))
 
@@ -797,11 +555,9 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-44-1.png)
-
 McElreath suggested we play around with different values of `size` and `prob`. With the next block of code, we'll simulate nine conditions.
 
-``` r
+```{r}
 n_draws <- 1e5
 
 simulate_binom <- function(n, probability){
@@ -821,19 +577,9 @@ d <-
 head(d)
 ```
 
-    ## # A tibble: 6 x 3
-    ##   n     probability draws
-    ##   <chr> <chr>       <int>
-    ## 1 n = 3 p = 0.3         3
-    ## 2 n = 3 p = 0.3         2
-    ## 3 n = 3 p = 0.3         1
-    ## 4 n = 3 p = 0.3         1
-    ## 5 n = 3 p = 0.3         0
-    ## 6 n = 3 p = 0.3         0
-
 The results look as follows:
 
-``` r
+```{r, fig.width = 6, fig.height = 5}
 d %>% 
   ggplot(aes(x = draws)) +
   geom_histogram(binwidth = 1, center = 0,
@@ -845,8 +591,6 @@ d %>%
   theme(panel.grid = element_blank()) +
   facet_grid(n ~ probability)
 ```
-
-![](03_files/figure-markdown_github/unnamed-chunk-46-1.png)
 
 ### Model checking.
 
@@ -860,7 +604,7 @@ Let this haunt your dreams: "There is no way to really be sure that software wor
 
 Let's update our `simulate_binom()` golem to keep the number of trials constant at 9.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 n_draws     <- 1e4
 n_trials    <- 9
 probability <- .6
@@ -878,11 +622,9 @@ tibble(draws = rbinom(n_draws, size = n_trials, prob = probability)) %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-47-1.png)
+But notice that in this simulation we held $p$ at a constant .6. There was no posterior uncertainty packed into the model. Let's refresh ourselves on what the model was:
 
-But notice that in this simulation we held *p* at a constant .6. There was no posterior uncertainty packed into the model. Let's refresh ourselves on what the model was:
-
-``` r
+```{r}
 # how many grid points would you like?
 n <- 1000
 n_success <- 6
@@ -903,19 +645,9 @@ samples <-
 head(samples)
 ```
 
-    ## # A tibble: 6 x 1
-    ##   samples
-    ##     <dbl>
-    ## 1   0.445
-    ## 2   0.394
-    ## 3   0.458
-    ## 4   0.630
-    ## 5   0.585
-    ## 6   0.518
-
 Let's use it to simulate and make the middle panels of Figure 3.6.
 
-``` r
+```{r, fig.width = 8, fig.height = 1.75}
 # the simulation
 set.seed(3322)
 samples <-
@@ -937,11 +669,9 @@ samples  %>%
   facet_wrap(~ key, ncol = 9, scales = "free_y") 
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-49-1.png)
-
 The top panel of Figure 3.6 is just the density of `samples`.
 
-``` r
+```{r, fig.width = 7, fig.height = 2}
 samples %>% 
 
   ggplot(aes(x = samples)) +
@@ -953,11 +683,9 @@ samples %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-50-1.png)
-
 And the bottom panel is the histogram of `w` without faceting by levels of `samples`.
 
-``` r
+```{r, fig.width = 3, fig.height = 2}
 samples %>% 
   ggplot(aes(x = w)) +
   geom_histogram(binwidth = 1, center = 0,
@@ -970,27 +698,21 @@ samples %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-51-1.png)
-
 In Figure 3.7, McElreath considered the longst sequence of the sampe values. We've been using `rbinom()` with the size parameter set to 9 for our simulations. E.g.,
 
-``` r
+```{r}
 rbinom(10, size = 9, prob = .6)
 ```
 
-    ##  [1] 4 3 6 4 3 3 4 5 4 6
-
 Notice this collapses (i.e., aggregated) over the sequences within the individual sets of 9. What we need is to simulate nine individual trials many times over. For example, this
 
-``` r
+```{r}
 rbinom(9, size = 1, prob = .6)
 ```
 
-    ## [1] 1 0 1 1 0 1 1 0 0
-
 would be the disaggregated version of just one of the numerals returned by `rbinom()` when `size = 9`. So let's try simulating again with unaggregated samples.
 
-``` r
+```{r}
 simulate_disaggregated_binom <- function(samples){
   set.seed(37)
   rbinom(9, size = 1, prob = samples)
@@ -1006,48 +728,27 @@ simulate_disaggregated_binom <- function(samples){
   )
 ```
 
-    ## # A tibble: 90,000 x 3
-    ##    samples iteration draws
-    ##      <dbl>     <int> <int>
-    ##  1   0.445         1     0
-    ##  2   0.445         1     0
-    ##  3   0.445         1     1
-    ##  4   0.445         1     0
-    ##  5   0.445         1     1
-    ##  6   0.445         1     1
-    ##  7   0.445         1     0
-    ##  8   0.445         1     0
-    ##  9   0.445         1     0
-    ## 10   0.394         2     0
-    ## # ... with 89,990 more rows
-
 Now we have to count the longest sequences. The base R [`rle()` function](https://www.rdocumentation.org/packages/base/versions/3.3/topics/rle) will help with that. Consider McElreath's sequence of tosses.
 
-``` r
+```{r}
 tosses <- c("w", "l", "w", "w", "w", "l", "w", "l", "w")
 ```
 
 You can plug that into `rle()`.
 
-``` r
+```{r}
 rle(tosses)
 ```
 
-    ## Run Length Encoding
-    ##   lengths: int [1:7] 1 1 3 1 1 1 1
-    ##   values : chr [1:7] "w" "l" "w" "l" "w" "l" "w"
-
 For our purposes, we're interested in `lengths`. That tells us the length of each sequences of the same value. The `3` corresponds to our run of three `w`s. The `max()` function will help us confirm it's the largest value.
 
-``` r
+```{r}
 rle(tosses)$lengths %>% max()
 ```
 
-    ## [1] 3
-
 Now let's apply our method to the data and plot.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 disaggregated_samples %>% 
   group_by(iteration) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% max()) %>% 
@@ -1065,29 +766,21 @@ disaggregated_samples %>%
         legend.position = "none")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-58-1.png)
-
 Let's look at `rle()` again.
 
-``` r
+```{r}
 rle(tosses)
 ```
 
-    ## Run Length Encoding
-    ##   lengths: int [1:7] 1 1 3 1 1 1 1
-    ##   values : chr [1:7] "w" "l" "w" "l" "w" "l" "w"
+We can use the length of the output (i.e., 7 in this example) as the numbers of switches from, in this case, "w" and "l". 
 
-We can use the length of the output (i.e., 7 in this example) as the numbers of switches from, in this case, "w" and "l".
-
-``` r
+```{r}
 rle(tosses)$lengths %>% length()
 ```
 
-    ## [1] 7
-
 We're ready to make the right panel of Figure 3.7.
 
-``` r
+```{r, fig.width = 3.5, fig.height = 3}
 disaggregated_samples %>% 
   group_by(iteration) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% length()) %>% 
@@ -1105,20 +798,17 @@ disaggregated_samples %>%
         legend.position = "none")
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-61-1.png)
-
-~~Summary~~ Let's practice in brms
-----------------------------------
+## ~~Summary~~ Let's practice in brms
 
 Open brms.
 
-``` r
+```{r, warning = F, message = F}
 library(brms)
 ```
 
-In brms, we'll fit the primary model of *w* = 6 and *n* = 9 much like we did at the end of the project for Chapter 2.
+In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
 
-``` r
+```{r fit1, cache = T, message = F, warning = F, results = 'hide'}
 fit1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
@@ -1129,19 +819,16 @@ fit1 <-
 
 We’ll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
 
-``` r
+```{r}
 posterior_summary(fit1)["b_Intercept", ] %>% 
   round(digits = 2)
 ```
 
-    ##  Estimate Est.Error      Q2.5     Q97.5 
-    ##      0.63      0.14      0.35      0.87
-
-As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the two `Q` columns are the quantile-based 95% intervals, and `Est.Error` is the posterior standard deviation.
+As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the two `Q` columns are the quantile-based 95% intervals, and `Est.Error` is the posterior standard deviation. 
 
 Much like the way we used the `samples()` function to simulate probability values, above, we can do so with `fitted()` within the brms framework. But we will have to specify `scale = "linear"` in order to return results in the probability metric. By default, `brms::fitted()` will return summary information. Since we want actual simulation draws, we'll specify `summary = F`.
 
-``` r
+```{r}
 fitted_samples <-
   fitted(fit1, summary = F,
          scale = "linear") %>% 
@@ -1150,13 +837,9 @@ fitted_samples <-
 glimpse(fitted_samples)
 ```
 
-    ## Observations: 4,000
-    ## Variables: 1
-    ## $ V1 <dbl> 0.5899375, 0.5898957, 0.4581620, 0.4788888, 0.3914035, 0.5739587, 0.5184822, 0.66335...
-
 By default, we have a generically-named vector `V1` of 4000 samples. We'll explain the defaults in later chapters. For now, notice we can view these in a density.
 
-``` r
+```{r, fig.width = 7, fig.height = 2}
 fitted_samples %>% 
 
   ggplot(aes(x = V1)) +
@@ -1168,11 +851,9 @@ fitted_samples %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-65-1.png)
-
 Looks a lot like the posterior probability density at the top of Figure 3.6, doesn't it? Much like we did with `samples`, we can use this distribution of probabilities to predict histograms of "w" counts.
 
-``` r
+```{r, fig.width = 8, fig.height = 1.75}
 # the simulation
 set.seed(33.22)
 fitted_samples <-
@@ -1194,11 +875,9 @@ fitted_samples  %>%
   facet_wrap(~ key, ncol = 9, scales = "free_y") 
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-66-1.png)
-
 And also like with `samples`, we can omit the `facet_wrap()` function to make histogram in the bottom panel of Figure 3.6.
 
-``` r
+```{r, fig.width = 3, fig.height = 2}
 fitted_samples %>% 
   ggplot(aes(x = w)) +
   geom_histogram(binwidth = 1, center = 0,
@@ -1211,72 +890,19 @@ fitted_samples %>%
   theme(panel.grid = element_blank())
 ```
 
-![](03_files/figure-markdown_github/unnamed-chunk-67-1.png)
-
 As you might imagine, we can use the output from `fitted()` to return disaggregated batches of 0s and 1s, too. And we could even use those disaggregated 0s and 1s to examine longest run lengths and numbers of switches as in the analyses for Figure 3.7. I’ll leave those as exercises for the interested reader.
 
-Reference
----------
+## Reference {-}
 
 [McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
-Session info
-------------
+## Session info {-}
 
-``` r
+```{r}
 sessionInfo()
 ```
 
-    ## R version 3.5.1 (2018-07-02)
-    ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-    ## Running under: macOS High Sierra 10.13.6
-    ## 
-    ## Matrix products: default
-    ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-    ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## attached base packages:
-    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
-    ## 
-    ## other attached packages:
-    ##  [1] brms_2.5.0      Rcpp_0.12.18    tidybayes_1.0.1 bindrcpp_0.2.2  forcats_0.3.0   stringr_1.3.1  
-    ##  [7] dplyr_0.7.6     purrr_0.2.5     readr_1.1.1     tidyr_0.8.1     tibble_1.4.2    ggplot2_3.0.0  
-    ## [13] tidyverse_1.2.1
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] nlme_3.1-137              matrixStats_0.54.0        xts_0.10-2               
-    ##  [4] lubridate_1.7.4           threejs_0.3.1             httr_1.3.1               
-    ##  [7] rprojroot_1.3-2           rstan_2.17.3              LaplacesDemon_16.1.1     
-    ## [10] tools_3.5.1               backports_1.1.2           DT_0.4                   
-    ## [13] utf8_1.1.4                R6_2.2.2                  lazyeval_0.2.1           
-    ## [16] colorspace_1.3-2          withr_2.1.2               tidyselect_0.2.4         
-    ## [19] gridExtra_2.3             mnormt_1.5-5              Brobdingnag_1.2-5        
-    ## [22] compiler_3.5.1            cli_1.0.0                 rvest_0.3.2              
-    ## [25] HDInterval_0.2.0          arrayhelpers_1.0-20160527 shinyjs_1.0              
-    ## [28] xml2_1.2.0                colourpicker_1.0          labeling_0.3             
-    ## [31] scales_0.5.0              dygraphs_1.1.1.5          mvtnorm_1.0-8            
-    ## [34] psych_1.8.4               ggridges_0.5.0            digest_0.6.15            
-    ## [37] StanHeaders_2.17.2        foreign_0.8-70            rmarkdown_1.10           
-    ## [40] rethinking_1.59           base64enc_0.1-3           pkgconfig_2.0.1          
-    ## [43] htmltools_0.3.6           htmlwidgets_1.2           rlang_0.2.1              
-    ## [46] readxl_1.1.0              rstudioapi_0.7            shiny_1.1.0              
-    ## [49] bindr_0.1.1               svUnit_0.7-12             zoo_1.8-2                
-    ## [52] jsonlite_1.5              gtools_3.8.1              crosstalk_1.0.0          
-    ## [55] inline_0.3.15             magrittr_1.5              loo_2.0.0                
-    ## [58] bayesplot_1.6.0           Matrix_1.2-14             munsell_0.5.0            
-    ## [61] abind_1.4-5               stringi_1.2.3             yaml_2.1.19              
-    ## [64] MASS_7.3-50               plyr_1.8.4                ggstance_0.3             
-    ## [67] grid_3.5.1                parallel_3.5.1            promises_1.0.1           
-    ## [70] crayon_1.3.4              miniUI_0.1.1.1            lattice_0.20-35          
-    ## [73] haven_1.1.2               hms_0.4.2                 knitr_1.20               
-    ## [76] pillar_1.2.3              igraph_1.2.1              markdown_0.8             
-    ## [79] shinystan_2.5.0           reshape2_1.4.3            stats4_3.5.1             
-    ## [82] rstantools_1.5.0          glue_1.2.0                evaluate_0.10.1          
-    ## [85] modelr_0.1.2              httpuv_1.4.4.2            cellranger_1.1.0         
-    ## [88] gtable_0.2.0              assertthat_0.2.0          mime_0.5                 
-    ## [91] xtable_1.8-2              broom_0.4.5               coda_0.19-1              
-    ## [94] later_0.7.3               rsconnect_0.8.8           viridisLite_0.3.0        
-    ## [97] shinythemes_1.1.1         bridgesampling_0.4-0
+```{r, echo = F, warning = F, message = F}
+rm(n, n_success, n_tirals, d, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, probability, simulate_disaggregated_binom, disaggregated_samples, tosses, fit1, fitted_samples)
+```
+
