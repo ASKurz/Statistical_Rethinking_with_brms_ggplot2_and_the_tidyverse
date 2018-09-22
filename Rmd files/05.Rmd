@@ -95,7 +95,7 @@ d %>%
   facet_wrap(~key)
 ```
 
-One of the advantages of this visualization method is it just became clear that Nevada is missing from the `WaffleDivorce` data. Execute `d %>% distinct(Location)` to see for yourself. Those missing data should motivate the skills we'll cover in chapter 14. But let's get back on track.
+One of the advantages of this visualization method is it just became clear that Nevada is missing from the `WaffleDivorce` data. Execute `d %>% distinct(Location)` to see for yourself. Those missing data should motivate the skills we'll cover in Chapter 14. But let's get back on track.
 
 Here we'll officially standardize the predictor, `MedianAgeMarriage`.
 
@@ -127,17 +127,16 @@ print(b5.1)
 We'll employ `fitted()` to make Figure 5.2.b. In preparation for `fitted()` we'll make a new tibble, `nd`, composed of a handful of densely-packed values for our predictor, `MedianAgeMarriage_s`. With the `newdata` argument, we'll use those values to return model-implied expected values for `Divorce`.
 
 ```{r, fig.width = 3, fig.height = 3}
-# First we determine the range of `MedianAgeMarriage_s` values we'd like to feed into `fitted()`
-nd <- tibble(MedianAgeMarriage_s = seq(from = -3, to = 3.5, 
-                                       length.out = 30))
+# Determine the range of `MedianAgeMarriage_s` values we'd like to feed into `fitted()`
+nd <- tibble(MedianAgeMarriage_s = seq(from = -3, to = 3.5, length.out = 30))
 
-# Now we use `fitted()` to get the model-implied trajectories
+# Now use `fitted()` to get the model-implied trajectories
 fitd_b5.1 <- 
   fitted(b5.1, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
-# The plot
+# Plot
 ggplot(data = fitd_b5.1, 
        aes(x = MedianAgeMarriage_s, y = Estimate)) +
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
@@ -180,8 +179,7 @@ print(b5.2)
 Now we'll wangle and plot our version of Figure 5.2.a.
 
 ```{r, fig.width = 3, fig.height = 3}
-nd <- tibble(Marriage_s = seq(from = -2.5, to = 3.5, 
-                              length.out = 30))
+nd <- tibble(Marriage_s = seq(from = -2.5, to = 3.5, length.out = 30))
 
 fitd_b5.2 <- 
   fitted(b5.2, newdata = nd) %>%
@@ -203,6 +201,10 @@ ggplot(data = fitd_b5.2,
   theme(panel.grid = element_blank())                   
 ```
 
+> But merely comparing parameter means between different bivariate regressions is no way to decide which predictor is better Both of these predictors could provide independent value, or they could be redundant, or one could eliminate the value of the other. So we’ll build a multivariate model with the goal of measuring the partial value of each predictor. The question we want answered is:
+>
+>> *What is the predictive value of a variable, once I already know all of the other predictor variables?* (p. 123, *emphasis* in the original)
+
 ### Multivariate notation.
 
 Now we'll get both predictors in there with our very first multivariable model. We can write the statistical model as
@@ -218,9 +220,11 @@ $$
 \end{eqnarray}
 $$
 
+> It might help to read the $+$ symbols as "or" and then say: *A State’s divorce rate can be a function of its marriage rate **or** its median age at marriage*. The "or" indicates independent associations, which may be purely statistical or rather causal. (p. 124, *emphasis* in the original)
+
 ### Fitting the model.
 
-Much like we used the `+` operator to add single predictors to the intercept, we just use more `+` operators in the formula to add more predictors. Also notice we're using the same prior `prior(normal(0, 1), class = b)` for both predictors. Within the brms framework, they are both of `class = b`. But if we wanted their priors to differ, we'd make two `prior()` statements and differentiate them with the `coef` argument. You'll see that later on.
+Much like we used the `+` operator to add single predictors to the intercept, we just use more `+` operators in the `formula` argument to add more predictors. Also notice we're using the same prior `prior(normal(0, 1), class = b)` for both predictors. Within the brms framework, they are both of `class = b`. But if we wanted their priors to differ, we'd make two `prior()` statements and differentiate them with the `coef` argument. You'll see examples of that later on.
 
 ```{r b5.3, cache = T, message = F, warning = F}
 b5.3 <- 
@@ -289,7 +293,7 @@ The substantive interpretation of all those coefficient plots is: "*Once we know
 
 ### Plotting multivariate posteriors.
 
-McElreath’s prose is delightfully deflationary. “There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression” (p. 126). Now you’re inspired, let’s learn three:
+McElreath’s prose is delightfully deflationary. "There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression" (p. 126). Now you’re inspired, let’s learn three:
 
 * Predictor residual plots
 * Counterfactual plots
@@ -313,7 +317,7 @@ b5.4 <-
 print(b5.4)
 ```
 
-With `fitted()`, we compute the expected values for each State (with the exception of Nevada). Since the `MedianAgeMarriage_s` values for each state are in the date we used to fit the model, we’ll omit the `newdata` argument.
+With `fitted()`, we compute the expected values for each state (with the exception of Nevada). Since the `MedianAgeMarriage_s` values for each state are in the date we used to fit the model, we’ll omit the `newdata` argument.
 
 ```{r}
 fitd_b5.4 <- 
@@ -421,14 +425,15 @@ residuals(b5.4b) %>%
 Making Figure 5.5.a requires a little more data wrangling than before.
 
 ```{r, fig.width = 3, fig.height = 3}
-# We need new data
+# We need new `nd` data
 nd <- 
   tibble(Marriage_s          = seq(from = -3, to = 3, length.out = 30),
          MedianAgeMarriage_s = rep(mean(d$MedianAgeMarriage_s), times = 30))
   
 fitted(b5.3, newdata = nd) %>% 
   as_tibble() %>% 
-  # Since `fitted()` and `predict()` name their intervals the same way, we'll need to `rename()` then to keep them straight.
+  # Since `fitted()` and `predict()` name their intervals the same way, we'll need to
+  # `rename()` then to keep them straight.
   rename(f_ll = Q2.5,
          f_ul = Q97.5) %>% 
   # Note how we're just nesting the `predict()` code right inside `bind_cols()`
@@ -533,7 +538,7 @@ tibble(`brms function` = c("fitted", "predict", "residual"),
   knitr::kable()
 ```
 
-This means that if we want to incorporate the prediction interval in a deviance metric, we'll need to first use `predict()` and then subtract the intervals from their corresponding `Divorce` values in the data.
+Hopefully this clarifies that if we want to incorporate the prediction interval in a deviance metric, we'll need to first use `predict()` and then subtract the intervals from their corresponding `Divorce` values in the data.
 
 ```{r, fig.width = 2.25, fig.height = 5.5}
 residuals(b5.3) %>% 
@@ -599,7 +604,9 @@ residuals(b5.3) %>%
   theme(panel.grid = element_blank())
 ```  
 
-More McElreath inspiration: "No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation" (p. 134).
+More McElreath inspiration: "No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation" (p. 134). To keep our deflation train going, it’s worthwhile to repeat the message in McElreath’s **Rethinking: Stats, huh, year what is it good for?** box.
+
+> Often people want statistical modeling to do things that statistical modeling cannot do. For example, we’d like to know whether an effect is real or rather spurious. Unfortunately, modeling merely quantifies uncertainty in the precise way that the model understands the problem. Usually answers to large world questions about truth and causation depend upon information not included in the model. For example, any observed correlation between an outcome and predictor could be eliminated or reversed once another predictor is added to the model. But if we cannot think of another predictor, we might never notice this. Therefore all statistical models are vulnerable to and demand critique, regardless of the precision of their estimates and apparent accuracy of their predictions. (p. 134)
 
 #### Overthinking: Simulating spurious association.
 
@@ -618,6 +625,8 @@ Here are the quick `pairs()` plots.
 ```{r, fig.width = 4.5, fig.height = 4.5}
 pairs(d, col = "firebrick4")
 ```
+
+We may as well fit a model.
 
 ```{r spurious_fit, cache = T, message = F, warning = F}
 brm(data = d, family = gaussian,
@@ -670,7 +679,7 @@ b5.5 <-
       iter = 2000, warmup = 500, chains = 4, cores = 4)
 ```
 
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to chapter 14 where we'll learn how to do better. 
+The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to Chapter 14 where we'll learn how to do better. 
 
 Here's how to explicitly drop the cases with missing values on the predictor.
 
@@ -680,16 +689,18 @@ dcc <-
   filter(complete.cases(.))              
 ```
 
-Let's inspect the parameter summary.
+But anyway, let's inspect the parameter summary.
 
 ```{r}
 print(b5.5, digits = 3)
 ```
 
+Did you notice now we set `digits = 3` within `print()` much the way McElreath set `digits=3` within `precis()`?
+
 To get the brms answer to what McElreath did with `coef()`, we'll use the `fixef()` function.
 
 ```{r, warning = F, message = F}
-fixef(b5.5)[2]*(76 - 55)
+fixef(b5.5)[2] * (76 - 55)
 ```
 
 Yes, indeed, "that's less than 0.1 kilocalories" (p. 137).
@@ -773,7 +784,20 @@ fitted(b5.6,
   theme(panel.grid = element_blank())
 ```
 
-Finally, we're ready to fit with both predictors included in the "joint model." Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
+Finally, we're ready to fit with both predictors included in the "joint model." Here's the statistical formula
+
+$$
+\begin{eqnarray}
+\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = & \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
+\alpha & \sim & \text{Normal}(0, 100) \\
+\beta_1 & \sim & \text{Normal}(0, 1) \\
+\beta_2 & \sim & \text{Normal}(0, 1) \\
+\sigma & \sim & \text{Uniform}(0, 1)
+\end{eqnarray}
+$$
+
+Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
 
 ```{r b5.7, cache = T, message = F, warning = F}
 b5.7 <- 
@@ -922,7 +946,7 @@ d %>%
   round(digits = 4)
 ```
 
-Have you ever seen a $\rho = .9995$ correlation, before? Here it is in a plot.
+Have you ever even seen a $\rho = .9995$ correlation, before? Here it is in a plot.
 
 ```{r, fig.width = 3, fig.height = 3}
 d %>%
@@ -950,7 +974,7 @@ Let's inspect the damage.
 print(b5.8)
 ```
 
-That 'Est.Error' column isn't looking too good. But it's easy to miss that, which is why McEreath suggested "a graphical view of the [output] is more useful because it displays the posterior [estimates] and [intervals] in a way that allows us with a glance to see that something has gone wrong here" (p. 143).
+That 'Est.Error' column isn't looking too good. But it's easy to miss that, which is why McElreath suggested "a graphical view of the [output] is more useful because it displays the posterior [estimates] and [intervals] in a way that allows us with a glance to see that something has gone wrong here" (p. 143).
 
 Here's our coefficient plot using `brms::stanplot()` with a little help from `bayesplot::color_scheme_set()`.
 
@@ -966,11 +990,12 @@ stanplot(b5.8,
        subtitle = "Holy smokes; look at the widths of those betas!") +
   theme_bw() +
   theme(text = element_text(size = 14),
+        panel.grid   = element_blank(),
         axis.ticks.y = element_blank(),
         axis.text.y  = element_text(hjust = 0))
 ```
 
-Note. You can use the `brms::stanplot()` function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with `color_scheme_set()`.
+Now you can use the `brms::stanplot()` function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with `color_scheme_set()`.
 
 This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 5.8.a.
 
@@ -990,7 +1015,7 @@ post %>%
   theme(panel.grid = element_blank())
 ```
 
-While we're at it, you can make a similar plot with the `mcmc_scatter()` [function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
+While we're at it, you can make a similar plot with the [`mcmc_scatter()` function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
 
 ```{r, fig.width = 3, fig.height = 3}
 post %>% 
@@ -1048,7 +1073,7 @@ b5.9 <-
 print(b5.9)
 ```
 
-That posterior $SD$ looks much better. Here's the density in Figure 5.8.b.
+That posterior $SD$ looks much better. Compare this density to the one in Figure 5.8.b.
 
 ```{r, fig.width = 3, fig.height = 3}
 posterior_samples(b5.9) %>% 
@@ -1057,8 +1082,9 @@ posterior_samples(b5.9) %>%
   geom_halfeyeh(fill = "firebrick4", 
                 point_interval = median_qi, .width = .95) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Just one coefficient needed",
-       subtitle = "Marked by the median and 95% PIs") +
+  labs(title    = "Just one coefficient needed",
+       subtitle = "Marked by the median and 95% PIs",
+       x        = "only b_leg_left, this time") +
   theme_bw() +
   theme(panel.grid = element_blank())
 ```
@@ -1163,7 +1189,7 @@ ggpairs(data  = d, columns = c(3:4, 6),
         panel.grid       = element_blank())
 ```
 
-McElreath wrote "these two variables form essentially a single axis of variation" (p. 148). You can really see that on the lower two scatter plots. You'll note the `ggpairs()` plot also showed the correlations.
+McElreath wrote "these two variables form essentially a single axis of variation" (p. 148). You can really see that on the lower two scatter plots. You'll note the `ggpairs()` plot also showed the Pearson's correlation coefficients.
 
 #### Overthinking: Simulating collinearity.
 
@@ -1194,7 +1220,7 @@ d <-
   mutate(parameter_sd = purrr::map2(seed, rho, sim_coll)) %>% 
   unnest() %>% 
   group_by(rho) %>% 
-  # we'll `summarise()` our output by 95% percentile-baesd intervals in addition to the mean
+  # we'll `summarise()` our output by the mean and 95% intervals
   summarise(mean = mean(parameter_sd),
             ll   = quantile(parameter_sd, prob = .025),
             ul   = quantile(parameter_sd, prob = .975))
@@ -1246,7 +1272,7 @@ d %>%
   head()
 ```
 
-These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = .99`.
+These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = 0.99`.
 
 ```{r b5.13, cache = T, message = F, warning = F}
 b5.13 <- 
@@ -1275,7 +1301,7 @@ b5.14 <-
 print(b5.14)
 ```
 
-"Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in a few chapters.
+"Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in Chapter 10.
 
 ## Categorical varaibles
 
@@ -1308,7 +1334,7 @@ d %>%
 
 Let's fit the first `height` model with the `male` dummy. 
 
-Note. The uniform prior McElreath used in the text in conjunction with his `map()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating chapter 8, I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
+Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating Chapter 8, I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
 
 ```{r b5.15, cache = T, message = F, warning = F}
 b5.15 <- 
@@ -1411,7 +1437,7 @@ posterior_samples(b5.15b) %>%
   theme(panel.grid = element_blank())
 ```
 
-## Many categories.
+### Many categories.
 
 > When there are more than two categories, you'll need more than one dummy variable. Here's the general rule: To include $k$ categories in a linear model, you require $k - 1$ dummy variables. Each dummy variable indicates, with the value 1, a unique category. The category with no dummy variable assigned to it ends up again as the "intercept" category. (p. 155)
 
@@ -1487,7 +1513,7 @@ post$mu_s   <- post$b_Intercept + post$b_clade_s
 round(t(apply(post[ ,7:10], 2, quantile, c(.5, .025, .975))), digits = 2)
 ```
 
-Here's a more tidyverse sort of way to get the same thing.
+Here's a more tidyverse sort of way to get the same thing, but this time with means and HPDIs via the `tidybayes::mean_hdi()` function.
 
 ```{r}
 post %>%
@@ -1497,11 +1523,11 @@ post %>%
             mu_s   = b_Intercept + b_clade_s) %>%
   gather() %>%
   group_by(key) %>%
-  median_qi() %>% 
+  mean_hdi() %>% 
   mutate_if(is.double, round, digits = 2)
 ```
 
-You could also use `fitted()`.
+You could also summarize with `fitted()`.
 
 ```{r, fig.width = 6, fig.height = 2}
 nd <- tibble(clade_nwm = c(1, 0, 0, 0),
@@ -1527,7 +1553,7 @@ fitted(b5.16,
         axis.text.y  = element_text(hjust = 0))
 ```
 
-Getting summary statistics for the difference between `NWM` and `OWM`:
+And there are multiple ways to compute summary statistics for the difference between `NWM` and `OWM`, too.
 
 ```{r}
 # base R
@@ -1541,11 +1567,11 @@ post %>%
 
 ### Adding regular predictor variables.
 
-If we wanted to fit the model including `perc.fat` as an additional predictor, 
+If we wanted to fit the model including `perc.fat` as an additional predictor, the basic statistical formula would be
 
 $$\mu_i = \alpha + \beta_\text{clade_nwm} \text{clade_nwm}_i + \beta_\text{clade_owm} \text{clade_owm}_i + \beta_\text{clade_s} \text{clade_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i$$
 
-the `formula` code would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`.
+The corresponding `formula` argument within `brm()` would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`.
 
 ### Another approach: Unique intercepts.
 
@@ -1570,7 +1596,7 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/web/packages/lme4/index.html) syntax for multilevel models.
 
-Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`.
+Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We’ve already made use of it in the "Polynomial regression" section of Chapter 4.
 
 ## Reference {-}
 
