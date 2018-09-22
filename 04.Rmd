@@ -133,27 +133,26 @@ ggplot(data = growth, aes(x = value)) +
 
 "The smaller the effect of each locus, the better this additive approximation will be" (p. 74). Let's compare big and small.
 
-```{r, fig.width = 3.25, fig.height = 3}
-set.seed(1.7195451)
-big <- 
-  replicate(10000, prod(1 + runif(12, 0, 0.5))) %>%
-  as_tibble() 
+```{r, fig.width = 6, fig.height = 2.5}
+# sample big
+set.seed(412)
+big <- replicate(10000, prod(1 + runif(12, 0, 0.5)))
 
-set.seed(1.7195451)
-small <- 
-  replicate(10000, prod(1 + runif(12, 0, 0.01))) %>%
-  as_tibble()
+# sample small
+set.seed(412)
+small <- replicate(10000, prod(1 + runif(12, 0, 0.01)))
 
-ggplot(data = big) +
-  geom_density(aes(x = value), 
-               fill = "black", color = "transparent") +
-  labs(title = "My big density")
-
-ggplot(data = small) +
-  geom_density(aes(x = value), 
-               fill = "black", size = 0) +
-  labs(title = "My small density")
+# combine them
+tibble(samples      = c(big, small),
+       distribution = rep(c("big", "small"), each = 10000)) %>% 
+  
+  # plot
+  ggplot(aes(x = samples)) +
+  geom_density(fill = "black", color = "transparent") +
+  facet_wrap(~distribution, scales = "free")  
 ```
+
+Yep, the `small` samples were more Gaussian.
 
 ### Normal by log-multiplication.
 
@@ -344,7 +343,7 @@ ggplot(data = tibble(x = seq(from = 100, to = 250, by = .1)),
   ylab("density")
 ```
 
-And here's the ggplot2 code for our prior for $\sigma$, a uniform distribution with a minimum value of 0 and a maximum value of 50. We don't really need the y axis when looking at the shapes of a density, so we'll just remove it.
+And here's the ggplot2 code for our prior for $\sigma$, a uniform distribution with a minimum value of 0 and a maximum value of 50. We don't really need the y axis when looking at the shapes of a density, so we'll just remove it with `scale_y_continuous()`.
 
 ```{r, fig.width = 3, fig.height = 2.5}
 tibble(x = seq(from = -10, to = 60, by = .1)) %>%
@@ -355,7 +354,7 @@ tibble(x = seq(from = -10, to = 60, by = .1)) %>%
   theme(panel.grid = element_blank())
 ```
 
-We can simulate from those two priors to get a prior probability distribution of `heights`.
+We can simulate from both priors at once to get a prior probability distribution of `heights`.
 
 ```{r, fig.width = 3, fig.height = 2.5}
 n <- 1e4
@@ -373,7 +372,7 @@ tibble(sample_mu    = rnorm(n, mean = 178,       sd = 20),
   theme(panel.grid = element_blank())
 ```
 
-As McElreath wrote, we've made a "vaguely bell-shaped density with thick tails" (p. 83).
+As McElreath wrote, we've made a "vaguely bell-shaped density with thick tails. It is the expected distribution of heights, averaged over the prior" (p. 83).
 
 ### Grid approximation of the posterior distribution. 
 
@@ -415,7 +414,7 @@ d_grid <-
 head(d_grid)
 ```
 
-In the final `d_grid`, the `probability` vector contains the posterior probabilities across values of `mu` and `sigma`. We can make a contour plot with `geom_contour`.
+In the final `d_grid`, the `probability` vector contains the posterior probabilities across values of `mu` and `sigma`. We can make a contour plot with `geom_contour()`.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 d_grid %>% 
@@ -770,11 +769,11 @@ The `brms::brm()` syntax doesn't mirror the statistical notation. But here are t
 
 * $h_i \sim \text{Normal}(\mu_i, \sigma)$: `family = gaussian`
 * $\mu_i = \alpha + \beta x_i$: `height ~ 1 + weight`
-* $\alpha \sim \text{Normal}(178, 100)$: `prior(normal(156, 100), class = Intercept`
+* $\alpha \sim \text{Normal}(156, 100)$: `prior(normal(156, 100), class = Intercept`
 * $\beta \sim \text{Normal}(0, 10)$: ` prior(normal(0, 10), class = b)`
 * $\sigma \sim \text{Uniform}(0, 50)$: `prior(uniform(0, 50), class = sigma)`
 
-To add a predictor, you just the `+` operator in the model `formula`.
+Thus, to add a predictor you just the `+` operator in the model `formula`.
 
 ```{r b4.3, cache = T, message = F, warning = F}
 b4.3 <- 
@@ -864,6 +863,8 @@ d2 %>%
   theme_bw() +
   theme(panel.grid = element_blank())
 ```
+
+#### Adding uncertainty around the mean.
 
 Be default, we extract all the posterior iterations with `posterior_samples()`.
 
@@ -1269,7 +1270,7 @@ Here's the quadratic model in brms.
 b4.5 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + weight_s + I(weight_s^2),
-      prior = c(prior(normal(178, 20), class = Intercept),
+      prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4)
