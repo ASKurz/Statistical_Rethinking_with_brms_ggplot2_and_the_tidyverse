@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options, echo = FALSE, cache = FALSE}
+```{r set-options_03, echo = FALSE, cache = FALSE}
 options(width = 100)
 ```
 
@@ -42,6 +42,8 @@ tibble(pr_vampire            = 100 / 100000,
 
 ## Sampling from a grid-like approximate posterior
 
+Here we use grid approximation, again, to generate samples.
+
 ```{r}
 # how many grid points would you like?
 n <- 1000
@@ -58,6 +60,8 @@ n_tirals  <- 9
   mutate(posterior  = posterior / sum(posterior))
   )
 ```
+
+Now we're ready to sample.
 
 ```{r}
 samples <- sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)
@@ -107,6 +111,10 @@ samples %>%
 ```
 
 ## Sampling to summarize
+
+"Once your model produces a posterior distribution, the model’s work is done. But your work has just begun. It is necessary to summarize and interpret the posterior distribution. Exactly now it is summarized depends upon your purpose" (p. 53).
+
+### Intervals of defined boundaries.
 
 To get the proportion of water less than some value of `p_grid` within the tidyverse, you'd first `filter()` by that value and then take the `sum()` within `summarise()`.
 
@@ -261,7 +269,7 @@ library(tidybayes)
 median_qi(samples$samples, .width = .5)
 ```
 
-The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency and intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
+The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
 ```{r}
 median_qi(samples$samples, .width = c(.5, .8, .99))
@@ -412,7 +420,7 @@ make_loss <- function(our_d){
   d %>% 
   select(p_grid) %>% 
   rename(decision = p_grid) %>% 
-  mutate(weighted_average_loss = map(decision, make_loss)) %>% 
+  mutate(weighted_average_loss = purrr::map(decision, make_loss)) %>% 
   unnest() 
 )
 ```
@@ -459,7 +467,7 @@ l <-
   d %>% 
   select(p_grid) %>% 
   rename(decision = p_grid) %>% 
-  mutate(weighted_average_loss = map(decision, make_loss)) %>% 
+  mutate(weighted_average_loss = purrr::map(decision, make_loss)) %>% 
   unnest()
 
 # update to the new minimum loss coordinates
@@ -524,6 +532,8 @@ set.seed(331)
 rbinom(10, size = 2, prob = .7)
 ```
 
+Now generate 100,000 (i.e., `1e5`) reproducible dummy observations.
+
 ```{r}
 # how many would you like?
 n_draws <- 1e5
@@ -537,7 +547,7 @@ d %>%
   mutate(proportion = n / nrow(d))
 ```
 
-Here's the simulation updated so $n = 9$.
+Here's the simulation updated so $n = 9$, which we plot in our version of Figure 3.5.
 
 ```{r, fig.width = 3.5, fig.height = 3}
 set.seed(331)
@@ -778,7 +788,7 @@ We can use the length of the output (i.e., 7 in this example) as the numbers of 
 rle(tosses)$lengths %>% length()
 ```
 
-We're ready to make the right panel of Figure 3.7.
+With that new trick, we're ready to make the right panel of Figure 3.7.
 
 ```{r, fig.width = 3.5, fig.height = 3}
 disaggregated_samples %>% 
@@ -813,11 +823,11 @@ fit1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
       w | trials(9) ~ 1,
-      prior = prior(normal(.5, 1), class = Intercept),
-      control = list(adapt_delta = 0.99))
+      prior = prior(beta(1, 1), class = Intercept),
+      control = list(adapt_delta = .99))
 ```
 
-Here's the posterior summary for `b_Intercept`, the probability of a "w".
+We’ll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
 
 ```{r}
 posterior_summary(fit1)["b_Intercept", ] %>% 
