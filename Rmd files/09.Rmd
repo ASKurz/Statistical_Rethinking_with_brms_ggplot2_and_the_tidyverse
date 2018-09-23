@@ -8,12 +8,16 @@ output:
 
 # Big Entropy and the Generalized Linear Model
 
+> …Statistical models force many choices upon us. Some of these choices are distributions that represent uncertainty. We must choose, for each parameter, a prior distribution. And we must choose a likelihood function, which serves as a distribution of data. There are conventional choices, such as wide Gaussian priors and the Gaussian likelihood of linear regression. These conventional choices work unreasonably well in many circumstances. But very often the conventional choices are not the best choices. Inference can be more powerful when we use all of the information, and doing so usually requires going beyond convention.
+>
+> To go beyond convention, it helps to have some principles to guide choice. When an engineer wants to make an unconventional bridge, engineering principles help guide choice. When a researcher wants to build an unconventional model, entropy provides one useful principle to guide choice of probability distributions: Bet on the distribution with the biggest entropy. (p. 267)
+
 ## Maximum entropy
 
 > In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
 >
 >$$H(p) = - \sum_i p_i \text{ log } p_i$$
-> This function is known as *information entropy*. (p. 268)
+> This function is known as *information entropy*. (p. 268, *emphasis* in the original)
 
 Let's execute the code for the pebbles-in-buckets example.
 
@@ -289,7 +293,7 @@ Here's the entropy for our distribution `a`.
 -sum(a * log(a))
 ```
 
-I'm going to alter McElreath's simulation function from R code block 9.9 to take a seed argument. In adition, I altered the names of the objects within the function and changed the output to a tibble that wil also include the conditions "ww", "bw", "wb", and "bb".
+I'm going to alter McElreath's simulation function from R code block 9.9 to take a seed argument. In addition, I altered the names of the objects within the function and changed the output to a tibble that will also include the conditions "ww", "bw", "wb", and "bb".
 
 ```{r}
 sim_p <- function(seed, g = 1.4) {
@@ -306,7 +310,7 @@ sim_p <- function(seed, g = 1.4) {
 }
 ```
 
-For a given `seed`--and `g`--, our augmented `sim_p()` function returns a $4 \times 3$ tibble.
+For a given `seed` and `g` value, our augmented `sim_p()` function returns a $4 \times 3$ tibble.
 
 ```{r}
 sim_p(seed = 9.9, g = 1.4)
@@ -326,7 +330,7 @@ d <-
 head(d)
 ```
 
-In order to intelligently choose which four replications we want to highlight in Figure 9.4, we'll want to rank order the by entropy, `h`.
+In order to intelligently choose which four replications we want to highlight in Figure 9.4, we'll want to rank order them by entropy, `h`.
 
 ```{r}
 ranked_d <-
@@ -538,6 +542,12 @@ tibble(x = 0:10) %>%
   facet_wrap(~strip, labeller = label_parsed)
 ```
 
+#### Rethinking: A likelihood is a prior. 
+
+> In traditional statistics, likelihood functions are "objective" and prior distributions "subjective." However, likelihoods are themselves prior probability distributions: They are priors for the data, conditional on the parameters. And just like with other priors, there is no correct likelihood. But there are better and worse likelihoods, depending upon context. (p. 284)
+
+For a little more in this, check out McElreath’s great lecture, [Bayesian Statistics without Frequentist Language](https://www.youtube.com/watch?v=yakg94HyWdE&t=1s&frags=pl%2Cwn). This subsection also reminds me of the title of one of Gelman’s blog posts, [*"It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood"*](https://andrewgelman.com/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/). The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It’s taken some time for the weight of that quote to sink in with me, and indeed it’s still sinking. Perhaps you’ll benefit from it, too.
+
 ### Linking linear models to distributions.
 
 > To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)
@@ -557,8 +567,7 @@ Speaking of,
 
 > the logit link maps a parameter that is defined as a probability mass and therefore constrained to lie between zero and one, onto a linear model that can take on any real value. This link is extremely common when working with binomial GLMs. In the context of a model definition, it looks like this:
 >
->
-> $$y_i \sim \text{Binomail} (n, p_i)$$
+>$$ \begin{eqnarray}y_i&\sim&\text{Binomial}(n, p_i)\\\text{logit}(p_i)&=&\alpha+\beta x_i \end{eqnarray}$$
 >
 > And the logit function itself is defined as the *log-odds:*
 >
@@ -634,13 +643,6 @@ grid.arrange(p1, p2, ncol = 2)
 > $$ 
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
- 
-$$
-\begin{eqnarray}
-y_i & \sim & \text{Normal} (\mu, \sigma_i) \\
-\text{log} (\sigma_i) & = & \alpha + \beta x_i
-\end{eqnarray}
-$$
 
 This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
 
@@ -733,9 +735,9 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright).
+For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright).
 
-But back to the text,
+But getting back to the text,
 
 > what the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving $\text{log} (\sigma_i) = \alpha + \beta x_i$ for $\sigma_i$ yields the inverse link:
 >
