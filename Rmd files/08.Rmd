@@ -48,12 +48,13 @@ library(tidyverse)
 
 tibble(week   = 1:1e5,
        island = positions) %>%
-  filter(week < 101) %>%
 
   ggplot(aes(x = week, y = island)) +
   geom_point(shape = 1) +
   scale_x_continuous(breaks = seq(from = 0, to = 100, by = 20)) +
   scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
+  coord_cartesian(xlim = 0:100,
+                  ylim = 1:10) +
   labs(title = "Behold: The Metropolis algorithm in action!",
        subtitle = "The dots show the king's path over the first 100 weeks.") +
   theme_ipsum()
@@ -75,7 +76,7 @@ tibble(week   = 1:1e5,
 
 ## Markov chain Monte Carlo
 
-"The metropolis algorithm is the grandparent of several different strategies for getting samples form unknown posterior distributions" (p. 245). If you're interested, Robert and Casells wrote a [good historical overview of MCMC](https://arxiv.org/pdf/0808.2902.pdf).
+"The metropolis algorithm is the grandparent of several different strategies for getting samples from unknown posterior distributions" (p. 245). If you're interested, Robert and Casells wrote a [good historical overview of MCMC](https://arxiv.org/pdf/0808.2902.pdf).
 
 ## Easy HMC: ~~map2stan~~ `brm()`
 
@@ -87,7 +88,7 @@ data(rugged)
 d <- rugged
 ```
 
-Switching from rethinking to brms.
+Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
 detach(package:rethinking)
@@ -111,7 +112,7 @@ In the context of this chapter, it doesn't make sense to translate McElreath's m
 
 ### Preparation.
 
-When working with brms, you don't need to do the data processing McElreath does on pages 248 and 249. If you wanted to, however, here's how you might do it within the tidyverse.
+When working with brms, you don't need to do the data processing McElreath did on pages 248 and 249. If you wanted to, however, here's how you might do it within the tidyverse.
 
 ```{r, eval = F}
 dd.trim <-
@@ -194,7 +195,6 @@ library(GGally)
 ```{r, fig.width = 8, fig.height = 7, message = F, warning = F}
 post %>%
   select(b_Intercept:sigma) %>%
-  
   ggpairs()
 ```
 
@@ -263,12 +263,12 @@ mcmc_acf(post,
 
 That's just what we like to see--nice L-shaped autocorrelation plots. Those are the kinds of shapes you'd expect when you have reasonably large effective samples. Anyway...
 
-##### Overthinking: Raw Stan model code.
+#### Overthinking: Raw Stan model code.
 
 The `stancode()` function works in brms much like it does in rethinking.
 
 ```{r}
-stancode(b8.1)
+brms::stancode(b8.1)
 ```
 
 You can also get that information with `b8.1$model` or `b8.1$fit@stanmodel`.
@@ -286,6 +286,12 @@ The brms defaults for `iter` and `warmup` match those of McElreath's rethinking.
 ### How many chains do you need?
 
 "Using 3 or 4 chains is conventional, and quite often more than enough to reassure us that the sampling is working properly" (p. 257).
+
+#### Convergence diagnostics.
+
+> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\hat{R}$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](http://mc-stan.org/users/documentation/index.html) for more details. It’s important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
+
+For more on `n_eff` and `Rhat`, you might also check out Gabry and Modrák's vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics).
 
 ### Taming a wild chain.
 
@@ -357,7 +363,7 @@ mcmc_trace(post[, c(1:2, 4)],
         legend.direction = "horizontal")
 ```
 
-Behold our version of Figure 8.6.a.
+Now behold our version of Figure 8.6.a.
 
 ```{r, fig.height = 3, fig.width = 3.5}
 post %>%
@@ -373,7 +379,7 @@ post %>%
   theme_ipsum()
 ```
   
-And our version of Figure 8.6.b.
+Here's our version of Figure 8.6.b.
   
 ```{r, fig.height = 3, fig.width = 3.5}
 post %>%
