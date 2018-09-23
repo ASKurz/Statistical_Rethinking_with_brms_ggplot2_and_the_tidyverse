@@ -240,7 +240,7 @@ model_weights(b7.3, b7.4, b7.5,
   round(digits = 3)
 ```
 
-##### Overthinking: Conventional form of interaction.
+#### Overthinking: Conventional form of interaction.
 
 The conventional equation for the interaction model might look like:
 
@@ -310,6 +310,10 @@ ggplot(aes(x = rugged)) +
   facet_wrap(~cont_africa)
 ```
 
+### Interpreting an interaction estimate.
+
+Interpreting interaction estimates is tricky. It’s trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers along. Plotting implied predictions does far more for both our own understanding and for our audience’s.
+
 #### Parameters change meaning.
 
 > In a simple linear regression with no interactions, each coefficient says how much the average outcome, $\mu$, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there’s no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable’s influence. 
@@ -319,7 +323,17 @@ ggplot(aes(x = rugged)) +
 Return the parameter estimates.
 
 ```{r}
-print(b7.5)
+posterior_summary(b7.5)
+```
+
+"Since $\gamma$ (gamma) doesn’t appear in this table—it wasn’t estimated—we have to compute it ourselves" (p. 221). Like in the text, we'll do so first by working with the point estimates.
+
+```{r}
+# within Africa
+fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 1
+
+# outside Africa
+fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 0
 ```
 
 #### Incorporating uncertainty.
@@ -377,7 +391,7 @@ post %>%
 > 1. How much does the influence of ruggedness (on GDP) depend upon whether the nation is in Africa?
 >2. How much does the influence of being in Africa (on GDP) depend upon ruggedness?
 >
-> While these two possibilities sound different to mode humans, your golem thinks they are identical. (p. 223)
+> While these two possibilities sound different to most humans, your golem thinks they are identical. (p. 223)
 
 ### Buridan's interaction.
 
@@ -571,7 +585,7 @@ d <-
          water_c = water - mean(water))
 ```
 
-Refitting the models with our shiny new centered predictors.
+Now refit the models with our shiny new centered predictors.
 
 ```{r b7.8_and_b7.9, cache = T, message = F, results = 'hide'}
 b7.8 <-
