@@ -23,7 +23,7 @@ McElreath's not a fan, but we will cover the Bayesian version of $R^2$ and how t
 
 ### More parameters always improve fit.
 
-We'll start of by making the data with brain size and body size for seven `species`.
+We'll start off by making the data with brain size and body size for seven `species`.
 
 ```{r, warning = F, message = F}
 library(tidyverse)
@@ -43,7 +43,7 @@ Let's get ready for Figure 6.2. The plots in this chapter will be characterized 
 library(rcartocolor)
 ```
 
-The specific palette we'll be using is "BurgYl." In addition to palettes, the rcartocolor package offers a few convenience functions to make it easier to use their palettes. The `carto_pal()` function will return the HEX numbers associated with a given palette's colors and the `display_carto_pal()` function will display the actual colors.
+The specific palette we'll be using is "BurgYl." In addition to palettes, the rcartocolor package offers a few convenience functions which make it easier to use their palettes. The `carto_pal()` function will return the HEX numbers associated with a given palette's colors and the `display_carto_pal()` function will display the actual colors.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 carto_pal(7, "BurgYl")
@@ -126,7 +126,7 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-For Figure 6.3, we'll make each plot individually and them glue them together with. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
+For Figure 6.3, we'll make each plot individually and them glue them together with `gridExtra::grid.arrange()`. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
 ```{r}
 p <-
@@ -142,7 +142,7 @@ p <-
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-Now for each subplot, we'll tack the subplot-specific components onto `p`. The main action is in `stat_smooth()`. For each subplot, the first three lines in `stat_smooth()` are identical, with only the bottom `formula` line differing. Like McElreath did in the text, we also adjusted the y-axis range for the last two plots.
+Now for each subplot, we'll tack the subplot-specific components onto `p`. The main action is in `stat_smooth()`. For each subplot, the first three lines in `stat_smooth()` are identical, with only the bottom `formula` line differing. Like McElreath did in the text, we also adjust the y-axis range for the last two plots.
 
 ```{r, warning = F, message = F}
 # linear
@@ -203,7 +203,7 @@ p6 <-
   ggtitle(NULL, subtitle = expression(paste(italic(R)^2, " = 1")))
 ```
 
-Okay, now we're ready to stitch the six subplots together and produce our version of Figure 6.3.
+Okay, now we're ready to combine six subplots and produce our version of Figure 6.3.
 
 ```{r, fig.width = 6, fig.height = 8, warning = F, message = F}
 library(gridExtra)
@@ -228,7 +228,7 @@ With the intercept-only model, we didn't even get an $R^2$ value in the summary.
 glance(b6.7)
 ```
 
-Zero. Our intercept-only `b6.7` explained exactly zero variance in `brain`. All it did was tell us what the unconditional mean and variance (i.e., 'Residual standard error') were. I hope that makes sense. They were the only things in the model: $v_i \sim \text{Normal}(\mu = \alpha, \sigma)$. To get the intercept-only model for Figure 6.4, we plug `formula = y ~ 1` into the `stat_smooth()` function.
+Zero. Our intercept-only `b6.7` explained exactly zero variance in `brain`. All it did was tell us what the unconditional mean and variance (i.e., 'Residual standard error') were. I hope that makes sense. They were the only things in the model: $\text{brain}_i \sim \text{Normal}(\mu = \alpha, \sigma)$. To get the intercept-only model for Figure 6.4, we plug `formula = y ~ 1` into the `stat_smooth()` function.
 
 ```{r, fig.width = 3, fig.height = 2.67} 
 p +
@@ -251,7 +251,7 @@ You can `filter()` by `row_number()` to drop rows in a [tidyverse kind of way](h
 We can then extend that logic into a custom function, `make_lines()`, that will drop a row from `d`, fit the simple model `brain ~ mass`, and then use base R `predict()` to return the model-implied trajectory over new data values.
 
 ```{r}
-# because these lines are straight, we only need new data over twom points of `mass`
+# because these lines are straight, we only need new data over two points of `mass`
 nd <- tibble(mass = c(30, 70))
 
 make_lines <- function(row){
@@ -384,7 +384,7 @@ weatherperson %>%
   summarise(hit_rate = mean(hit))
 ```
 
-### Costs and benefits.
+#### Costs and benefits.
 
 Our new `points` variable doesn't fit into the nice color-based `geom_tile()` plots from above. But we can still do the math.
 
@@ -447,14 +447,14 @@ $$D_{\text{KL}} (p, q) = \sum_i p_i \big ( \text{log} (p_i) - \text{log} (q_i) \
 
 which, in plainer language, is what McElreath described as "the average difference in log probability between the target (p) and model (q)" (p. 179).
 
-Based on McElreath's example
+In McElreath's example
 
 * $p_1 = .3$
 * $p_2 = .7$
 * $q_1 = .25$
 * $q_2 = .75$
 
-we can compute $D_{\text{KL}} (p, q)$ within a tibble like so:
+With those values, we can compute $D_{\text{KL}} (p, q)$ within a tibble like so:
 
 ```{r}
 tibble(p_1    = .3,
@@ -522,7 +522,7 @@ The $D_{\text{KL}}$ was double when applying Martian estimates to Terran estimat
 
 > The point of all the preceding material about information theory and divergence is to establish both:
 >
-> 1. How to measure the distance of a model from our target. Information theory dives us the distance measure we need, the K-L divergence.
+> 1. How to measure the distance of a model from our target. Information theory gives us the distance measure we need, the K-L divergence.
 >
 > 2. How to estimate the divergence. Having identified the right measure of distance, we now need a way to estimate it in real statistical modeling tasks. (p. 181)
 
@@ -540,7 +540,7 @@ lm(data = d,
   logLik() * -2
 ```
 
-##### Overthinking: Computing deviance.
+#### Overthinking: Computing deviance.
 
 To follow along with the text, we'll need to standardize `mass` before we compute deviance.
 
@@ -634,12 +634,13 @@ In the next subsection, we'll see this in a simulation.
 
 I find the `rethinking::sim.train.test()` function opaque. If you're curious, you can find McElreath's code [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/sim_train_test.R). Let's simulate and see what happens.
 
-```{r sim_1, cache = T, warning = F, message = F, results = 'hide'}
+```{r, eval = F}
 library(rethinking)
 
 N       <- 20
 kseq    <- 1:5
-n_sim   <- 1e3  # I've reduced this number by one order of magnitude to reduce computation time
+# I've reduced this number by one order of magnitude to reduce computation time
+n_sim   <- 1e3
 n_cores <- 4
 
 # here's our dev object based on `N <- 20`
@@ -660,6 +661,16 @@ dev_100 <-
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ]))
     })
+```
+
+```{r, echo = F}
+# Even after reducing `n_sim` by an order of magnitude, that simulation takes a long time to
+# complete. So instead of completing it on the fly for each new version of this project, I’ve
+# saved the results in an external file. 
+
+# save(list = c("dev_100", "dev_20", "kseq", "n_sim", "n_cores"), file = "06_sims/sim_1.rda")
+
+load("06_sims/sim_1.rda")
 ```
 
 If you didn't quite catch it, the simulation yields `dev_20` and `dev_100`. We'll want to convert them to tibbles, bind them together, and wrangle extensively before we're ready to plot.
@@ -748,10 +759,11 @@ In our version of the plot, darker purple = more regularizing.
 
 But to prepare for Figure 6.9, let's simulate. This time we'll wrap the basic simulation code we used before into a function we'll call `make_sim()`. Our `make_sim()` function has two parameters, `N` and `b_sigma`, both of which come from McElreath's simulation code. So you'll note that instead of hard coding the values for `N` and `b_sigma` within the simulation, we're leaving them adjustable (i.e., `sim.train.test(N = N, k = k, b_sigma = b_sigma)`). Also notice that instead of saving the simulation results as objects, like before, we're just converting them to tibbles with the `as_tibble()` function at the bottom. Our goal is to use `make_sim()` within a `purrr::map2()` statement. The result will be a nested tibble into which we've saved the results of 6 simulations based off of two sample sizes (i.e., `N = c(20, 100)`) and three values of $\sigma$ for our Gaussian $\beta$ prior (i.e., `b_sigma = c(1, .5, .2)`).
 
-```{r sim_2, cache = T, warning = F, message = F, results = "hide"}
+```{r, eval = F}
 library(rethinking)
 
-n_sim <- 1e3  # I've reduced this number by one order of magnitude to reduce computation time
+# I've reduced this number by one order of magnitude to reduce computation time
+n_sim <- 1e3
 
 make_sim <- function(N, b_sigma){
   sapply(kseq, function(k) {
@@ -769,6 +781,16 @@ s <-
          b_sigma = rep(c(1, .5, .2), times = 2)) %>% 
   mutate(sim     = map2(N, b_sigma, make_sim)) %>% 
   unnest()
+```
+
+```{r, echo = F}
+# Even after reducing `n_sim` by an order of magnitude, that simulation takes a long time to
+# complete. So instead of completing it on the fly for each new version of this project, I’ve
+# saved the results in an external file. 
+
+# save("s", file = "06_sims/sim_2.rda")
+
+load("06_sims/sim_2.rda")
 ```
 
 We'll follow the same principles for wrangling these data as we did those from the previous simulation, `dev_tibble`. And after wrangling, we'll feed the data directly into the code for our version of Figure 6.9.
@@ -804,15 +826,17 @@ s %>%
   facet_wrap(~N, scale = "free_y")
 ```
 
+Our results don’t perfectly align with those in the text. I suspect his is because we used `1e3` iterations, rather than the `1e4` of the text. If you’d like to wait all night long for the simulation to yield more stable results, be my guest.
+
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
 For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog post [*(It’s never a) Total Eclipse of the Prior*](http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/).
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.4.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.5.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
 
-> The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is nonzero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 67)
+> The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is nonzero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 68)
 
 ## Information criteria
 
@@ -821,7 +845,7 @@ The data from our initial simulation isn't formatted well to plot Figure 6.10. W
 ```{r}
 (
   dev_tibble <-
-  dev_tibble%>% 
+  dev_tibble %>% 
   select(-sd) %>% 
   mutate(n_par  = ifelse(sample == "in", n_par + .075, n_par - .075)) %>% 
   spread(key = sample, value = mean) %>% 
@@ -899,7 +923,7 @@ It's okay that the brms and loo packages don't yield the DIC because
 
 You'll see how to compute the WAIC in brms in just a bit.
 
-##### Overthinking: WAIC calculation. 
+#### Overthinking: WAIC calculation. 
 
 Here is how to fit the pre-WAIC model in brms.
 
@@ -982,7 +1006,7 @@ dfmean %>%
 
 Once again, we'll wrap McElreath's `sim.train.test()`-based simulation code within a custom function, `make_sim()`. This time we've adjusted `make_sim()` to take one argument, `b_sigma`. We will then feed that value into the same-named argument within `sim.train.test()`. Also notice that within `sim.train.test()`, we've specified `TRUE` for the information criteria and deviance arguments. Be warned: it takes extra time to compute the WAIC. Because we do that for every model, this simulation takes longer than the previous ones. To get a taste, try running it with something like `n_sim <- 5` first.
 
-```{r sim_3, cache = T, results = 'hide'}
+```{r, eval = F}
 n_sim <- 1e3
 
 make_sim <- function(b_sigma){
@@ -1017,6 +1041,16 @@ s <-
   unnest()
 ```
 
+```{r, echo = F}
+# Even after reducing `n_sim` by an order of magnitude, that simulation takes a long time to
+# complete. So instead of completing it on the fly for each new version of this project, I’ve
+# saved the results in an external file. 
+
+# save("s", file = "06_sims/sim_3.rda")
+
+load("06_sims/sim_3.rda")
+```
+
 Here we wrangle and plot.
 
 ```{r, fig.height = 4.5, fig.width = 3.25}
@@ -1046,6 +1080,8 @@ s %>%
         legend.position  = "none") +
   facet_wrap(~ic, ncol = 1)
 ```
+
+And again, our results don’t perfectly match those in the text because a) we’re simulating and b) we used fewer iterations than McElreath did. But the overall pattern remains.
 
 ## Using information criteria
 
@@ -1617,7 +1653,7 @@ r2_combined <-
   bind_cols(r2_b6.13, r2_b6.14) %>%
   mutate(dif = r2_14 - r2_13)
 
-# A simple density plot
+# Plot their densities
 r2_combined %>%
   ggplot() +
   geom_density(aes(x = r2_13),
@@ -1663,5 +1699,5 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, N, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, make_sim, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, p11, p12, p13, p14, fitd_b6.14, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, p11, p12, p13, p14, fitd_b6.14, r2_b6.13, r2_b6.14, r2_combined)
 ```
