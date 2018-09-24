@@ -190,7 +190,7 @@ ggplot(data = d_plot,
         legend.position = "none")
 ```
 
-McElreath's convention for this first statistical models is
+McElreath's convention for this first type of statistical model is
 
 $$
 \begin{eqnarray} 
@@ -459,13 +459,13 @@ fitted(b11.3,
   separate(key, into = c("intention", "rating")) %>% 
   # That step produced two character vectors. They’ll be more useful as numbers
   mutate(intention = intention %>% as.double(),
-         rating =  rating %>% as.double()) %>%
+         rating    =  rating %>% as.double()) %>%
   # Here we convert `intention` into its proper 0:1 metric
   mutate(intention = intention -1) %>%
   # This isn't necessary, but it helps me understand exactly what metric the values are currently in
   rename(pk = value) %>% 
   # This step is based on McElreath's R code 11.10 on page 338
-  mutate(`pk:rating` = pk*rating) %>% 
+  mutate(`pk:rating` = pk * rating) %>% 
   # I’m not sure how to succinctly explain this. You’re just going to have to trust me.
   group_by(iter, intention) %>% 
   # This is very important for the next step.
@@ -480,7 +480,7 @@ fitted(b11.3,
              color = probability)) +
   geom_line(aes(group = interaction(iter, rating)),
             alpha = 1/10) +
-  # Note how we made a new data object for geom_text()
+  # Note how we made a new data object for `geom_text()`
   geom_text(data = tibble(text        = 1:7,
                           intention   = seq(from = .9, to = .1, length.out = 7),
                           probability = c(.05, .12, .20, .35, .53, .71, .87)),
@@ -522,10 +522,10 @@ make_Figure_11.3_data <- function(action, contact, max_iter){
     select(iter, everything()) %>% 
     separate(key, into = c("intention", "rating")) %>% 
     mutate(intention = intention %>% as.double(),
-           rating =  rating %>% as.double()) %>%
+           rating    =  rating %>% as.double()) %>%
     mutate(intention = intention -1) %>%
     rename(pk = value) %>% 
-    mutate(`pk:rating` = pk*rating) %>% 
+    mutate(`pk:rating` = pk * rating) %>% 
     group_by(iter, intention) %>% 
     arrange(iter, intention, rating) %>% 
     mutate(probability = cumsum(pk)) %>% 
@@ -647,10 +647,10 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
     select(iter, everything()) %>% 
     separate(key, into = c("intention", "rating")) %>% 
     mutate(intention = intention %>% as.double(),
-           rating =  rating %>% as.double()) %>%
+           rating    =  rating %>% as.double()) %>%
     mutate(intention = intention -1) %>%
     rename(pk = value) %>% 
-    mutate(`pk:rating` = pk*rating) %>% 
+    mutate(`pk:rating` = pk * rating) %>% 
     group_by(iter, intention) %>% 
     
     # Everything above this point is identical to the previous custom function.
@@ -727,7 +727,7 @@ Finally; now those are plots I can sell in a clinical psychology journal!
 >
 > Count variables are especially prone to needing a mixture treatment. The reason is that a count of zero can often arise more than one way. A "zero" means that nothing happened, and nothing can happen either because the rate of events is low or rather because the process that generates events failed to get started. (p. 342, *emphasis* in the original)
 
-In his **Rethinking: Breaking the law** box, McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's vignette [*Define Custom Response Distributions with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
+In his **Rethinking: Breaking the law** box, McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's vignette, [*Define Custom Response Distributions with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
 
 ### Example: Zero-inflated Poisson.
 
@@ -790,11 +790,11 @@ And
 > And the likelihood of a non-zero value $y$ is:
 >
 > $$
-\begin{eqnarray}
-\text{Pr} (y | p, \lambda) & = & \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
-& = & (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
-\end{eqnarray}
-$$
+> \begin{eqnarray}
+> \text{Pr} (y | p, \lambda) & = & \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
+> & = & (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
+> \end{eqnarray}
+> $$
 >
 > Since drinking monks never produce $y > 0$, the expression above is just the chance the monks both work $1 - p$, and finish $y$ manuscripts. (p. 344, *emphasis* in the original)
 
@@ -868,7 +868,7 @@ dzip <- function(x, p, lambda, log = TRUE) {
 }
 ```
 
-We can use McElreath's `dzip()` to do a posterior predictive check for our model. To work with our estimates for $p$ and $lambda$ directly, we'll set `log = F`.
+We can use McElreath's `dzip()` to do a posterior predictive check for our model. To work with our estimates for $p$ and $\lambda$ directly, we'll set `log = F`.
 
 ```{r, fig.width = 5, fig.height = 3}
 p_b11.4      <- posterior_summary(b11.4)[2, 1]
@@ -901,7 +901,7 @@ In this chapter we’ll cope with the problem using continuous mixture models—
 
 > A beta-binomial model assumes that each binomial count observation has its own probability of success. The model estimates the *distribution* of probabilities of success across cases, instead of a single probability of success. And predictor variables change the shape of this distribution, instead of directly determining the probability of each success. (p, 347, *emphasis* in the original)
 
-Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\overline{p}$ and a shape parameter $\theta$. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` argument is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
+Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\overline{p}$ and a shape parameter $\theta$. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` parameter is. If you want a beta with an average of .2, you set `pbar <- .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
 
 However, the beta density is typically defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
 
@@ -909,7 +909,7 @@ $$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\t
 
 which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan reference manual](http://mc-stan.org/users/documentation/index.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()`.
 
-McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use, but McElreath's `dbeta2()` are. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
+McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use; the parameters in McElreath's `dbeta2()` are much nicer. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
 
 $$\mu = \frac{\alpha}{\alpha + \beta}$$
 
@@ -921,7 +921,7 @@ With $\mu$ and $\kappa$ in hand, we can even find the $SD$ of a beta distributio
 
 $$\sigma = \sqrt{\mu (1 - \mu) / (\kappa + 1)}$$
 
-The reason I explicate this is because McElreath's `pbar` is $\mu = \frac{\alpha}{\alpha + \beta}$ and his `theta` is $\kappa = \alpha + \beta$. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
+I'm explicate all this because McElreath's `pbar` is $\mu = \frac{\alpha}{\alpha + \beta}$ and his `theta` is $\kappa = \alpha + \beta$. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
 
 ```{r, fig.width = 4, fig.height = 3}
 pbar  <- 0.5
@@ -1021,7 +1021,7 @@ $$
 
 Here the size $n = \text{applications}$.
 
-Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
+Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
 Before we get carried away, let's load the data.
 
@@ -1059,7 +1059,7 @@ stan_funs <- "
 "
 ```
 
-With that out of the way, we’re ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing. $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
+With that out of the way, we’re almost ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing: $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
 
 ```{r b11.5, cache = T, warning = F, message = F}
 b11.5 <-
@@ -1123,7 +1123,7 @@ tibble(x = 0:1) %>%
 
 I got the idea to nest `stat_function()` within `mapply()` from [shadow's answer to this Stack Overflow question](http://stackoverflow.com/questions/27009641/plot-multiple-normal-curves-in-same-plot).
 
-Before we can do our variant of Figure 11.5.b, we'll need to specify a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
+Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
 ```{r, results = 'hide', warning = F, message = F}
 expose_functions(b11.5, vectorize = TRUE)
@@ -1226,7 +1226,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-##### Bonus: Let's fit a negative-binomial model.
+#### Bonus: Let's fit a negative-binomial model.
 
 McElreath didn't give an example of negative-binomial regression in the text. Here's one with the `UCBadmit` data.
 
@@ -1244,7 +1244,7 @@ brm(data = d, family = negbinomial,
 Since the negative-binomial model uses the log link, you need to exponentiate to get the estimates back into the count metric. E.g.,
 
 ```{r}
-exp(4.69)
+exp(4.7)
 ```
 
 Also, you may have noticed we used the brms default `prior(gamma(0.01, 0.01), class = shape)` for the shape parameter. Here's what that prior looks like.
