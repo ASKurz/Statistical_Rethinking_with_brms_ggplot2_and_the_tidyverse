@@ -56,7 +56,7 @@ $$
 \end{eqnarray}
 $$
 
-```{r b10.1, cache = T, message = F, results = "hide"}
+```{r b10.1, cache = T, warning = F, message = F, results = "hide"}
 b10.1 <-
   brm(data = d, family = binomial,
       pulled_left ~ 1,
@@ -84,7 +84,7 @@ fixef(b10.1) %>%
 
 The next two chimp models add predictors in the usual way.
 
-```{r b10.2_and b10.3, cache = T, message = F, results = "hide"}
+```{r b10.2_and b10.3, cache = T, warning = F, message = F, results = "hide"}
 b10.2 <-
   brm(data = d, family = binomial,
       pulled_left ~ 1 + prosoc_left,
@@ -99,7 +99,7 @@ b10.3 <-
 
 Before comparing our models, we'll first save their WAIC estimates as objects. These will come in handy in just a bit.
 
-```{r w_b10.1_through_w_b10.3, cache = T, message = F}
+```{r w_b10.1_through_w_b10.3, cache = T, warning = F, message = F}
 w_b10.1 <- waic(b10.1)
 w_b10.2 <- waic(b10.2)
 w_b10.3 <- waic(b10.3)
@@ -430,9 +430,9 @@ The univariable logistic model with `male` as the sole predictor of `admit` foll
 $$
 \begin{eqnarray}
 n_{\text{admit}_i} & \sim & \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) & = & \alpha + \beta_1 \text{male}_i \\
+\text{logit} (p_i) & = & \alpha + \beta \text{male}_i \\
 \alpha & \sim & \text{Normal} (0, 10) \\
-\beta_1 & \sim & \text{Normal} (0, 10)
+\beta & \sim & \text{Normal} (0, 10)
 \end{eqnarray}
 $$
 
@@ -459,7 +459,7 @@ Here's the WAIC comparison.
 waic(b10.6, b10.7)
 ```
 
-##### Bonus: Information criteria digression.
+**Bonus: Information criteria digression.**
 
 Let's see what happens if we switch to the LOO.
 
@@ -537,7 +537,7 @@ In this case, the results are kinda similar. But holy smokes, look at the size o
 
 But this has all been a tangent from the central thrust of this section. 
 
-#### Back from our information criteria digression.
+**Back from our information criteria digression.**
 
 Let's get back on track. Here's a look at `b10.6`, the unavailable model:
 
@@ -545,13 +545,15 @@ Let's get back on track. Here's a look at `b10.6`, the unavailable model:
 print(b10.6)
 ```
 
+Here's the relative difference in admission odds.
+
 ```{r, warning = F, message = F}
 fixef(b10.6)[2] %>%
   exp() %>%
   round(digits = 2)
 ```
 
-The difference in admission probabilities:
+And now we'll compute difference in admission probabilities.
 
 ```{r}
 post <- posterior_samples(b10.6)
@@ -608,13 +610,13 @@ As alluded to in all that LOO/`pareto_k` talk, above, this is not a great fit. S
 $$
 \begin{eqnarray}
 n_{\text{admit}_i} & \sim & \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) & = & \alpha_{\text{dept}_i} + \beta_1 \text{male}_i \\
+\text{logit} (p_i) & = & \alpha_{\text{dept}_i} + \beta \text{male}_i \\
 \alpha_{\text{dept}} & \sim & \text{Normal} (0, 10) \\
-\beta_1 & \sim & \text{Normal} (0, 10)
+\beta & \sim & \text{Normal} (0, 10)
 \end{eqnarray}
 $$
 
-We don't need to coerce an index. But here are the models.
+We don't need to coerce an index like McElreath did in the text. But here are the models.
 
 ```{r b10.8_and_b10.9, cache = T, message = F, warning = F, results = "hide"}
 b10.8 <-
@@ -641,10 +643,23 @@ loos <- loo(b10.6, b10.7, b10.8, b10.9,
 loos
 ```
 
+Here are the LOO weights.
+
+```{r}
+model_weights(b10.6, b10.7, b10.8, b10.9,
+              weights = "loo")
+```
+
 The parameters summaries for our multivariable model, `b10.9`, look like this:
 
 ```{r}
 fixef(b10.9) %>% round(digits = 2)
+```
+
+And on the proportional odds scale, the posterior mean for `b_male` is:
+
+```{r}
+fixef(b10.9)[7, 1] %>% exp()
 ```
 
 Since we've been using brms, there's no need to fit our version of McElreath's `m10.9stan`. We already have that in our `b10.9`. But just for kicks and giggles, here's another way to get the model summary. 
@@ -715,13 +730,13 @@ b.good <-
                 prior(normal(0, 10), class = b)))
 ```
 
-Our model summary will differ a bit from the one in the text. It seems this is because of the MAP/HMC contrast.
+Our model summary will differ a bit from the one in the text. It seems this is because of the MAP/HMC contrast and our choice of priors.
 
 ```{r}
 print(b.good)
 ```
 
-Here's the `pairs()` plot McElreath excluded from the text:
+You might experiment with different prior $SD$s to see how they influence the posterior $SD$s. Anyways, here's the `pairs()` plot McElreath excluded from the text:
 
 ```{r, fig.width = 3.25, fig.height = 3}
 pairs(b.good,
@@ -744,11 +759,11 @@ tibble(y = rbinom(1e5, 1000, 1/1000)) %>%
             y_variance = var(y))
 ```
 
-Yes, those statistics are virtually the same. When dealing with Poisson data, $\mu = \sigma^2$. When you have a number of trials for which $n$ is unknown or much larger than seen in the data, the Poisson likelihood is a useful too. We define it like this
+Yes, those statistics are virtually the same. When dealing with Poisson data, $\mu = \sigma^2$. When you have a number of trials for which $n$ is unknown or much larger than seen in the data, the Poisson likelihood is a useful tool. We define it like this
 
 $$y \sim \text{Poisson} (\lambda)$$
 
-and $\lambda$ expresses both mean and variance because, within this model, the variance scales right along with the mean. Since $\lambda$ is constrained to be positive, we typically use the log link. Thus the basic Poisson regression model is
+As $\lambda$ expresses both mean and variance because, within this model, the variance scales right along with the mean. Since $\lambda$ is constrained to be positive, we typically use the log link. Thus the basic Poisson regression model is
 
 $$
 \begin{eqnarray}
@@ -1023,7 +1038,7 @@ b10.10_c <-
   brm(data = d, family = poisson,
       total_tools ~ 1 + log_pop_c + contact_high + contact_high:log_pop_c,
       prior = c(prior(normal(0, 10), class = Intercept),
-                prior(normal(0, 10), class = b)),
+                prior(normal(0, 1), class = b)),
       iter = 3000, warmup = 1000, chains = 4, cores = 4)
 ```
 
@@ -1066,6 +1081,8 @@ psych::lowerCor(posterior_samples(b10.10_c)[, 1:4])
 ```
 
 ### Example: Exposure and the offset.
+
+> For the last Poisson example, we’ll look at a case where the exposure varies across observations. When the length of observation, area of sampling, or intensity f sampling varies, the counts we observe also naturally vary. Since a Poisson distribution assumes that the rate of events is constant in time (or space), it’s easy to handle this. All we need to do, as explained on page 312 [of the text], is to add the logarithm of the exposure to the linear model. The term we add is typically called an *offset*. (p. 321, *emphasis* in the original)
 
 Here we simulate our data.
 
@@ -1125,15 +1142,17 @@ posterior_samples(b10.15) %>%
   mutate_if(is.double, round, digits = 2)
 ```
 
+As McElreath pointed out in the text, "Your estimates will be slightly different, because yo got different randomly simulated data" (p. 322).
+
 ## Other count regressions
 
 The next two of the remaining four models are maximum entropy distributions for certain problem types. The last two are mixtures, of which we’ll see more in the next chapter. 
 
 ### Multinomial.
 
-> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in Chapter 9 when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, …, p_K$, then the probability of observing $y_1, …, y_K$ events of each type out of $n$ trials is:
+> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in Chapter 9 when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, …, p_K$, then the probability of observing $y_1, …, y_K$ events of each type out of $n$ trials is (p. 323):
 
-$$\text{Pr} (y_i, ..., y_K | n, p_1, ..., p_K) = \frac{n!}{\prod_i y_i!} \prod_{i = 1}^K p_i^{y_i}$$
+$$\text{Pr} (y_1, ..., y_K | n, p_1, ..., p_K) = \frac{n!}{\prod_i y_i!} \prod_{i = 1}^K p_i^{y_i}$$
 
 Compare that equation with the simpler version in section 2.3.1 (page 33 in the text).
 
@@ -1233,7 +1252,7 @@ Here's the brms version of McElreath's `m10.17`.
 
 ```{r b10.17, cache = T, message = F, warning = F}
 b10.17 <-
-  brm(data = list(career        = career,          # note how we used a list instead of a tibble
+  brm(data = list(career        = career,  # note how we used a list instead of a tibble
                   family_income = family_income), 
       family = categorical(link = "logit"),
       career ~ 1 + family_income,
