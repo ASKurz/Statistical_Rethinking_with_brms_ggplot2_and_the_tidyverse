@@ -8,7 +8,7 @@ output:
 
 # Multilevel Models
 
-> [Multilevel models] remember features of each cluster in the data as they learn about all of the clusters. Depending upon the variation among clusters, which is learned from the data as well, the model pools information across clusters. This pooling tends to improve estimates about each cluster. This improved estimation leads to several, more pragmatic sounding, benefits of the multilevel approach. (p. 356)
+> Multilevel models... remember features of each cluster in the data as they learn about all of the clusters. Depending upon the variation among clusters, which is learned from the data as well, the model pools information across clusters. This pooling tends to improve estimates about each cluster. This improved estimation leads to several, more pragmatic sounding, benefits of the multilevel approach. (p. 356)
 
 These benefits include:
 
@@ -16,6 +16,12 @@ These benefits include:
 * improved estimates when there are imbalances among subsamples
 * estimates of the variation across subsamples
 * avoiding simplistic averaging by retaining variation across subsamples
+
+> All of these benefits flow out of the same strategy and model structure. You learn one basic design and you get all of this for free.
+>
+> When it comes to regression, multilevel regression deserves to be the default approach. There are certainly contexts in which it would be better to use an old-fashioned single-level model. But the contexts in which multilevel models are superior are much more numerous. It is better to begin to build a multilevel analysis, and then realize it’s unnecessary, than to overlook it. And once you grasp the basic multilevel stragety, it becomes much easier to incorporate related tricks such as allowing for measurement error in the data and even model missing data itself (Chapter 14). (p. 356)
+
+I’m totally on board with this. After learning about the multilevel model, I see it everywhere. For more on the sentiment it should be the default, check out McElreath’s blog post, [*Multilevel Regression as Default*](http://elevanth.org/blog/2017/08/24/multilevel-regression-as-default/).
 
 ## Example: Multilevel tadpoles
 
@@ -54,13 +60,15 @@ d <-
 
 Here's the formula for the un-pooled model in which each `tank` gets its own intercept.
 
-$$\begin{eqnarray}
-text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
+$$
+\begin{eqnarray}
+\text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
 \text{logit} (p_i) & = & \alpha_{\text{tank}_i} \\
 \alpha_{\text{tank}} & \sim & \text{Normal} (0, 5)
-\end{eqnarray}$$
+\end{eqnarray}
+$$
 
-And $n_i = \text{density}$. Now we'll fit this simple aggregated binomial model much like we practiced in Chapter 10.
+And $n_i = \text{density}_i$. Now we'll fit this simple aggregated binomial model much like we practiced in Chapter 10.
 
 ```{r b12.1, cache = T, message = F, warning = F}
 b12.1 <- 
@@ -72,13 +80,15 @@ b12.1 <-
 
 The formula for the multilevel alternative is
 
-$$\begin{eqnarray}
-text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
+$$
+\begin{eqnarray}
+\text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
 \text{logit} (p_i) & = & \alpha_{\text{tank}_i} \\
 \alpha_{\text{tank}} & \sim & \text{Normal} (\alpha, \sigma) \\
 \alpha & \sim & \text{Normal} (0, 1) \\
 \sigma & \sim & \text{HalfCauchy} (0, 1)
-\end{eqnarray}$$
+\end{eqnarray}
+$$
 
 You specify the corresponding multilevel model like this.
 
@@ -91,9 +101,9 @@ b12.2 <-
       iter = 4000, warmup = 1000, chains = 4, cores = 4)
 ```
 
-The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf), `( <varying predictor(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. 
+The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf), `( <varying predictor(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. 
 
-Instead of computing the information criteria for each model, saving the results as objects and then placing those objects in `compare_ic()`, we can also just but both fit objects in `waic()` or `loo()`.
+Instead of computing the information criteria for each model, saving the results as objects and then placing those objects in `compare_ic()`, we can also just put both fit objects in `waic()` or `loo()`.
 
 ```{r ic_b12.1_and_b12.2, cache = T}
 waic(b12.1, b12.2)
@@ -113,7 +123,7 @@ kf
 
 The $K$-fold cross-validation difference of `r kf$ic_diffs__[1] %>% round(0)`, with a standard error around `r kf$ic_diffs__[2] %>% round(0)`, suggests that model `b12.2` is the clear favorite relative to `b12.1`. For more on the `kfold()` function, see the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf).
 
-But here's our prep work for Figure 12.1
+But here's our prep work for Figure 12.1.
 
 ```{r}
 post <- posterior_samples(b12.2)
@@ -206,7 +216,7 @@ rnorm(n    = 1,
 
 First, we took one random draw from a normal distribution with a mean of the first row in `post[, 1]` and a standard deviation of the value from the first row in `post[, 2]`, and passed it through the `inv_logit_scaled()` function. By replacing the `1` with `nrow(post)`, we do this `nrow(post)` times (i.e., 12,000). So our orange density is the summary of that process.
 
-##### Overthinking: Prior for variance components.
+#### Overthinking: Prior for variance components.
 
 Yep, you can use the exponential distribution for your priors in brms. Here it is for model `b12.2`.
 
@@ -253,17 +263,21 @@ In this section, we explicate this by contrasting three perspectives:
 * No pooling (i.e., the single-level $\alpha_{\text{tank}_i}$ model)
 * Partial pooling (i.e., the multilevel model for which $\alpha_{\text{tank}} \sim \text{Normal} (\alpha, \sigma)$)
 
+> To demonstrate [the magic of the multilevel model], we’ll simulate some tadpole data. That way, we’ll know the true per-pond survival probabilities. Then we can compare the no-pooling estimates to the partial pooling estimates, by computing how close each gets to the true values they are trying to estimate. The rest of this section shows how to do such a simulation. (p. 365)
+
 ### The model.
 
 The simulation formula should look familiar.
 
-$$\begin{eqnarray}
-text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
+$$
+\begin{eqnarray}
+\text{surv}_i & \sim & \text{Binomial} (n_i, p_i) \\
 \text{logit} (p_i) & = & \alpha_{\text{pond}_i} \\
 \alpha_{\text{pond}} & \sim & \text{Normal} (\alpha, \sigma) \\
 \alpha & \sim & \text{Normal} (0, 1) \\
 \sigma & \sim & \text{HalfCauchy} (0, 1)
-\end{eqnarray}$$
+\end{eqnarray}
+$$
 
 ### Assign values to the parameters.
 
@@ -309,6 +323,8 @@ The no-pooling estimates (i.e., $\alpha_{\text{tank}_i}$) are a function of simp
   mutate(p_nopool = si / ni)
   )
 ```
+
+"These are the same no-pooling estimates you’d get by fitting a model with a dummy variable for each pond and flat priors that induct no regularization" (p. 367).
 
 ### Compute the partial-pooling estimates.
 
@@ -436,9 +452,13 @@ dsim %>%
             median_error = median(value) %>% round(digits = 3))
 ```
 
+I originally learned about the multilevel model within the context of [longitudinal data](http://gseacademic.harvard.edu/alda/). In that context, I found the basic principles of a multilevel structure quite intuitive. The concept of partial pooling, however, took me some time to wrap my head around. If you’re struggling with this, be patient and keep chipping away. 
+
+When McElreath was [lecturing on this topic in 2015](https://www.youtube.com/watch?v=82TaniPgzQc&t=2048s&frags=pl%2Cwn), he traced partial pooling to statistician James Stein. In 1977, Efron and Morris wrote the now classic paper, [*Stein’s Paradox in Statistics*](http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf), which did a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works--or if you just like baseball--, check out my project on that example, [*James-Stein and Bayesian partial pooling*](https://github.com/ASKurz/James-Stein-and-Bayesian-partial-pooling).
+
 #### Overthinking: Repeating the pond simulation. 
 
-Within the brms workflow, we reuse a compiled model with `update()`.
+Within the brms workflow, we reuse a compiled model with `update()`. But first, we'll simulate new data.
 
 ```{r}
 a       <-  1.4
@@ -493,7 +513,7 @@ posterior_samples(b12.3) %>%
   facet_wrap(~model, ncol = 2)
 ```
 
-If you'd like the `stanfit` portion of your `brm()` object, subset with `$fit`. Take `b12.3`. You might check out its structure via `b12.3$fit %>% str()`. Here's the actual Stan code.
+If you'd like the `stanfit` portion of your `brm()` object, subset with `$fit`. Take `b12.3`, for example. You might check out its structure via `b12.3$fit %>% str()`. Here's the actual Stan code.
 
 ```{r}
 b12.3$fit@ stanmodel
@@ -514,7 +534,8 @@ b12.3$data %>%
 
 The initial multilevel update from model `b10.4` from the last chapter follows the statistical formula
 
-$$\begin{eqnarray}
+$$
+\begin{eqnarray}
 \text{left_pull}_i & \sim & \text{Binomial} (n_i = 1, p_i) \\
 \text{logit} (p_i) & = & \alpha + \alpha_{\text{actor}_i} + (\beta_1 + \beta_2 \text{condition}_i) \text{prosoc_left}_i \\
 \alpha_{\text{actor}} & \sim & \text{Normal} (0, \sigma_{\text{actor}}) \\
@@ -522,9 +543,14 @@ $$\begin{eqnarray}
 \beta_1 & \sim & \text{Normal} (0, 10) \\
 \beta_2 & \sim & \text{Normal} (0, 10) \\
 \sigma_{\text{actor}} & \sim & \text{HalfCauchy} (0, 1)
-\end{eqnarray}$$
+\end{eqnarray}
+$$
 
-Before we load the data and fit the model, behold our two identical Gaussians in a tidy tibble.
+> Notice that $\alpha$ is inside the linear model, not inside the Gaussian prior for $\alpha_\text{actor}$. This is mathematically equivalent to what [we] did with the tadpoles earlier in the chapter. You can always take the mean out of a Gaussian distribution and treat that distribution as a constant plus a Gaussian distribution centered on zero.
+>
+> This might seem a little weird at first, so it might help train your intuition by experimenting in R. (p. 371)
+
+Behold our two identical Gaussians in a tidy tibble.
 
 ```{r}
 set.seed(241)
@@ -595,7 +621,7 @@ post %>%
   summarise(mean = mean(value) %>% round(digits = 2))
 ```
 
-Here's another way to get at the same information, this time using `coef()` and a little formatting help from the `tidyverse::str_c()` function. Just for kicks, we'll throw in the 95% intervals, too.
+Here's another way to get at the same information, this time using `coef()` and a little formatting help from the `stringr::str_c()` function. Just for kicks, we'll throw in the 95% intervals, too.
 
 ```{r, message = F}
 coef(b12.4)$actor[ , c(1, 3:4), 1] %>%
@@ -1130,14 +1156,16 @@ rm(Kline)
 
 The statistical formula for our multilevel count model is
 
-$$\begin{eqnarray}
+$$
+\begin{eqnarray}
 \text{total_tools}_i & \sim & \text{Poisson} (\mu_i) \\
-\text{log} (\mu_i) & = & \alpha + \alpha_{\text{culture}_i} + \beta_1 \text{log} (\text{population}_i) \\
+\text{log} (\mu_i) & = & \alpha + \alpha_{\text{culture}_i} + \beta \text{log} (\text{population}_i) \\
 \alpha & \sim & \text{Normal} (0, 10) \\
-\beta_1 & \sim & \text{Normal} (0, 1) \\
+\beta & \sim & \text{Normal} (0, 1) \\
 \alpha_{\text{culture}} & \sim & \text{Normal} (0, \sigma_{\text{culture}}) \\
 \sigma_{\text{culture}} & \sim & \text{HalfCauchy} (0, 1) \\
-\end{eqnarray}$$
+\end{eqnarray}
+$$
 
 With brms, we don't actually need to make the `logpop` or `society` variables. We're ready to fit the multilevel `Kline` model with the data in hand.
 
@@ -1159,7 +1187,8 @@ Here is the data-processing work for our variant of Figure 12.6.
 ```{r}
 nd <- 
   tibble(population = seq(from = 1000, to = 400000, by = 5000),
-         # To "simulate counterfactual societies, using the hyper-parameters" (p. 383), we'll plug a new island into the `culture` variable
+         # To "simulate counterfactual societies, using the hyper-parameters" (p. 383), 
+         # we'll plug a new island into the `culture` variable
          culture    = "my_island") 
 
 pred_12.6 <-
@@ -1199,6 +1228,8 @@ pred_12.6 %>%
 ```
 
 Glorious.
+
+> The envelope of predictions is a lot wider here than it was back in Chapter 10. This is a consequene of the varying intercepts, combined with the fact that there is much more variation in the data than a pure-Poisson model anticipates. (p. 384)
 
 ## Reference {-}
 
