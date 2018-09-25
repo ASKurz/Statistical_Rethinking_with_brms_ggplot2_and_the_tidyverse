@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options, echo = FALSE, cache = FALSE}
+```{r set-options_13, echo = FALSE, cache = FALSE}
 options(width = 100)
 ```
 
@@ -775,21 +775,15 @@ My math's aren't the best. But if I'm following along correctly, here's a fuller
 $$\begin{eqnarray}
 \text{pulled_left}_i & \sim & \text{Binomial} (n = 1, p_i) \\
 \text{logit} (p_i) & = & \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc_left}_i  \\
-
 \alpha_i & = & \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block_id}_i} \\
 \beta_{1i} & = & \beta_1 + \beta_{1, \text{actor}_i} + \beta_{1, \text{block_id}_i} \\
 \beta_{2i} & = & \beta_2 + \beta_{2, \text{actor}_i} + \beta_{2, \text{block_id}_i} \\
-
 \begin{bmatrix} \alpha_\text{actor} \\ \beta_{1, \text{actor}} \\ \beta_{2, \text{actor}} \end{bmatrix} & \sim & \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{actor} \end{pmatrix} \\
-
 \begin{bmatrix} \alpha_\text{block_id} \\ \beta_{1, \text{block_id}} \\ \beta_{2, \text{block_id}} \end{bmatrix} & \sim & \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{block_id} \end{pmatrix} \\
-
 \mathbf S_\text{actor} & = & \begin{pmatrix} \sigma_{\alpha_\text{actor}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{actor}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} 
 \mathbf R_\text{actor} \begin{pmatrix} \sigma_{\alpha_\text{actor}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{actor}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} \\
-
 \mathbf S_\text{block_id} & = & \begin{pmatrix} \sigma_{\alpha_\text{block_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} 
 \mathbf R_\text{block_id} \begin{pmatrix} \sigma_{\alpha_\text{block_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} \\
-
 (\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) & \sim & \text{HalfCauchy} (0, 2) \\
 (\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) & \sim & \text{HalfCauchy} (0, 2) \\
 \mathbf R_\text{actor} & \sim & \text{LKJcorr} (4) \\
@@ -880,7 +874,7 @@ First off, recall that `fitted()` returns summary values, by default. If we want
 
 Moving forward, before we can follow along with McElreath’s R code 13.27, we need to refit the simpler model from way back in Chapter 12.
 
-```{r b12.5, cache = T, message = F, warning = F, results = "hide"}
+```{r b12.5_redo, cache = T, message = F, warning = F, results = "hide"}
 b12.5 <- 
   brm(data = d, family = binomial,
       pulled_left ~ 1 + prosoc_left + condition:prosoc_left + 
