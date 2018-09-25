@@ -818,8 +818,8 @@ library(brms)
 
 In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
 
-```{r fit1, cache = T, message = F, warning = F, results = 'hide'}
-fit1 <-
+```{r b3.1, cache = T, message = F, warning = F, results = 'hide'}
+b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
       w | trials(9) ~ 1,
@@ -830,7 +830,7 @@ fit1 <-
 We’ll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
 
 ```{r}
-posterior_summary(fit1)["b_Intercept", ] %>% 
+posterior_summary(b3.1)["b_Intercept", ] %>% 
   round(digits = 2)
 ```
 
@@ -840,7 +840,7 @@ Much like the way we used the `samples()` function to simulate probability value
 
 ```{r}
 fitted_samples <-
-  fitted(fit1, summary = F,
+  fitted(b3.1, summary = F,
          scale = "linear") %>% 
   as_tibble()
 
@@ -913,6 +913,6 @@ sessionInfo()
 ```
 
 ```{r, echo = F, warning = F, message = F}
-rm(n, n_success, n_tirals, d, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, probability, simulate_disaggregated_binom, disaggregated_samples, tosses, fit1, fitted_samples)
+rm(n, n_success, n_tirals, d, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, probability, simulate_disaggregated_binom, disaggregated_samples, tosses, b3.1, fitted_samples)
 ```
 
