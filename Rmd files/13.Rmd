@@ -18,9 +18,9 @@ options(width = 100)
 
 ## Varying slopes by construction
 
-> How should the robot pool information across intercepts and slopes? By modeling the joint population of intercepts and slopes, which means by modeling their covariance. In conventional multilevel models, the device that makes this possible is a joint multivariate Gaussian distribution for all of the varying effects, both intercepts and slopes. So instead of having two independent Gaussian distributions of intercepts and of slopes, the robot can do better by assigning a two-dimensional Gaussian distribution to both the intercepts (first dimension) and the sloped (second dimension). (p. 389)
+> How should the robot pool information across intercepts and slopes? By modeling the joint population of intercepts and slopes, which means by modeling their covariance. In conventional multilevel models, the device that makes this possible is a joint multivariate Gaussian distribution for all of the varying effects, both intercepts and slopes. So instead of having two independent Gaussian distributions of intercepts and of slopes, the robot can do better by assigning a two-dimensional Gaussian distribution to both the intercepts (first dimension) and the slopes (second dimension). (p. 389)
 
-In the **Rethinking: Why Gaussian?** box, McElreath discussed how researchers might use other multivariate distributions to model multiple random effects. The only one he named as an alternative to the Gaussian was the multivariate Student’s $t$. As it turns out, brms does currently allow users to use multivariate Student’s $t$ in this way. For details, check out [this discussion in the brms GitHub page](https://github.com/paul-buerkner/brms/issues/231). Bürkner's exemplar syntax from his comment on May 13, 2018, was `y ~ x + (x | gr(g, dist = "student"))`. I haven't experimented with this, but if you do, do consider commenting on how it went.
+In the **Rethinking: Why Gaussian?** box, McElreath discussed how researchers might use other multivariate distributions to model multiple random effects. The only one he named as an alternative to the Gaussian was the multivariate Student’s $t$. As it turns out, brms does currently allow users to use multivariate Student’s $t$ in this way. For details, check out [this discussion in the brms GitHub page](https://github.com/paul-buerkner/brms/issues/231). Bürkner's exemplar syntax from his comment on May 13, 2018, was `y ~ x + (x | gr(g, dist = "student"))`. I haven't experimented with this, but if you do, do consider [commenting on how it went](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 ### Simulate the population.
 
@@ -115,7 +115,11 @@ vary_effects %>%
   theme_pearl_earring
 ```
 
+Again, these are not "data." This is a distribution of *parameters*.
+
 ### Simulate observations.
+
+Here we put those simulated parameters to use.
 
 ```{r}
 n_visits <- 10
@@ -280,7 +284,8 @@ Here's the code to extract the relevant elements from the `coef()` list, convert
 
 ```{r}
 partially_pooled_params <-
-  # With this line we select each of the 20 cafe's posterior mean (i.e., Estimate) for both `Intercept` and `afternoon`
+  # With this line we select each of the 20 cafe's posterior mean (i.e., Estimate)
+  # for both `Intercept` and `afternoon`
   coef(b13.1)$cafe[ , 1, 1:2] %>%
   as_tibble() %>%               # convert the two vectors to a tibble
   rename(Slope = afternoon) %>%
@@ -294,7 +299,8 @@ Like McElreath, we'll compute the unpooled estimates directly from the data.
 # compute unpooled estimates directly from data
 un_pooled_params <-
   d %>%
-  # With these two lines, we compute the mean value for each cafe's wait time in the morning and then the afternoon.
+  # With these two lines, we compute the mean value for each cafe's wait time 
+  # in the morning and then the afternoon.
   group_by(afternoon, cafe) %>%
   summarise(mean = mean(wait)) %>%
   ungroup() %>%  # Ungrouping allows us to alter afternoon, one of the grouping variables
@@ -302,11 +308,13 @@ un_pooled_params <-
   spread(key = afternoon, value = mean) %>%  # use `spread()` just as in the previous block
   mutate(Slope = Slope - Intercept)          # Finally, here's our slope!
 
-# Here we combine the partially-pooled and unpooled means into a single data object, which will make plotting easier.
+# Here we combine the partially-pooled and unpooled means into a single data object, 
+# which will make plotting easier.
 params <-
   # `bind_rows()` will stack the second tibble below the first
   bind_rows(partially_pooled_params, un_pooled_params) %>%
-  mutate(pooled = rep(c("partially", "not"), each = nrow(.)/2))  # index whether the estimates are pooled
+  # index whether the estimates are pooled
+  mutate(pooled = rep(c("partially", "not"), each = nrow(.)/2)) 
 
 # Here's a glimpse at what we've been working for
 params %>%
@@ -336,7 +344,7 @@ ggplot(data = params, aes(x = Intercept, y = Slope)) +
   theme_pearl_earring
 ```
 
-Here we prep for Figure 13.5.b:
+Learn more about `stat_ellipse()`, [here](https://ggplot2.tidyverse.org/reference/stat_ellipse.html). Let's prep for Figure 13.5.b.
 
 ```{r}
 # retrieve the partially-pooled estimates with `coef()`
@@ -367,8 +375,9 @@ The code for Figure 13.5.b.
 
 ```{r, fig.width = 4.7, fig.height = 3}
 ggplot(data = estimates, aes(x = morning, y = afternoon)) +
-  # Nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the ten-layered
-  # semitransparent ellipses we did with ten lines of `stat_ellipse()` functions in the previous plot
+  # Nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the 
+  # ten-layered semitransparent ellipses we did with ten lines of `stat_ellipse()` 
+  # functions in the previous plot
   mapply(function(level) {
     stat_ellipse(geom  = "polygon", type = "norm",
                  size  = 0, alpha = 1/20, fill = "#E7CDC2",
@@ -438,7 +447,7 @@ b13.2 <-
       control = list(adapt_delta = 0.99))
 ```
 
-Since we don't have a `depth = 2` argument in `brms::summary()`, we'll have to get creative. One way to look at the parameters is with `b13.2$fit`:
+Since we don't have a `depth=2` argument in `brms::summary()`, we'll have to get creative. One way to look at the parameters is with `b13.2$fit`:
 
 ```{r}
 b13.2$fit
@@ -601,7 +610,8 @@ coef(b13.3)
 We may as well keep our doing-things-by-hand kick going. Instead relying on `bayesplog::mcmc_intervals()` or `tidybayes::pointintervalh()` to make our coefficient plot, we’ll combine `geom_pointrange()` and `coord_flip()`. But we will need to wrangle a bit to get those brms-based **centered** random effects into a usefully-formatted tidy tibble.
 
 ```{r, fig.width = 6.5, fig.height = 2.5}
-# As far as I can tell, because `coef()` yields a list, you have to take out the two random effects one at a time, convert them into tibbles, and then reassemble them with `bind_rows()`
+# As far as I can tell, because `coef()` yields a list, you have to take out the two 
+# random effects one at a time, convert them to tibbles, and reassemble them with `bind_rows()`
 coef(b13.3)$dept_id[, , 1] %>% 
   as_tibble() %>% 
   bind_rows(
@@ -661,9 +671,9 @@ partially_pooled_params <-
   mutate(dept = 1:n()) %>%
   select(dept, everything())
 
-# In order to calculate the unpooled estimates from the data, we'll need a function that can 
-# convert probabilities into the logit metric. If you do the algebra, this is just a 
-# transformation of the `inv_logit_scaled()` function.
+# In order to calculate the unpooled estimates from the data, we'll need a function that 
+# can convert probabilities into the logit metric. If you do the algebra, this is just
+# a transformation of the `inv_logit_scaled()` function.
 prob_to_logit <- function(x){
   -log((1 / x) -1)
   }
@@ -737,6 +747,8 @@ Compare the three models by the WAIC.
 waic(b13.2, b13.3, b13.4)
 ```
 
+> The varying slopes model, [`b13.3`], dominates [the other two]. This is despite the fact that the *average* slope in [`b13.3`] is nearly zero. The average isn’t what matters, however. It is the individual slopes, one for each department, that matter. If we wish to generalize to new departments, the variation in slopes suggest that it’ll be worth paying attention to gender, even if the average slope is nearly zero in the population. (pp. 402--403, *emphasis* in the original)
+
 ## Example: Cross-classified `chimpanzees` with varying slopes
 
 Retrieve the `chimpanzees` data.
@@ -760,8 +772,7 @@ d <-
 
 My math's aren't the best. But if I'm following along correctly, here's a fuller statistical expression of our cross-classified model.
 
-$$
-\begin{eqnarray}
+$$\begin{eqnarray}
 \text{pulled_left}_i & \sim & \text{Binomial} (n = 1, p_i) \\
 \text{logit} (p_i) & = & \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc_left}_i  \\
 
@@ -783,8 +794,7 @@ $$
 (\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) & \sim & \text{HalfCauchy} (0, 2) \\
 \mathbf R_\text{actor} & \sim & \text{LKJcorr} (4) \\
 \mathbf R_\text{block_id} & \sim & \text{LKJcorr} (4)
-\end{eqnarray}
-$$
+\end{eqnarray}$$
 
 And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
@@ -838,8 +848,7 @@ neff %>%
   theme_pearl_earring
 ```
 
-The bayesplot package contains a sweet of [handy diagnostic features](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#effective-sample-size). 
-The `mcmc_neff()` function, for example, makes it easy to examine the ratio of n.eff and the fill number of post-warm-up iterations, *N*. Ideally, that ratio is closer to 1 than not.
+As in the last chapter, we'll use the `bayesplot::mcmc_neff()` function to examine the ratio of n.eff and the fill number of post-warm-up iterations, *N*. Ideally, that ratio is closer to 1 than not.
 
 ```{r, warning = F, message = F, fig.height = 3.5}
 library(bayesplot)
@@ -884,7 +893,7 @@ b12.5 <-
 
 Now we can compare them with `waic()`.
 
-```{r waic_b13.6_and_b12.5, cache = T, message = F}
+```{r waic_b13.6_and_b12.5, cache = T, message = F, warning = F}
 waic(b13.6, b12.5)
 ```
 
@@ -941,7 +950,7 @@ d_mat %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-Figure 13.8, the "shape of the function relating distance to the covariance $\mathbf{K}_{ij}$."
+Figure 13.8 shows the "shape of the function relating distance to the covariance $\mathbf{K}_{ij}$."
  
 ```{r, fig.width = 3.25, fig.height = 3}
 tibble(
@@ -988,7 +997,7 @@ b13.7 <-
       total_tools ~ 1 + gp(lat, lon2) + logpop,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(inv_gamma(2.874624, 0.393695), class =	lscale),
+                prior(inv_gamma(2.874624, 0.393695), class = lscale),
                 prior(cauchy(0, 1), class = sdgp)),
       iter = 1e4, warmup = 2000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.999,
@@ -1017,7 +1026,7 @@ posterior_samples(b13.7) %>%
 
 Now we're in the ballpark. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`.
 
-Now look at the denominator of the inner part of Bürkner equation, $2lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that whereas McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
+Now look at the denominator of the inner part of Bürkner equation, $2lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
 
 $$\rho^2 = 1/(2 \times (lscale^2))$$
 
@@ -1256,7 +1265,7 @@ tidy_rho %>%
   theme_pearl_earring 
 ```
 
-Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced. Here's our version of Figure 13.10.b.
+Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here's our version of Figure 13.10.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 # new data for fitted()
