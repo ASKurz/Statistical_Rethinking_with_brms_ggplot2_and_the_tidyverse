@@ -12,6 +12,18 @@ options(width = 100)
 
 # Missing Data and Other Opportunities
 
+For the opening example, we're playing with the conditional probability
+
+$$
+\text{Pr(burnt down | burnt up)} = \frac{\text(Pr(burnt up, burnt down))}{\text{Pr(burnt up)}}
+$$
+
+It works out that 
+
+$$
+\text{Pr(burnt down | burnt up)} = \frac{1/3}{1/2} = \frac{2}{3}
+$$
+
 We might express the math in the middle of page 423 in tibble form like this.
 
 ```{r, warning = F, message = F}
@@ -21,9 +33,9 @@ p_pancake <- 1/3
 
 (
   d <-
-    tibble(pancake      = c("BB", "BU", "UU"),
-           p_burnt      = c(1, .5, 0)) %>% 
-    mutate(p_burnt_up   = p_burnt * p_pancake)
+    tibble(pancake    = c("BB", "BU", "UU"),
+           p_burnt    = c(1, .5, 0)) %>% 
+    mutate(p_burnt_up = p_burnt * p_pancake)
 ) 
 
 d %>% 
@@ -56,7 +68,7 @@ Each of those `value_returned` values stands for one of the three pancakes: 1 = 
 matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)
 ```
 
-See how the three columns are identified as `[,1]`, `[,2]`, and `[,3]`? If, say, we wanted to isolate the values in the second column, we'd execute
+See how the three columns are identified as `[,1]`, `[,2]`, and `[,3]`? If, say, we wanted to subset the values in the second column, we'd execute
 
 ```{r}
 matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, 2]
@@ -117,7 +129,7 @@ The results are within rounding error of the ideal 2/3.
 >
 > In this chapter, [we’ll] meet two commonplace applications of this assume-and-deduce strategy. The first is the incorporation of measurement error into our models. The second is the estimation of missing data through Bayesian imputation…
 >
-> In neither application do [we] have to intuit the consequences f measurement errors nor the implications of missing values in order to design the models. All [we] have to do is state your information about the error or about the variables with missing values. Logic does the rest. (p. 424)
+> In neither application do [we] have to intuit the consequences of measurement errors nor the implications of missing values in order to design the models. All [we] have to do is state [the] information about the error or about the variables with missing values. Logic does the rest. (p. 424)
 
 ## Measurement error
 
@@ -139,7 +151,7 @@ library(brms)
 
 The brms package currently supports `theme_black()`, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. You can find the origins of the code, [here](https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/). 
 
-Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used for this chapter is based on his version, with a few amendments.
+Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used for this chapter is based on his version, with a few amendments of my own.
 
 ```{r}
 theme_black <- 
@@ -292,7 +304,7 @@ As in the text
 >
 > All this does is define the measurement $D_{\text{OBS}i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST}i}$. So the above defines a probability for each State $i$’s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're fitting a meta-analysis on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the *brmsformula* section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/) on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
@@ -379,7 +391,7 @@ $$
 > The formula for the original intercept is
 `b_intercept = temp_intercept - dot_product(means_X, b)`, where `means_X` is the vector of means of the predictor variables and b is the vector of regression coefficients (fixed effects). That is, when transforming a prior on the intercept to an "equivalent" prior on the temporary intercept, you have to take the means of the predictors and well as the priors on the other coefficients into account.
 
-If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. And since many of the models in *Statistical Rethinking* use only weakly-regularizing priors, this hasn't been much of an issue up to this point. But this model is quite sensitive to the intercept syntax. My general recommendation for applied data analysis is this: **If your predictors aren’t mean centered, default to the** `0 + intercept` **syntax for the** `formula` argument when using** `brms::brm()`. Otherwise, your priors might not be doing what you think they’re doing.
+If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. And since many of the models in *Statistical Rethinking* use only weakly-regularizing priors, this hasn't been much of an issue up to this point. But this model is quite sensitive to the intercept syntax. My general recommendation for applied data analysis is this: **If your predictors aren’t mean centered, default to the** `0 + intercept` **syntax for the** `formula` **argument when using** `brms::brm()`. Otherwise, your priors might not be doing what you think they’re doing.
 
 Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to McElreath's `m14.1`, we'll use that one for our plots. Here's our Figure 14.2.a.
 
@@ -546,7 +558,7 @@ data_error %>%
   geom_point(alpha = 2/3, size = 2, color = color)
 ```
 
-To get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with $i$ ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we' can make our version of Figure 14.4.b.
+To get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with $i$ ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we can make our version of Figure 14.4.b.
 
 ```{r, message = F, warning = F, fig.width = 4, fig.height = 3.5}
 color_y <- viridis_pal(option = "C")(7)[7]
@@ -572,7 +584,7 @@ posterior_samples(b14.2_mi) %>%
   coord_cartesian(ylim = c(4, 14.5))
 ```
 
-The yellow points are model-implied; the purple ones are of the original data. It turns out our regularized more aggressively than what McElreath’s. I'm unsure of why. If you understand the difference, [please share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
+The yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath’s rethinking model. I'm unsure of why. If you understand the difference, [please share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 Anyway,
 
@@ -620,7 +632,7 @@ Here's the structure of our data list.
 data_list
 ```
 
-Here's the statistical model:
+Our statistical model follows the form
 
 $$
 \begin{eqnarray}
@@ -675,7 +687,7 @@ b14.3 <-
       iter = 1e4, chains = 2, cores = 2)
 ```
 
-The model parameters, including the imputed `neocortex` values, indexed by occasion number:
+The imputed `neocortex` values are indexed by occasion number from the original data.
 
 ```{r}
 tidy(b14.3) %>%
@@ -906,7 +918,7 @@ data_list %>%
        y = "neocortex proportion")
 ```
 
-If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf).
+If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I’ll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html), too.
 
 ## Reference {-}
 
