@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:site" content="@SolomonKurz" />
+  <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  
+
+<meta name="author" content="A Solomon Kurz">
+
+
+<meta name="date" content="2018-09-26">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="markov-chain-monte-carlo.html">
+<link rel="next" href="counting-and-classification.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
+<li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#session-info"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html"><i class="fa fa-check"></i><b>2</b> Small Worlds and Large Worlds</a><ul>
+<li class="chapter" data-level="2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#the-garden-of-forking-data"><i class="fa fa-check"></i><b>2.1</b> The garden of forking data</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#counting-possibilities."><i class="fa fa-check"></i><b>2.1.1</b> Counting possibilities.</a></li>
+<li class="chapter" data-level="2.1.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#using-prior-information."><i class="fa fa-check"></i><b>2.1.2</b> Using prior information.</a></li>
+<li class="chapter" data-level="2.1.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#from-counts-to-probability."><i class="fa fa-check"></i><b>2.1.3</b> From counts to probability.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#building-a-model"><i class="fa fa-check"></i><b>2.2</b> Building a model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#a-data-story."><i class="fa fa-check"></i><b>2.2.1</b> A data story.</a></li>
+<li class="chapter" data-level="2.2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#bayesian-updating."><i class="fa fa-check"></i><b>2.2.2</b> Bayesian updating.</a></li>
+<li class="chapter" data-level="2.2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#evaluate."><i class="fa fa-check"></i><b>2.2.3</b> Evaluate.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#components-of-the-model"><i class="fa fa-check"></i><b>2.3</b> Components of the model</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#likelihood."><i class="fa fa-check"></i><b>2.3.1</b> Likelihood.</a></li>
+<li class="chapter" data-level="2.3.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#parameters."><i class="fa fa-check"></i><b>2.3.2</b> Parameters.</a></li>
+<li class="chapter" data-level="2.3.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#prior."><i class="fa fa-check"></i><b>2.3.3</b> Prior.</a></li>
+<li class="chapter" data-level="2.3.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#posterior."><i class="fa fa-check"></i><b>2.3.4</b> Posterior.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#making-the-model-go"><i class="fa fa-check"></i><b>2.4</b> Making the model go</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#grid-approximation."><i class="fa fa-check"></i><b>2.4.1</b> Grid approximation.</a></li>
+<li class="chapter" data-level="2.4.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#quadratic-approximation."><i class="fa fa-check"></i><b>2.4.2</b> Quadratic approximation.</a></li>
+<li class="chapter" data-level="2.4.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#markov-chain-monte-carlo."><i class="fa fa-check"></i><b>2.4.3</b> Markov chain Monte Carlo.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#reference-1"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#session-info-1"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html"><i class="fa fa-check"></i><b>3</b> Sampling the Imaginary</a><ul>
+<li class="chapter" data-level="3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-from-a-grid-like-approximate-posterior"><i class="fa fa-check"></i><b>3.1</b> Sampling from a grid-like approximate posterior</a></li>
+<li class="chapter" data-level="3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-summarize"><i class="fa fa-check"></i><b>3.2</b> Sampling to summarize</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-boundaries."><i class="fa fa-check"></i><b>3.2.1</b> Intervals of defined boundaries.</a></li>
+<li class="chapter" data-level="3.2.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-mass."><i class="fa fa-check"></i><b>3.2.2</b> Intervals of defined mass.</a></li>
+<li class="chapter" data-level="3.2.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#point-estimates."><i class="fa fa-check"></i><b>3.2.3</b> Point estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-simulate-prediction"><i class="fa fa-check"></i><b>3.3</b> Sampling to simulate prediction</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#dummy-data."><i class="fa fa-check"></i><b>3.3.1</b> Dummy data.</a></li>
+<li class="chapter" data-level="3.3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#model-checking."><i class="fa fa-check"></i><b>3.3.2</b> Model checking.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#summary-lets-practice-in-brms"><i class="fa fa-check"></i><b>3.4</b> <del>Summary</del> Let’s practice in brms</a></li>
+<li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#reference-2"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#session-info-2"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>4</b> Linear Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="linear-models.html"><a href="linear-models.html#why-normal-distributions-are-normal"><i class="fa fa-check"></i><b>4.1</b> Why normal distributions are normal</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="linear-models.html"><a href="linear-models.html#normal-by-addition."><i class="fa fa-check"></i><b>4.1.1</b> Normal by addition.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="linear-models.html"><a href="linear-models.html#normal-by-multiplication."><i class="fa fa-check"></i><b>4.1.2</b> Normal by multiplication.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="linear-models.html"><a href="linear-models.html#normal-by-log-multiplication."><i class="fa fa-check"></i><b>4.1.3</b> Normal by log-multiplication.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="linear-models.html"><a href="linear-models.html#using-gaussian-distributions."><i class="fa fa-check"></i><b>4.1.4</b> Using Gaussian distributions.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="linear-models.html"><a href="linear-models.html#a-language-for-describing-models"><i class="fa fa-check"></i><b>4.2</b> A language for describing models</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="linear-models.html"><a href="linear-models.html#re-describing-the-globe-tossing-model."><i class="fa fa-check"></i><b>4.2.1</b> Re-describing the globe tossing model.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="linear-models.html"><a href="linear-models.html#a-gaussian-model-of-height"><i class="fa fa-check"></i><b>4.3</b> A Gaussian model of height</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="linear-models.html"><a href="linear-models.html#the-data."><i class="fa fa-check"></i><b>4.3.1</b> The data.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
+<li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
+<li class="chapter" data-level="4.3.4" data-path="linear-models.html"><a href="linear-models.html#sampling-from-the-posterior."><i class="fa fa-check"></i><b>4.3.4</b> Sampling from the posterior.</a></li>
+<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map()</code></del> <code>brm()</code>.</a></li>
+<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map()</code></del> <code>brm()</code> fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy"><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy</a></li>
+<li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="linear-models.html"><a href="linear-models.html#polynomial-regression"><i class="fa fa-check"></i><b>4.5</b> Polynomial regression</a></li>
+<li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#reference-3"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#session-info-3"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html"><i class="fa fa-check"></i><b>5</b> Multivariate Linear Models</a><ul>
+<li class="chapter" data-level="5.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#spurious-associations"><i class="fa fa-check"></i><b>5.1</b> Spurious associations</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multivariate-notation."><i class="fa fa-check"></i><b>5.1.1</b> Multivariate notation.</a></li>
+<li class="chapter" data-level="5.1.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#fitting-the-model.-1"><i class="fa fa-check"></i><b>5.1.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
+<li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
+<li class="chapter" data-level="5.4.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#another-approach-unique-intercepts."><i class="fa fa-check"></i><b>5.4.4</b> Another approach: Unique intercepts.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#ordinary-least-squares-and-lm"><i class="fa fa-check"></i><b>5.5</b> <del>Ordinary least squares and <code>lm()</code></del></a></li>
+<li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#reference-4"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#session-info-4"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html"><i class="fa fa-check"></i><b>6</b> Overfitting, Regularization, and Information Criteria</a><ul>
+<li class="chapter" data-level="6.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#the-problem-with-parameters"><i class="fa fa-check"></i><b>6.1</b> The problem with parameters</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#more-parameters-always-improve-fit."><i class="fa fa-check"></i><b>6.1.1</b> More parameters always improve fit.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#too-few-parameters-hurts-too."><i class="fa fa-check"></i><b>6.1.2</b> Too few parameters hurts, too.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-theory-and-model-performance"><i class="fa fa-check"></i><b>6.2</b> Information theory and model performance</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#firing-the-weatherperson."><i class="fa fa-check"></i><b>6.2.1</b> Firing the weatherperson.</a></li>
+<li class="chapter" data-level="6.2.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-and-uncertainty."><i class="fa fa-check"></i><b>6.2.2</b> Information and uncertainty.</a></li>
+<li class="chapter" data-level="6.2.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-entropy-to-accuracy."><i class="fa fa-check"></i><b>6.2.3</b> From entropy to accuracy.</a></li>
+<li class="chapter" data-level="6.2.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-divergence-to-deviance."><i class="fa fa-check"></i><b>6.2.4</b> From divergence to deviance.</a></li>
+<li class="chapter" data-level="6.2.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-deviance-to-out-of-sample."><i class="fa fa-check"></i><b>6.2.5</b> From deviance to out-of-sample.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#regularization"><i class="fa fa-check"></i><b>6.3</b> Regularization</a></li>
+<li class="chapter" data-level="6.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-criteria"><i class="fa fa-check"></i><b>6.4</b> Information criteria</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic."><i class="fa fa-check"></i><b>6.4.1</b> DIC.</a></li>
+<li class="chapter" data-level="6.4.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#waic."><i class="fa fa-check"></i><b>6.4.2</b> WAIC.</a></li>
+<li class="chapter" data-level="6.4.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic-and-waic-as-estimates-of-deviance."><i class="fa fa-check"></i><b>6.4.3</b> DIC and WAIC as estimates of deviance.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#using-information-criteria"><i class="fa fa-check"></i><b>6.5</b> Using information criteria</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-comparison."><i class="fa fa-check"></i><b>6.5.1</b> Model comparison.</a></li>
+<li class="chapter" data-level="6.5.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-averaging."><i class="fa fa-check"></i><b>6.5.2</b> Model averaging.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#summary-bonus-r2-talk"><i class="fa fa-check"></i><b>6.6</b> <del>Summary</del> Bonus: <span class="math inline">\(R^2\)</span> talk</a></li>
+<li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#reference-5"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#session-info-5"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="interactions.html"><a href="interactions.html"><i class="fa fa-check"></i><b>7</b> Interactions</a><ul>
+<li class="chapter" data-level="7.1" data-path="interactions.html"><a href="interactions.html#building-an-interaction."><i class="fa fa-check"></i><b>7.1</b> Building an interaction.</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="interactions.html"><a href="interactions.html#adding-a-dummy-variable-doesnt-work."><i class="fa fa-check"></i><b>7.1.1</b> Adding a dummy variable doesn’t work.</a></li>
+<li class="chapter" data-level="7.1.2" data-path="interactions.html"><a href="interactions.html#adding-a-linear-interaction-does-work."><i class="fa fa-check"></i><b>7.1.2</b> Adding a linear interaction does work.</a></li>
+<li class="chapter" data-level="7.1.3" data-path="interactions.html"><a href="interactions.html#plotting-the-interaction."><i class="fa fa-check"></i><b>7.1.3</b> Plotting the interaction.</a></li>
+<li class="chapter" data-level="7.1.4" data-path="interactions.html"><a href="interactions.html#interpreting-an-interaction-estimate."><i class="fa fa-check"></i><b>7.1.4</b> Interpreting an interaction estimate.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="interactions.html"><a href="interactions.html#symmetry-of-the-linear-interaction."><i class="fa fa-check"></i><b>7.2</b> Symmetry of the linear interaction.</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="interactions.html"><a href="interactions.html#buridans-interaction."><i class="fa fa-check"></i><b>7.2.1</b> Buridan’s interaction.</a></li>
+<li class="chapter" data-level="7.2.2" data-path="interactions.html"><a href="interactions.html#africa-depends-upon-ruggedness."><i class="fa fa-check"></i><b>7.2.2</b> Africa depends upon ruggedness.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="interactions.html"><a href="interactions.html#continuous-interactions"><i class="fa fa-check"></i><b>7.3</b> Continuous interactions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="interactions.html"><a href="interactions.html#the-data.-1"><i class="fa fa-check"></i><b>7.3.1</b> The data.</a></li>
+<li class="chapter" data-level="7.3.2" data-path="interactions.html"><a href="interactions.html#the-un-centered-models."><i class="fa fa-check"></i><b>7.3.2</b> The un-centered models.</a></li>
+<li class="chapter" data-level="7.3.3" data-path="interactions.html"><a href="interactions.html#center-and-re-estimate."><i class="fa fa-check"></i><b>7.3.3</b> Center and re-estimate.</a></li>
+<li class="chapter" data-level="7.3.4" data-path="interactions.html"><a href="interactions.html#plotting-implied-predictions."><i class="fa fa-check"></i><b>7.3.4</b> Plotting implied predictions.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="interactions.html"><a href="interactions.html#interactions-in-design-formulas"><i class="fa fa-check"></i><b>7.4</b> Interactions in design formulas</a></li>
+<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code></a></li>
+<li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#reference-6"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a></li>
+<li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a><ul>
+<li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
+<li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
+<li class="chapter" data-level="8.3.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#sampling-again-in-parallel."><i class="fa fa-check"></i><b>8.3.3</b> Sampling again, in parallel.</a></li>
+<li class="chapter" data-level="8.3.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#visualization."><i class="fa fa-check"></i><b>8.3.4</b> Visualization.</a></li>
+<li class="chapter" data-level="8.3.5" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#using-the-samples."><i class="fa fa-check"></i><b>8.3.5</b> Using the samples.</a></li>
+<li class="chapter" data-level="8.3.6" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#checking-the-chain."><i class="fa fa-check"></i><b>8.3.6</b> Checking the chain.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#care-and-feeding-of-your-markov-chain."><i class="fa fa-check"></i><b>8.4</b> Care and feeding of your Markov chain.</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-samples-do-you-need"><i class="fa fa-check"></i><b>8.4.1</b> How many samples do you need?</a></li>
+<li class="chapter" data-level="8.4.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-chains-do-you-need"><i class="fa fa-check"></i><b>8.4.2</b> How many chains do you need?</a></li>
+<li class="chapter" data-level="8.4.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#taming-a-wild-chain."><i class="fa fa-check"></i><b>8.4.3</b> Taming a wild chain.</a></li>
+<li class="chapter" data-level="8.4.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#non-identifiable-parameters."><i class="fa fa-check"></i><b>8.4.4</b> Non-identifiable parameters.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#reference-7"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#session-info-7"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html"><i class="fa fa-check"></i><b>9</b> Big Entropy and the Generalized Linear Model</a><ul>
+<li class="chapter" data-level="9.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#maximum-entropy"><i class="fa fa-check"></i><b>9.1</b> Maximum entropy</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#gaussian."><i class="fa fa-check"></i><b>9.1.1</b> Gaussian.</a></li>
+<li class="chapter" data-level="9.1.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#binomial."><i class="fa fa-check"></i><b>9.1.2</b> Binomial.</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
+<li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#reference-8"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="counting-and-classification.html"><a href="counting-and-classification.html"><i class="fa fa-check"></i><b>10</b> Counting and Classification</a><ul>
+<li class="chapter" data-level="10.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#binomial-regression"><i class="fa fa-check"></i><b>10.1</b> Binomial regression</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#logistic-regression-prosocial-chimpanzees."><i class="fa fa-check"></i><b>10.1.1</b> Logistic regression: Prosocial chimpanzees.</a></li>
+<li class="chapter" data-level="10.1.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-chimpanzees-again-condensed."><i class="fa fa-check"></i><b>10.1.2</b> Aggregated binomial: Chimpanzees again, condensed.</a></li>
+<li class="chapter" data-level="10.1.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-graduate-school-admissions."><i class="fa fa-check"></i><b>10.1.3</b> Aggregated binomial: Graduate school admissions.</a></li>
+<li class="chapter" data-level="10.1.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#fitting-binomial-regressions-with-glm."><i class="fa fa-check"></i><b>10.1.4</b> Fitting binomial regressions with <code>glm()</code>.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#poisson-regression"><i class="fa fa-check"></i><b>10.2</b> Poisson regression</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-oceanic-tool-complexity."><i class="fa fa-check"></i><b>10.2.1</b> Example: Oceanic tool complexity.</a></li>
+<li class="chapter" data-level="10.2.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#mcmc-islands."><i class="fa fa-check"></i><b>10.2.2</b> MCMC islands.</a></li>
+<li class="chapter" data-level="10.2.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-exposure-and-the-offset."><i class="fa fa-check"></i><b>10.2.3</b> Example: Exposure and the offset.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#other-count-regressions"><i class="fa fa-check"></i><b>10.3</b> Other count regressions</a><ul>
+<li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
+<li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#reference-9"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html"><i class="fa fa-check"></i><b>11</b> Monsters and Mixtures</a><ul>
+<li class="chapter" data-level="11.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#ordered-categorical-outcomes"><i class="fa fa-check"></i><b>11.1</b> Ordered categorical outcomes</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-moral-intuition."><i class="fa fa-check"></i><b>11.1.1</b> Example: Moral intuition.</a></li>
+<li class="chapter" data-level="11.1.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#describing-an-ordered-distribution-with-intercepts."><i class="fa fa-check"></i><b>11.1.2</b> Describing an ordered distribution with intercepts.</a></li>
+<li class="chapter" data-level="11.1.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#adding-predictor-variables."><i class="fa fa-check"></i><b>11.1.3</b> Adding predictor variables.</a></li>
+<li class="chapter" data-level="11.1.4" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#bonus-figure-11.3-alternative."><i class="fa fa-check"></i><b>11.1.4</b> Bonus: Figure 11.3 alternative.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#zero-inflated-outcomes"><i class="fa fa-check"></i><b>11.2</b> Zero-inflated outcomes</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-zero-inflated-poisson."><i class="fa fa-check"></i><b>11.2.1</b> Example: Zero-inflated Poisson.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersed-outcomes"><i class="fa fa-check"></i><b>11.3</b> Over-dispersed outcomes</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#beta-binomial."><i class="fa fa-check"></i><b>11.3.1</b> Beta-binomial.</a></li>
+<li class="chapter" data-level="11.3.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#negative-binomial-or-gamma-poisson."><i class="fa fa-check"></i><b>11.3.2</b> Negative-binomial or gamma-Poisson.</a></li>
+<li class="chapter" data-level="11.3.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersion-entropy-and-information-criteria."><i class="fa fa-check"></i><b>11.3.3</b> Over-dispersion, entropy, and information criteria.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#reference-10"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#session-info-10"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multilevel-models.html"><a href="multilevel-models.html"><i class="fa fa-check"></i><b>12</b> Multilevel Models</a><ul>
+<li class="chapter" data-level="12.1" data-path="multilevel-models.html"><a href="multilevel-models.html#example-multilevel-tadpoles"><i class="fa fa-check"></i><b>12.1</b> Example: Multilevel tadpoles</a></li>
+<li class="chapter" data-level="12.2" data-path="multilevel-models.html"><a href="multilevel-models.html#varying-effects-and-the-underfittingoverfitting-trade-off"><i class="fa fa-check"></i><b>12.2</b> Varying effects and the underfitting/overfitting trade-off</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="multilevel-models.html"><a href="multilevel-models.html#the-model.-1"><i class="fa fa-check"></i><b>12.2.1</b> The model.</a></li>
+<li class="chapter" data-level="12.2.2" data-path="multilevel-models.html"><a href="multilevel-models.html#assign-values-to-the-parameters."><i class="fa fa-check"></i><b>12.2.2</b> Assign values to the parameters.</a></li>
+<li class="chapter" data-level="12.2.3" data-path="multilevel-models.html"><a href="multilevel-models.html#sumulate-survivors."><i class="fa fa-check"></i><b>12.2.3</b> Sumulate survivors.</a></li>
+<li class="chapter" data-level="12.2.4" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-no-pooling-estimates."><i class="fa fa-check"></i><b>12.2.4</b> Compute the no-pooling estimates.</a></li>
+<li class="chapter" data-level="12.2.5" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-partial-pooling-estimates."><i class="fa fa-check"></i><b>12.2.5</b> Compute the partial-pooling estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
+<li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
+<li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
+<li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html"><i class="fa fa-check"></i><b>13</b> Adventures in Covariance</a><ul>
+<li class="chapter" data-level="13.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-slopes-by-construction"><i class="fa fa-check"></i><b>13.1</b> Varying slopes by construction</a><ul>
+<li class="chapter" data-level="13.1.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-the-population."><i class="fa fa-check"></i><b>13.1.1</b> Simulate the population.</a></li>
+<li class="chapter" data-level="13.1.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-observations."><i class="fa fa-check"></i><b>13.1.2</b> Simulate observations.</a></li>
+<li class="chapter" data-level="13.1.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#the-varying-slopes-model."><i class="fa fa-check"></i><b>13.1.3</b> The varying slopes model.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-admission-decisions-and-gender"><i class="fa fa-check"></i><b>13.2</b> Example: Admission decisions and gender</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-intercepts."><i class="fa fa-check"></i><b>13.2.1</b> Varying intercepts.</a></li>
+<li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
+<li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
+<li class="chapter" data-level="13.2.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#model-comparison.-1"><i class="fa fa-check"></i><b>13.2.4</b> Model comparison.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
+<li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a><ul>
+<li class="chapter" data-level="13.4.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-spatial-autocorrelation-in-oceanic-tools."><i class="fa fa-check"></i><b>13.4.1</b> Example: Spatial autocorrelation in Oceanic tools.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#summary-bonus-another-berkley-admissions-data-like-example."><i class="fa fa-check"></i><b>13.5</b> <del>Summary</del> Bonus: Another Berkley-admissions-data-like example.</a></li>
+<li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#reference-12"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#session-info-12"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html"><i class="fa fa-check"></i><b>14</b> Missing Data and Other Opportunities</a><ul>
+<li class="chapter" data-level="14.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#measurement-error"><i class="fa fa-check"></i><b>14.1</b> Measurement error</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-the-outcome."><i class="fa fa-check"></i><b>14.1.1</b> Error on the outcome.</a></li>
+<li class="chapter" data-level="14.1.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-both-outcome-and-predictor."><i class="fa fa-check"></i><b>14.1.2</b> Error on both outcome and predictor.</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#missing-data"><i class="fa fa-check"></i><b>14.2</b> Missing data</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html"><i class="fa fa-check"></i><b>15</b> <del>Horoscopes</del> Insights</a><ul>
+<li class="chapter" data-level="15.1" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-r-notebooks"><i class="fa fa-check"></i><b>15.1</b> Use R Notebooks</a></li>
+<li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
+<li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
+<li class="chapter" data-level="15.4" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#look-at-your-data"><i class="fa fa-check"></i><b>15.4</b> Look at your data</a></li>
+<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + intercept</code> syntax</a></li>
+<li class="chapter" data-level="15.6" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-workflow"><i class="fa fa-check"></i><b>15.6</b> Annotate your workflow</a></li>
+<li class="chapter" data-level="15.7" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-code"><i class="fa fa-check"></i><b>15.7</b> Annotate your code</a></li>
+<li class="chapter" data-level="15.8" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#break-up-your-workflow"><i class="fa fa-check"></i><b>15.8</b> Break up your workflow</a></li>
+<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.9</b> Read Gelman’s blog</a></li>
+<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.10</b> Check out other social media, too</a></li>
+<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.11</b> Parting wisdom</a></li>
+<li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#reference-14"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#session-info-14"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Statistical Rethinking</em> with brms, ggplot2, and the tidyverse</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="big-entropy-and-the-generalized-linear-model" class="section level1">
+<h1><span class="header-section-number">9</span> Big Entropy and the Generalized Linear Model</h1>
+<blockquote>
+<p>…Statistical models force many choices upon us. Some of these choices are distributions that represent uncertainty. We must choose, for each parameter, a prior distribution. And we must choose a likelihood function, which serves as a distribution of data. There are conventional choices, such as wide Gaussian priors and the Gaussian likelihood of linear regression. These conventional choices work unreasonably well in many circumstances. But very often the conventional choices are not the best choices. Inference can be more powerful when we use all of the information, and doing so usually requires going beyond convention.</p>
+<p>To go beyond convention, it helps to have some principles to guide choice. When an engineer wants to make an unconventional bridge, engineering principles help guide choice. When a researcher wants to build an unconventional model, entropy provides one useful principle to guide choice of probability distributions: Bet on the distribution with the biggest entropy. (p. 267)</p>
+</blockquote>
+<div id="maximum-entropy" class="section level2">
+<h2><span class="header-section-number">9.1</span> Maximum entropy</h2>
+<blockquote>
+<p>In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution <span class="math inline">\(p\)</span> with probabilities <span class="math inline">\(p_i\)</span> for each possible event <span class="math inline">\(i\)</span> turns out to be just the average log-probability:</p>
+<p><span class="math display">\[H(p) = - \sum_i p_i \text{ log } p_i\]</span> This function is known as <em>information entropy</em>. (p. 268, <em>emphasis</em> in the original)</p>
+</blockquote>
+<p>Let’s execute the code for the pebbles-in-buckets example.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+
+d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">a =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">0</span>, <span class="dv">0</span>),
+         <span class="dt">b =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">8</span>, <span class="dv">1</span>, <span class="dv">0</span>),
+         <span class="dt">c =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">0</span>),
+         <span class="dt">d =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>),
+         <span class="dt">e =</span> <span class="dv">2</span>) 
+
+<span class="co"># this is our analogue to McElreath&#39;s `lapply()` code</span>
+d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate_all</span>(<span class="kw">funs</span>(. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># the next few lines constitute our analogue to his `sapply()` code</span>
+<span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">h =</span> <span class="op">-</span><span class="kw">sum</span>(<span class="kw">ifelse</span>(value <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">0</span>, value <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(value))))</code></pre></div>
+<pre><code>## # A tibble: 5 x 2
+##   key       h
+##   &lt;chr&gt; &lt;dbl&gt;
+## 1 a     0    
+## 2 b     0.639
+## 3 c     0.950
+## 4 d     1.47 
+## 5 e     1.61</code></pre>
+<p>We’re almost ready to plot. Which brings us to color. For the plots in this chapter, we’ll be taking our color palettes from the <a href="https://github.com/ewenme/ghibli">ghibli package</a>, which provides palettes based on scenes from anime films by the Studio Ghibli.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ghibli)</code></pre></div>
+<p>The main function is <code>ghibli_palette()</code> which you can use to both preview the palettes before using them and also index in order to use specific colors. For example, we’ll play with “MarnieMedium1”, first.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-471-1.png" width="576" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
+<pre><code>## [1] &quot;#7BA46C&quot; &quot;#602D31&quot; &quot;#008D91&quot; &quot;#0A789F&quot; &quot;#C6A28A&quot; &quot;#61B8D3&quot; &quot;#EACF9E&quot;</code></pre>
+<p>Now we’re ready to plot five of the six panels of Figure 9.1.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">bucket =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(letter, pebbles, <span class="op">-</span><span class="st"> </span>bucket) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> bucket, <span class="dt">y =</span> pebbles)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">width =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">2</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pebbles <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">label =</span> pebbles)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> <span class="kw">tibble</span>(
+    <span class="dt">letter  =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>],
+    <span class="dt">bucket  =</span> <span class="fl">5.5</span>,
+    <span class="dt">pebbles =</span> <span class="dv">10</span>,
+    <span class="dt">label   =</span> <span class="kw">str_c</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">90</span>, <span class="dv">1260</span>, <span class="dv">37800</span>, <span class="dv">113400</span>), 
+                    <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot; way&quot;</span>, <span class="st">&quot; ways&quot;</span>), <span class="dt">times =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">4</span>)))),
+    <span class="kw">aes</span>(<span class="dt">label =</span> label), <span class="dt">hjust =</span> <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">6</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">1</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>letter, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-472-1.png" width="576" /></p>
+<p>We might plot the final panel like so.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># the next four lines are the same from above</span>
+<span class="st">  </span><span class="kw">mutate_all</span>(<span class="kw">funs</span>(. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">h =</span> <span class="op">-</span><span class="kw">sum</span>(<span class="kw">ifelse</span>(value <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">0</span>, value <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(value)))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># here&#39;s the R code 9.4 stuff</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_ways   =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">90</span>, <span class="dv">1260</span>, <span class="dv">37800</span>, <span class="dv">113400</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">log_ways =</span> <span class="kw">log</span>(n_ways) <span class="op">/</span><span class="st"> </span><span class="dv">10</span>,
+         <span class="dt">text_y   =</span> <span class="kw">ifelse</span>(key <span class="op">&lt;</span><span class="st"> &quot;c&quot;</span>, h <span class="op">+</span><span class="st"> </span>.<span class="dv">15</span>, h <span class="op">-</span><span class="st"> </span>.<span class="dv">15</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="co"># plot</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> log_ways, <span class="dt">y =</span> h)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">intercept =</span> <span class="dv">0</span>, <span class="dt">slope =</span> <span class="fl">1.37</span>, 
+              <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">2.5</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">7</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">y =</span> text_y, <span class="dt">label =</span> key)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;log(ways) per pebble&quot;</span>,
+       <span class="dt">y =</span> <span class="st">&quot;entropy&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">6</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-473-1.png" width="288" /></p>
+<p>“The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution” (p. 271). Among the pebbles, the maximum entropy distribution was <code>e</code> (i.e., the uniform).</p>
+<div id="gaussian." class="section level3">
+<h3><span class="header-section-number">9.1.1</span> Gaussian.</h3>
+<p>Behold the probability distribution for the generalized normal distribution:</p>
+<p><span class="math display">\[\text{Pr} (y | \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma \bigg (\frac{1}{\beta} \bigg )} e ^ {- \bigg (\frac{|y - \mu|}{\alpha} \bigg ) ^ {\beta}}\]</span></p>
+<p>In this formulation, <span class="math inline">\(\alpha =\)</span> the scale, <span class="math inline">\(\beta =\)</span> the shape, <span class="math inline">\(\mu =\)</span> the location, and <span class="math inline">\(\Gamma =\)</span> the <a href="https://en.wikipedia.org/wiki/Gamma_function">gamma function</a>. If you read closely in the text, you’ll discover that the densities in the right panel of Figure 9.2 were all created with the constraint <span class="math inline">\(\sigma^2 = 1\)</span>. But <span class="math inline">\(\sigma^2 \neq \alpha\)</span> and there’s no <span class="math inline">\(\sigma\)</span> in the equations in the text. However, it appears the variance for the generalized normal distribution follows the form:</p>
+<p><span class="math display">\[\sigma^2 = \frac{\alpha^2 \Gamma (3/\beta)}{\Gamma (1/\beta)}\]</span></p>
+<p>So if you do the algebra, you’ll see that you can compute <span class="math inline">\(\alpha\)</span> for a given <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\beta\)</span> like so:</p>
+<p><span class="math display">\[\alpha = \sqrt{ \frac{\sigma^2 \Gamma (1/\beta)}{\Gamma (3/\beta)} }\]</span></p>
+<p>I go the formula from <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia.com</a>. Don’t judge. We can wrap that formula in a custom function, <code>alpha_per_beta()</code>, use it to solve for the desired <span class="math inline">\(\beta\)</span> values, and plot. But one more thing: McElreath didn’t tell us exactly which <span class="math inline">\(\beta\)</span> values the left panel of Figure 9.2 was based on. So the plot below is my best guess.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha_per_beta &lt;-<span class="st"> </span><span class="cf">function</span>(variance, beta){
+  <span class="kw">sqrt</span>((variance <span class="op">*</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>beta)) <span class="op">/</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">3</span> <span class="op">/</span><span class="st"> </span>beta))
+}
+
+<span class="kw">tibble</span>(<span class="dt">mu       =</span> <span class="dv">0</span>,
+       <span class="dt">variance =</span> <span class="dv">1</span>,
+       <span class="co"># I arrived at these values by trial and error</span>
+       <span class="dt">beta     =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="dv">4</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">alpha  =</span> <span class="kw">map2</span>(variance, beta, alpha_per_beta)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">expand</span>(<span class="kw">nesting</span>(mu, beta, alpha), 
+         <span class="dt">value =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">5</span>, <span class="dt">to =</span> <span class="dv">5</span>, <span class="dt">by =</span> .<span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># behold the formula for the generalized normal distribution in code</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">density =</span> (beta <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>alpha <span class="op">*</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>beta))) <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="dv">1</span>) <span class="op">^</span><span class="st"> </span>(<span class="op">-</span><span class="dv">1</span> <span class="op">*</span><span class="st"> </span>(<span class="kw">abs</span>(value <span class="op">-</span><span class="st"> </span>mu) <span class="op">/</span><span class="st"> </span>alpha) <span class="op">^</span><span class="st"> </span>beta)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">y =</span> density,
+             <span class="dt">group =</span> beta)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color =</span> beta <span class="op">==</span><span class="st"> </span><span class="dv">2</span>,
+                <span class="dt">size  =</span> beta <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">2</span>],
+                                <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">4</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_size_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="fl">1.25</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="ot">NULL</span>, <span class="dt">subtitle =</span> <span class="st">&quot;Guess which color denotes the Gaussian.&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">4</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-474-1.png" width="336" /></p>
+<p>Here’s Figure 9.2’s right panel.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">mu       =</span> <span class="dv">0</span>,
+       <span class="dt">variance =</span> <span class="dv">1</span>,
+       <span class="co"># this time we need a more densely-packed sequence of `beta` values</span>
+       <span class="dt">beta     =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">1</span>, <span class="dt">to =</span> <span class="dv">4</span>, <span class="dt">length.out =</span> <span class="dv">100</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">alpha  =</span> <span class="kw">map2</span>(variance, beta, alpha_per_beta)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">expand</span>(<span class="kw">nesting</span>(mu, beta, alpha), 
+         <span class="dt">value =</span> <span class="op">-</span><span class="dv">8</span><span class="op">:</span><span class="dv">8</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">density =</span> (beta <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>alpha <span class="op">*</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>beta))) <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="dv">1</span>) <span class="op">^</span><span class="st"> </span>(<span class="op">-</span><span class="dv">1</span> <span class="op">*</span><span class="st"> </span>(<span class="kw">abs</span>(value <span class="op">-</span><span class="st"> </span>mu) <span class="op">/</span><span class="st"> </span>alpha) <span class="op">^</span><span class="st"> </span>beta)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(beta) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># this is just an abbreviated version of the formula we used in our first code block</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">entropy =</span> <span class="op">-</span><span class="kw">sum</span>(density <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(density))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> beta, <span class="dt">y =</span> entropy)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="fl">1.34</span>, <span class="fl">1.42</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-475-1.png" width="336" /></p>
+<p>If you look closely, you’ll see our version doesn’t quite match up with McElreath’s. Over x-axis values of 2 to 4, they match up pretty well. But as you go from 2 to 1, you’ll see our line drops off more steeply than his did. [And no, <code>coord_cartesian()</code> isn’t the problem.] If you can figure out why our numbers diverged, <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">please share the answer</a>.</p>
+<p>But getting back on track:</p>
+<blockquote>
+<p>The take-home lesson from all of this is that, if all we are willing to assume about a collection of measurements is that they have a finite variance, then the Gaussian distribution represents the most conservative probability distribution to assign to those measurements. But very often we are comfortable assuming something more. And in those cases, provided our assumptions are good ones, the principle of maximum entropy leads to distributions other than the Gaussian. (p. 274)</p>
+</blockquote>
+</div>
+<div id="binomial." class="section level3">
+<h3><span class="header-section-number">9.1.2</span> Binomial.</h3>
+<p>The binomial likelihood entials</p>
+<blockquote>
+<p>counting the numbers of ways that a given observation could arise, according to assumptions… If only two things can happen (blue or white marble, for example), and there’s a constant chance <span class="math inline">\(p\)</span> of each across <span class="math inline">\(n\)</span> trials, then the probability of observing <span class="math inline">\(y\)</span> events of type 1 and <span class="math inline">\(n - y\)</span> events of type 2 is:</p>
+<p><span class="math display">\[\text{Pr} (y | n, p) = \frac{n!}{y! (n - y)!} p^y (1 - p)^{n - y}\]</span></p>
+<p>It may help to note that the fraction with the factorials is just saying how many different ordered sequences of <span class="math inline">\(n\)</span> outcomes have a count of <span class="math inline">\(y\)</span>. (p. 275)</p>
+</blockquote>
+<p>For me, that last sentence made more sense when I walked it out in a example. To do so, lets wrap that fraction of factorials into a function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">count_ways &lt;-<span class="st"> </span><span class="cf">function</span>(n, y){
+  <span class="co"># n = the total number of trials (i.e., the number of rows in your vector)</span>
+  <span class="co"># y = the total number of 1s (i.e., successes) in your vector</span>
+  (<span class="kw">factorial</span>(n) <span class="op">/</span><span class="st"> </span>(<span class="kw">factorial</span>(y) <span class="op">*</span><span class="st"> </span><span class="kw">factorial</span>(n <span class="op">-</span><span class="st"> </span>y)))
+}</code></pre></div>
+<p>Now consider three sequences:</p>
+<ul>
+<li>0, 0, 0, 0 (i.e., <span class="math inline">\(n = 4\)</span> and <span class="math inline">\(y = 0\)</span>)</li>
+<li>1, 0, 0, 0 (i.e., <span class="math inline">\(n = 4\)</span> and <span class="math inline">\(y = 1\)</span>)</li>
+<li>1, 1, 0, 0 (i.e., <span class="math inline">\(n = 4\)</span> and <span class="math inline">\(y = 2\)</span>)</li>
+</ul>
+<p>We can organize that information in a little tibble and then demo our <code>count_ways()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">sequence =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,
+       <span class="dt">n        =</span> <span class="dv">4</span>,
+       <span class="dt">y        =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_ways =</span> <span class="kw">map2</span>(n, y, count_ways)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest</span>()</code></pre></div>
+<pre><code>## # A tibble: 3 x 4
+##   sequence     n     y n_ways
+##      &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1        1     4     0      1
+## 2        2     4     1      4
+## 3        3     4     2      6</code></pre>
+<p>Here’s the pre-Figure 9.3 data McElreath presented at the bottom of page 275.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
+  d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">distribution =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>],
+         <span class="dt">ww =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">8</span>),
+         <span class="dt">bw =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">4</span><span class="op">/</span><span class="dv">8</span>),
+         <span class="dt">wb =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">8</span>),
+         <span class="dt">bb =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">8</span>))
+  )</code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+##   distribution    ww    bw    wb    bb
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 a            0.25  0.25  0.25  0.25 
+## 2 b            0.333 0.167 0.167 0.333
+## 3 c            0.167 0.333 0.333 0.167
+## 4 d            0.125 0.5   0.25  0.125</code></pre>
+<p>Those data take just a tiny bit of wrangling before they’re ready to plot with.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(key, value, <span class="op">-</span>distribution) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">key =</span> <span class="kw">factor</span>(key, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;ww&quot;</span>, <span class="st">&quot;bw&quot;</span>, <span class="st">&quot;wb&quot;</span>, <span class="st">&quot;bb&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> key, <span class="dt">y =</span> value, <span class="dt">group =</span> <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">4</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>,
+       <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.ticks.x =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">2</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>distribution)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-479-1.png" width="384" /></p>
+<p>If we go step by step, we might count the expected value for each <code>distribution</code> like follows.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(sequence, probability, <span class="op">-</span>distribution) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># `str_count()` will count the number of times &quot;b&quot; occurs within a given row of `sequence`</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_b     =</span> <span class="kw">str_count</span>(sequence, <span class="st">&quot;b&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">product =</span> probability <span class="op">*</span><span class="st"> </span>n_b) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(distribution) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">expected_value =</span> <span class="kw">sum</span>(product))</code></pre></div>
+<pre><code>## # A tibble: 4 x 2
+##   distribution expected_value
+##   &lt;chr&gt;                 &lt;dbl&gt;
+## 1 a                         1
+## 2 b                         1
+## 3 c                         1
+## 4 d                         1</code></pre>
+<p>We can use the same <code>gather()</code> and <code>group_by()</code> strategies on the way to computing the entropies.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(sequence, probability, <span class="op">-</span>distribution) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(distribution) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">entropy =</span> <span class="op">-</span><span class="kw">sum</span>(probability <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(probability)))</code></pre></div>
+<pre><code>## # A tibble: 4 x 2
+##   distribution entropy
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 a               1.39
+## 2 b               1.33
+## 3 c               1.33
+## 4 d               1.21</code></pre>
+<p>Like in the text, <code>distribution == &quot;a&quot;</code> had the largest <code>entropy</code> of the four. In the next example, the <span class="math inline">\(\text{expected value} = 1.4\)</span> and <span class="math inline">\(p = .7\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p &lt;-<span class="st"> </span><span class="fl">0.7</span>
+
+(
+  a &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">c</span>((<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>p)<span class="op">^</span><span class="dv">2</span>, 
+    p <span class="op">*</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>p), 
+    (<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>p) <span class="op">*</span><span class="st"> </span>p, 
+    p<span class="op">^</span><span class="dv">2</span>)
+)</code></pre></div>
+<pre><code>## [1] 0.09 0.21 0.21 0.49</code></pre>
+<p>Here’s the entropy for our distribution <code>a</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">-</span><span class="kw">sum</span>(a <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(a))</code></pre></div>
+<pre><code>## [1] 1.221729</code></pre>
+<p>I’m going to alter McElreath’s simulation function from R code block 9.9 to take a seed argument. In addition, I altered the names of the objects within the function and changed the output to a tibble that will also include the conditions “ww”, “bw”, “wb”, and “bb”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim_p &lt;-<span class="st"> </span><span class="cf">function</span>(seed, <span class="dt">g =</span> <span class="fl">1.4</span>) {
+  
+  <span class="kw">set.seed</span>(seed)
+  
+  x_<span class="dv">123</span> &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">3</span>)
+  x_<span class="dv">4</span>   &lt;-<span class="st"> </span>((g) <span class="op">*</span><span class="st"> </span><span class="kw">sum</span>(x_<span class="dv">123</span>) <span class="op">-</span><span class="st"> </span>x_<span class="dv">123</span>[<span class="dv">2</span>] <span class="op">-</span><span class="st"> </span>x_<span class="dv">123</span>[<span class="dv">3</span>]) <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">-</span><span class="st"> </span>g)
+  z     &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">c</span>(x_<span class="dv">123</span>, x_<span class="dv">4</span>))
+  p     &lt;-<span class="st"> </span><span class="kw">c</span>(x_<span class="dv">123</span>, x_<span class="dv">4</span>) <span class="op">/</span><span class="st"> </span>z
+  <span class="kw">tibble</span>(<span class="dt">h   =</span> <span class="op">-</span><span class="kw">sum</span>(p <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(p)), 
+         <span class="dt">p   =</span> p,
+         <span class="dt">key =</span> <span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;ww&quot;</span>, <span class="st">&quot;bw&quot;</span>, <span class="st">&quot;wb&quot;</span>, <span class="st">&quot;bb&quot;</span>), <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;ww&quot;</span>, <span class="st">&quot;bw&quot;</span>, <span class="st">&quot;wb&quot;</span>, <span class="st">&quot;bb&quot;</span>)))
+}</code></pre></div>
+<p>For a given <code>seed</code> and <code>g</code> value, our augmented <code>sim_p()</code> function returns a <span class="math inline">\(4 \times 3\)</span> tibble.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sim_p</span>(<span class="dt">seed =</span> <span class="fl">9.9</span>, <span class="dt">g =</span> <span class="fl">1.4</span>)</code></pre></div>
+<pre><code>## # A tibble: 4 x 3
+##       h      p key  
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;
+## 1  1.02 0.197  ww   
+## 2  1.02 0.0216 bw   
+## 3  1.02 0.184  wb   
+## 4  1.02 0.597  bb</code></pre>
+<p>So the next step is to determine how many replications we’d like, create a tibble with seed values ranging from 1 to that number, and then feed those <code>seed</code> values into <code>sim_p()</code> via <code>purrr::map2()</code>, which will return a nested tibble. We’ll then <code>unnest()</code> and take a peek.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># how many replications would you like?</span>
+n_rep &lt;-<span class="st"> </span><span class="fl">1e5</span>
+
+d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">seed =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sim =</span> <span class="kw">map2</span>(seed, <span class="fl">1.4</span>, sim_p)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest</span>()
+
+<span class="kw">head</span>(d)</code></pre></div>
+<pre><code>## # A tibble: 6 x 4
+##    seed     h      p key  
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;
+## 1     1  1.21 0.108  ww   
+## 2     1  1.21 0.151  bw   
+## 3     1  1.21 0.233  wb   
+## 4     1  1.21 0.508  bb   
+## 5     2  1.21 0.0674 ww   
+## 6     2  1.21 0.256  bw</code></pre>
+<p>In order to intelligently choose which four replications we want to highlight in Figure 9.4, we’ll want to rank order them by entropy, <code>h</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ranked_d &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(seed) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(h)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># here&#39;s the rank order step</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rank =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>n_rep, <span class="dt">each =</span> <span class="dv">4</span>))
+
+<span class="kw">head</span>(ranked_d)</code></pre></div>
+<pre><code>## # A tibble: 6 x 5
+##    seed     h      p key    rank
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;int&gt;
+## 1 55665  1.22 0.0903 ww        1
+## 2 55665  1.22 0.209  bw        1
+## 3 55665  1.22 0.210  wb        1
+## 4 55665  1.22 0.490  bb        1
+## 5 71132  1.22 0.0902 ww        2
+## 6 71132  1.22 0.210  bw        2</code></pre>
+<p>And we’ll also want a subset of the data to correspond to McElreath’s “A” through “D” distributions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">subset_d &lt;-
+<span class="st">  </span>ranked_d <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># I arrived at these `rank` values by trial and error</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">87373</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">1500</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">10</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># I arrived at the `height` values by trial and error, too</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">height       =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="dv">8</span>, <span class="fl">2.25</span>, .<span class="dv">75</span>, .<span class="dv">5</span>), <span class="dt">each =</span> <span class="dv">4</span>),
+         <span class="dt">distribution =</span> <span class="kw">rep</span>(letters[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>], <span class="dt">each =</span> <span class="dv">4</span>))
+
+<span class="kw">head</span>(subset_d)</code></pre></div>
+<pre><code>## # A tibble: 6 x 7
+##    seed     h      p key    rank height distribution
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;       
+## 1 55665 1.22  0.0903 ww        1   8    a           
+## 2 55665 1.22  0.209  bw        1   8    a           
+## 3 55665 1.22  0.210  wb        1   8    a           
+## 4 55665 1.22  0.490  bb        1   8    a           
+## 5 50981 1.000 0.0459 ww    87373   2.25 b           
+## 6 50981 1.000 0.0459 bw    87373   2.25 b</code></pre>
+<p>We’re finally ready to plot the left panel of Figure 9.4.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> h)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">size =</span> <span class="dv">0</span>, <span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">3</span>],
+               <span class="dt">adjust =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="co"># note the data statements for the next two geoms</span>
+<span class="st">  </span><span class="kw">geom_linerange</span>(<span class="dt">data =</span> subset_d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(seed) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>),
+             <span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> height),
+             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> subset_d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(seed) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>),
+             <span class="kw">aes</span>(<span class="dt">y =</span> height <span class="op">+</span><span class="st"> </span>.<span class="dv">5</span>, <span class="dt">label =</span> distribution)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Entropy&quot;</span>,
+                     <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> .<span class="dv">7</span>, <span class="dt">to =</span> <span class="fl">1.2</span>, <span class="dt">by =</span> .<span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-489-1.png" width="384" /></p>
+<p>Did you notice how our <code>adjust = 1/4</code> with <code>geom_density()</code> served a similar function to the <code>adj=0.1</code> in McElreath’s <code>dens()</code> code. Anyways, here’s the right panel.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ranked_d <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">87373</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">1500</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">10</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">distribution =</span> <span class="kw">rep</span>(letters[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>], <span class="dt">each =</span> <span class="dv">4</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> key, <span class="dt">y =</span> p, <span class="dt">group =</span> <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">4</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>,
+       <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.ticks.x =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">7</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>distribution)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-490-1.png" width="384" /></p>
+<p>Because we were simulating, our values won’t match up identically with those in the text. But we’re pretty close, eh?</p>
+<p>Since we saved our <code>sim_p()</code> output in a nested tibble, which we then <code>unnested()</code>, there’s no need to separate the entropy values from the distributional values the way McElreath did in R code 9.11. If we wanted to determine our highest entropy value–and the corresponding <code>seed</code> and <code>p</code> values, while we’re at it–, we might use <code>max(h)</code> within <code>slice()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ranked_d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">slice</span>(<span class="kw">max</span>(h))</code></pre></div>
+<pre><code>## # A tibble: 4 x 5
+## # Groups:   key [4]
+##    seed     h      p key    rank
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;int&gt;
+## 1 55665  1.22 0.0903 ww        1
+## 2 55665  1.22 0.209  bw        1
+## 3 55665  1.22 0.210  wb        1
+## 4 55665  1.22 0.490  bb        1</code></pre>
+<p>That maximum <code>h</code> value matched up nicely with the one in the text. If you look at the <code>p</code> column, you’ll see our values approximated McElreath’s <code>distribution</code> values, too. In both cases, they’re real close to the <code>a</code> values we computed, above.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a</code></pre></div>
+<pre><code>## [1] 0.09 0.21 0.21 0.49</code></pre>
+</div>
+</div>
+<div id="generalized-linear-models" class="section level2">
+<h2><span class="header-section-number">9.2</span> Generalized linear models</h2>
+<blockquote>
+<p>For an outcome variable that is continuous and far from any theoretical maximum or minimum, [a simple] Gaussian model has maximum entropy. But when the outcome variable is either discrete or bounded, a Gaussian likelihood is not the most powerful choice. (p. 280)</p>
+</blockquote>
+<p>I winged the values for our Figure 9.5.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">to =</span> <span class="dv">3</span>, <span class="dt">by =</span> .<span class="dv">01</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">probability =</span> .<span class="dv">35</span> <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>.<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> probability)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">xmax =</span> <span class="dv">3</span>,
+                <span class="dt">ymin =</span> <span class="dv">0</span>,  <span class="dt">ymax =</span> <span class="dv">1</span>),
+            <span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">7</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">linetype =</span> probability <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">color =</span> probability <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>),
+            <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_segment</span>(<span class="dt">x =</span> <span class="fl">1.3</span>, <span class="dt">xend =</span> <span class="dv">3</span>,
+               <span class="dt">y =</span> <span class="dv">1</span>, <span class="dt">yend =</span> <span class="dv">1</span>,
+               <span class="dt">size =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">3</span>],
+                                <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">5</span>, <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">2</span>,
+                  <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">1.2</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">1</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-493-1.png" width="312" /></p>
+<blockquote>
+<p>For a count outcome <span class="math inline">\(y\)</span> for which each observation arises from <span class="math inline">\(n\)</span> trials and with constant expected value <span class="math inline">\(np\)</span>, the binomial distribution has maximum entropy. So it’s the least informative distribution that satisfies our prior knowledge of the outcomes <span class="math inline">\(y\)</span>. (p. 281)</p>
+</blockquote>
+<p>The binomial model follows the basic form</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Binomial} (n, p_i) \\
+f(p_i) &amp; = &amp; \alpha + \beta x_i
+\end{eqnarray}
+\]</span></p>
+<p>The <span class="math inline">\(f()\)</span> portion of the second line represents the link function. We need the link function because, though the shape of the Binomial distribution is determined by two parameters–<span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>–, neither is equivalent to the Gaussian mean <span class="math inline">\(\mu\)</span>. The mean outcome, rather, is <span class="math inline">\(np\)</span>–a function of both. The link function also ensures the model doesn’t make probability predictions outside of the boundary <span class="math inline">\([0, 1]\)</span>.</p>
+<p>Let’s get more general.</p>
+<div id="meet-the-family." class="section level3">
+<h3><span class="header-section-number">9.2.1</span> Meet the family.</h3>
+<p>Here are the Gamma and Exponential panels for Figure 9.6.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
+
+<span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">5</span>, <span class="dt">length.out =</span> length_out)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Gamma       =</span> <span class="kw">dgamma</span>(x, <span class="dv">2</span>, <span class="dv">2</span>),
+         <span class="dt">Exponential =</span> <span class="kw">dexp</span>(x)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(key, density, <span class="op">-</span>x) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">label =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;y %~% Gamma(lambda, kappa)&quot;</span>, <span class="st">&quot;y %~% Exponential(lambda)&quot;</span>), <span class="dt">each =</span> <span class="kw">n</span>()<span class="op">/</span><span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> density)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>label, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-494-1.png" width="576" /></p>
+<p>The Gaussian:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
+
+<span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">5</span>, <span class="dt">to =</span> <span class="dv">5</span>, <span class="dt">length.out =</span> length_out)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">density =</span> <span class="kw">dnorm</span>(x),
+         <span class="dt">strip   =</span> <span class="st">&quot;y %~% Normal(mu, sigma)&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> density)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">4</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-495-1.png" width="288" /></p>
+<p>Here is the Poisson.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
+
+<span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">20</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">density =</span> <span class="kw">dpois</span>(x, <span class="dt">lambda =</span> <span class="fl">2.5</span>),
+         <span class="dt">strip   =</span> <span class="st">&quot;y %~% Poisson(lambda)&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> density)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">2</span>], <span class="dt">width =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-496-1.png" width="288" /></p>
+<p>Finally, the Binomial:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
+
+<span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">density =</span> <span class="kw">dbinom</span>(x, <span class="dt">size =</span> <span class="dv">10</span>, <span class="dt">prob =</span> .<span class="dv">85</span>),
+         <span class="dt">strip   =</span> <span class="st">&quot;y %~% Binomial(n, p)&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> density)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">2</span>], <span class="dt">width =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
+        <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-497-1.png" width="288" /></p>
+<div id="rethinking-a-likelihood-is-a-prior." class="section level4">
+<h4><span class="header-section-number">9.2.1.1</span> Rethinking: A likelihood is a prior.</h4>
+<blockquote>
+<p>In traditional statistics, likelihood functions are “objective” and prior distributions “subjective.” However, likelihoods are themselves prior probability distributions: They are priors for the data, conditional on the parameters. And just like with other priors, there is no correct likelihood. But there are better and worse likelihoods, depending upon context. (p. 284)</p>
+</blockquote>
+<p>For a little more in this, check out McElreath’s great lecture, <a href="https://www.youtube.com/watch?v=yakg94HyWdE&amp;t=1s&amp;frags=pl%2Cwn">Bayesian Statistics without Frequentist Language</a>. This subsection also reminds me of the title of one of Gelman’s blog posts, <a href="https://andrewgelman.com/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/"><em>“It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood”</em></a>. The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It’s taken some time for the weight of that quote to sink in with me, and indeed it’s still sinking. Perhaps you’ll benefit from it, too.</p>
+</div>
+</div>
+<div id="linking-linear-models-to-distributions." class="section level3">
+<h3><span class="header-section-number">9.2.2</span> Linking linear models to distributions.</h3>
+<blockquote>
+<p>To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)</p>
+</blockquote>
+<p>These models generally follow the form:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Some distribution} (\theta_i, \phi) \\
+f(\theta_i) &amp; = &amp; \alpha + \beta x_i
+\end{eqnarray}
+\]</span></p>
+<p>where <span class="math inline">\(\theta_i\)</span> is a parameter of central interest (e.g., the probability of 1 in a Binomial distribution) and <span class="math inline">\(\phi\)</span> is a placeholder for any other parameters necessary for the likelihood but not of primary substantive interest (e.g., <span class="math inline">\(\sigma\)</span> in work-a-day Gaussian models). And as stated earlier, <span class="math inline">\(f()\)</span> is the link function.</p>
+<p>Speaking of,</p>
+<blockquote>
+<p>the logit link maps a parameter that is defined as a probability mass and therefore constrained to lie between zero and one, onto a linear model that can take on any real value. This link is extremely common when working with binomial GLMs. In the context of a model definition, it looks like this:</p>
+<p><span class="math display">\[ \begin{eqnarray}y_i&amp;\sim&amp;\text{Binomial}(n, p_i)\\\text{logit}(p_i)&amp;=&amp;\alpha+\beta x_i \end{eqnarray}\]</span></p>
+<p>And the logit function itself is defined as the <em>log-odds:</em></p>
+<p><span class="math display">\[\text{logit} (p_i) = \text{log} \frac{p_i}{1 - p_i}\]</span></p>
+<p>The “odds” of an event are just the probability it happens divided by the probability it does not happen. So really all that is being stated here is:</p>
+<p><span class="math display">\[\text{log} \frac{p_i}{1 - p_i} = \alpha + \beta x_i\]</span></p>
+</blockquote>
+<p>If we do the final algebraic manipulation on page 285, we can solve for <span class="math inline">\(p_i\)</span> in terms of the linear model:</p>
+<p><span class="math display">\[p_i = \frac{\text{exp} (\alpha + \beta x_i)}{1 + \text{exp} (\alpha + \beta x_i)}\]</span></p>
+<p>As we’ll see later, we will make great use of this formula via the <code>brms::inv_logit_scaled()</code> when making sense of logistic regression models. Now we have that last formula in hand, we can make the data necessary for Figure 9.7.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># first, we&#39;ll make data for the horizontal lines</span>
+alpha &lt;-<span class="st"> </span><span class="dv">0</span>
+beta  &lt;-<span class="st"> </span><span class="dv">4</span>
+
+lines &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x           =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">by =</span> .<span class="dv">25</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">log-odds</span><span class="st">`</span>  =<span class="st"> </span>alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta,
+         <span class="dt">probability =</span> <span class="kw">exp</span>(alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta) <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta)))
+
+<span class="co"># now we&#39;re ready to make the primary data</span>
+beta  &lt;-<span class="st"> </span><span class="dv">2</span>
+
+d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x           =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="fl">1.5</span>, <span class="dt">to =</span> <span class="fl">1.5</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">log-odds</span><span class="st">`</span>  =<span class="st"> </span>alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta,
+         <span class="dt">probability =</span> <span class="kw">exp</span>(alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta) <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta))) 
+
+<span class="co"># now we make the individual plots</span>
+p1 &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="st">`</span><span class="dt">log-odds</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> lines,
+             <span class="kw">aes</span>(<span class="dt">yintercept =</span> <span class="st">`</span><span class="dt">log-odds</span><span class="st">`</span>),
+             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">5</span>]))
+
+p2 &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> probability)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> lines,
+             <span class="kw">aes</span>(<span class="dt">yintercept =</span> probability),
+             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">7</span>]))
+
+<span class="co"># finally, we&#39;re ready to mash the plots together and behold their nerdy glory</span>
+<span class="kw">library</span>(gridExtra)
+
+<span class="kw">grid.arrange</span>(p1, p2, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-498-1.png" width="576" /></p>
+<blockquote>
+<p>The key lesson for now is just that no regression coefficient, such as <span class="math inline">\(\beta\)</span>, from a GLM ever produces a constant change on the outcome scale. Recall that we defined interaction (Chapter 7) as a situation in which the effect of a predictor depends upon the value of another predictor. Well now every predictor essentially interacts with itself, because the impact of a change in a predictor depends upon the value of the predictor before the change…</p>
+<p>The second very common link function is the log link. This link function maps a parameter that is defined over only positive real values onto a linear model. For example, suppose we want to model the standard deviation of <span class="math inline">\(\sigma\)</span> of a Gaussian distribution so it is a function of a predictor variable <span class="math inline">\(x\)</span>. The parameter <span class="math inline">\(\sigma\)</span> must be positive, because a standard deviation cannot be negative no can it be zero. The model might look like:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+y_i &amp; \sim &amp; \text{Normal} (\mu, \sigma_i) \\
+\text{log} (\sigma_i) &amp; = &amp; \alpha + \beta x_i
+\end{eqnarray}
+\]</span></p>
+<p>In this model, the mean <span class="math inline">\(\mu\)</span> is constant, but the standard deviation scales with the value <span class="math inline">\(x_i\)</span>. (p. 268)</p>
+</blockquote>
+<p>This kind of model is trivial in the brms framework, which you can learn more about in Bürkner’s vignette <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. Before moving on with the text, let’s detour and see how we might fit such a model. First, let’s simulate some continuous data <code>y</code> for which the <span class="math inline">\(SD\)</span> is effected by a dummy variable <code>x</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">100</span>)
+(
+  d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> <span class="dv">100</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">y =</span> <span class="kw">rnorm</span>(<span class="dt">n =</span> <span class="kw">n</span>(), <span class="dt">mean =</span> <span class="dv">100</span>, <span class="dt">sd =</span> <span class="dv">10</span> <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span><span class="dv">10</span>))
+  )</code></pre></div>
+<pre><code>## # A tibble: 200 x 2
+##        x     y
+##    &lt;int&gt; &lt;dbl&gt;
+##  1     0  95.0
+##  2     0 101. 
+##  3     0  99.2
+##  4     0 109. 
+##  5     0 101. 
+##  6     0 103. 
+##  7     0  94.2
+##  8     0 107. 
+##  9     0  91.7
+## 10     0  96.4
+## # ... with 190 more rows</code></pre>
+<p>We can view what data like these look like with aid from <code>tidybayes::geom_halfeyeh()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
+
+d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x =</span> x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> y, <span class="dt">y =</span> x, <span class="dt">fill =</span> x)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">2</span>],
+                <span class="dt">point_interval =</span> mean_qi, <span class="dt">.width =</span> .<span class="dv">68</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">4</span>],
+                                   <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.ticks.y     =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-500-1.png" width="336" /></p>
+<p>Even though the means of <code>y</code> are the same for both levels of the <code>x</code> dummy, the variance for <code>x == 1</code> is substantially larger than that for <code>x == 0</code>. Let’s open brms.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(brms)</code></pre></div>
+<p>For such a model, we have two formulas: one for <span class="math inline">\(\mu\)</span> and one for <span class="math inline">\(\sigma\)</span>. We wrap both within the <code>bf()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b9.<span class="dv">1</span> &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, 
+      <span class="dt">family =</span> gaussian,
+      <span class="kw">bf</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, sigma <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>x),
+      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">100</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>),   <span class="dt">class =</span> Intercept, <span class="dt">dpar =</span> sigma),
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>),   <span class="dt">class =</span> b,         <span class="dt">dpar =</span> sigma)))</code></pre></div>
+<p>Do note our use of the <code>dpar</code> arguments in the <code>prior</code> statements. Here’s the summary.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b9.<span class="dv">1</span>)</code></pre></div>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = log 
+## Formula: y ~ 1 
+##          sigma ~ 1 + x
+##    Data: d (Number of observations: 200) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Population-Level Effects: 
+##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept         100.12      0.84    98.49   101.79       3908 1.00
+## sigma_Intercept     2.33      0.07     2.19     2.48       4000 1.00
+## sigma_x             0.44      0.10     0.25     0.64       3511 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+<p>Now we get an intercept for both <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>, with the intercept for sigma identified as <code>sigma_Intercept</code>. And note the coefficient for <span class="math inline">\(\sigma\)</span> was named <code>sigma_x</code>. Also notice the scale the <code>sigma_</code> coefficients are on. These are not in the original metric, but rather based on <code>log()</code>. You can confirm that by the second line of the <code>print()</code> output: <code>Links: mu = identity; sigma = log</code>. So if you want to get a sense of the effects of <code>x</code> on the <span class="math inline">\(\sigma\)</span> for <code>y</code>, you have to exponentiate the formula. Here we’ll do so with the <code>posterior_samples()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b9.<span class="dv">1</span>)
+
+<span class="kw">head</span>(post)</code></pre></div>
+<pre><code>##   b_Intercept b_sigma_Intercept b_sigma_x      lp__
+## 1   100.96575          2.343610 0.3280349 -803.0574
+## 2    99.11466          2.427497 0.3172929 -803.3017
+## 3    99.16897          2.427403 0.3362887 -803.1968
+## 4    99.60756          2.304547 0.4648463 -801.7567
+## 5   100.67528          2.317253 0.4149594 -801.9135
+## 6    99.55635          2.224778 0.7179760 -805.5759</code></pre>
+<p>With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of <code>y</code> based on the <code>x</code> dummy and then examine them in a plot.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">transmute</span>(<span class="st">`</span><span class="dt">x == 0</span><span class="st">`</span> =<span class="st"> </span><span class="kw">exp</span>(b_sigma_Intercept <span class="op">+</span><span class="st"> </span>b_sigma_x <span class="op">*</span><span class="st"> </span><span class="dv">0</span>),
+            <span class="st">`</span><span class="dt">x == 1</span><span class="st">`</span> =<span class="st"> </span><span class="kw">exp</span>(b_sigma_Intercept <span class="op">+</span><span class="st"> </span>b_sigma_x <span class="op">*</span><span class="st"> </span><span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(key, sd) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sd, <span class="dt">y =</span> key, <span class="dt">fill =</span> key)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">2</span>],
+                <span class="dt">point_interval =</span> median_qi, <span class="dt">.width =</span> .<span class="dv">95</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">4</span>],
+                                   <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>,
+       <span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Model-implied &quot;</span>, <span class="kw">italic</span>(SD), <span class="st">&quot;s by group x&quot;</span>))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.ticks.y     =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-504-1.png" width="336" /></p>
+<p>And if we looked back at the data, those <span class="math inline">\(SD\)</span> estimates are just what we’d expect.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(x) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">sd =</span> <span class="kw">sd</span>(y) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">1</span>)) </code></pre></div>
+<pre><code>## # A tibble: 2 x 2
+##       x    sd
+##   &lt;int&gt; &lt;dbl&gt;
+## 1     0  10.2
+## 2     1  15.9</code></pre>
+<p>For more on models like this, check out Christakis’ <a href="https://www.edge.org/response-detail/25437"><em>2014: What scientific idea is ready for retirement?</em></a> or <a href="http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright"><em>The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright</em></a>.</p>
+<p>But getting back to the text,</p>
+<blockquote>
+<p>what the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving <span class="math inline">\(\text{log} (\sigma_i) = \alpha + \beta x_i\)</span> for <span class="math inline">\(\sigma_i\)</span> yields the inverse link:</p>
+<p><span class="math display">\[\sigma_i = \text{exp} (\alpha + \beta x_i)\]</span></p>
+<p>The impact of this assumption can be seen in [our version of] Figure 9.8. (pp. 286—287)</p>
+</blockquote>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># first, we&#39;ll make data that&#39;ll be make the horizontal lines</span>
+alpha &lt;-<span class="st"> </span><span class="dv">0</span>
+beta  &lt;-<span class="st"> </span><span class="dv">2</span>
+
+lines &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="st">`</span><span class="dt">log-measurement</span><span class="st">`</span>      =<span class="st"> </span><span class="op">-</span><span class="dv">3</span><span class="op">:</span><span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">original measurement</span><span class="st">`</span> =<span class="st"> </span><span class="kw">exp</span>(<span class="st">`</span><span class="dt">log-measurement</span><span class="st">`</span>))
+
+<span class="co"># now we&#39;re ready to make the primary data</span>
+d &lt;-
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x                      =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="fl">1.5</span>, <span class="dt">to =</span> <span class="fl">1.5</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">log-measurement</span><span class="st">`</span>      =<span class="st"> </span>alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta,
+         <span class="st">`</span><span class="dt">original measurement</span><span class="st">`</span> =<span class="st"> </span><span class="kw">exp</span>(alpha <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>beta)) 
+
+<span class="co"># now we make the individual plots</span>
+p1 &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="st">`</span><span class="dt">log-measurement</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> lines,
+             <span class="kw">aes</span>(<span class="dt">yintercept =</span> <span class="st">`</span><span class="dt">log-measurement</span><span class="st">`</span>),
+             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">5</span>]))
+
+p2 &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="st">`</span><span class="dt">original measurement</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">data =</span> lines,
+             <span class="kw">aes</span>(<span class="dt">yintercept =</span> <span class="st">`</span><span class="dt">original measurement</span><span class="st">`</span>),
+             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">3</span>]) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>,
+                  <span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;YesterdayMedium&quot;</span>)[<span class="dv">7</span>]))
+
+<span class="co"># finally, we&#39;re ready to mash the plots together and behold their nerdy glory</span>
+<span class="kw">grid.arrange</span>(p1, p2, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-506-1.png" width="576" /></p>
+</div>
+</div>
+<div id="reference-8" class="section level2 unnumbered">
+<h2>Reference</h2>
+<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2016). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
+</div>
+<div id="session-info-8" class="section level2 unnumbered">
+<h2>Session info</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+<pre><code>## R version 3.5.1 (2018-07-02)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.6
+## 
+## Matrix products: default
+## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] brms_2.5.0      Rcpp_0.12.18    tidybayes_1.0.1 gridExtra_2.3   ghibli_0.1.1    forcats_0.3.0  
+##  [7] stringr_1.3.1   dplyr_0.7.6     purrr_0.2.5     readr_1.1.1     tidyr_0.8.1     tibble_1.4.2   
+## [13] ggplot2_3.0.0   tidyverse_1.2.1
+## 
+## loaded via a namespace (and not attached):
+##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
+##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
+##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
+##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
+##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
+##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
+##  [19] bayesplot_1.6.0           labeling_0.3              rstan_2.17.3             
+##  [22] mnormt_1.5-5              bridgesampling_0.4-0      rprojroot_1.3-2          
+##  [25] coda_0.19-1               xfun_0.3                  R6_2.2.2                 
+##  [28] markdown_0.8              HDInterval_0.2.0          reshape_0.8.7            
+##  [31] assertthat_0.2.0          promises_1.0.1            scales_0.5.0             
+##  [34] beeswarm_0.2.3            gtable_0.2.0              rethinking_1.59          
+##  [37] rlang_0.2.1               extrafontdb_1.0           lazyeval_0.2.1           
+##  [40] broom_0.4.5               inline_0.3.15             yaml_2.1.19              
+##  [43] reshape2_1.4.3            abind_1.4-5               modelr_0.1.2             
+##  [46] threejs_0.3.1             crosstalk_1.0.0           backports_1.1.2          
+##  [49] httpuv_1.4.4.2            rsconnect_0.8.8           extrafont_0.17           
+##  [52] tools_3.5.1               bookdown_0.7              psych_1.8.4              
+##  [55] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
+##  [58] base64enc_0.1-3           progress_1.2.0            prettyunits_1.0.2        
+##  [61] zoo_1.8-2                 LaplacesDemon_16.1.1      haven_1.1.2              
+##  [64] magrittr_1.5              colourpicker_1.0          mvtnorm_1.0-8            
+##  [67] matrixStats_0.54.0        hms_0.4.2                 shinyjs_1.0              
+##  [70] mime_0.5                  evaluate_0.10.1           arrayhelpers_1.0-20160527
+##  [73] xtable_1.8-2              shinystan_2.5.0           readxl_1.1.0             
+##  [76] rstantools_1.5.0          compiler_3.5.1            maps_3.3.0               
+##  [79] crayon_1.3.4              StanHeaders_2.17.2        htmltools_0.3.6          
+##  [82] later_0.7.3               lubridate_1.7.4           MASS_7.3-50              
+##  [85] Matrix_1.2-14             cli_1.0.0                 bindr_0.1.1              
+##  [88] igraph_1.2.1              pkgconfig_2.0.1           foreign_0.8-70           
+##  [91] xml2_1.2.0                svUnit_0.7-12             dygraphs_1.1.1.5         
+##  [94] vipor_0.4.5               rvest_0.3.2               digest_0.6.15            
+##  [97] rmarkdown_1.10            cellranger_1.1.0          shiny_1.1.0              
+## [100] gtools_3.8.1              nlme_3.1-137              jsonlite_1.5             
+## [103] bindrcpp_0.2.2            mapproj_1.2.6             viridisLite_0.3.0        
+## [106] pillar_1.2.3              lattice_0.20-35           loo_2.0.0                
+## [109] httr_1.3.1                glue_1.2.0                xts_0.10-2               
+## [112] shinythemes_1.1.1         pander_0.6.2              stringi_1.2.3</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="markov-chain-monte-carlo.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="counting-and-classification.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

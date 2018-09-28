@@ -1,2123 +1,18 @@
-*Statistical Rethinking* with brms, ggplot2, and the tidyverse
+Chapter 01. The Golem of Prague
 ================
 A Solomon Kurz
-2018-09-18
+2018-09-25
 
-This is a love letter
-=====================
+The Golem of Prague
+===================
 
-Placeholder
+![Rabbi Loew and Golem by Mikoláš Aleš, 1899](pictures/Golem_and_Loew.jpg)
 
-Why this?
----------
+I retrieved the picture from [here](https://en.wikipedia.org/wiki/Golem#/media/File:Golem_and_Loew.jpg).
 
-My assumptions about you
-------------------------
+> Ultimately Judah was forced to destroy the golem, as its combination of extraordinary power with clumsiness eventually led to innocent deaths. Wiping away one letter from the inscription *emet* to spell instead *met*, "death," Rabbi Judah decommissioned the robot. (p. 1)
 
-How to use and understand this project
---------------------------------------
-
-<!--chapter:end:index.Rmd-->
-Multivariate Linear Models
-==========================
-
-McElreath's listed reasons for multivaraiable regression include:
-
--   statistical control for confounds
--   multiple causation
--   interactions
-
-We'll approach the first two in this chapter. Interactions are reserved for chapter 6.
-
-Spurious associations
----------------------
-
-Load the Waffle House data.
-
-``` r
-library(rethinking)
-data(WaffleDivorce)
-d <- WaffleDivorce
-```
-
-Unload rethinking and load brms and, while we're at it, the tidyverse.
-
-``` r
-rm(WaffleDivorce)
-detach(package:rethinking, unload = T)
-library(brms)
-library(tidyverse)
-```
-
-I'm not going to show the output, but you might go ahead and investigate the data with the typical functions. E.g.,
-
-``` r
-head(d)
-glimpse(d)
-```
-
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
-
-``` r
-# install.packages("ggrepel", depencencies = T)
-library(ggrepel)
-
-d %>%
-  ggplot(aes(x = WaffleHouses/Population, y = Divorce)) +
-  stat_smooth(method = "lm", fullrange = T, size = 1/2,
-              color = "firebrick4", fill = "firebrick", alpha = 1/5) +
-  geom_point(size = 1.5, color = "firebrick4", alpha = 1/2) +
-  geom_text_repel(data = d %>% filter(Loc %in% c("ME", "OK", "AR", "AL", "GA", "SC", "NJ")),  
-                  aes(label = Loc), 
-                  size = 3, seed = 1042) +  # this makes it reproducible
-  scale_x_continuous(limits = c(0, 55)) +
-  coord_cartesian(xlim = 0:50, ylim = 5:15) +
-  labs(x = "Waffle Houses per million", 
-       y = "Divorce rate") +
-  theme_bw() +
-  theme(panel.grid = element_blank())  
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
-With `coord_map()` and help from the [fiftystater package](https://cran.r-project.org/web/packages/fiftystater/index.html) (which gives us access to lat/long data for all fifty states via `fifty_states`), we can plot our three major variables in a map format.
-
-``` r
-library(fiftystater)
-
-d %>% 
-  # first we'll standardize the three variables to put them all on the same scale
-  mutate(Divorce_z           = (Divorce - mean(Divorce))                     / sd(Divorce),
-         MedianAgeMarriage_z = (MedianAgeMarriage - mean(MedianAgeMarriage)) / sd(MedianAgeMarriage),
-         Marriage_z          = (Marriage - mean(Marriage))                   / sd(Marriage),
-         # need to make the state names lowercase to match with the map data
-         Location            = str_to_lower(Location)) %>% 
-  # here we select the relevant variables and put them in the long format to facet with `facet_wrap()`
-  select(Divorce_z:Marriage_z, Location) %>% 
-  gather(key, value, -Location) %>% 
-  
-  ggplot(aes(map_id = Location)) +
-  geom_map(aes(fill = value), map = fifty_states, 
-           color = "firebrick", size = 1/15) +
-  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
-  scale_x_continuous(NULL, breaks = NULL) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  scale_fill_gradient(low = "#f8eaea", high = "firebrick4") +
-  coord_map() +
-  theme_bw() +
-  theme(panel.grid       = element_blank(),
-        legend.position  = "none",
-        strip.background = element_rect(fill = "transparent", color = "transparent")) +
-  facet_wrap(~key)
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-5-1.png)
-
-One of the advantages of this visualization method is it just became clear that Nevada is missing from the `WaffleDivorce` data. Execute `d %>% distinct(Location)` to see for yourself. Those missing data should motivate the skills we'll cover in chapter 14. But let's get back on track.
-
-Here we'll officially standardize the predictor, `MedianAgeMarriage`.
-
-``` r
-d <-
-  d %>%
-  mutate(MedianAgeMarriage_s = (MedianAgeMarriage - mean(MedianAgeMarriage)) /
-           sd(MedianAgeMarriage))
-```
-
-Now we're ready to fit the first univariable model.
-
-``` r
-b5.1 <- 
-  brm(data = d, family = gaussian,
-      Divorce ~ 1 + MedianAgeMarriage_s,
-      prior = c(prior(normal(10, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-The summary:
-
-``` r
-print(b5.1)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: Divorce ~ 1 + MedianAgeMarriage_s 
-    ##    Data: d (Number of observations: 50) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept               9.69      0.21     9.27    10.11       6000 1.00
-    ## MedianAgeMarriage_s    -1.04      0.21    -1.45    -0.63       5012 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.51      0.16     1.24     1.86       5044 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-We'll employ `fitted()` to make Figure 5.2.b. In preparation for `fitted()` we'll make a new tibble, `nd`, composed of a handful of densely-packed values for our predictor, `MedianAgeMarriage_s`. With the `newdata` argument, we'll use those values to return model-implied expected values for `Divorce`.
-
-``` r
-# First we determine the range of `MedianAgeMarriage_s` values we'd like to feed into `fitted()`
-nd <- tibble(MedianAgeMarriage_s = seq(from = -3, to = 3.5, 
-                                       length.out = 30))
-
-# Now we use `fitted()` to get the model-implied trajectories
-fitd_b5.1 <- 
-  fitted(b5.1, newdata = nd) %>%
-  as_tibble() %>%
-  bind_cols(nd)
-
-# The plot
-ggplot(data = fitd_b5.1, 
-       aes(x = MedianAgeMarriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
-  geom_point(data = d, 
-             aes(x = MedianAgeMarriage_s, y = Divorce), 
-             size = 2, color = "firebrick4") +
-  labs(y = "Divorce") +
-  coord_cartesian(xlim = range(d$MedianAgeMarriage_s), 
-                  ylim = range(d$Divorce)) +
-  theme_bw() +
-  theme(panel.grid = element_blank())                   
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
-Before fitting the next model, we'll standardize `Marriage`.
-
-``` r
-d <-
-  d %>%
-  mutate(Marriage_s = (Marriage - mean(Marriage)) / sd(Marriage))
-```
-
-We're ready to fit our second univariable model.
-
-``` r
-b5.2 <- 
-  brm(data = d, family = gaussian,
-      Divorce ~ 1 + Marriage_s,
-      prior = c(prior(normal(10, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.2)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: Divorce ~ 1 + Marriage_s 
-    ##    Data: d (Number of observations: 50) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept      9.69      0.25     9.19    10.16       5354 1.00
-    ## Marriage_s     0.64      0.25     0.14     1.12       5484 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.75      0.19     1.44     2.16       4878 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Now we'll wangle and plot our version of Figure 5.2.a.
-
-``` r
-nd <- tibble(Marriage_s = seq(from = -2.5, to = 3.5, 
-                              length.out = 30))
-
-fitd_b5.2 <- 
-  fitted(b5.2, newdata = nd) %>%
-  as_tibble() %>%
-  bind_cols(nd)
-
-ggplot(data = fitd_b5.2, 
-       aes(x = Marriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
-  geom_point(data = d, 
-             aes(x = Marriage_s, y = Divorce), 
-             size = 2, color = "firebrick4") +
-  coord_cartesian(xlim = range(d$Marriage_s), 
-                  ylim = range(d$Divorce)) +
-  labs(y = "Divorce") +
-  theme_bw() +
-  theme(panel.grid = element_blank())                   
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-11-1.png)
-
-### Multivariate notation.
-
-Now we'll get both predictors in there with our very first multivariable model. We can write the statistical model as
-
-$$
-\\begin{eqnarray}
-\\text{Divorce}\_i & \\sim & \\text{Normal}(\\mu\_i, \\sigma) \\\\
-\\mu\_i & = & \\alpha + \\beta\_1 \\text{Marriage\_s}\_i + \\beta\_2 \\text{MedianAgeMarriage\_s}\_i \\\\
-\\alpha & \\sim & \\text{Normal}(10, 10) \\\\
-\\beta\_1 & \\sim & \\text{Normal}(0, 1) \\\\
-\\beta\_2 & \\sim & \\text{Normal}(0, 1) \\\\
-\\sigma & \\sim & \\text{Uniform}(0, 10)
-\\end{eqnarray}
-$$
-
-### Fitting the model.
-
-Much like we used the `+` operator to add single predictors to the intercept, we just use more `+` operators in the formula to add more predictors. Also notice we're using the same prior `prior(normal(0, 1), class = b)` for both predictors. Within the brms framework, they are both of `class = b`. But if we wanted their priors to differ, we'd make two `prior()` statements and differentiate them with the `coef` argument. You'll see that later on.
-
-``` r
-b5.3 <- 
-  brm(data = d, family = gaussian,
-      Divorce ~ 1 + Marriage_s + MedianAgeMarriage_s,
-      prior = c(prior(normal(10, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.3)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: Divorce ~ 1 + Marriage_s + MedianAgeMarriage_s 
-    ##    Data: d (Number of observations: 50) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept               9.68      0.22     9.25    10.11       5495 1.00
-    ## Marriage_s             -0.12      0.29    -0.67     0.46       4131 1.00
-    ## MedianAgeMarriage_s    -1.12      0.29    -1.67    -0.56       4154 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.52      0.16     1.25     1.87       4882 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-The `stanplot()` function is an easy way to get a default coefficient plot. You just put the brmsfit object into the function.
-
-``` r
-stanplot(b5.3)
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-13-1.png)
-
-There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/web/packages/bayesplot/index.html). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object.
-
-``` r
-# install.packages("bayesplot", dependencies = T)
-library(bayesplot)
-
-post <- posterior_samples(b5.3)
-
-color_scheme_set("red")
-mcmc_intervals(post[, 1:4], 
-               prob = .5,
-               point_est = "median") +
-  labs(title = "My fancy bayesplot-based coefficient plot") +
-  theme(axis.text.y  = element_text(hjust = 0),
-        axis.line.x  = element_line(size = 1/4),
-        axis.line.y  = element_blank(),
-        axis.ticks.y = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-14-1.png)
-
-Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
-
-The `tidybaes::stat_pointintervalh()` function offers a third way, this time with a more ground-up ggplot2 workflow.
-
-``` r
-library(tidybayes)
-
-post %>% 
-  select(-lp__) %>% 
-  gather() %>% 
-  
-  ggplot(aes(x = value, y = reorder(key, value))) +  # note how we used `reorder()` to arrange the coefficients
-  geom_vline(xintercept = 0, color = "firebrick4", alpha = 1/10) +
-  stat_pointintervalh(point_interval = mode_hdi, .width = .95, 
-                      size = 3/4, color = "firebrick4") +
-  labs(title = "My tidybayes-based coefficient plot",
-       x = NULL, y = NULL) +
-  theme_bw() +
-  theme(panel.grid   = element_blank(),
-        panel.grid.major.y = element_line(color = alpha("firebrick4", 1/4), linetype = 3),
-        axis.text.y  = element_text(hjust = 0),
-        axis.ticks.y = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-15-1.png)
-
-The substantive interpretation of all those coefficient plots is: "*Once we know median age at marriage for a State, there is little or no additive predictive power in also knowing the rate of marriage in that State*" (p. 126, *emphasis* in the original).
-
-### Plotting multivariate posteriors.
-
-McElreath’s prose is delightfully deflationary. “There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression” (p. 126). Now you’re inspired, let’s learn three:
-
--   Predictor residual plots
--   Counterfactual plots
--   Posterior prediction plots
-
-#### Predictor residual plots.
-
-To get ready to make our residual plots, we'll predict `Marriage_s` with `MedianAgeMarriage_s`.
-
-``` r
-b5.4 <- 
-  brm(data = d, family = gaussian,
-      Marriage_s ~ 1 + MedianAgeMarriage_s,
-      prior = c(set_prior("normal(0, 10)", class = "Intercept"),
-                set_prior("normal(0, 1)", class = "b"),
-                set_prior("uniform(0, 10)", class = "sigma")),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.4)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: Marriage_s ~ 1 + MedianAgeMarriage_s 
-    ##    Data: d (Number of observations: 50) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept               0.00      0.10    -0.20     0.20       5490 1.00
-    ## MedianAgeMarriage_s    -0.71      0.10    -0.91    -0.51       4726 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     0.72      0.08     0.59     0.89       4688 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-With `fitted()`, we compute the expected values for each State (with the exception of Nevada). Since the `MedianAgeMarriage_s` values for each state are in the date we used to fit the model, we’ll omit the `newdata` argument.
-
-``` r
-fitd_b5.4 <- 
-  fitted(b5.4) %>%
-  as_tibble() %>%
-  bind_cols(d)
-
-head(fitd_b5.4)
-```
-
-    ## # A tibble: 6 x 19
-    ##   Estimate Est.Error     Q2.5  Q97.5 Location   Loc   Population
-    ##      <dbl>     <dbl>    <dbl>  <dbl> <fct>      <fct>      <dbl>
-    ## 1    0.432     0.121  0.191    0.673 Alabama    AL          4.78
-    ## 2    0.489     0.126  0.240    0.739 Alaska     AK          0.71
-    ## 3    0.146     0.106 -0.0631   0.355 Arizona    AZ          6.33
-    ## 4    1.00      0.179  0.652    1.36  Arkansas   AR          2.92
-    ## 5   -0.425     0.120 -0.663   -0.189 California CA         37.2 
-    ## 6    0.203     0.108 -0.00877  0.415 Colorado   CO          5.03
-    ## # ... with 12 more variables: MedianAgeMarriage <dbl>, Marriage <dbl>,
-    ## #   Marriage.SE <dbl>, Divorce <dbl>, Divorce.SE <dbl>,
-    ## #   WaffleHouses <int>, South <int>, Slaves1860 <int>,
-    ## #   Population1860 <int>, PropSlaves1860 <dbl>, MedianAgeMarriage_s <dbl>,
-    ## #   Marriage_s <dbl>
-
-After a little data processing, we can make Figure 5.3.
-
-``` r
-fitd_b5.4 %>% 
-  
-  ggplot(aes(x = MedianAgeMarriage_s, y = Marriage_s)) +
-  geom_point(size = 2, shape = 1, color = "firebrick4") +
-  geom_segment(aes(xend = MedianAgeMarriage_s, yend = Estimate), 
-               size = 1/4) +
-  geom_line(aes(y = Estimate), 
-            color = "firebrick4") +
-  coord_cartesian(ylim = range(d$Marriage_s)) +
-  theme_bw() +
-  theme(panel.grid = element_blank())     
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-18-1.png)
-
-We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
-
-With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
-
-``` r
-res_b5.4 <- 
-  residuals(b5.4) %>%
-  # To use this in ggplot2, we need to make it a tibble or data frame
-  as_tibble() %>% 
-  bind_cols(d)
-
-# for the annotation at the top
-text <-
-  tibble(Estimate = c(- 0.5, 0.5),
-         Divorce = 14.1,
-         label = c("slower", "faster"))
-
-res_b5.4 %>% 
-  ggplot(aes(x = Estimate, y = Divorce)) +
-  stat_smooth(method = "lm", fullrange = T,
-              color = "firebrick4", fill = "firebrick4", 
-              alpha = 1/5, size = 1/2) +
-  geom_vline(xintercept = 0, linetype = 2, color = "grey50") +
-  geom_point(size = 2, color = "firebrick4", alpha = 2/3) +
-  geom_text(data = text,
-            aes(label = label)) +
-  scale_x_continuous(limits = c(-2, 2)) +
-  coord_cartesian(xlim = range(res_b5.4$Estimate),
-                  ylim = c(6, 14.1)) +
-  labs(x = "Marriage rate residuals") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-19-1.png)
-
-To get the `MedianAgeMarriage_s` residuals, we have to fit the corresponding model first.
-
-``` r
-b5.4b <- 
-  brm(data = d, family = gaussian,
-      MedianAgeMarriage_s ~ 1 + Marriage_s,
-      prior = c(prior(normal(0, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
-
-``` r
-text <-
-  tibble(Estimate = c(- 0.7, 0.5),
-         Divorce  = 14.1,
-         label    = c("younger", "older"))
-
-residuals(b5.4b) %>%
-  as_tibble() %>%
-  bind_cols(d) %>% 
-  
-  ggplot(aes(x = Estimate, y = Divorce)) +
-  stat_smooth(method = "lm", fullrange = T,
-              color = "firebrick4", fill = "firebrick4", 
-              alpha = 1/5, size = 1/2) +
-  geom_vline(xintercept = 0, linetype = 2, color = "grey50") +
-  geom_point(size = 2, color = "firebrick4", alpha = 2/3) +
-  geom_text(data = text,
-            aes(label = label)) +
-  scale_x_continuous(limits = c(-2, 3)) +
-  coord_cartesian(xlim = range(res_b5.4$Estimate),
-                  ylim = c(6, 14.1)) +
-  labs(x = "Age of marriage residuals") +
-  theme_bw() +
-  theme(panel.grid = element_blank())  
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-20-1.png)
-
-#### Counterfactual plots.
-
-> A second sort of inferential plot displays the implied predictions of the model. I call these plots *counterfactual*, because they can be produced for any values of the predictor variable you like, even unobserved or impossible combinations like very high median age of marriage and very high marriage rate. There are no States with this combination, but in a counterfactual plot, you can ask the model for a prediction for such a State. (p. 129, *emphasis* in the original)
-
-Making Figure 5.5.a requires a little more data wrangling than before.
-
-``` r
-# We need new data
-nd <- 
-  tibble(Marriage_s          = seq(from = -3, to = 3, length.out = 30),
-         MedianAgeMarriage_s = rep(mean(d$MedianAgeMarriage_s), times = 30))
-  
-fitted(b5.3, newdata = nd) %>% 
-  as_tibble() %>% 
-  # Since `fitted()` and `predict()` name their intervals the same way, we'll need to `rename()` then to keep them straight.
-  rename(f_ll = Q2.5,
-         f_ul = Q97.5) %>% 
-  # Note how we're just nesting the `predict()` code right inside `bind_cols()`
-  bind_cols(
-    predict(b5.3, newdata = nd) %>% 
-      as_tibble() %>% 
-      # Since we only need the intervals, we'll use `transmute()` rather than `mutate()`
-      transmute(p_ll = Q2.5,
-                p_ul = Q97.5)
-  ) %>% 
-  bind_cols(nd) %>% 
-  
-  # We're finally ready to plot
-  ggplot(aes(x = Marriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = p_ll, ymax = p_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = f_ll, ymax = f_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
-  coord_cartesian(xlim = range(d$Marriage_s),
-                  ylim = c(6, 14)) +
-  labs(subtitle = "Counterfactual plot for which\nMedianAgeMarriage_s = 0",
-       y = "Divorce") +
-  theme_bw() +
-  theme(panel.grid = element_blank())     
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-21-1.png)
-
-We follow the same process for Figure 5.5.b.
-
-``` r
-# new data
-nd <- 
-  tibble(MedianAgeMarriage_s = seq(from = -3, to = 3.5, length.out = 30),
-         Marriage_s          = rep(mean(d$Marriage_s), times = 30))
-  
-# `fitted()` + `predict()`
-fitted(b5.3, newdata = nd) %>% 
-  as_tibble() %>% 
-  rename(f_ll = Q2.5,
-         f_ul = Q97.5) %>% 
-  bind_cols(
-    predict(b5.3, newdata = nd) %>% 
-      as_tibble() %>% 
-      transmute(p_ll = Q2.5,
-                p_ul = Q97.5)
-  ) %>% 
-  bind_cols(nd) %>% 
-  
-  # plot
-  ggplot(aes(x = MedianAgeMarriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = p_ll, ymax = p_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = f_ll, ymax = f_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
-  coord_cartesian(xlim = range(d$MedianAgeMarriage_s),
-                  ylim = c(6, 14)) +
-  labs(subtitle = "Counterfactual plot for which\nMarriage_s = 0",
-       y = "Divorce") +
-  theme_bw() +
-  theme(panel.grid = element_blank())   
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-22-1.png)
-
-> A tension with such plots, however, lies in their counterfactual nature. In the small world of the model, it is possible to change median age of marriage without also changing the marriage rate. But is this also possible in the large world of reality? Probably not...
->
-> ...If our goal is to intervene in the world, there may not be any realistic way to manipulate each predictor without also manipulating the others. This is a serious obstacle to applied science, whether you are an ecologist, an economist, or an epidemiologist \[or a psychologist\] (p. 131)
-
-#### Posterior prediction plots.
-
-"In addition to understanding the estimates, it’s important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post [*Touch me, I want to feel your data*](http://andrewgelman.com/2017/09/07/touch-want-feel-data/).
-
-In this version of Figure 5.6.a, the thin lines are the 95% intervals and the thicker lines are +/- the posterior *S**D*, both of which are returned when you use `fitted()`.
-
-``` r
-fitted(b5.3) %>%
-  as_tibble() %>%
-  bind_cols(d) %>%
-  
-  ggplot(aes(x = Divorce, y = Estimate)) +
-  geom_abline(linetype = 2, color = "grey50", size = .5) +
-  geom_point(size = 1.5, color = "firebrick4", alpha = 3/4) +
-  geom_linerange(aes(ymin = Q2.5, ymax = Q97.5),
-                 size = 1/4, color = "firebrick4") +
-  geom_linerange(aes(ymin = Estimate - Est.Error, 
-                     ymax = Estimate + Est.Error),
-                 size = 1/2, color = "firebrick4") +
-  # Note our use of the dot placeholder, here: https://magrittr.tidyverse.org/reference/pipe.html
-  geom_text(data = . %>% filter(Loc %in% c("ID", "UT")),
-            aes(label = Loc), 
-            hjust = 0, nudge_x = - 0.65) +
-  labs(x = "Observed divorce", y = "Predicted divorce") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-23-1.png)
-
-In order to make Figure 5.6.b, we need to clarify the relationships among `fitted()`, `predict()`, and `residuals()`. Here's my attempt in a table.
-
-``` r
-tibble(`brms function` = c("fitted", "predict", "residual"),
-       mean  = c("same as the data", "same as the data", "in a deviance-score metric"),
-       scale = c("excludes sigma", "includes sigma", "excludes sigma")) %>% 
-  knitr::kable()
-```
-
-| brms function | mean                       | scale          |
-|:--------------|:---------------------------|:---------------|
-| fitted        | same as the data           | excludes sigma |
-| predict       | same as the data           | includes sigma |
-| residual      | in a deviance-score metric | excludes sigma |
-
-This means that if we want to incorporate the prediction interval in a deviance metric, we'll need to first use `predict()` and then subtract the intervals from their corresponding `Divorce` values in the data.
-
-``` r
-residuals(b5.3) %>% 
-  as_tibble() %>% 
-  rename(f_ll = Q2.5,
-         f_ul = Q97.5) %>% 
-  bind_cols(
-    predict(b5.3) %>% 
-      as_tibble() %>% 
-      transmute(p_ll = Q2.5,
-                p_ul = Q97.5)
-  ) %>% 
-  bind_cols(d) %>%
-  # here we put our `predict()` intervals into a deviance metric
-  mutate(p_ll = Divorce - p_ll,
-         p_ul = Divorce - p_ul) %>% 
-  
-  # The plot
-  ggplot(aes(x = reorder(Loc, Estimate), y = Estimate)) +
-  geom_hline(yintercept = 0, size = 1/2, 
-             color = "firebrick4", alpha = 1/10) +
-  geom_pointrange(aes(ymin = f_ll, ymax = f_ul),
-                  size = 2/5, shape = 20, color = "firebrick4") + 
-  geom_segment(aes(y    = Estimate - Est.Error, 
-                   yend = Estimate + Est.Error,
-                   x    = Loc, 
-                   xend = Loc),
-               size = 1, color = "firebrick4") +
-  geom_segment(aes(y    = p_ll, 
-                   yend = p_ul,
-                   x    = Loc, 
-                   xend = Loc),
-               size = 3, color = "firebrick4", alpha = 1/10) +
-  labs(x = NULL, y = NULL) +
-  coord_flip(ylim = c(-6, 5)) +
-  theme_bw() +
-  theme(panel.grid   = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y  = element_text(hjust = 0))
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-25-1.png)
-
-Compared to the last couple plots, Figure 5.6.c is pretty simple.
-
-``` r
-residuals(b5.3) %>% 
-  as_tibble() %>% 
-  bind_cols(d) %>% 
-  mutate(wpc = WaffleHouses / Population) %>% 
-  
-  ggplot(aes(x = wpc, y = Estimate)) +
-  geom_point(size = 1.5, color = "firebrick4", alpha = 1/2) +
-  stat_smooth(method = "lm", fullrange = T,
-              color  = "firebrick4", size = 1/2, 
-              fill   = "firebrick", alpha = 1/5) + 
-  geom_text_repel(data = . %>% filter(Loc %in% c("ME", "AR", "MS", "AL", "GA", "SC", "ID")),
-                  aes(label = Loc),
-                  seed = 5.6) +
-  scale_x_continuous(limits = c(0, 45)) +
-  coord_cartesian(xlim = range(0, 40)) +
-  labs(x = "Waffles per capita",
-       y = "Divorce error") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-26-1.png)
-
-More McElreath inspiration: "No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation" (p. 134).
-
-#### Overthinking: Simulating spurious association.
-
-``` r
-N <- 100                             # number of cases
-
-set.seed(135)                        # setting the seed makes the results reproducible
-d <- 
-  tibble(x_real = rnorm(N),          # x_real as Gaussian with mean 0 and SD 1 (i.e., the defaults)
-         x_spur = rnorm(N, x_real),  # x_spur as Gaussian with mean = x_real
-         y =      rnorm(N, x_real))  # y as Gaussian with mean = x_real
-```
-
-Here are the quick `pairs()` plots.
-
-``` r
-pairs(d, col = "firebrick4")
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-28-1.png)
-
-``` r
-brm(data = d, family = gaussian,
-    y ~ 1 + x_real + x_spur,
-    prior = c(prior(normal(0, 10), class = Intercept),
-              prior(normal(0, 1), class = b),
-              prior(uniform(0, 10), class = sigma)),
-    iter = 2000, warmup = 500, chains = 4, cores = 4) %>% 
-  
-  fixef() %>% round(digits = 2)
-```
-
-    ##           Estimate Est.Error  Q2.5 Q97.5
-    ## Intercept    -0.05      0.10 -0.24  0.13
-    ## x_real        1.17      0.14  0.90  1.45
-    ## x_spur       -0.05      0.09 -0.23  0.11
-
-Masked relationship
--------------------
-
-Let's load those tasty `milk` data.
-
-``` r
-library(rethinking)
-data(milk)
-d <- milk
-```
-
-Unload rethinking and load brms.
-
-``` r
-rm(milk)
-detach(package:rethinking, unload = T)
-library(brms)
-```
-
-You might inspect the data like this.
-
-``` r
-d %>% 
-  select(kcal.per.g, mass, neocortex.perc) %>% 
-  pairs(col = "firebrick4")
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-31-1.png)
-
-By just looking at that mess, do you think you could describe the associations of `mass` and `neocortex.perc` with the criterion, `kcal.per.g`? I couldn't. It's a good thing we have math.
-
-McElreath has us start of with a simple univaraible `milk` model.
-
-``` r
-b5.5 <- 
-  brm(data = d, family = gaussian,
-      kcal.per.g ~ 1 + neocortex.perc,
-      prior = c(prior(normal(0, 100), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to chapter 14 where we'll learn how to do better.
-
-Here's how to explicitly drop the cases with missing values on the predictor.
-
-``` r
-dcc <- 
-  d %>%
-  filter(complete.cases(.))              
-```
-
-Let's inspect the parameter summary.
-
-``` r
-print(b5.5, digits = 3)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: kcal.per.g ~ 1 + neocortex.perc 
-    ##    Data: d (Number of observations: 17) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## Intercept         0.357     0.567   -0.756    1.507       4941 0.999
-    ## neocortex.perc    0.004     0.008   -0.012    0.021       4896 1.000
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## sigma    0.193     0.040    0.133    0.288       3093 1.000
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-To get the brms answer to what McElreath did with `coef()`, we'll use the `fixef()` function.
-
-``` r
-fixef(b5.5)[2]*(76 - 55)
-```
-
-    ## [1] 0.09358682
-
-Yes, indeed, "that's less than 0.1 kilocalories" (p. 137).
-
-Just for kicks, we'll superimpose 50% intervals atop 95% intervals for the next few plots. Here's Figure 5.7, top left.
-
-``` r
-nd <- tibble(neocortex.perc = 54:80)
-
-fitted(b5.5, 
-       newdata = nd,
-       probs = c(.025, .975, .25, .75)) %>%
-  as_tibble() %>%
-  bind_cols(nd) %>% 
-  
-  ggplot(aes(x = neocortex.perc, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
-  geom_point(data = dcc, 
-             aes(x = neocortex.perc, y = kcal.per.g),
-             size = 2, color = "firebrick4") +
-  coord_cartesian(xlim = range(dcc$neocortex.perc), 
-                  ylim = range(dcc$kcal.per.g)) +
-  labs(y = "kcal.per.g") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-35-1.png)
-
-Do note the `probs` argument in the `fitted()` code, above. Let's make the `log_mass` variable.
-
-``` r
-dcc <-
-  dcc %>%
-  mutate(log_mass = log(mass))
-```
-
-Now we use `log_mass` as the new sole predictor.
-
-``` r
-b5.6 <- 
-  brm(data = dcc, family = gaussian,
-      kcal.per.g ~ 1 + log_mass,
-      prior = c(prior(normal(0, 100), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 1), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.9))
-```
-
-``` r
-print(b5.6, digits = 3)
-```
-
-    ## Warning: There were 23 divergent transitions after warmup. Increasing adapt_delta above 0.9 may help.
-    ## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: kcal.per.g ~ 1 + log_mass 
-    ##    Data: dcc (Number of observations: 17) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## Intercept    0.705     0.057    0.591    0.819       4432 1.000
-    ## log_mass    -0.032     0.024   -0.080    0.017       4601 1.000
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## sigma    0.184     0.037    0.129    0.270       1425 1.004
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Make Figure 5.7, top right.
-
-``` r
-nd <- tibble(log_mass = seq(from = -2.5, to = 5, length.out = 30))
-
-fitted(b5.6, 
-       newdata = nd,
-       probs = c(.025, .975, .25, .75)) %>%
-  as_tibble() %>%
-  bind_cols(nd) %>% 
-  
-  ggplot(aes(x = log_mass, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
-  geom_point(data = dcc, 
-             aes(x = log_mass, y = kcal.per.g),
-             size = 2, color = "firebrick4") +
-  coord_cartesian(xlim = range(dcc$log_mass), 
-                  ylim = range(dcc$kcal.per.g)) +
-  labs(y = "kcal.per.g") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-38-1.png)
-
-Finally, we're ready to fit with both predictors included in the "joint model." Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
-
-``` r
-b5.7 <- 
-  brm(data = dcc, family = gaussian,
-      kcal.per.g ~ 1 + neocortex.perc + log_mass,
-      prior = c(prior(normal(0, 100), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 1), class = sigma)),
-      iter = 4000, warmup = 2000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.999))
-```
-
-``` r
-print(b5.7, digits = 3)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: kcal.per.g ~ 1 + neocortex.perc + log_mass 
-    ##    Data: dcc (Number of observations: 17) 
-    ## Samples: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
-    ##          total post-warmup samples = 8000
-    ## 
-    ## Population-Level Effects: 
-    ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## Intercept        -1.092     0.579   -2.234    0.047       3788 1.000
-    ## neocortex.perc    0.028     0.009    0.010    0.046       3714 1.000
-    ## log_mass         -0.096     0.028   -0.152   -0.042       3510 1.000
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-    ## sigma    0.140     0.031    0.095    0.215       3343 1.001
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Make Figure 5.7, bottom left.
-
-``` r
-nd <- 
-  tibble(neocortex.perc = 54:80 %>% as.double(),
-         log_mass       = mean(dcc$log_mass))
-
-b5.7 %>%
-  fitted(newdata = nd, 
-         probs = c(.025, .975, .25, .75)) %>%
-  as_tibble() %>%
-  bind_cols(nd) %>% 
-
-  ggplot(aes(x = neocortex.perc, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
-  geom_point(data = dcc, aes(x = neocortex.perc, y = kcal.per.g),
-             size = 2, color = "firebrick4") +
-  coord_cartesian(xlim = range(dcc$neocortex.perc), 
-                  ylim = range(dcc$kcal.per.g)) +
-  labs(y = "kcal.per.g") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-40-1.png)
-
-And make Figure 5.7, bottom right.
-
-``` r
-nd <- 
-  tibble(log_mass       = seq(from = -2.5, to = 5, length.out = 30),
-         neocortex.perc = mean(dcc$neocortex.perc))
-
-b5.7 %>%
-  fitted(newdata = nd,
-         probs = c(.025, .975, .25, .75)) %>%
-  as_tibble() %>%
-  bind_cols(nd) %>% 
-
-  ggplot(aes(x = log_mass, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
-  geom_point(data = dcc, aes(x = log_mass, y = kcal.per.g),
-             size = 2, color = "firebrick4") +
-  coord_cartesian(xlim = range(dcc$log_mass), 
-                  ylim = range(dcc$kcal.per.g)) +
-  labs(y = "kcal.per.g") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-41-1.png)
-
-> What \[this regression model did was\] ask if species that have high neocortex percent *for their body mass* have higher milk energy. Likewise, the model \[asked\] if species with high body mass *for their neocortex percent* have higher milk energy. Bigger species, like apes, have milk with less energy. But species with more neocortex tend to have richer milk. The fact that these two variables, body size and neocortex, are correlated across species makes it hard to see these relationships, unless we statistically account for both. (pp. 140--141, *emphasis* in the original)
-
-#### Overthinking: Simulating a masking relationship.
-
-``` r
-N   <- 100     # number of cases
-rho <- .7      # correlation between x_pos and x_neg
-
-set.seed(141)  # setting the seed makes the results reproducible
-d <- 
-  tibble(x_pos = rnorm(N),                              # x_pos as a standard Gaussian
-         x_neg = rnorm(N, rho*x_pos, sqrt(1 - rho^2)),  # x_neg correlated with x_pos
-         y     = rnorm(N, x_pos - x_neg))               # y equally associated with x_pos and x_neg
-```
-
-Here are the quick `pairs()` plots.
-
-``` r
-pairs(d, col = "firebrick4")
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-43-1.png)
-
-Here we fit the models with a little help from the `update()` function.
-
-``` r
-b5.O.both <- 
-  brm(data = d, family = gaussian,
-      y ~ 1 + x_pos + x_neg,
-      prior = c(prior(normal(0, 100), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(cauchy(0, 1), class = sigma)))
-
-b5.O.pos <-
-  update(b5.O.both, 
-         formula = y ~ 1 + x_pos)
-
-b5.O.neg <-
-  update(b5.O.both, 
-         formula = y ~ 1 + x_neg)
-```
-
-Compare the coefficients.
-
-``` r
-fixef(b5.O.pos)  %>% round(digits = 2)
-```
-
-    ##           Estimate Est.Error  Q2.5 Q97.5
-    ## Intercept     0.01      0.13 -0.25  0.27
-    ## x_pos         0.32      0.14  0.04  0.59
-
-``` r
-fixef(b5.O.neg)  %>% round(digits = 2)
-```
-
-    ##           Estimate Est.Error  Q2.5 Q97.5
-    ## Intercept     0.07      0.12 -0.17  0.32
-    ## x_neg        -0.51      0.14 -0.79 -0.23
-
-``` r
-fixef(b5.O.both) %>% round(digits = 2)
-```
-
-    ##           Estimate Est.Error  Q2.5 Q97.5
-    ## Intercept     0.08      0.10 -0.13  0.28
-    ## x_pos         1.05      0.13  0.78  1.30
-    ## x_neg        -1.18      0.14 -1.45 -0.91
-
-When adding variables hurts
----------------------------
-
-> Multicollinearity means very strong correlation between two or more predictor variables. The consequence of it is that the posterior distribution will say that a very large range of parameter values are plausible, from tiny associations to massive ones, even if all of the variables are in reality strongly associated with the outcome variable. (pp. 141--142)
-
-### Multicollinear legs.
-
-Let's simulate some leg data.
-
-``` r
-N <- 100
-set.seed(531)
-
-d <- 
-  tibble(height    = rnorm(N, mean = 10, sd = 2),
-         leg_prop  = runif(N, min = 0.4, max = 0.5)) %>% 
-  mutate(leg_left  = leg_prop*height + rnorm(N, mean = 0, sd = 0.02),
-         leg_right = leg_prop*height + rnorm(N, mean = 0, sd = 0.02))
-```
-
-`leg_left` and `leg_right` are **highly** correlated.
-
-``` r
-d %>%
-  select(leg_left:leg_right) %>%
-  cor() %>%
-  round(digits = 4)
-```
-
-    ##           leg_left leg_right
-    ## leg_left    1.0000    0.9995
-    ## leg_right   0.9995    1.0000
-
-Have you ever seen a *ρ* = .9995 correlation, before? Here it is in a plot.
-
-``` r
-d %>%
-  ggplot(aes(x = leg_left, y = leg_right)) +
-  geom_point(alpha = 1/2, color = "firebrick4") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-47-1.png)
-
-Here's our attempt to predict `height` with both legs.
-
-``` r
-b5.8 <- 
-  brm(data = d, family = gaussian,
-      height ~ 1 + leg_left + leg_right,
-      prior = c(prior(normal(10, 100), class = Intercept),
-                prior(normal(2, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-Let's inspect the damage.
-
-``` r
-print(b5.8)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: height ~ 1 + leg_left + leg_right 
-    ##    Data: d (Number of observations: 100) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     0.91      0.30     0.33     1.50       6000 1.00
-    ## leg_left      1.03      2.08    -3.11     5.02       2226 1.00
-    ## leg_right     0.97      2.08    -3.02     5.10       2224 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     0.61      0.04     0.53     0.71       3434 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-That 'Est.Error' column isn't looking too good. But it's easy to miss that, which is why McEreath suggested "a graphical view of the \[output\] is more useful because it displays the posterior \[estimates\] and \[intervals\] in a way that allows us with a glance to see that something has gone wrong here" (p. 143).
-
-Here's our coefficient plot using `brms::stanplot()` with a little help from `bayesplot::color_scheme_set()`.
-
-``` r
-color_scheme_set("red")
-
-stanplot(b5.8, 
-         type = "intervals", 
-         prob = .5, 
-         prob_outer = .95,
-         point_est = "median") +
-  labs(title = "The coefficient plot for the two-leg model",
-       subtitle = "Holy smokes; look at the widths of those betas!") +
-  theme_bw() +
-  theme(text = element_text(size = 14),
-        axis.ticks.y = element_blank(),
-        axis.text.y  = element_text(hjust = 0))
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-49-1.png)
-
-Note. You can use the `brms::stanplot()` function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with `color_scheme_set()`.
-
-This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 5.8.a.
-
-``` r
-pairs(b5.8, pars = parnames(b5.8)[2:3])
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-50-1.png)
-
-If you'd like a nicer and more focused attempt, you might have to revert to the `posterior_samples()` function and a little ggplot2 code.
-
-``` r
-post <- posterior_samples(b5.8)
-  
-post %>% 
-  ggplot(aes(x = b_leg_left, y = b_leg_right)) +
-  geom_point(color = "firebrick", alpha = 1/10, size = 1/3) +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-51-1.png)
-
-While we're at it, you can make a similar plot with the `mcmc_scatter()` [function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
-
-``` r
-post %>% 
-  mcmc_scatter(pars = c("b_leg_left", "b_leg_right"),
-               size = 1/3, 
-               alpha = 1/10) +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-52-1.png)
-
-But wow, those coefficients look about as highly correlated as the predictors, just with the reversed sign.
-
-``` r
-post %>% 
-  select(b_leg_left:b_leg_right) %>% 
-  cor()
-```
-
-    ##             b_leg_left b_leg_right
-    ## b_leg_left   1.0000000  -0.9994647
-    ## b_leg_right -0.9994647   1.0000000
-
-On pages 143--144, McElreath clarified that "from the computer's perspective, this likelihood is really:"
-
-$$
-\\begin{eqnarray}
-y\_i & \\sim & \\text{Normal}(\\mu\_i, \\sigma) \\\\
-\\mu\_i & = & \\alpha + (\\beta\_1 + \\beta\_2) x\_i
-\\end{eqnarray}
-$$
-
-Accordingly, here's the posterior of the sum of the two regression coefficients, Figure 5.8.b. We'll use `tidybayes::geom_halfeyeh()` to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.
-
-``` r
-post %>% 
-  ggplot(aes(x = b_leg_left + b_leg_right, y = 0)) +
-  geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Sum the multicollinear coefficients",
-       subtitle = "Marked by the median and 95% PIs") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-54-1.png)
-
-Now we fit the model after ditching one of the leg lengths.
-
-``` r
-b5.9 <- 
-  brm(data = d, family = gaussian,
-      height ~ 1 + leg_left,
-      prior = c(prior(normal(10, 100), class = Intercept),
-                prior(normal(2, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.9)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: height ~ 1 + leg_left 
-    ##    Data: d (Number of observations: 100) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     0.91      0.30     0.32     1.50       5781 1.00
-    ## leg_left      2.00      0.07     1.87     2.13       5796 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     0.61      0.04     0.53     0.70       5583 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-That posterior *S**D* looks much better. Here's the density in Figure 5.8.b.
-
-``` r
-posterior_samples(b5.9) %>% 
-  
-  ggplot(aes(x = b_leg_left, y = 0)) +
-  geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Just one coefficient needed",
-       subtitle = "Marked by the median and 95% PIs") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-56-1.png)
-
-> *When two predictor variables are very strongly correlated, including both in a model may lead to confusion.* The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, *emphasis* in the original)
-
-### Multicollinear `milk`.
-
-Multicollinearity arises in real data, too.
-
-``` r
-library(rethinking)
-data(milk)
-d <- milk
-```
-
-Unload rethinking and load brms.
-
-``` r
-rm(milk)
-detach(package:rethinking, unload = TRUE)
-library(brms)
-```
-
-We'll follow the text and fit the two univariable models, first. Note our use of `update()`.
-
-``` r
-# kcal.per.g regressed on perc.fat
-b5.10 <- 
-  brm(data = d, family = gaussian,
-      kcal.per.g ~ 1 + perc.fat,
-      prior = c(prior(normal(.6, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-
-# kcal.per.g regressed on perc.lactose
-b5.11 <- 
-  update(b5.10,
-         newdata = d,
-         formula = kcal.per.g ~ 1 + perc.lactose)
-```
-
-``` r
-posterior_summary(b5.10) %>% round(digits = 3)
-```
-
-    ##             Estimate Est.Error   Q2.5  Q97.5
-    ## b_Intercept    0.302     0.039  0.225  0.378
-    ## b_perc.fat     0.010     0.001  0.008  0.012
-    ## sigma          0.080     0.012  0.060  0.106
-    ## lp__          24.031     1.301 20.733 25.489
-
-``` r
-posterior_summary(b5.11) %>% round(digits = 3)
-```
-
-    ##                Estimate Est.Error   Q2.5  Q97.5
-    ## b_Intercept       1.166     0.046  1.074  1.255
-    ## b_perc.lactose   -0.011     0.001 -0.012 -0.009
-    ## sigma             0.067     0.010  0.051  0.090
-    ## lp__             28.788     1.276 25.532 30.279
-
-If you'd like to get just the 95% intervals similar to the way McElreath reported them in the prose on page 146, you might use the handy `posterior_interval()` function.
-
-``` r
-posterior_interval(b5.10)[2, ] %>% round(digits = 3)
-```
-
-    ##  2.5% 97.5% 
-    ## 0.008 0.012
-
-``` r
-posterior_interval(b5.11)[2, ] %>% round(digits = 3)
-```
-
-    ##   2.5%  97.5% 
-    ## -0.012 -0.009
-
-Now "watch what happens when we place both predictor varaibles in the same regression model" (p. 146)
-
-``` r
-b5.12 <- 
-  update(b5.11,
-         newdata = d,
-         formula = kcal.per.g ~ 1 + perc.fat + perc.lactose)
-```
-
-``` r
-posterior_summary(b5.12) %>% round(digits = 3)
-```
-
-    ##                Estimate Est.Error   Q2.5  Q97.5
-    ## b_Intercept       1.014     0.223  0.590  1.466
-    ## b_perc.fat        0.002     0.003 -0.004  0.007
-    ## b_perc.lactose   -0.009     0.003 -0.014 -0.004
-    ## sigma             0.068     0.010  0.051  0.091
-    ## lp__             27.662     1.494 23.898 29.547
-
-You can make custom pairs plots with [GGalley](https://cran.r-project.org/web/packages/GGally/index.html), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
-
-``` r
-#install.packages("GGally", dependencies = T)
-library(GGally)
-
-ggpairs(data = d, columns = c(3:4, 6)) + 
-  theme_bw()
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-62-1.png)
-
-But you can customize [these](http://ggobi.github.io/ggally/), too. E.g.,
-
-``` r
-my_diag <- function(data, mapping, ...){
-  ggplot(data = data, mapping = mapping) + 
-    geom_density(fill = "firebrick4", size = 0)
-}
-
-my_lower <- function(data, mapping, ...){
-  ggplot(data = data, mapping = mapping) + 
-    geom_smooth(method = "lm", color = "firebrick4", size = 1/3, 
-                fill = "firebrick", alpha = 1/5) +
-    geom_point(color = "firebrick", alpha = .8, size = 1/4)
-  }
-
-# Then plug those custom functions into `ggpairs()`
-ggpairs(data  = d, columns = c(3:4, 6),
-        diag  = list(continuous = my_diag),
-        lower = list(continuous = my_lower)) + 
-  theme_bw() +
-  theme(strip.background = element_rect(fill = "white"),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.grid       = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-63-1.png)
-
-McElreath wrote "these two variables form essentially a single axis of variation" (p. 148). You can really see that on the lower two scatter plots. You'll note the `ggpairs()` plot also showed the correlations.
-
-#### Overthinking: Simulating collinearity.
-
-First we'll get the data and define the functions. You'll note I've defined my `sim_coll()` a little differently from `sim.coll()` in the text. I've omitted `rep.sim.coll()` as an independent function altogether, but computed similar summary information with the `summarise()` code at the bottom of the block.
-
-``` r
-sim_coll <- function(seed, rho){
-  set.seed(seed)
-  d <-
-    d %>% 
-    mutate(x = rnorm(n(), 
-                     mean = perc.fat * rho,
-                     sd   = sqrt((1 - rho^2) * var(perc.fat))))
-    
-  m <- lm(kcal.per.g ~ perc.fat + x, data = d)
-  
-  sqrt(diag(vcov(m)))[2]  # parameter SD
-}
-
-# how many simulations per `rho`-value would you like?
-n_seed <- 100
-# how many `rho`-values from 0 to .99 would you like to evaluate the process over?
-n_rho  <- 30
-
-d <-
-  tibble(seed = 1:n_seed) %>% 
-  expand(seed, rho = seq(from = 0, to = .99, length.out = n_rho)) %>% 
-  mutate(parameter_sd = purrr::map2(seed, rho, sim_coll)) %>% 
-  unnest() %>% 
-  group_by(rho) %>% 
-  # we'll `summarise()` our output by 95% percentile-baesd intervals in addition to the mean
-  summarise(mean = mean(parameter_sd),
-            ll   = quantile(parameter_sd, prob = .025),
-            ul   = quantile(parameter_sd, prob = .975))
-```
-
-We've added 95% interval bands to our version of Figure 5.10.
-
-``` r
-d %>% 
-  ggplot(aes(x = rho, y = mean)) +
-  geom_line(color = "firebrick4") +
-  geom_ribbon(aes(ymin = ll, ymax = ul),
-              fill = "firebrick", alpha = 1/4) +
-  labs(x = expression(rho),
-       y = "parameter SD") +
-  coord_cartesian(ylim = c(0, .0072)) +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-65-1.png)
-
-Did you notice we used the base R `lm()` function to fit the models? As McElreath rightly pointed out, `lm()` presumes flat priors. Proper Bayesian modeling could improve on that. But then we’d have to wait for a whole lot of HMC chains to run and until our personal computers or the algorithms we use to fit our Bayesian models become orders of magnitude faster, we just don’t have time for that.
-
-### Post-treatment bias.
-
-It helped me understand the next example by mapping out the sequence of events McElreath described in the second paragraph:
-
--   seed and sprout plants
--   measure heights
--   apply different antifungal soil treatments (i.e., the experimental manipulation)
--   measure (a) the heights and (b) the presence of fungus
-
-Based on the design, let's simulate our data.
-
-``` r
-N <- 100
-
-set.seed(17)
-d <- 
-  tibble(h0        = rnorm(N, mean = 10, sd = 2), 
-         treatment = rep(0:1, each = N / 2),
-         fungus    = rbinom(N, size = 1, prob = .5 - treatment * 0.4),
-         h1        = h0 + rnorm(N, mean = 5 - 3 * fungus, sd = 1))
-```
-
-We'll use `head()` to peek at the data.
-
-``` r
-d %>%
-  head()
-```
-
-    ## # A tibble: 6 x 4
-    ##      h0 treatment fungus    h1
-    ##   <dbl>     <int>  <int> <dbl>
-    ## 1  7.97         0      1  12.9
-    ## 2  9.84         0      1  11.9
-    ## 3  9.53         0      0  15.8
-    ## 4  8.37         0      1  11.1
-    ## 5 11.5          0      1  13.1
-    ## 6  9.67         0      0  15.7
-
-These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = .99`.
-
-``` r
-b5.13 <- 
-  brm(data = d, family = gaussian,
-      h1 ~ 1 + h0 + treatment + fungus,
-      prior = c(prior(normal(0, 100), class = Intercept),
-                prior(normal(0, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.99))
-```
-
-``` r
-print(b5.13)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: h1 ~ 1 + h0 + treatment + fungus 
-    ##    Data: d (Number of observations: 100) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     5.26      0.54     4.23     6.31       1986 1.00
-    ## h0            0.96      0.05     0.86     1.05       2050 1.00
-    ## treatment     0.21      0.24    -0.25     0.67       1587 1.00
-    ## fungus       -3.02      0.27    -3.55    -2.47       2367 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.07      0.08     0.93     1.24       4000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Now fit the model after excluding `fungus`, our post-treatment variable.
-
-``` r
-b5.14 <- 
-  update(b5.13, 
-         formula = h1 ~ 1 + h0 + treatment)
-```
-
-``` r
-print(b5.14)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: h1 ~ h0 + treatment 
-    ##    Data: d (Number of observations: 100) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
-    ##          total post-warmup samples = 4000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     4.43      0.82     2.81     6.02       1928 1.00
-    ## h0            0.90      0.08     0.75     1.06       1919 1.00
-    ## treatment     1.26      0.32     0.60     1.86        909 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     1.67      0.12     1.44     1.93       3179 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-"Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in a few chapters.
-
-Categorical varaibles
----------------------
-
-> Many readers will already know that variables like this, routinely called *factors*, can easily be included in linear models. But what is not widely understood is how these variables are included in a model... Knowing how the machine works removes a lot of this difficulty. (p. 153, *emphasis* in the original)
-
-### Binary categories.
-
-Reload the `Howell1` data.
-
-``` r
-library(rethinking)
-data(Howell1)
-d <- Howell1
-```
-
-Unload rethinking and load brms.
-
-``` r
-rm(Howell1)
-detach(package:rethinking, unload = T)
-library(brms)
-```
-
-Just in case you forgot what these data were like:
-
-``` r
-d %>%
-  glimpse()
-```
-
-    ## Observations: 544
-    ## Variables: 4
-    ## $ height <dbl> 151.7650, 139.7000, 136.5250, 156.8450, 145.4150, 163.8...
-    ## $ weight <dbl> 47.82561, 36.48581, 31.86484, 53.04191, 41.27687, 62.99...
-    ## $ age    <dbl> 63.0, 63.0, 65.0, 41.0, 51.0, 35.0, 32.0, 27.0, 19.0, 5...
-    ## $ male   <int> 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1...
-
-Let's fit the first `height` model with the `male` dummy.
-
-Note. The uniform prior McElreath used in the text in conjunction with his `map()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating chapter 8, I recommend you use a weakly-regularizing half Cauchy for *σ*.
-
-``` r
-b5.15 <- 
-  brm(data = d, family = gaussian,
-      height ~ 1 + male,
-      prior = c(prior(normal(178, 100), class = Intercept),
-                prior(normal(0, 10), class = b),
-                prior(cauchy(0, 2), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.15)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: height ~ 1 + male 
-    ##    Data: d (Number of observations: 544) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept   134.86      1.54   131.86   137.98       5508 1.00
-    ## male          7.27      2.24     2.90    11.68       6000 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma    27.35      0.84    25.75    29.08       6000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Our samples from the posterior are already in the HMC iterations. All we need to do is put them in a data frame and then put them to work.
-
-``` r
-post <- posterior_samples(b5.15)
-
-post %>%
-  transmute(male_height = b_Intercept + b_male) %>% 
-  mean_qi(.width = .89)
-```
-
-    ##   male_height   .lower   .upper .width .point .interval
-    ## 1    142.1281 139.4648 144.8105   0.89   mean        qi
-
-You can also do this with `fitted()`.
-
-``` r
-nd <- tibble(male = 1)
-
-fitted(b5.15,
-       newdata = nd)
-```
-
-    ##      Estimate Est.Error     Q2.5    Q97.5
-    ## [1,] 142.1281  1.683153 138.8715 145.4213
-
-And you could even plot.
-
-``` r
-fitted(b5.15,
-       newdata = nd,
-       summary = F) %>% 
-  as_tibble() %>% 
-  
-  ggplot(aes(x = V1, y = 0)) +
-    geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  labs(subtitle = "Model-implied male heights",
-       x = expression(alpha + beta["male"])) +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-76-1.png)
-
-##### Overthinking: Re-parameterizing the model.
-
-The reparameterized model follows the form
-
-$$
-\\begin{eqnarray}
-\\text{height}\_i & \\sim & \\text{Normal}(\\mu\_i, \\sigma) \\\\
-\\mu\_i & = & \\alpha\_\\text{female} (1 - \\text{male}\_i) + \\alpha\_\\text{male} \\text{male}\_i
-\\end{eqnarray}
-$$
-
-So then a `female` dummy would satisfy the condition female<sub>*i*</sub> = (1 − male<sub>*i*</sub>). Let's make that dummy.
-
-``` r
-d <-
-  d %>%
-  mutate(female = 1 - male)
-```
-
-Everyone has their own idiosyncratic way of coding. One of my quirks is I always explicitly specify a model’s intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don’t have to do this, of course. You could just code `y ~ x` to get the same results. The `brm()` function assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: `height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
-
-``` r
-b5.15b <- 
-  brm(data = d, family = gaussian,
-      height ~ 0 + male + female,
-      prior = c(prior(normal(178, 100), class = b),
-                prior(cauchy(0, 2), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.15b)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: height ~ 0 + male + female 
-    ##    Data: d (Number of observations: 544) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##        Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## male     142.30      1.73   138.94   145.73       5058 1.00
-    ## female   134.62      1.62   131.45   137.78       5320 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma    27.38      0.83    25.81    29.07       6000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-If we wanted the formal difference score from such a model, we'd subtract.
-
-``` r
-posterior_samples(b5.15b) %>% 
-  transmute(dif = b_male - b_female) %>% 
-  
-  ggplot(aes(x = dif, y = 0)) +
-    geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  labs(subtitle = "Model-implied difference score",
-       x = expression(alpha["male"] - alpha["female"])) +
-  theme_bw() +
-  theme(panel.grid = element_blank())
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-79-1.png)
-
-Many categories.
-----------------
-
-> When there are more than two categories, you'll need more than one dummy variable. Here's the general rule: To include *k* categories in a linear model, you require *k* − 1 dummy variables. Each dummy variable indicates, with the value 1, a unique category. The category with no dummy variable assigned to it ends up again as the "intercept" category. (p. 155)
-
-We'll practice with `milk`.
-
-``` r
-library(rethinking)
-data(milk)
-d <- milk
-```
-
-Unload rethinking and load brms.
-
-``` r
-rm(milk)
-detach(package:rethinking, unload = T)
-library(brms)
-```
-
-With the tidyverse, we can peek at `clade` with `distinct()` in the place of base R `unique()`.
-
-``` r
-d %>%
-  distinct(clade)
-```
-
-    ##              clade
-    ## 1    Strepsirrhine
-    ## 2 New World Monkey
-    ## 3 Old World Monkey
-    ## 4              Ape
-
-As `clade` has 4 categories, let's convert these to 4 dummy variables.
-
-``` r
-d <- 
-  d %>%
-  mutate(clade_nwm = ifelse(clade == "New World Monkey", 1, 0),
-         clade_owm = ifelse(clade == "Old World Monkey", 1, 0),
-         clade_s   = ifelse(clade == "Strepsirrhine", 1, 0),
-         clade_ape = ifelse(clade == "Ape", 1, 0))
-```
-
-Now we'll fit the model with three of the four dummies. In this model, `clade_ape` is the reference category captured by the intercept.
-
-``` r
-b5.16 <- 
-  brm(data = d, family = gaussian,
-      kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s,
-      prior = c(prior(normal(.6, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.8))
-```
-
-``` r
-print(b5.16)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s 
-    ##    Data: d (Number of observations: 29) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## Intercept     0.55      0.04     0.46     0.63       4722 1.00
-    ## clade_nwm     0.17      0.06     0.04     0.29       4783 1.00
-    ## clade_owm     0.24      0.07     0.11     0.38       5182 1.00
-    ## clade_s      -0.04      0.07    -0.18     0.11       4955 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     0.13      0.02     0.10     0.18       5129 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-Here we grab the chains, our draws from the posterior.
-
-``` r
-post <- 
-  b5.16 %>%
-  posterior_samples()
-
-head(post)
-```
-
-    ##   b_Intercept b_clade_nwm b_clade_owm   b_clade_s     sigma     lp__
-    ## 1   0.5277461  0.19936107  0.35851996 -0.01060836 0.1589307 7.727048
-    ## 2   0.4513961  0.30731873  0.31875671  0.09001695 0.1122578 6.951153
-    ## 3   0.6779912 -0.04308904  0.11906881 -0.14373685 0.1557958 4.772113
-    ## 4   0.6768455 -0.01195782  0.09045385 -0.10106702 0.1427922 5.260610
-    ## 5   0.4527920  0.35041628  0.30111828  0.09828521 0.1340900 6.062821
-    ## 6   0.5580750  0.05594137  0.22528556 -0.07522366 0.1438021 7.838956
-
-You might compute averages for each category and summarizing the results with the transpose of base R's `apply()` function, rounding to two digits of precision.
-
-``` r
-post$mu_ape <- post$b_Intercept
-post$mu_nwm <- post$b_Intercept + post$b_clade_nwm
-post$mu_owm <- post$b_Intercept + post$b_clade_owm
-post$mu_s   <- post$b_Intercept + post$b_clade_s
-
-round(t(apply(post[ ,7:10], 2, quantile, c(.5, .025, .975))), digits = 2)
-```
-
-    ##         50% 2.5% 97.5%
-    ## mu_ape 0.55 0.46  0.63
-    ## mu_nwm 0.71 0.62  0.80
-    ## mu_owm 0.79 0.69  0.89
-    ## mu_s   0.51 0.39  0.62
-
-Here's a more tidyverse sort of way to get the same thing.
-
-``` r
-post %>%
-  transmute(mu_ape = b_Intercept,
-            mu_nwm = b_Intercept + b_clade_nwm,
-            mu_owm = b_Intercept + b_clade_owm,
-            mu_s   = b_Intercept + b_clade_s) %>%
-  gather() %>%
-  group_by(key) %>%
-  median_qi() %>% 
-  mutate_if(is.double, round, digits = 2)
-```
-
-    ## # A tibble: 4 x 7
-    ##   key    value .lower .upper .width .point .interval
-    ##   <chr>  <dbl>  <dbl>  <dbl>  <dbl> <chr>  <chr>    
-    ## 1 mu_ape  0.55   0.46   0.63   0.95 median qi       
-    ## 2 mu_nwm  0.71   0.62   0.8    0.95 median qi       
-    ## 3 mu_owm  0.79   0.69   0.89   0.95 median qi       
-    ## 4 mu_s    0.51   0.39   0.62   0.95 median qi
-
-You could also use `fitted()`.
-
-``` r
-nd <- tibble(clade_nwm = c(1, 0, 0, 0),
-             clade_owm = c(0, 1, 0, 0),
-             clade_s   = c(0, 0, 1, 0),
-             primate   = c("New World Monkey", "Old World Monkey", "Strepsirrhine", "Ape"))
-
-fitted(b5.16,
-       newdata = nd,
-       summary = F) %>% 
-  as_tibble() %>% 
-  gather() %>% 
-  mutate(primate = rep(c("New World Monkey", "Old World Monkey", "Strepsirrhine", "Ape"), each = n() / 4)) %>% 
-  
-  ggplot(aes(x = value, y = reorder(primate, value))) +
-  geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
-  labs(x = "kcal.per.g",
-       y = NULL) +
-  theme_bw() +
-  theme(panel.grid   = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y  = element_text(hjust = 0))
-```
-
-![](_main_files/figure-markdown_github/unnamed-chunk-88-1.png)
-
-Getting summary statistics for the difference between `NWM` and `OWM`:
-
-``` r
-# base R
-quantile(post$mu_nwm - post$mu_owm, probs = c(.5, .025, .975))
-```
-
-    ##         50%        2.5%       97.5% 
-    ## -0.07397450 -0.21089360  0.05839067
-
-``` r
-# tidyverse + tidybayes
-post %>%
-  transmute(dif = mu_nwm - mu_owm) %>%
-  median_qi(dif)
-```
-
-    ##          dif     .lower     .upper .width .point .interval
-    ## 1 -0.0739745 -0.2108936 0.05839067   0.95 median        qi
-
-### Adding regular predictor variables.
-
-If we wanted to fit the model including `perc.fat` as an additional predictor,
-
-*μ*<sub>*i*</sub> = *α* + *β*<sub>clade\_nwm</sub>clade\_nwm<sub>*i*</sub> + *β*<sub>clade\_owm</sub>clade\_owm<sub>*i*</sub> + *β*<sub>clade\_s</sub>clade\_s<sub>*i*</sub> + *β*<sub>perc.fat</sub>perc.fat<sub>*i*</sub>
-
-the `formula` code would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`.
-
-### Another approach: Unique intercepts.
-
-Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
-
-``` r
-b5.16_alt <- 
-  brm(data = d, family = gaussian,
-      kcal.per.g ~ 0 + clade,
-      prior = c(prior(normal(.6, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
-```
-
-``` r
-print(b5.16_alt)
-```
-
-    ##  Family: gaussian 
-    ##   Links: mu = identity; sigma = identity 
-    ## Formula: kcal.per.g ~ 0 + clade 
-    ##    Data: d (Number of observations: 29) 
-    ## Samples: 4 chains, each with iter = 2000; warmup = 500; thin = 1;
-    ##          total post-warmup samples = 6000
-    ## 
-    ## Population-Level Effects: 
-    ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## cladeApe                0.54      0.04     0.46     0.63       6000 1.00
-    ## cladeNewWorldMonkey     0.71      0.05     0.62     0.80       6000 1.00
-    ## cladeOldWorldMonkey     0.79      0.05     0.68     0.89       6000 1.00
-    ## cladeStrepsirrhine      0.51      0.06     0.39     0.63       6000 1.00
-    ## 
-    ## Family Specific Parameters: 
-    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-    ## sigma     0.13      0.02     0.10     0.17       6000 1.00
-    ## 
-    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-    ## is a crude measure of effective sample size, and Rhat is the potential 
-    ## scale reduction factor on split chains (at convergence, Rhat = 1).
-
-See? This is much easier than trying to remember which one was which in an arbitrary numeric index.
-
-~~Ordinary least squares and `lm()`~~
--------------------------------------
-
-Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/web/packages/lme4/index.html) syntax for multilevel models.
-
-Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`.
+McElreath left us no code or figures to translate in this chapter. But before you skip off to the next one, why not invest a little time consuming this chapter’s material by watching [McElreath present it](https://www.youtube.com/watch?v=oy7Ks3YfbDg&t=14s&frags=pl%2Cwn)? He's an engaging speaker and the material in his online lectures does not entirely overlap with that in the text.
 
 Reference
 ---------
@@ -2136,7 +31,7 @@ sessionInfo()
     ## Running under: macOS High Sierra 10.13.6
     ## 
     ## Matrix products: default
-    ## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+    ## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
     ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
     ## 
     ## locale:
@@ -2146,65 +41,2152 @@ sessionInfo()
     ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
     ## [8] base     
     ## 
-    ## other attached packages:
-    ##  [1] GGally_1.4.0       tidybayes_1.0.1    bayesplot_1.6.0   
-    ##  [4] fiftystater_1.0.1  bindrcpp_0.2.2     ggrepel_0.8.0     
-    ##  [7] forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6       
-    ## [10] purrr_0.2.5        readr_1.1.1        tidyr_0.8.1       
-    ## [13] tibble_1.4.2       tidyverse_1.2.1    brms_2.4.0        
-    ## [16] Rcpp_0.12.18       rstan_2.17.3       StanHeaders_2.17.2
-    ## [19] ggplot2_3.0.0     
-    ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] colorspace_1.3-2          ggridges_0.5.0           
-    ##   [3] rsconnect_0.8.8           rprojroot_1.3-2          
-    ##   [5] ggstance_0.3              markdown_0.8             
-    ##   [7] base64enc_0.1-3           rstudioapi_0.7           
-    ##   [9] svUnit_0.7-12             DT_0.4                   
-    ##  [11] mvtnorm_1.0-8             lubridate_1.7.4          
-    ##  [13] xml2_1.2.0                bridgesampling_0.4-0     
-    ##  [15] codetools_0.2-15          mnormt_1.5-5             
-    ##  [17] knitr_1.20                shinythemes_1.1.1        
-    ##  [19] jsonlite_1.5              LaplacesDemon_16.1.1     
-    ##  [21] broom_0.4.5               shiny_1.1.0              
-    ##  [23] mapproj_1.2.6             compiler_3.5.1           
-    ##  [25] httr_1.3.1                backports_1.1.2          
-    ##  [27] assertthat_0.2.0          Matrix_1.2-14            
-    ##  [29] lazyeval_0.2.1            cli_1.0.0                
-    ##  [31] later_0.7.3               htmltools_0.3.6          
-    ##  [33] tools_3.5.1               igraph_1.2.1             
-    ##  [35] coda_0.19-1               gtable_0.2.0             
-    ##  [37] glue_1.2.0                reshape2_1.4.3           
-    ##  [39] maps_3.3.0                cellranger_1.1.0         
-    ##  [41] nlme_3.1-137              crosstalk_1.0.0          
-    ##  [43] psych_1.8.4               xfun_0.3                 
-    ##  [45] rvest_0.3.2               mime_0.5                 
-    ##  [47] miniUI_0.1.1.1            gtools_3.8.1             
-    ##  [49] MASS_7.3-50               zoo_1.8-2                
-    ##  [51] scales_0.5.0              colourpicker_1.0         
-    ##  [53] hms_0.4.2                 promises_1.0.1           
-    ##  [55] Brobdingnag_1.2-5         inline_0.3.15            
-    ##  [57] RColorBrewer_1.1-2        shinystan_2.5.0          
-    ##  [59] yaml_2.1.19               gridExtra_2.3            
-    ##  [61] loo_2.0.0                 reshape_0.8.7            
-    ##  [63] stringi_1.2.3             highr_0.7                
-    ##  [65] dygraphs_1.1.1.5          rlang_0.2.1              
-    ##  [67] pkgconfig_2.0.1           matrixStats_0.54.0       
-    ##  [69] HDInterval_0.2.0          evaluate_0.10.1          
-    ##  [71] lattice_0.20-35           bindr_0.1.1              
-    ##  [73] rstantools_1.5.0          htmlwidgets_1.2          
-    ##  [75] labeling_0.3              tidyselect_0.2.4         
-    ##  [77] plyr_1.8.4                magrittr_1.5             
-    ##  [79] bookdown_0.7              R6_2.2.2                 
-    ##  [81] pillar_1.2.3              haven_1.1.2              
-    ##  [83] foreign_0.8-70            withr_2.1.2              
-    ##  [85] xts_0.10-2                abind_1.4-5              
-    ##  [87] modelr_0.1.2              crayon_1.3.4             
-    ##  [89] arrayhelpers_1.0-20160527 utf8_1.1.4               
-    ##  [91] rmarkdown_1.10            grid_3.5.1               
-    ##  [93] readxl_1.1.0              threejs_0.3.1            
-    ##  [95] digest_0.6.15             xtable_1.8-2             
-    ##  [97] httpuv_1.4.4.2            stats4_3.5.1             
-    ##  [99] munsell_0.5.0             shinyjs_1.0
+    ##   [1] pacman_0.4.6              utf8_1.1.4               
+    ##   [3] ggstance_0.3              tidyselect_0.2.4         
+    ##   [5] htmlwidgets_1.2           grid_3.5.1               
+    ##   [7] munsell_0.5.0             codetools_0.2-15         
+    ##   [9] nleqslv_3.3.2             DT_0.4                   
+    ##  [11] miniUI_0.1.1.1            withr_2.1.2              
+    ##  [13] Brobdingnag_1.2-5         colorspace_1.3-2         
+    ##  [15] highr_0.7                 knitr_1.20               
+    ##  [17] rstudioapi_0.7            stats4_3.5.1             
+    ##  [19] Rttf2pt1_1.3.7            bayesplot_1.6.0          
+    ##  [21] labeling_0.3              mnormt_1.5-5             
+    ##  [23] bridgesampling_0.4-0      rprojroot_1.3-2          
+    ##  [25] coda_0.19-1               xfun_0.3                 
+    ##  [27] R6_2.2.2                  markdown_0.8             
+    ##  [29] HDInterval_0.2.0          reshape_0.8.7            
+    ##  [31] assertthat_0.2.0          promises_1.0.1           
+    ##  [33] scales_0.5.0              beeswarm_0.2.3           
+    ##  [35] gtable_0.2.0              rlang_0.2.1              
+    ##  [37] extrafontdb_1.0           lazyeval_0.2.1           
+    ##  [39] broom_0.4.5               inline_0.3.15            
+    ##  [41] yaml_2.1.19               reshape2_1.4.3           
+    ##  [43] abind_1.4-5               modelr_0.1.2             
+    ##  [45] threejs_0.3.1             crosstalk_1.0.0          
+    ##  [47] backports_1.1.2           httpuv_1.4.4.2           
+    ##  [49] rsconnect_0.8.8           extrafont_0.17           
+    ##  [51] tools_3.5.1               bookdown_0.7             
+    ##  [53] psych_1.8.4               ggplot2_3.0.0            
+    ##  [55] RColorBrewer_1.1-2        ggridges_0.5.0           
+    ##  [57] Rcpp_0.12.18              plyr_1.8.4               
+    ##  [59] base64enc_0.1-3           purrr_0.2.5              
+    ##  [61] zoo_1.8-2                 LaplacesDemon_16.1.1     
+    ##  [63] haven_1.1.2               magrittr_1.5             
+    ##  [65] colourpicker_1.0          mvtnorm_1.0-8            
+    ##  [67] matrixStats_0.54.0        hms_0.4.2                
+    ##  [69] shinyjs_1.0               mime_0.5                 
+    ##  [71] evaluate_0.10.1           arrayhelpers_1.0-20160527
+    ##  [73] xtable_1.8-2              shinystan_2.5.0          
+    ##  [75] readxl_1.1.0              gridExtra_2.3            
+    ##  [77] rstantools_1.5.0          compiler_3.5.1           
+    ##  [79] tibble_1.4.2              crayon_1.3.4             
+    ##  [81] htmltools_0.3.6           later_0.7.3              
+    ##  [83] tidyr_0.8.1               lubridate_1.7.4          
+    ##  [85] MASS_7.3-50               Matrix_1.2-14            
+    ##  [87] readr_1.1.1               cli_1.0.0                
+    ##  [89] bindr_0.1.1               igraph_1.2.1             
+    ##  [91] forcats_0.3.0             pkgconfig_2.0.1          
+    ##  [93] foreign_0.8-70            xml2_1.2.0               
+    ##  [95] svUnit_0.7-12             dygraphs_1.1.1.5         
+    ##  [97] vipor_0.4.5               rvest_0.3.2              
+    ##  [99] stringr_1.3.1             digest_0.6.15            
+    ## [101] rmarkdown_1.10            cellranger_1.1.0         
+    ## [103] shiny_1.1.0               gtools_3.8.1             
+    ## [105] nlme_3.1-137              jsonlite_1.5             
+    ## [107] bindrcpp_0.2.2            pillar_1.2.3             
+    ## [109] lattice_0.20-35           httr_1.3.1               
+    ## [111] glue_1.2.0                xts_0.10-2               
+    ## [113] shinythemes_1.1.1         stringi_1.2.3            
+    ## [115] dplyr_0.7.6
+
+<!--chapter:end:01.Rmd-->
+Small Worlds and Large Worlds
+=============================
+
+Placeholder
+
+The garden of forking data
+--------------------------
+
+### Counting possibilities.
+
+### Using prior information.
+
+### From counts to probability.
+
+Building a model
+----------------
+
+### A data story.
+
+### Bayesian updating.
+
+### Evaluate.
+
+Components of the model
+-----------------------
+
+### Likelihood.
+
+### Parameters.
+
+### Prior.
+
+### Posterior.
+
+Making the model go
+-------------------
+
+### Grid approximation.
+
+### Quadratic approximation.
+
+### Markov chain Monte Carlo.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:02.Rmd-->
+Sampling the Imaginary
+======================
+
+Placeholder
+
+Sampling from a grid-like approximate posterior
+-----------------------------------------------
+
+Sampling to summarize
+---------------------
+
+### Intervals of defined boundaries.
+
+### Intervals of defined mass.
+
+### Point estimates.
+
+Sampling to simulate prediction
+-------------------------------
+
+### Dummy data.
+
+### Model checking.
+
+#### Did the software work?
+
+#### Is the model adequate?
+
+~~Summary~~ Let's practice in brms
+----------------------------------
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:03.Rmd-->
+Linear Models
+=============
+
+Placeholder
+
+Why normal distributions are normal
+-----------------------------------
+
+### Normal by addition.
+
+### Normal by multiplication.
+
+### Normal by log-multiplication.
+
+### Using Gaussian distributions.
+
+#### Ontological justification.
+
+#### Epistemological justification.
+
+A language for describing models
+--------------------------------
+
+### Re-describing the globe tossing model.
+
+A Gaussian model of height
+--------------------------
+
+### The data.
+
+#### Overthinking: Data frames.
+
+#### Overthinking: Index magic.
+
+### The model.
+
+### Grid approximation of the posterior distribution.
+
+### Sampling from the posterior.
+
+#### Overthinking: Sample size and the normality of *σ*'s posterior.
+
+### Fitting the model with ~~`map()`~~ `brm()`.
+
+### Sampling from a ~~`map()`~~ `brm()` fit.
+
+#### Overthinking: Under the hood with multivariate sampling.
+
+#### Overthinking: Getting *σ* right.
+
+Adding a predictor
+------------------
+
+### The linear model strategy
+
+### Fitting the model.
+
+### Interpreting the model fit.
+
+#### Tables of estimates.
+
+#### Plotting posterior inference against the data.
+
+#### Adding uncertainty around the mean.
+
+#### Plotting regression intervals and contours.
+
+##### Overthinking: How ~~link~~ `fitted()` works.
+
+#### Prediction intervals.
+
+Polynomial regression
+---------------------
+
+##### Overthinking: Converting back to natural scale.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:04.Rmd-->
+Multivariate Linear Models
+==========================
+
+Placeholder
+
+Spurious associations
+---------------------
+
+### Multivariate notation.
+
+### Fitting the model.
+
+### Plotting multivariate posteriors.
+
+#### Predictor residual plots.
+
+#### Counterfactual plots.
+
+#### Posterior prediction plots.
+
+#### Overthinking: Simulating spurious association.
+
+Masked relationship
+-------------------
+
+#### Overthinking: Simulating a masking relationship.
+
+When adding variables hurts
+---------------------------
+
+### Multicollinear legs.
+
+### Multicollinear `milk`.
+
+#### Overthinking: Simulating collinearity.
+
+### Post-treatment bias.
+
+Categorical varaibles
+---------------------
+
+### Binary categories.
+
+##### Overthinking: Re-parameterizing the model.
+
+### Many categories.
+
+### Adding regular predictor variables.
+
+### Another approach: Unique intercepts.
+
+~~Ordinary least squares and `lm()`~~
+-------------------------------------
+
+Reference
+---------
+
+Session info
+------------
 
 <!--chapter:end:05.Rmd-->
+Overfitting, Regularization, and Information Criteria
+=====================================================
+
+Placeholder
+
+The problem with parameters
+---------------------------
+
+### More parameters always improve fit.
+
+### Too few parameters hurts, too.
+
+#### Overthinking: Dropping rows.
+
+Information theory and model performance
+----------------------------------------
+
+### Firing the weatherperson.
+
+#### Costs and benefits.
+
+#### Measuring accuracy.
+
+### Information and uncertainty.
+
+### From entropy to accuracy.
+
+#### Rethinking: Divergence depends upon direction.
+
+### From divergence to deviance.
+
+#### Overthinking: Computing deviance.
+
+### From deviance to out-of-sample.
+
+#### Overthinking: Simulated training and testing.
+
+Regularization
+--------------
+
+#### Rethinking: Ridge regression.
+
+Information criteria
+--------------------
+
+### DIC.
+
+### WAIC.
+
+#### Overthinking: WAIC calculation.
+
+### DIC and WAIC as estimates of deviance.
+
+Using information criteria
+--------------------------
+
+### Model comparison.
+
+#### Comparing WAIC values.
+
+#### Comparing estimates.
+
+#### Rethinking: Barplots suck.
+
+### Model averaging.
+
+~~Summary~~ Bonus: *R*<sup>2</sup> talk
+---------------------------------------
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:06.Rmd-->
+Interactions
+============
+
+Placeholder
+
+Building an interaction.
+------------------------
+
+### Adding a dummy variable doesn't work.
+
+### Adding a linear interaction does work.
+
+#### Overthinking: Conventional form of interaction.
+
+### Plotting the interaction.
+
+### Interpreting an interaction estimate.
+
+#### Parameters change meaning.
+
+#### Incorporating uncertainty.
+
+Symmetry of the linear interaction.
+-----------------------------------
+
+### Buridan's interaction.
+
+### Africa depends upon ruggedness.
+
+Continuous interactions
+-----------------------
+
+### The data.
+
+### The un-centered models.
+
+### Center and re-estimate.
+
+#### Estimation worked better.
+
+#### Estimates changed less across models.
+
+### Plotting implied predictions.
+
+Interactions in design formulas
+-------------------------------
+
+~~Summary~~ Bonus: `marginal_effects()`
+---------------------------------------
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:07.Rmd-->
+Markov Chain Monte Carlo
+========================
+
+Placeholder
+
+Good King Markov and His island kingdom
+---------------------------------------
+
+Markov chain Monte Carlo
+------------------------
+
+Easy HMC: ~~map2stan~~ `brm()`
+------------------------------
+
+### Preparation.
+
+### Estimation.
+
+### Sampling again, in parallel.
+
+### Visualization.
+
+### Using the samples.
+
+### Checking the chain.
+
+#### Overthinking: Raw Stan model code.
+
+Care and feeding of your Markov chain.
+--------------------------------------
+
+### How many samples do you need?
+
+### How many chains do you need?
+
+#### Convergence diagnostics.
+
+### Taming a wild chain.
+
+#### Overthinking: Cauchy distribution.
+
+### Non-identifiable parameters.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:08.Rmd-->
+Big Entropy and the Generalized Linear Model
+============================================
+
+Placeholder
+
+Maximum entropy
+---------------
+
+### Gaussian.
+
+### Binomial.
+
+Generalized linear models
+-------------------------
+
+### Meet the family.
+
+#### Rethinking: A likelihood is a prior.
+
+### Linking linear models to distributions.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:09.Rmd-->
+Counting and Classification
+===========================
+
+Placeholder
+
+Binomial regression
+-------------------
+
+### Logistic regression: Prosocial chimpanzees.
+
+#### Overthinking: Using the ~~by~~ `group_by()` function.
+
+### Aggregated binomial: Chimpanzees again, condensed.
+
+### Aggregated binomial: Graduate school admissions.
+
+#### Overthinking: WAIC and aggregated binomial models.
+
+### Fitting binomial regressions with `glm()`.
+
+Poisson regression
+------------------
+
+### Example: Oceanic tool complexity.
+
+### MCMC islands.
+
+### Example: Exposure and the offset.
+
+Other count regressions
+-----------------------
+
+### Multinomial.
+
+#### Explicit multinomial models.
+
+#### Multinomial in disguise as Poisson.
+
+### Geometric.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:10.Rmd-->
+Monsters and Mixtures
+=====================
+
+Placeholder
+
+Ordered categorical outcomes
+----------------------------
+
+### Example: Moral intuition.
+
+### Describing an ordered distribution with intercepts.
+
+### Adding predictor variables.
+
+### Bonus: Figure 11.3 alternative.
+
+Zero-inflated outcomes
+----------------------
+
+### Example: Zero-inflated Poisson.
+
+#### Overthinking: Zero-inflated Poisson distribution function.
+
+Over-dispersed outcomes
+-----------------------
+
+### Beta-binomial.
+
+### Negative-binomial or gamma-Poisson.
+
+#### Bonus: Let's fit a negative-binomial model.
+
+### Over-dispersion, entropy, and information criteria.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:11.Rmd-->
+Multilevel Models
+=================
+
+Placeholder
+
+Example: Multilevel tadpoles
+----------------------------
+
+#### Overthinking: Prior for variance components.
+
+Varying effects and the underfitting/overfitting trade-off
+----------------------------------------------------------
+
+### The model.
+
+### Assign values to the parameters.
+
+### Sumulate survivors.
+
+### Compute the no-pooling estimates.
+
+### Compute the partial-pooling estimates.
+
+#### Overthinking: Repeating the pond simulation.
+
+More than one type of cluster
+-----------------------------
+
+### Multilevel chimpanzees.
+
+### Two types of cluster.
+
+Multilevel posterior predictions
+--------------------------------
+
+### Posterior prediction for same clusters.
+
+### Posterior prediction for new clusters.
+
+#### Bonus: Let's use `fitted()` this time.
+
+### Focus and multilevel prediction.
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:12.Rmd-->
+Adventures in Covariance
+========================
+
+Placeholder
+
+Varying slopes by construction
+------------------------------
+
+### Simulate the population.
+
+### Simulate observations.
+
+### The varying slopes model.
+
+Example: Admission decisions and gender
+---------------------------------------
+
+### Varying intercepts.
+
+### Varying effects of being `male`.
+
+### Shrinkage.
+
+### Model comparison.
+
+Example: Cross-classified `chimpanzees` with varying slopes
+-----------------------------------------------------------
+
+Continuous categories and the Gaussian process
+----------------------------------------------
+
+### Example: Spatial autocorrelation in Oceanic tools.
+
+~~Summary~~ Bonus: Another Berkley-admissions-data-like example.
+----------------------------------------------------------------
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:13.Rmd-->
+Missing Data and Other Opportunities
+====================================
+
+For the opening example, we're playing with the conditional probability
+
+$$
+\\text{Pr(burnt down | burnt up)} = \\frac{\\text(Pr(burnt up, burnt down))}{\\text{Pr(burnt up)}}
+$$
+
+It works out that
+
+$$
+\\text{Pr(burnt down | burnt up)} = \\frac{1/3}{1/2} = \\frac{2}{3}
+$$
+
+We might express the math in the middle of page 423 in tibble form like this.
+
+``` r
+library(tidyverse)
+
+p_pancake <- 1/3
+
+(
+  d <-
+    tibble(pancake    = c("BB", "BU", "UU"),
+           p_burnt    = c(1, .5, 0)) %>% 
+    mutate(p_burnt_up = p_burnt * p_pancake)
+) 
+```
+
+    ## # A tibble: 3 x 3
+    ##   pancake p_burnt p_burnt_up
+    ##   <chr>     <dbl>      <dbl>
+    ## 1 BB          1        0.333
+    ## 2 BU          0.5      0.167
+    ## 3 UU          0        0
+
+``` r
+d %>% 
+  summarise(`p (burnt_down | burnt_up)` = p_pancake / sum(p_burnt_up))
+```
+
+    ## # A tibble: 1 x 1
+    ##   `p (burnt_down | burnt_up)`
+    ##                         <dbl>
+    ## 1                       0.667
+
+I understood McElreath's simulation better after I broke it apart. The first part of `sim_pancake()` takes one random draw from the integers 1, 2, and 3. It just so happens that if we set `set.seed(1)`, the code returns a 1.
+
+``` r
+set.seed(1)
+sample(x = 1:3, size = 1)
+```
+
+    ## [1] 1
+
+So here's what it looks like if we use seeds `2:11`.
+
+``` r
+take_sample <- function(seed){
+ set.seed(seed)
+  sample(x = 1:3, size = 1)
+}
+
+tibble(seed = 2:11) %>% 
+  mutate(value_returned = map(seed, take_sample)) %>% 
+  unnest()
+```
+
+    ## # A tibble: 10 x 2
+    ##     seed value_returned
+    ##    <int>          <int>
+    ##  1     2              1
+    ##  2     3              1
+    ##  3     4              2
+    ##  4     5              1
+    ##  5     6              2
+    ##  6     7              3
+    ##  7     8              2
+    ##  8     9              1
+    ##  9    10              2
+    ## 10    11              1
+
+Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like:
+
+``` r
+matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)
+```
+
+    ##      [,1] [,2] [,3]
+    ## [1,]    1    1    0
+    ## [2,]    1    0    0
+
+See how the three columns are identified as `[,1]`, `[,2]`, and `[,3]`? If, say, we wanted to subset the values in the second column, we'd execute
+
+``` r
+matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, 2]
+```
+
+    ## [1] 1 0
+
+which returns a numeric vector.
+
+``` r
+matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, 2] %>% str()
+```
+
+    ##  num [1:2] 1 0
+
+And that `1 0` corresponds to the pancake with one burnt (i.e., 1) and one unburnt (i.e., 0) side. So when McElreath then executed `sample(sides)`, he randomly sampled from one of those two values. In the case of `pancake == 2`, he randomly sampled one the pancake with one burnt and one unburnt side. Had he sampled from `pancake == 1`, he would have sampled from the pancake with both sides burnt.
+
+Going forward, let's amend McElreath's `sim_pancake()` function a bit. First, we'll add a `seed` argument, with will allow us to make the output reproducible. We'll be inserting `seed` into `set.seed()` in the two places preceding the `sample()` function. The second major change is that we're going to convert the output of the `sim_pancake()` function to a tibble and adding a `side` column, which will contain the values `c("up", "down")`. Just for pedagogical purposes, we’ll also add `pancake_n` and `pancake_chr` columns to help index which `pancake` the draws came from.
+
+``` r
+# simulate a pancake and return randomly ordered sides
+sim_pancake <- function(seed) {
+  set.seed(seed)
+  pancake <- sample(x = 1:3, size = 1)
+  sides   <- matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, pancake]
+  
+  set.seed(seed)
+  sample(sides) %>% 
+    as_tibble() %>% 
+    mutate(side        = c("up", "down"),
+           pancake_n   = pancake,
+           pancake_chr = ifelse(pancake == 1, "BB",
+                                ifelse(pancake == 2, "BU", "UU")))
+}
+```
+
+Let’s take this baby for a whirl.
+
+``` r
+# How many simulations would you like?
+n_sim <- 1e4
+
+(
+  d <-
+  tibble(seed = 1:n_sim) %>% 
+  mutate(r = map(seed, sim_pancake)) %>% 
+  unnest()
+  )
+```
+
+    ## # A tibble: 20,000 x 5
+    ##     seed value side  pancake_n pancake_chr
+    ##    <int> <dbl> <chr>     <int> <chr>      
+    ##  1     1     1 up            1 BB         
+    ##  2     1     1 down          1 BB         
+    ##  3     2     1 up            1 BB         
+    ##  4     2     1 down          1 BB         
+    ##  5     3     1 up            1 BB         
+    ##  6     3     1 down          1 BB         
+    ##  7     4     0 up            2 BU         
+    ##  8     4     1 down          2 BU         
+    ##  9     5     1 up            1 BB         
+    ## 10     5     1 down          1 BB         
+    ## # ... with 19,990 more rows
+
+And now we'll `spread()` and `summarise()` to get the value we've been working for.
+
+``` r
+d %>% 
+  spread(key = side, value = value) %>% 
+  summarise(`p (burnt_down | burnt_up)` = sum(up == 1 & down == 1) / ( sum(up == 1)))
+```
+
+    ## # A tibble: 1 x 1
+    ##   `p (burnt_down | burnt_up)`
+    ##                         <dbl>
+    ## 1                       0.661
+
+The results are within rounding error of the ideal 2/3.
+
+> Probability theory is not difficult mathematically. It’s just counting. But it is hard to interpret and apply. Doing so often seems to require some cleverness, and authors have an incentive to solve problems in clever ways, just to show off. But we don’t need that cleverness, if we ruthlessly apply conditional probability…
+>
+> In this chapter, \[we’ll\] meet two commonplace applications of this assume-and-deduce strategy. The first is the incorporation of measurement error into our models. The second is the estimation of missing data through Bayesian imputation…
+>
+> In neither application do \[we\] have to intuit the consequences of measurement errors nor the implications of missing values in order to design the models. All \[we\] have to do is state \[the\] information about the error or about the variables with missing values. Logic does the rest. (p. 424)
+
+Measurement error
+-----------------
+
+First, let's grab our `WaffleDivorce` data.
+
+``` r
+library(rethinking)
+data(WaffleDivorce)
+d <- WaffleDivorce
+rm(WaffleDivorce)
+```
+
+Switch out rethinking for brms.
+
+``` r
+detach(package:rethinking, unload = T)
+library(brms)
+```
+
+The brms package currently supports `theme_black()`, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. You can find the origins of the code, [here](https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/).
+
+Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used for this chapter is based on his version, with a few amendments of my own.
+
+``` r
+theme_black <- 
+  function(base_size=12, base_family="") {
+    theme_grey(base_size=base_size, base_family=base_family) %+replace%
+        theme(
+            # Specify axis options
+            axis.line=element_blank(),
+            # All text colors used to be "grey55"
+            axis.text.x=element_text(size=base_size*0.8, color="grey85",
+                lineheight=0.9, vjust=1),
+            axis.text.y=element_text(size=base_size*0.8, color="grey85",
+                lineheight=0.9,hjust=1),
+            axis.ticks=element_line(color="grey55", size = 0.2),
+            axis.title.x=element_text(size=base_size, color="grey85", vjust=1,
+                margin=ggplot2::margin(.5, 0, 0, 0, "lines")),
+            axis.title.y=element_text(size=base_size, color="grey85", angle=90,
+                margin=ggplot2::margin(.5, 0, 0, 0, "lines"), vjust=0.5),
+            axis.ticks.length=grid::unit(0.3, "lines"),
+
+            # Specify legend options
+            legend.background=element_rect(color=NA, fill="black"),
+            legend.key=element_rect(color="grey55", fill="black"),
+            legend.key.size=grid::unit(1.2, "lines"),
+            legend.key.height=NULL,
+            legend.key.width=NULL,
+            legend.text=element_text(size=base_size*0.8, color="grey85"),
+            legend.title=element_text(size=base_size*0.8, face="bold",hjust=0,
+                color="grey85"),
+            # legend.position="right",
+            legend.position = "none",
+            legend.text.align=NULL,
+            legend.title.align=NULL,
+            legend.direction="vertical",
+            legend.box=NULL,
+            # Specify panel options
+            panel.background=element_rect(fill="black", color = NA),
+            panel.border=element_rect(fill=NA, color="grey55"),
+            panel.grid.major=element_blank(),
+            panel.grid.minor=element_blank(),
+            panel.spacing=grid::unit(0.25,"lines"),
+            # Specify facetting options
+            strip.background=element_rect(fill = "black", color="grey10"), # fill="grey30"
+            strip.text.x=element_text(size=base_size*0.8, color="grey85"),
+            strip.text.y=element_text(size=base_size*0.8, color="grey85",
+                angle=-90),
+            # Specify plot options
+            plot.background=element_rect(color="black", fill="black"),
+            plot.title=element_text(size=base_size*1.2, color="grey85", hjust = 0), # added hjust = 0
+            plot.subtitle=element_text(size=base_size*.9, color="grey85", hjust = 0), # added line
+            # plot.margin=grid::unit(c(1, 1, 0.5, 0.5), "lines")
+            plot.margin=grid::unit(c(0.5, 0.5, 0.5, 0.5), "lines")
+    )
+}
+```
+
+One way to use our `theme_black()` is to make it part of the code for an individual plot, such as `ggplot() + geom_point() + theme_back()`. Another way is to make `theme_black()` the default setting with `bayesplot::theme_set()`. That's the method we'll use.
+
+``` r
+library(bayesplot)
+
+theme_set(theme_black())
+
+# To reset the default ggplot2 theme to its traditional parameters, use this code:
+# theme_set(theme_default()) 
+```
+
+In the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/web/packages/viridis/index.html), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html).
+
+``` r
+# install.packages("viridis")
+library(viridis)
+```
+
+The `viridis_pal()` function gives a list of colors within a given palette. The colors in each palette fall on a spectrum. Within `viridis_pal()`, the `option` argument allows one to select a given spectrum, "C", in our case. The final parentheses, `()`, allows one to determine how many discrete colors one would like to break the spectrum up by. We'll choose 7.
+
+``` r
+viridis_pal(option = "C")(7)
+```
+
+    ## [1] "#0D0887FF" "#5D01A6FF" "#9C179EFF" "#CC4678FF" "#ED7953FF" "#FDB32FFF" "#F0F921FF"
+
+With a little data wrangling, we can put the colors of our palette in a tibble and display them in a plot.
+
+``` r
+viridis_pal(option = "C")(7) %>%
+  as_tibble() %>% 
+  mutate(color_number = str_c(1:7, ". ", value),
+         number = 1:7) %>%
+  
+  ggplot(aes(x = factor(0), y = reorder(color_number, number))) +
+  geom_tile(aes(fill = factor(number))) +
+  geom_text(aes(color = factor(number), label = color_number)) +
+  scale_color_manual(values = c(rep("black", times = 4), 
+                                rep("white", times = 3))) +
+  scale_fill_viridis(option = "C", discrete = T, direction = -1) +
+  scale_x_discrete(NULL, breaks = NULL) +
+  scale_y_discrete(NULL, breaks = NULL) +
+  ggtitle("Behold: viridis C!")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-17-1.png)
+
+Now, let's make use of our custom theme and reproduce/reimagine Figure 14.1.a.
+
+``` r
+color <- viridis_pal(option = "C")(7)[7]
+
+d %>%
+  ggplot(aes(x = MedianAgeMarriage, 
+             y = Divorce,
+             ymin = Divorce - Divorce.SE, 
+             ymax = Divorce + Divorce.SE)) +
+  geom_pointrange(shape = 20, alpha = 2/3, color = color) +
+  labs(x = "Median age marriage" , 
+       y = "Divorce rate")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-18-1.png)
+
+Notice how `viridis_pal(option = "C")(7)[7]` called the seventh color in the color scheme, `"#F0F921FF"`. For Figure 14.1.b, we'll select the sixth color in the palette by coding `viridis_pal(option = "C")(7)[6]`.
+
+``` r
+color <- viridis_pal(option = "C")(7)[6]
+
+d %>%
+  ggplot(aes(x = log(Population), 
+             y = Divorce,
+             ymin = Divorce - Divorce.SE, 
+             ymax = Divorce + Divorce.SE)) +
+  geom_pointrange(shape = 20, alpha = 2/3, color = color) +
+  labs(x = "log population", 
+       y = "Divorce rate")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-19-1.png)
+
+Just like in the text, our plot shows states with larger populations tend to have smaller measurement error.
+
+### Error on the outcome.
+
+To get a better sense of what we're about to do, imagine for a moment that each states' divorce rate is normally distributed with a mean of `Divorce` and standard deviation `Divorce.SE`. Those distributions would be:
+
+``` r
+d %>% 
+  mutate(Divorce_distribution = str_c("Divorce ~ Normal(", Divorce, ", ", Divorce.SE, ")")) %>% 
+  select(Loc, Divorce_distribution) %>% 
+  head()
+```
+
+    ##   Loc         Divorce_distribution
+    ## 1  AL Divorce ~ Normal(12.7, 0.79)
+    ## 2  AK Divorce ~ Normal(12.5, 2.05)
+    ## 3  AZ Divorce ~ Normal(10.8, 0.74)
+    ## 4  AR Divorce ~ Normal(13.5, 1.22)
+    ## 5  CA    Divorce ~ Normal(8, 0.24)
+    ## 6  CO Divorce ~ Normal(11.6, 0.94)
+
+As in the text
+
+> In \[the following\] example we’ll use a Gaussian distribution with mean equal to the observed value and standard deviation equal to the measurement’s standard error. This is the logical choice, because if all we know about the error is its standard deviation, then the maximum entropy distribution for it will be Gaussian…
+>
+> Here’s how to define the distribution for each divorce rate. For each observed value *D*<sub>OBS*i*</sub>, there will be one parameter, *D*<sub>EST*i*</sub>, defined by:
+>
+> *D*<sub>OBS*i*</sub> ∼ Normal(*D*<sub>EST*i*</sub>, *D*<sub>SE*i*</sub>)
+>
+> All this does is define the measurement *D*<sub>OBS*i*</sub> as having the specified Gaussian distribution centered on the unknown parameter *D*<sub>EST*i*</sub>. So the above defines a probability for each State *i*’s observed divorce rate, given a known measurement error. (pp. 426--427)
+
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior *S**D*. Unless you're [fitting a meta-analysis](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/) on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for *σ*! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
+
+The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
+
+We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
+
+``` r
+# Put the data into a list
+dlist <- list(
+    div_obs = d$Divorce,
+    div_sd  = d$Divorce.SE,
+    R       = d$Marriage,
+    A       = d$MedianAgeMarriage)
+
+# Here we specify the initial (i.e., starting) values
+inits      <- list(Yl = dlist$div_obs)
+inits_list <- list(inits, inits)
+
+# Fit the models
+b14.1_se <- 
+  brm(data = dlist, family = gaussian,
+      div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A,
+      prior = c(prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2.5), class = sigma)),
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      inits = inits_list)
+
+b14.1_mi <- 
+  brm(data = dlist, family = gaussian,
+      div_obs | mi(div_sd) ~ 0 + intercept + R + A,
+      prior = c(prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2.5), class = sigma)),
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      save_mevars = TRUE,  # note this line for the `mi()` model
+      inits = inits_list)
+```
+
+Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `inits = inits_list` for both models, the differ by `fit@inits`.
+
+``` r
+b14.1_se$fit@inits
+```
+
+    ## [[1]]
+    ## [[1]]$b
+    ## [1] -0.1011521  0.5448677 -0.8505697
+    ## 
+    ## [[1]]$sigma
+    ## [1] 0.6347405
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$b
+    ## [1]  1.694187 -0.908708 -1.611568
+    ## 
+    ## [[2]]$sigma
+    ## [1] 0.1474002
+
+``` r
+b14.1_mi$fit@inits
+```
+
+    ## [[1]]
+    ## [[1]]$Yl
+    ##  [1] 12.7 12.5 10.8 13.5  8.0 11.6  6.7  8.9  6.3  8.5 11.5  8.3  7.7  8.0 11.0 10.2 10.6 12.6 11.0
+    ## [20] 13.0  8.8  7.8  9.2  7.4 11.1  9.5  9.1  8.8 10.1  6.1 10.2  6.6  9.9  8.0  9.5 12.8 10.4  7.7
+    ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
+    ## 
+    ## [[1]]$b
+    ## [1] -0.1148269  1.6206242 -1.8700186
+    ## 
+    ## [[1]]$sigma
+    ## [1] 0.84763
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$Yl
+    ##  [1] 12.7 12.5 10.8 13.5  8.0 11.6  6.7  8.9  6.3  8.5 11.5  8.3  7.7  8.0 11.0 10.2 10.6 12.6 11.0
+    ## [20] 13.0  8.8  7.8  9.2  7.4 11.1  9.5  9.1  8.8 10.1  6.1 10.2  6.6  9.9  8.0  9.5 12.8 10.4  7.7
+    ## [39]  9.4  8.1 10.9 11.4 10.0 10.2  9.6  8.9 10.0 10.9  8.3 10.3
+    ## 
+    ## [[2]]$b
+    ## [1]  1.9816698 -0.8366523  0.2924846
+    ## 
+    ## [[2]]$sigma
+    ## [1] 0.2723394
+
+As we explore further, it should become apparent why. Here are the primary model summaries.
+
+``` r
+print(b14.1_se)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A 
+    ##    Data: dlist (Number of observations: 50) 
+    ## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 8000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## intercept    21.22      6.51     8.17    33.84       1767 1.00
+    ## R             0.13      0.08    -0.02     0.28       2131 1.00
+    ## A            -0.54      0.21    -0.94    -0.11       1881 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.13      0.20     0.77     1.58       2787 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+``` r
+print(b14.1_mi)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: div_obs | mi(div_sd) ~ 0 + intercept + R + A 
+    ##    Data: dlist (Number of observations: 50) 
+    ## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 8000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## intercept    21.32      6.73     7.96    34.11       3971 1.00
+    ## R             0.13      0.08    -0.03     0.28       4409 1.00
+    ## A            -0.55      0.22    -0.97    -0.12       4171 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.13      0.20     0.77     1.56       3074 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `broom::tidy()` method.
+
+``` r
+library(broom)
+
+tidy(b14.1_se) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+    ##          term estimate std.error   lower   upper
+    ## 1 b_intercept    21.22      6.51   10.32   31.90
+    ## 2         b_R     0.13      0.08    0.00    0.25
+    ## 3         b_A    -0.54      0.21   -0.88   -0.19
+    ## 4       sigma     1.13      0.20    0.82    1.49
+    ## 5        lp__  -105.33      1.45 -108.12 -103.68
+
+``` r
+tidy(b14.1_mi) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+    ##           term estimate std.error   lower   upper
+    ## 1  b_intercept    21.32      6.73   10.14   32.26
+    ## 2          b_R     0.13      0.08    0.00    0.26
+    ## 3          b_A    -0.55      0.22   -0.90   -0.19
+    ## 4        sigma     1.13      0.20    0.82    1.48
+    ## 5        Yl[1]    11.79      0.68   10.68   12.92
+    ## 6        Yl[2]    11.19      1.06    9.46   12.94
+    ## 7        Yl[3]    10.47      0.63    9.45   11.54
+    ## 8        Yl[4]    12.34      0.89   10.91   13.82
+    ## 9        Yl[5]     8.05      0.24    7.66    8.43
+    ## 10       Yl[6]    11.01      0.72    9.85   12.20
+    ## 11       Yl[7]     7.24      0.65    6.17    8.28
+    ## 12       Yl[8]     9.35      0.93    7.84   10.88
+    ## 13       Yl[9]     7.00      1.12    5.17    8.84
+    ## 14      Yl[10]     8.53      0.31    8.04    9.04
+    ## 15      Yl[11]    11.15      0.53   10.27   12.04
+    ## 16      Yl[12]     9.09      0.91    7.60   10.57
+    ## 17      Yl[13]     9.67      0.89    8.13   11.10
+    ## 18      Yl[14]     8.11      0.41    7.41    8.79
+    ## 19      Yl[15]    10.68      0.55    9.79   11.60
+    ## 20      Yl[16]    10.16      0.72    8.97   11.34
+    ## 21      Yl[17]    10.51      0.80    9.20   11.79
+    ## 22      Yl[18]    11.95      0.65   10.90   13.03
+    ## 23      Yl[19]    10.50      0.69    9.39   11.63
+    ## 24      Yl[20]    10.18      1.02    8.60   11.92
+    ## 25      Yl[21]     8.75      0.61    7.75    9.75
+    ## 26      Yl[22]     7.77      0.47    6.99    8.55
+    ## 27      Yl[23]     9.15      0.48    8.35    9.94
+    ## 28      Yl[24]     7.73      0.54    6.82    8.60
+    ## 29      Yl[25]    10.44      0.77    9.19   11.72
+    ## 30      Yl[26]     9.54      0.58    8.58   10.50
+    ## 31      Yl[27]     9.42      0.96    7.84   10.99
+    ## 32      Yl[28]     9.26      0.73    8.04   10.45
+    ## 33      Yl[29]     9.18      0.93    7.67   10.73
+    ## 34      Yl[30]     6.38      0.44    5.66    7.09
+    ## 35      Yl[31]     9.97      0.80    8.68   11.28
+    ## 36      Yl[32]     6.69      0.30    6.20    7.19
+    ## 37      Yl[33]     9.88      0.44    9.16   10.60
+    ## 38      Yl[34]     9.76      0.98    8.09   11.33
+    ## 39      Yl[35]     9.43      0.42    8.74   10.12
+    ## 40      Yl[36]    11.97      0.79   10.68   13.31
+    ## 41      Yl[37]    10.07      0.66    8.99   11.16
+    ## 42      Yl[38]     7.80      0.40    7.13    8.46
+    ## 43      Yl[39]     8.21      1.02    6.56    9.90
+    ## 44      Yl[40]     8.39      0.61    7.40    9.39
+    ## 45      Yl[41]    10.03      1.06    8.32   11.78
+    ## 46      Yl[42]    10.94      0.63    9.93   11.99
+    ## 47      Yl[43]    10.02      0.33    9.47   10.56
+    ## 48      Yl[44]    11.06      0.81    9.73   12.36
+    ## 49      Yl[45]     8.90      0.98    7.30   10.52
+    ## 50      Yl[46]     9.00      0.46    8.24    9.75
+    ## 51      Yl[47]     9.96      0.55    9.04   10.87
+    ## 52      Yl[48]    10.62      0.84    9.25   12.02
+    ## 53      Yl[49]     8.46      0.50    7.63    9.28
+    ## 54      Yl[50]    11.52      1.14    9.64   13.35
+    ## 55        lp__  -152.79      6.31 -163.65 -142.86
+
+``` r
+# you can get similar output with b14.1_mi$fit
+```
+
+Again, from `b_intercept` to `sigma`, the output is about the same. But model `b14.1_mi`, based on the `mi()` syntax, contained posterior summaries for all 50 of the criterion values. The `se()` method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as `div_est[i]`; with the `mi()` method, brms indexed them as `Yl[i]`--no big deal. So while both brms methods accommodated measurement error, the `mi()` method appears to be the brms analogue to what McElreath did with his model `m14.1` in the text. Thus, it's our `b14.1_mi` model that follows the form
+
+$$
+\\begin{eqnarray}
+\\text{Divorce}\_{\\text{estimated}, i} & \\sim & \\text{Normal} (\\mu\_i, \\sigma) \\\\
+\\mu & = & \\alpha + \\beta\_1 \\text A\_i + \\beta\_2 \\text R\_i \\\\
+\\text{Divorce}\_{\\text{observed}, i} & \\sim & \\text{Normal} (\\text{Divorce}\_{\\text{estimated}, i}, \\text{Divorce}\_{\\text{standard error}, i}) \\\\
+\\alpha & \\sim & \\text{Normal} (0, 10) \\\\
+\\beta\_1 & \\sim & \\text{Normal} (0, 10) \\\\
+\\beta\_2 & \\sim & \\text{Normal} (0, 10) \\\\
+\\sigma & \\sim & \\text{HalfCauchy} (0, 2.5)
+\\end{eqnarray}
+$$
+
+*Note*. The `normal(0, 10)` prior McElreath used was [quite informative and can lead to discrepancies between the rethinking and brms results](https://github.com/paul-buerkner/brms/issues/114) if you're not careful. A large issue is the default way brms handles intercept priors. From the hyperlink, Bürkner wrote:
+
+> The formula for the original intercept is `b_intercept = temp_intercept - dot_product(means_X, b)`, where `means_X` is the vector of means of the predictor variables and b is the vector of regression coefficients (fixed effects). That is, when transforming a prior on the intercept to an "equivalent" prior on the temporary intercept, you have to take the means of the predictors and well as the priors on the other coefficients into account.
+
+If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. And since many of the models in *Statistical Rethinking* use only weakly-regularizing priors, this hasn't been much of an issue up to this point. But this model is quite sensitive to the intercept syntax. My general recommendation for applied data analysis is this: **If your predictors aren’t mean centered, default to the** `0 + intercept` **syntax for the** `formula` **argument when using** `brms::brm()`. Otherwise, your priors might not be doing what you think they’re doing.
+
+Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to McElreath's `m14.1`, we'll use that one for our plots. Here's our Figure 14.2.a.
+
+``` r
+data_error <- 
+  fitted(b14.1_mi) %>%
+  as_tibble() %>%
+  bind_cols(d)
+
+color <- viridis_pal(option = "C")(7)[5]
+
+data_error %>%
+  ggplot(aes(x = Divorce.SE, y = Estimate - Divorce)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "white") +
+  geom_point(alpha = 2/3, size = 2, color = color)
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-24-1.png)
+
+Before we make Figure 14.2.b, we need to fit a model that ignores measurement error.
+
+``` r
+b14.1b <- 
+  brm(data = dlist, family = gaussian,
+      div_obs ~ 0 + intercept + R + A,              
+      prior = c(prior(normal(0, 50), class = b, coef = intercept),
+                prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2.5), class = sigma)),
+      chains = 2, iter = 5000, warmup = 1000, cores = 2,
+      control = list(adapt_delta = 0.95))
+```
+
+``` r
+print(b14.1b)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: div_obs ~ 0 + intercept + R + A 
+    ##    Data: dlist (Number of observations: 50) 
+    ## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 8000
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## intercept    36.01      7.79    20.51    51.16       2108 1.00
+    ## R            -0.05      0.08    -0.21     0.12       2633 1.00
+    ## A            -0.97      0.25    -1.46    -0.47       2181 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.52      0.16     1.24     1.89       2787 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+With the ignore-measurement-error fit in hand, we're ready for Figure 14.2.b.
+
+``` r
+nd <- 
+  tibble(R      = mean(d$Marriage),
+         A      = seq(from = 22, to = 30.2, length.out = 30),
+         div_sd = mean(d$Divorce.SE))
+
+# red line
+fitd_error <- 
+  fitted(b14.1_mi, newdata = nd) %>%
+  as_tibble() %>%
+  bind_cols(nd)
+
+# yellow line
+fitd_no_error <- 
+  fitted(b14.1b, newdata = nd) %>%
+  as_tibble() %>%
+  bind_cols(nd)
+
+# white dots
+data_error <- 
+  fitted(b14.1_mi) %>%
+  as_tibble() %>%
+  bind_cols(b14.1_mi$data)
+
+color_y <- viridis_pal(option = "C")(7)[7]
+color_r <- viridis_pal(option = "C")(7)[4]
+
+# plot
+fitd_error %>% 
+  ggplot(aes(x = A, y = Estimate)) +
+  geom_ribbon(data = fitd_no_error,
+              aes(ymin = Q2.5, ymax = Q97.5),
+              fill = color_y, alpha = 1/4) +
+  geom_line(data = fitd_no_error,
+            color = color_y, linetype = 2) +
+  geom_ribbon(data = fitd_error,
+              aes(ymin = Q2.5, ymax = Q97.5),
+              fill = color_r, alpha = 1/3) +
+  geom_line(data = fitd_error,
+            color = color_r) +
+  geom_pointrange(data = data_error,
+                  aes(ymin = Estimate - Est.Error,
+                      ymax = Estimate + Est.Error),
+                  color = "white", shape = 20, alpha = 1/2) +
+  scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
+  labs(x = "Median age marriage" , y = "Divorce rate (posterior)") +
+  coord_cartesian(xlim = range(data_error$A), 
+                  ylim = c(4, 15))
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-26-1.png)
+
+In our plot, it’s the reddish regression line that accounts for measurement error.
+
+### Error on both outcome and predictor.
+
+In brms, you can specify error on predictors with an `me()` statement in the form of `me(predictor, sd_predictor)` where `sd_predictor` is a vector in the data denoting the size of the measurement error, presumed to be in a standard-deviation metric.
+
+``` r
+# The data
+dlist <- list(
+  div_obs = d$Divorce,
+  div_sd  = d$Divorce.SE,
+  mar_obs = d$Marriage,
+  mar_sd  = d$Marriage.SE,
+  A       = d$MedianAgeMarriage)
+
+# The `inits`
+inits <- list(Yl = dlist$div_obs)
+inits_list <- list(inits, inits)
+
+# The models
+b14.2_se <-
+  brm(data = dlist, family = gaussian,
+      div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
+      prior = c(prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2.5), class = sigma)),
+      iter = 5000, warmup = 1000, chains = 3, cores = 3,
+      control = list(adapt_delta = 0.95),
+      save_mevars = TRUE) # Note the lack if `inits`. See below.
+
+b14.2_mi <- 
+  brm(data = dlist, family = gaussian,
+      div_obs | mi(div_sd) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
+      prior = c(prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2.5), class = sigma)),
+      iter = 5000, warmup = 1000, cores = 2, chains = 2,
+      control = list(adapt_delta = 0.99,
+                     max_treedepth = 12),
+      save_mevars = TRUE,
+      inits = inits_list)
+```
+
+We already know including `inits` values for our `Yl[i]` estimates is a waste of time for our `se()` model. But note how we still defined our `inits` values as `inits <- list(Yl = dlist$div_obs)` for the `mi()` model. Although it’s easy in brms to set the starting values for our `Yl[i]` estimates, much the way McElreath did, that isn’t the case when you have measurement error on the predictors. The brms package uses a non-centered parameterization for these, which requires users to have a deeper understanding of the underlying Stan code. This is where I get off the train, but if you want to go further, execute `stancode(b14.2_mi)`.
+
+Here's the two versions of the model.
+
+``` r
+print(b14.2_se)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + me(mar_obs, mar_sd) + A 
+    ##    Data: dlist (Number of observations: 50) 
+    ## Samples: 3 chains, each with iter = 5000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 12000
+    ## 
+    ## Population-Level Effects: 
+    ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## intercept          15.81      6.71     2.47    28.76       5409 1.00
+    ## A                  -0.45      0.20    -0.83    -0.04       6204 1.00
+    ## memar_obsmar_sd     0.27      0.11     0.07     0.49       5539 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     0.99      0.21     0.62     1.44      12000 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+``` r
+print(b14.2_mi)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: div_obs | mi(div_sd) ~ 0 + intercept + me(mar_obs, mar_sd) + A 
+    ##    Data: dlist (Number of observations: 50) 
+    ## Samples: 2 chains, each with iter = 5000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 8000
+    ## 
+    ## Population-Level Effects: 
+    ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## intercept          15.52      6.82     2.07    28.68       2001 1.00
+    ## A                  -0.44      0.21    -0.83    -0.03       2217 1.00
+    ## memar_obsmar_sd     0.28      0.11     0.07     0.49       2056 1.00
+    ## 
+    ## Family Specific Parameters: 
+    ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+    ## sigma     1.00      0.21     0.62     1.43       1527 1.00
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+    ## is a crude measure of effective sample size, and Rhat is the potential 
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+We'll use `broom::tidy()`, again, to get a sense of `depth=2` summaries.
+
+``` r
+tidy(b14.2_se) %>%
+  mutate_if(is.numeric, round, digits = 2)
+
+tidy(b14.2_mi) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+Due to space concerns, I'm not going to show the results, here. You can do that on your own. Both methods yielded the posteriors for `Xme_memar_obs[1]`, but only the `b14.2_mi` model based on the `mi()` syntax yielded posteriors for the criterion, the `Yl[i]` summaries.
+
+Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
+
+Here is the code for Figure 14.3.a.
+
+``` r
+data_error <-
+  fitted(b14.2_mi) %>%
+  as_tibble() %>%
+  bind_cols(d)
+
+color <- viridis_pal(option = "C")(7)[3]
+
+data_error %>%
+  ggplot(aes(x = Divorce.SE, y = Estimate - Divorce)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "white") +
+  geom_point(alpha = 2/3, size = 2, color = color)
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-29-1.png)
+
+To get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with *i* ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we can make our version of Figure 14.4.b.
+
+``` r
+color_y <- viridis_pal(option = "C")(7)[7]
+color_p <- viridis_pal(option = "C")(7)[2]
+
+posterior_samples(b14.2_mi) %>%
+  select(starts_with("Xme")) %>%
+  gather() %>%
+  # This extracts the numerals from the otherwise cumbersome names in key and saves them as integers
+  mutate(key = str_extract(key, "\\d+") %>% as.integer()) %>%
+  group_by(key) %>%
+  summarise(mean = mean(value)) %>%
+  bind_cols(data_error) %>%
+  
+  ggplot(aes(x = mean, y = Estimate)) +
+  geom_segment(aes(xend = Marriage, yend = Divorce),
+               color = "white", size = 1/4) +
+  geom_point(size = 2, alpha = 2/3, color = color_y) +
+  geom_point(aes(x = Marriage, y = Divorce), 
+             size = 2, alpha = 2/3, color = color_p) +
+  scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
+  labs(x = "Marriage rate (posterior)" , y = "Divorce rate (posterior)") +
+  coord_cartesian(ylim = c(4, 14.5))
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-30-1.png)
+
+The yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath’s rethinking model. I'm unsure of why. If you understand the difference, [please share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
+
+Anyway,
+
+> the big take home point for this section is that when you have a distribution of values, don’t reduce it down to a single value to use in a regression. Instead, use the entire distribution. Anytime we use an average value, discarding the uncertainty around that average, we risk overconfidence and spurious inference. This doesn’t only apply to measurement error, but also to cases which data are averaged before analysis.
+>
+> Do not average. Instead, model. (p. 431)
+
+Missing data
+------------
+
+Starting with the developer's version 2.1.2, (or the official [version 2.3.1 available on CRAN](https://cran.r-project.org/web/packages/brms/index.html)) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) is quite helpful.
+
+### Imputing `neocortex`
+
+Once again, here are the `milk` data.
+
+``` r
+library(rethinking)
+data(milk)
+d <- milk
+
+d <-
+  d %>%
+  mutate(neocortex.prop = neocortex.perc/100,
+         logmass        = log(mass))
+```
+
+Now we'll switch out rethinking for brms and do a little data wrangling.
+
+``` r
+detach(package:rethinking, unload = T)
+library(brms)
+rm(milk)
+
+# prep data
+data_list <- 
+  list(
+    kcal      = d$kcal.per.g,
+    neocortex = d$neocortex.prop,
+    logmass   = d$logmass)
+```
+
+Here's the structure of our data list.
+
+``` r
+data_list
+```
+
+    ## $kcal
+    ##  [1] 0.49 0.51 0.46 0.48 0.60 0.47 0.56 0.89 0.91 0.92 0.80 0.46 0.71 0.71 0.73 0.68 0.72 0.97 0.79
+    ## [20] 0.84 0.48 0.62 0.51 0.54 0.49 0.53 0.48 0.55 0.71
+    ## 
+    ## $neocortex
+    ##  [1] 0.5516     NA     NA     NA     NA 0.6454 0.6454 0.6764     NA 0.6885 0.5885 0.6169 0.6032
+    ## [14]     NA     NA 0.6997     NA 0.7041     NA 0.7340     NA 0.6753     NA 0.7126 0.7260     NA
+    ## [27] 0.7024 0.7630 0.7549
+    ## 
+    ## $logmass
+    ##  [1]  0.6678294  0.7371641  0.9202828  0.4824261  0.7839015  1.6582281  1.6808279  0.9202828
+    ##  [9] -0.3424903 -0.3856625 -2.1202635 -0.7550226 -1.1394343 -0.5108256  1.2441546  0.4382549
+    ## [17]  1.9572739  1.1755733  2.0719133  2.5095993  2.0268316  1.6808279  2.3721112  3.5689692
+    ## [25]  4.3748761  4.5821062  3.7072104  3.4998354  4.0064237
+
+Our statistical model follows the form
+
+$$
+\\begin{eqnarray}
+\\text{kcal}\_i & \\sim & \\text{Normal} (\\mu\_i, \\sigma) \\\\
+\\mu\_i & = & \\alpha + \\beta\_1 \\text{neocortex}\_i + \\beta\_2 \\text{logmass}\_i \\\\
+\\text{neocortex}\_i & \\sim & \\text{Normal} (\\nu, \\sigma\_\\text{neocortex}) \\\\
+\\alpha & \\sim & \\text{Normal} (0, 100) \\\\
+\\beta\_1 & \\sim & \\text{Normal} (0, 10) \\\\
+\\beta\_2 & \\sim & \\text{Normal} (0, 10) \\\\
+\\sigma & \\sim & \\text{HalfCauchy} (0, 1) \\\\
+\\nu & \\sim & \\text{Normal} (0.5, 1) \\\\
+\\sigma\_\\text{neocortex} & \\sim & \\text{HalfCauchy} (0, 1)
+\\end{eqnarray}
+$$
+
+When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the `brm()` function. Otherwise, things get cluttered in a hurry.
+
+``` r
+b_model <- 
+  # Here's the primary `kcal` model
+  bf(kcal      | mi() ~ 1 + mi(neocortex) + logmass) + 
+  # Here's the model for the missing `neocortex` data 
+  bf(neocortex | mi() ~ 1) + 
+  # Here we set the residual correlations for the two models to zero
+  set_rescor(FALSE)
+```
+
+Note the `mi(neocortex)` syntax in the `kcal` model. This indicates that the predictor, `neocortex`, has missing values that are themselves being modeled.
+
+To get a sense of how to specify the priors for such a model, use the `get_prior()` function.
+
+``` r
+get_prior(data = data_list, 
+          family = gaussian,
+          b_model)
+```
+
+    ##                 prior     class        coef group      resp dpar nlpar bound
+    ## 1                             b                                             
+    ## 2                     Intercept                                             
+    ## 3                             b                        kcal                 
+    ## 4                             b     logmass            kcal                 
+    ## 5                             b mineocortex            kcal                 
+    ## 6 student_t(3, 1, 10) Intercept                        kcal                 
+    ## 7 student_t(3, 0, 10)     sigma                        kcal                 
+    ## 8 student_t(3, 1, 10) Intercept                   neocortex                 
+    ## 9 student_t(3, 0, 10)     sigma                   neocortex
+
+With the one-step Bayesian imputation procedure in brms, you might need to use the `resp` argument when specifying non-defaut priors.
+
+Anyway, here we fit the model.
+
+``` r
+b14.3 <- 
+  brm(data = data_list, 
+      family = gaussian,
+      b_model,  # here we insert the model
+      prior = c(prior(normal(0, 100), class = Intercept, resp = kcal),
+                prior(normal(0.5, 1), class = Intercept, resp = neocortex),
+                prior(normal(0, 10),  class = b),
+                prior(cauchy(0, 1),   class = sigma,     resp = kcal),
+                prior(cauchy(0, 1),   class = sigma,     resp = neocortex)),
+      iter = 1e4, chains = 2, cores = 2)
+```
+
+The imputed `neocortex` values are indexed by occasion number from the original data.
+
+``` r
+tidy(b14.3) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+    ##                     term estimate std.error lower upper
+    ## 1       b_kcal_Intercept    -0.55      0.47 -1.32  0.25
+    ## 2  b_neocortex_Intercept     0.67      0.01  0.65  0.69
+    ## 3         b_kcal_logmass    -0.07      0.02 -0.11 -0.03
+    ## 4   bsp_kcal_mineocortex     1.92      0.74  0.70  3.13
+    ## 5             sigma_kcal     0.13      0.02  0.10  0.17
+    ## 6        sigma_neocortex     0.06      0.01  0.05  0.08
+    ## 7       Ymi_neocortex[2]     0.63      0.05  0.55  0.72
+    ## 8       Ymi_neocortex[3]     0.62      0.05  0.54  0.71
+    ## 9       Ymi_neocortex[4]     0.62      0.05  0.54  0.71
+    ## 10      Ymi_neocortex[5]     0.65      0.05  0.58  0.73
+    ## 11      Ymi_neocortex[9]     0.70      0.05  0.62  0.78
+    ## 12     Ymi_neocortex[14]     0.66      0.05  0.58  0.74
+    ## 13     Ymi_neocortex[15]     0.69      0.05  0.61  0.77
+    ## 14     Ymi_neocortex[17]     0.70      0.05  0.62  0.78
+    ## 15     Ymi_neocortex[19]     0.71      0.05  0.63  0.79
+    ## 16     Ymi_neocortex[21]     0.64      0.05  0.57  0.72
+    ## 17     Ymi_neocortex[23]     0.66      0.05  0.58  0.73
+    ## 18     Ymi_neocortex[26]     0.70      0.05  0.61  0.77
+    ## 19                  lp__    40.58      4.30 32.87 46.79
+
+Here's the model that drops the cases with NAs on `neocortex`.
+
+``` r
+b14.3cc <- 
+  brm(data = data_list, 
+      family = gaussian,
+      kcal ~ 1 + neocortex + logmass,
+      prior = c(prior(normal(0, 100), class = Intercept),
+                prior(normal(0, 10), class = b),
+                prior(cauchy(0, 1), class = sigma)),
+      iter = 1e4, chains = 2, cores = 2)
+```
+
+The parameters:
+
+``` r
+tidy(b14.3cc) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+    ##          term estimate std.error lower upper
+    ## 1 b_Intercept    -1.07      0.57 -2.00 -0.14
+    ## 2 b_neocortex     2.76      0.89  1.33  4.21
+    ## 3   b_logmass    -0.10      0.03 -0.14 -0.05
+    ## 4       sigma     0.14      0.03  0.10  0.20
+    ## 5        lp__    -4.23      1.64 -7.48 -2.33
+
+In order to make our versions of Figure 14.4, we'll need to do a little data wrangling with `fitted()`.
+
+``` r
+nd <-
+  tibble(neocortex = seq(from = .5, to = .85, length.out = 30),
+         logmass   = median(data_list$logmass))
+
+f_b14.3 <-
+  fitted(b14.3, newdata = nd) %>%
+  as_tibble() %>%
+  bind_cols(nd)
+
+f_b14.3 %>%
+  glimpse()
+```
+
+    ## Observations: 30
+    ## Variables: 10
+    ## $ Estimate.kcal       <dbl> 0.3267034, 0.3498761, 0.3730488, 0.3962215, 0.4193942, 0.4425669, 0...
+    ## $ Est.Error.kcal      <dbl> 0.12613844, 0.11749785, 0.10889647, 0.10034439, 0.09185537, 0.08344...
+    ## $ Q2.5.kcal           <dbl> 0.07891592, 0.11822356, 0.15859545, 0.19882097, 0.23785085, 0.27789...
+    ## $ Q97.5.kcal          <dbl> 0.5736144, 0.5786973, 0.5846743, 0.5918066, 0.5993471, 0.6061761, 0...
+    ## $ Estimate.neocortex  <dbl> 0.6711892, 0.6711892, 0.6711892, 0.6711892, 0.6711892, 0.6711892, 0...
+    ## $ Est.Error.neocortex <dbl> 0.01357247, 0.01357247, 0.01357247, 0.01357247, 0.01357247, 0.01357...
+    ## $ Q2.5.neocortex      <dbl> 0.6441185, 0.6441185, 0.6441185, 0.6441185, 0.6441185, 0.6441185, 0...
+    ## $ Q97.5.neocortex     <dbl> 0.6979453, 0.6979453, 0.6979453, 0.6979453, 0.6979453, 0.6979453, 0...
+    ## $ neocortex           <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, 0...
+    ## $ logmass             <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.24415...
+
+To include the imputed `neocortex` values in the plot, we'll extract the information from `broom::tidy()`.
+
+``` r
+f_b14.3_mi <-
+  tidy(b14.3) %>%
+  filter(str_detect(term, "Ymi")) %>%
+  bind_cols(data_list %>%
+              as_tibble() %>%
+              filter(is.na(neocortex))
+            )
+
+# Here's what we did
+f_b14.3_mi %>% head()
+```
+
+    ##                term  estimate  std.error     lower     upper kcal neocortex    logmass
+    ## 1  Ymi_neocortex[2] 0.6327711 0.05042317 0.5507748 0.7154472 0.51        NA  0.7371641
+    ## 2  Ymi_neocortex[3] 0.6237320 0.05049918 0.5435567 0.7077340 0.46        NA  0.9202828
+    ## 3  Ymi_neocortex[4] 0.6226573 0.05133513 0.5414685 0.7085861 0.48        NA  0.4824261
+    ## 4  Ymi_neocortex[5] 0.6519159 0.04785719 0.5752517 0.7302975 0.60        NA  0.7839015
+    ## 5  Ymi_neocortex[9] 0.7008994 0.04908458 0.6218532 0.7824183 0.91        NA -0.3424903
+    ## 6 Ymi_neocortex[14] 0.6554778 0.04885412 0.5774180 0.7360913 0.71        NA -0.5108256
+
+Data wrangling done--here's our code for Figure 14.4.a.
+
+``` r
+color <- viridis_pal(option = "D")(7)[4]
+
+f_b14.3 %>% 
+  ggplot(aes(x = neocortex,
+             y = Estimate.kcal)) +
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
+              fill = color, alpha = 1/3) +
+  geom_line(color = color) +
+  geom_point(data = data_list %>% as_tibble(),
+             aes(y = kcal),
+             color = "white") +
+  geom_point(data = f_b14.3_mi,
+             aes(x = estimate, y = kcal),
+             color = color, shape = 1) +
+  geom_segment(data = f_b14.3_mi, 
+               aes(x = lower, xend = upper,
+                   y = kcal, yend = kcal),
+             color = color, size = 1/4) +
+  coord_cartesian(xlim = c(.55, .8),
+                  ylim = range(data_list$kcal, na.rm = T)) +
+  labs(subtitle = "Note: For the regression line in this plot, log(mass)\nhas been set to its median, 1.244.",
+       x = "neocortex proportion",
+       y = "kcal per gram")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-40-1.png)
+
+Figure 14.4.b.
+
+``` r
+color <- viridis_pal(option = "D")(7)[4]
+
+data_list %>% 
+  as_tibble() %>% 
+  
+  ggplot(aes(x = logmass, y = neocortex)) +
+  geom_point(color = "white") +
+  geom_pointrange(data = f_b14.3_mi,
+                  aes(x = logmass, y = estimate,
+                      ymin = lower, ymax = upper),
+             color = color, size = 1/3, shape = 1) +
+  scale_x_continuous(breaks = -2:4) +
+  coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
+                  ylim = c(.55, .8)) +
+  labs(x = "log(mass)",
+       y = "neocortex proportion")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-41-1.png)
+
+### Improving the imputation model
+
+Like McElreath, we'll update the imputation line of our statistical model to:
+
+$$
+\\begin{eqnarray}
+\\text{neocortex}\_i & \\sim & \\text{Normal} (\\nu\_i, \\sigma\_\\text{neocortex}) \\\\
+\\nu\_i & = & \\alpha\_\\text{neocortex} + \\gamma\_1 \\text{logmass}\_i \\\\
+\\end{eqnarray}
+$$
+ which includes the updated priors
+
+$$
+\\begin{eqnarray}
+\\alpha\_\\text{neocortex} & \\sim & \\text{Normal} (0.5, 1) \\\\
+\\gamma\_1 & \\sim & \\text{Normal} (0, 10)
+\\end{eqnarray}
+$$
+
+As far as the brms code goes, adding `logmass` as a predictor to the `neocortex` submodel is pretty simple.
+
+``` r
+# The model
+b_model <- 
+  bf(kcal      | mi() ~ 1 + mi(neocortex) + logmass) + 
+  bf(neocortex | mi() ~ 1 + logmass) + # Here's the big difference
+  set_rescor(FALSE)
+
+# Fit the model
+b14.4 <- 
+  brm(data = data_list, 
+      family = gaussian,
+      b_model,
+      prior = c(prior(normal(0, 100), class = Intercept, resp = kcal),
+                prior(normal(0.5, 1), class = Intercept, resp = neocortex),
+                prior(normal(0, 10),  class = b),
+                prior(cauchy(0, 1),   class = sigma,     resp = kcal),
+                prior(cauchy(0, 1),   class = sigma,     resp = neocortex)),
+      iter = 1e4, chains = 2, cores = 2,
+      # There were a couple divergent transitions with the default `adapt_delta = 0.8`
+      control = list(adapt_delta = 0.9))
+```
+
+The parameter estimates:
+
+``` r
+tidy(b14.4) %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+    ##                     term estimate std.error lower upper
+    ## 1       b_kcal_Intercept    -0.88      0.49 -1.67 -0.05
+    ## 2  b_neocortex_Intercept     0.64      0.01  0.62  0.66
+    ## 3         b_kcal_logmass    -0.09      0.02 -0.13 -0.05
+    ## 4    b_neocortex_logmass     0.02      0.01  0.01  0.03
+    ## 5   bsp_kcal_mineocortex     2.46      0.77  1.15  3.67
+    ## 6             sigma_kcal     0.13      0.02  0.10  0.17
+    ## 7        sigma_neocortex     0.04      0.01  0.03  0.06
+    ## 8       Ymi_neocortex[2]     0.63      0.03  0.57  0.69
+    ## 9       Ymi_neocortex[3]     0.63      0.04  0.57  0.69
+    ## 10      Ymi_neocortex[4]     0.62      0.04  0.56  0.68
+    ## 11      Ymi_neocortex[5]     0.65      0.03  0.59  0.70
+    ## 12      Ymi_neocortex[9]     0.66      0.04  0.60  0.72
+    ## 13     Ymi_neocortex[14]     0.63      0.04  0.57  0.69
+    ## 14     Ymi_neocortex[15]     0.68      0.03  0.62  0.73
+    ## 15     Ymi_neocortex[17]     0.70      0.03  0.64  0.75
+    ## 16     Ymi_neocortex[19]     0.71      0.04  0.65  0.77
+    ## 17     Ymi_neocortex[21]     0.66      0.03  0.61  0.72
+    ## 18     Ymi_neocortex[23]     0.68      0.03  0.62  0.73
+    ## 19     Ymi_neocortex[26]     0.74      0.04  0.68  0.80
+    ## 20                  lp__    48.81      4.21 41.20 54.81
+
+Here's our pre-Figure 14.5 data wrangling.
+
+``` r
+f_b14.4 <-
+  fitted(b14.4, newdata = nd) %>%
+  as_tibble() %>%
+  bind_cols(nd)
+
+f_b14.4_mi <-
+  tidy(b14.4) %>%
+  filter(str_detect(term, "Ymi")) %>%
+  bind_cols(data_list %>%
+              as_tibble() %>%
+              filter(is.na(neocortex))
+            )
+
+f_b14.4 %>%
+  glimpse()
+```
+
+    ## Observations: 30
+    ## Variables: 10
+    ## $ Estimate.kcal       <dbl> 0.2374528, 0.2671333, 0.2968137, 0.3264942, 0.3561747, 0.3858551, 0...
+    ## $ Est.Error.kcal      <dbl> 0.13113444, 0.12207301, 0.11304632, 0.10406339, 0.09513662, 0.08628...
+    ## $ Q2.5.kcal           <dbl> -0.01427944, 0.03271199, 0.07886490, 0.12538145, 0.17282835, 0.2194...
+    ## $ Q97.5.kcal          <dbl> 0.5042009, 0.5153634, 0.5271686, 0.5386522, 0.5490984, 0.5597979, 0...
+    ## $ Estimate.neocortex  <dbl> 0.666987, 0.666987, 0.666987, 0.666987, 0.666987, 0.666987, 0.66698...
+    ## $ Est.Error.neocortex <dbl> 0.009515376, 0.009515376, 0.009515376, 0.009515376, 0.009515376, 0....
+    ## $ Q2.5.neocortex      <dbl> 0.6478449, 0.6478449, 0.6478449, 0.6478449, 0.6478449, 0.6478449, 0...
+    ## $ Q97.5.neocortex     <dbl> 0.6859796, 0.6859796, 0.6859796, 0.6859796, 0.6859796, 0.6859796, 0...
+    ## $ neocortex           <dbl> 0.5000000, 0.5120690, 0.5241379, 0.5362069, 0.5482759, 0.5603448, 0...
+    ## $ logmass             <dbl> 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.244155, 1.24415...
+
+``` r
+f_b14.4_mi %>%
+  glimpse()
+```
+
+    ## Observations: 12
+    ## Variables: 8
+    ## $ term      <chr> "Ymi_neocortex[2]", "Ymi_neocortex[3]", "Ymi_neocortex[4]", "Ymi_neocortex[5]...
+    ## $ estimate  <dbl> 0.6315315, 0.6291364, 0.6195210, 0.6460987, 0.6629953, 0.6272294, 0.6794934, ...
+    ## $ std.error <dbl> 0.03455027, 0.03566968, 0.03530195, 0.03447702, 0.03593316, 0.03521603, 0.033...
+    ## $ lower     <dbl> 0.5748736, 0.5710091, 0.5623011, 0.5900270, 0.6031384, 0.5698775, 0.6240172, ...
+    ## $ upper     <dbl> 0.6885171, 0.6873072, 0.6761746, 0.7014286, 0.7210787, 0.6855189, 0.7347319, ...
+    ## $ kcal      <dbl> 0.51, 0.46, 0.48, 0.60, 0.91, 0.71, 0.73, 0.72, 0.79, 0.48, 0.51, 0.53
+    ## $ neocortex <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+    ## $ logmass   <dbl> 0.7371641, 0.9202828, 0.4824261, 0.7839015, -0.3424903, -0.5108256, 1.2441546...
+
+For our final plots, let's play around with colors from `viridis_pal(option = "D")`. Figure 14.5.a.
+
+``` r
+color <- viridis_pal(option = "D")(7)[3]
+
+f_b14.4 %>% 
+  ggplot(aes(x = neocortex,
+             y = Estimate.kcal)) +
+  geom_ribbon(aes(ymin = Q2.5.kcal,
+                  ymax = Q97.5.kcal),
+              fill = color, alpha = 1/2) +
+  geom_line(color = color) +
+  geom_point(data = data_list %>% as_tibble(),
+             aes(y = kcal),
+             color = "white") +
+  geom_point(data = f_b14.4_mi,
+             aes(x = estimate, y = kcal),
+             color = color, shape = 1) +
+  geom_segment(data = f_b14.4_mi, 
+               aes(x = lower, xend = upper,
+                   y = kcal, yend = kcal),
+             color = color, size = 1/4) +
+  coord_cartesian(xlim = c(.55, .8),
+                  ylim = range(data_list$kcal, na.rm = T)) +
+  labs(subtitle = "Note: For the regression line in this plot, log(mass)\nhas been set to its median, 1.244.",
+       x = "neocortex proportion",
+       y = "kcal per gram")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-44-1.png)
+
+Figure 14.5.b.
+
+``` r
+color <- viridis_pal(option = "D")(7)[3]
+
+data_list %>% 
+  as_tibble() %>% 
+  
+  ggplot(aes(x = logmass, y = neocortex)) +
+  geom_point(color = "white") +
+  geom_pointrange(data = f_b14.4_mi,
+                  aes(x = logmass, y = estimate,
+                      ymin = lower, ymax = upper),
+             color = color, size = 1/3, shape = 1) +
+  scale_x_continuous(breaks = -2:4) +
+  coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
+                  ylim = c(.55, .8)) +
+  labs(x = "log(mass)",
+       y = "neocortex proportion")
+```
+
+![](_main_files/figure-markdown_github/unnamed-chunk-45-1.png)
+
+If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I’ll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html), too.
+
+Reference
+---------
+
+[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+
+Session info
+------------
+
+``` r
+sessionInfo()
+```
+
+    ## R version 3.5.1 (2018-07-02)
+    ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+    ## Running under: macOS High Sierra 10.13.6
+    ## 
+    ## Matrix products: default
+    ## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+    ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+    ## 
+    ## locale:
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ## 
+    ## attached base packages:
+    ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
+    ## 
+    ## other attached packages:
+    ##  [1] gridExtra_2.3      broom_0.4.5        rcartocolor_0.0.22 GGally_1.4.0       tidybayes_1.0.1   
+    ##  [6] fiftystater_1.0.1  bindrcpp_0.2.2     ggrepel_0.8.0      viridis_0.5.1      viridisLite_0.3.0 
+    ## [11] bayesplot_1.6.0    brms_2.5.0         Rcpp_0.12.18       rstan_2.17.3       StanHeaders_2.17.2
+    ## [16] forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6        purrr_0.2.5        readr_1.1.1       
+    ## [21] tidyr_0.8.1        tibble_1.4.2       ggplot2_3.0.0      tidyverse_1.2.1   
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
+    ##   [4] tidyselect_0.2.4          htmlwidgets_1.2           grid_3.5.1               
+    ##   [7] munsell_0.5.0             codetools_0.2-15          nleqslv_3.3.2            
+    ##  [10] DT_0.4                    miniUI_0.1.1.1            withr_2.1.2              
+    ##  [13] Brobdingnag_1.2-5         colorspace_1.3-2          highr_0.7                
+    ##  [16] knitr_1.20                rstudioapi_0.7            stats4_3.5.1             
+    ##  [19] Rttf2pt1_1.3.7            labeling_0.3              mnormt_1.5-5             
+    ##  [22] bridgesampling_0.4-0      rprojroot_1.3-2           coda_0.19-1              
+    ##  [25] xfun_0.3                  R6_2.2.2                  markdown_0.8             
+    ##  [28] HDInterval_0.2.0          reshape_0.8.7             assertthat_0.2.0         
+    ##  [31] promises_1.0.1            scales_0.5.0              beeswarm_0.2.3           
+    ##  [34] gtable_0.2.0              rlang_0.2.1               extrafontdb_1.0          
+    ##  [37] lazyeval_0.2.1            inline_0.3.15             yaml_2.1.19              
+    ##  [40] reshape2_1.4.3            abind_1.4-5               modelr_0.1.2             
+    ##  [43] threejs_0.3.1             crosstalk_1.0.0           backports_1.1.2          
+    ##  [46] httpuv_1.4.4.2            rsconnect_0.8.8           extrafont_0.17           
+    ##  [49] tools_3.5.1               bookdown_0.7              psych_1.8.4              
+    ##  [52] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
+    ##  [55] base64enc_0.1-3           zoo_1.8-2                 LaplacesDemon_16.1.1     
+    ##  [58] haven_1.1.2               magrittr_1.5              colourpicker_1.0         
+    ##  [61] mvtnorm_1.0-8             matrixStats_0.54.0        hms_0.4.2                
+    ##  [64] shinyjs_1.0               mime_0.5                  evaluate_0.10.1          
+    ##  [67] arrayhelpers_1.0-20160527 xtable_1.8-2              shinystan_2.5.0          
+    ##  [70] readxl_1.1.0              rstantools_1.5.0          compiler_3.5.1           
+    ##  [73] crayon_1.3.4              htmltools_0.3.6           later_0.7.3              
+    ##  [76] lubridate_1.7.4           MASS_7.3-50               Matrix_1.2-14            
+    ##  [79] cli_1.0.0                 bindr_0.1.1               igraph_1.2.1             
+    ##  [82] pkgconfig_2.0.1           foreign_0.8-70            xml2_1.2.0               
+    ##  [85] svUnit_0.7-12             dygraphs_1.1.1.5          vipor_0.4.5              
+    ##  [88] rvest_0.3.2               digest_0.6.15             rmarkdown_1.10           
+    ##  [91] cellranger_1.1.0          shiny_1.1.0               gtools_3.8.1             
+    ##  [94] nlme_3.1-137              jsonlite_1.5              pillar_1.2.3             
+    ##  [97] loo_2.0.0                 lattice_0.20-35           httr_1.3.1               
+    ## [100] glue_1.2.0                xts_0.10-2                shinythemes_1.1.1        
+    ## [103] stringi_1.2.3
+
+<!--chapter:end:14.Rmd-->
+~~Horoscopes~~ Insights
+=======================
+
+Placeholder
+
+Use R Notebooks
+---------------
+
+Save your model fits
+--------------------
+
+Build your models slowly
+------------------------
+
+Look at your data
+-----------------
+
+Use the `0 + intercept` syntax
+------------------------------
+
+Annotate your workflow
+----------------------
+
+Annotate your code
+------------------
+
+Break up your workflow
+----------------------
+
+Read Gelman's blog
+------------------
+
+Check out other social media, too
+---------------------------------
+
+Parting wisdom
+--------------
+
+Reference
+---------
+
+Session info
+------------
+
+<!--chapter:end:15.Rmd-->

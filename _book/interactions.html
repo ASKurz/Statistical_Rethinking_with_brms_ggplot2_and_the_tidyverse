@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:site" content="@SolomonKurz" />
+  <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  
+
+<meta name="author" content="A Solomon Kurz">
+
+
+<meta name="date" content="2018-09-26">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="overfitting-regularization-and-information-criteria.html">
+<link rel="next" href="markov-chain-monte-carlo.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
+<li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#session-info"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html"><i class="fa fa-check"></i><b>2</b> Small Worlds and Large Worlds</a><ul>
+<li class="chapter" data-level="2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#the-garden-of-forking-data"><i class="fa fa-check"></i><b>2.1</b> The garden of forking data</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#counting-possibilities."><i class="fa fa-check"></i><b>2.1.1</b> Counting possibilities.</a></li>
+<li class="chapter" data-level="2.1.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#using-prior-information."><i class="fa fa-check"></i><b>2.1.2</b> Using prior information.</a></li>
+<li class="chapter" data-level="2.1.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#from-counts-to-probability."><i class="fa fa-check"></i><b>2.1.3</b> From counts to probability.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#building-a-model"><i class="fa fa-check"></i><b>2.2</b> Building a model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#a-data-story."><i class="fa fa-check"></i><b>2.2.1</b> A data story.</a></li>
+<li class="chapter" data-level="2.2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#bayesian-updating."><i class="fa fa-check"></i><b>2.2.2</b> Bayesian updating.</a></li>
+<li class="chapter" data-level="2.2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#evaluate."><i class="fa fa-check"></i><b>2.2.3</b> Evaluate.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#components-of-the-model"><i class="fa fa-check"></i><b>2.3</b> Components of the model</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#likelihood."><i class="fa fa-check"></i><b>2.3.1</b> Likelihood.</a></li>
+<li class="chapter" data-level="2.3.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#parameters."><i class="fa fa-check"></i><b>2.3.2</b> Parameters.</a></li>
+<li class="chapter" data-level="2.3.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#prior."><i class="fa fa-check"></i><b>2.3.3</b> Prior.</a></li>
+<li class="chapter" data-level="2.3.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#posterior."><i class="fa fa-check"></i><b>2.3.4</b> Posterior.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#making-the-model-go"><i class="fa fa-check"></i><b>2.4</b> Making the model go</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#grid-approximation."><i class="fa fa-check"></i><b>2.4.1</b> Grid approximation.</a></li>
+<li class="chapter" data-level="2.4.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#quadratic-approximation."><i class="fa fa-check"></i><b>2.4.2</b> Quadratic approximation.</a></li>
+<li class="chapter" data-level="2.4.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#markov-chain-monte-carlo."><i class="fa fa-check"></i><b>2.4.3</b> Markov chain Monte Carlo.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#reference-1"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#session-info-1"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html"><i class="fa fa-check"></i><b>3</b> Sampling the Imaginary</a><ul>
+<li class="chapter" data-level="3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-from-a-grid-like-approximate-posterior"><i class="fa fa-check"></i><b>3.1</b> Sampling from a grid-like approximate posterior</a></li>
+<li class="chapter" data-level="3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-summarize"><i class="fa fa-check"></i><b>3.2</b> Sampling to summarize</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-boundaries."><i class="fa fa-check"></i><b>3.2.1</b> Intervals of defined boundaries.</a></li>
+<li class="chapter" data-level="3.2.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-mass."><i class="fa fa-check"></i><b>3.2.2</b> Intervals of defined mass.</a></li>
+<li class="chapter" data-level="3.2.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#point-estimates."><i class="fa fa-check"></i><b>3.2.3</b> Point estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-simulate-prediction"><i class="fa fa-check"></i><b>3.3</b> Sampling to simulate prediction</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#dummy-data."><i class="fa fa-check"></i><b>3.3.1</b> Dummy data.</a></li>
+<li class="chapter" data-level="3.3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#model-checking."><i class="fa fa-check"></i><b>3.3.2</b> Model checking.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#summary-lets-practice-in-brms"><i class="fa fa-check"></i><b>3.4</b> <del>Summary</del> Let’s practice in brms</a></li>
+<li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#reference-2"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#session-info-2"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>4</b> Linear Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="linear-models.html"><a href="linear-models.html#why-normal-distributions-are-normal"><i class="fa fa-check"></i><b>4.1</b> Why normal distributions are normal</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="linear-models.html"><a href="linear-models.html#normal-by-addition."><i class="fa fa-check"></i><b>4.1.1</b> Normal by addition.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="linear-models.html"><a href="linear-models.html#normal-by-multiplication."><i class="fa fa-check"></i><b>4.1.2</b> Normal by multiplication.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="linear-models.html"><a href="linear-models.html#normal-by-log-multiplication."><i class="fa fa-check"></i><b>4.1.3</b> Normal by log-multiplication.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="linear-models.html"><a href="linear-models.html#using-gaussian-distributions."><i class="fa fa-check"></i><b>4.1.4</b> Using Gaussian distributions.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="linear-models.html"><a href="linear-models.html#a-language-for-describing-models"><i class="fa fa-check"></i><b>4.2</b> A language for describing models</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="linear-models.html"><a href="linear-models.html#re-describing-the-globe-tossing-model."><i class="fa fa-check"></i><b>4.2.1</b> Re-describing the globe tossing model.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="linear-models.html"><a href="linear-models.html#a-gaussian-model-of-height"><i class="fa fa-check"></i><b>4.3</b> A Gaussian model of height</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="linear-models.html"><a href="linear-models.html#the-data."><i class="fa fa-check"></i><b>4.3.1</b> The data.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
+<li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
+<li class="chapter" data-level="4.3.4" data-path="linear-models.html"><a href="linear-models.html#sampling-from-the-posterior."><i class="fa fa-check"></i><b>4.3.4</b> Sampling from the posterior.</a></li>
+<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map()</code></del> <code>brm()</code>.</a></li>
+<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map()</code></del> <code>brm()</code> fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy"><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy</a></li>
+<li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="linear-models.html"><a href="linear-models.html#polynomial-regression"><i class="fa fa-check"></i><b>4.5</b> Polynomial regression</a></li>
+<li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#reference-3"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#session-info-3"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html"><i class="fa fa-check"></i><b>5</b> Multivariate Linear Models</a><ul>
+<li class="chapter" data-level="5.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#spurious-associations"><i class="fa fa-check"></i><b>5.1</b> Spurious associations</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multivariate-notation."><i class="fa fa-check"></i><b>5.1.1</b> Multivariate notation.</a></li>
+<li class="chapter" data-level="5.1.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#fitting-the-model.-1"><i class="fa fa-check"></i><b>5.1.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
+<li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
+<li class="chapter" data-level="5.4.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#another-approach-unique-intercepts."><i class="fa fa-check"></i><b>5.4.4</b> Another approach: Unique intercepts.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#ordinary-least-squares-and-lm"><i class="fa fa-check"></i><b>5.5</b> <del>Ordinary least squares and <code>lm()</code></del></a></li>
+<li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#reference-4"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#session-info-4"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html"><i class="fa fa-check"></i><b>6</b> Overfitting, Regularization, and Information Criteria</a><ul>
+<li class="chapter" data-level="6.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#the-problem-with-parameters"><i class="fa fa-check"></i><b>6.1</b> The problem with parameters</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#more-parameters-always-improve-fit."><i class="fa fa-check"></i><b>6.1.1</b> More parameters always improve fit.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#too-few-parameters-hurts-too."><i class="fa fa-check"></i><b>6.1.2</b> Too few parameters hurts, too.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-theory-and-model-performance"><i class="fa fa-check"></i><b>6.2</b> Information theory and model performance</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#firing-the-weatherperson."><i class="fa fa-check"></i><b>6.2.1</b> Firing the weatherperson.</a></li>
+<li class="chapter" data-level="6.2.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-and-uncertainty."><i class="fa fa-check"></i><b>6.2.2</b> Information and uncertainty.</a></li>
+<li class="chapter" data-level="6.2.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-entropy-to-accuracy."><i class="fa fa-check"></i><b>6.2.3</b> From entropy to accuracy.</a></li>
+<li class="chapter" data-level="6.2.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-divergence-to-deviance."><i class="fa fa-check"></i><b>6.2.4</b> From divergence to deviance.</a></li>
+<li class="chapter" data-level="6.2.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-deviance-to-out-of-sample."><i class="fa fa-check"></i><b>6.2.5</b> From deviance to out-of-sample.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#regularization"><i class="fa fa-check"></i><b>6.3</b> Regularization</a></li>
+<li class="chapter" data-level="6.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-criteria"><i class="fa fa-check"></i><b>6.4</b> Information criteria</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic."><i class="fa fa-check"></i><b>6.4.1</b> DIC.</a></li>
+<li class="chapter" data-level="6.4.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#waic."><i class="fa fa-check"></i><b>6.4.2</b> WAIC.</a></li>
+<li class="chapter" data-level="6.4.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic-and-waic-as-estimates-of-deviance."><i class="fa fa-check"></i><b>6.4.3</b> DIC and WAIC as estimates of deviance.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#using-information-criteria"><i class="fa fa-check"></i><b>6.5</b> Using information criteria</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-comparison."><i class="fa fa-check"></i><b>6.5.1</b> Model comparison.</a></li>
+<li class="chapter" data-level="6.5.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-averaging."><i class="fa fa-check"></i><b>6.5.2</b> Model averaging.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#summary-bonus-r2-talk"><i class="fa fa-check"></i><b>6.6</b> <del>Summary</del> Bonus: <span class="math inline">\(R^2\)</span> talk</a></li>
+<li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#reference-5"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#session-info-5"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="interactions.html"><a href="interactions.html"><i class="fa fa-check"></i><b>7</b> Interactions</a><ul>
+<li class="chapter" data-level="7.1" data-path="interactions.html"><a href="interactions.html#building-an-interaction."><i class="fa fa-check"></i><b>7.1</b> Building an interaction.</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="interactions.html"><a href="interactions.html#adding-a-dummy-variable-doesnt-work."><i class="fa fa-check"></i><b>7.1.1</b> Adding a dummy variable doesn’t work.</a></li>
+<li class="chapter" data-level="7.1.2" data-path="interactions.html"><a href="interactions.html#adding-a-linear-interaction-does-work."><i class="fa fa-check"></i><b>7.1.2</b> Adding a linear interaction does work.</a></li>
+<li class="chapter" data-level="7.1.3" data-path="interactions.html"><a href="interactions.html#plotting-the-interaction."><i class="fa fa-check"></i><b>7.1.3</b> Plotting the interaction.</a></li>
+<li class="chapter" data-level="7.1.4" data-path="interactions.html"><a href="interactions.html#interpreting-an-interaction-estimate."><i class="fa fa-check"></i><b>7.1.4</b> Interpreting an interaction estimate.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="interactions.html"><a href="interactions.html#symmetry-of-the-linear-interaction."><i class="fa fa-check"></i><b>7.2</b> Symmetry of the linear interaction.</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="interactions.html"><a href="interactions.html#buridans-interaction."><i class="fa fa-check"></i><b>7.2.1</b> Buridan’s interaction.</a></li>
+<li class="chapter" data-level="7.2.2" data-path="interactions.html"><a href="interactions.html#africa-depends-upon-ruggedness."><i class="fa fa-check"></i><b>7.2.2</b> Africa depends upon ruggedness.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="interactions.html"><a href="interactions.html#continuous-interactions"><i class="fa fa-check"></i><b>7.3</b> Continuous interactions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="interactions.html"><a href="interactions.html#the-data.-1"><i class="fa fa-check"></i><b>7.3.1</b> The data.</a></li>
+<li class="chapter" data-level="7.3.2" data-path="interactions.html"><a href="interactions.html#the-un-centered-models."><i class="fa fa-check"></i><b>7.3.2</b> The un-centered models.</a></li>
+<li class="chapter" data-level="7.3.3" data-path="interactions.html"><a href="interactions.html#center-and-re-estimate."><i class="fa fa-check"></i><b>7.3.3</b> Center and re-estimate.</a></li>
+<li class="chapter" data-level="7.3.4" data-path="interactions.html"><a href="interactions.html#plotting-implied-predictions."><i class="fa fa-check"></i><b>7.3.4</b> Plotting implied predictions.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="interactions.html"><a href="interactions.html#interactions-in-design-formulas"><i class="fa fa-check"></i><b>7.4</b> Interactions in design formulas</a></li>
+<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code></a></li>
+<li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#reference-6"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a></li>
+<li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a><ul>
+<li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
+<li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
+<li class="chapter" data-level="8.3.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#sampling-again-in-parallel."><i class="fa fa-check"></i><b>8.3.3</b> Sampling again, in parallel.</a></li>
+<li class="chapter" data-level="8.3.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#visualization."><i class="fa fa-check"></i><b>8.3.4</b> Visualization.</a></li>
+<li class="chapter" data-level="8.3.5" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#using-the-samples."><i class="fa fa-check"></i><b>8.3.5</b> Using the samples.</a></li>
+<li class="chapter" data-level="8.3.6" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#checking-the-chain."><i class="fa fa-check"></i><b>8.3.6</b> Checking the chain.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#care-and-feeding-of-your-markov-chain."><i class="fa fa-check"></i><b>8.4</b> Care and feeding of your Markov chain.</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-samples-do-you-need"><i class="fa fa-check"></i><b>8.4.1</b> How many samples do you need?</a></li>
+<li class="chapter" data-level="8.4.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-chains-do-you-need"><i class="fa fa-check"></i><b>8.4.2</b> How many chains do you need?</a></li>
+<li class="chapter" data-level="8.4.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#taming-a-wild-chain."><i class="fa fa-check"></i><b>8.4.3</b> Taming a wild chain.</a></li>
+<li class="chapter" data-level="8.4.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#non-identifiable-parameters."><i class="fa fa-check"></i><b>8.4.4</b> Non-identifiable parameters.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#reference-7"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#session-info-7"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html"><i class="fa fa-check"></i><b>9</b> Big Entropy and the Generalized Linear Model</a><ul>
+<li class="chapter" data-level="9.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#maximum-entropy"><i class="fa fa-check"></i><b>9.1</b> Maximum entropy</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#gaussian."><i class="fa fa-check"></i><b>9.1.1</b> Gaussian.</a></li>
+<li class="chapter" data-level="9.1.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#binomial."><i class="fa fa-check"></i><b>9.1.2</b> Binomial.</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
+<li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#reference-8"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="counting-and-classification.html"><a href="counting-and-classification.html"><i class="fa fa-check"></i><b>10</b> Counting and Classification</a><ul>
+<li class="chapter" data-level="10.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#binomial-regression"><i class="fa fa-check"></i><b>10.1</b> Binomial regression</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#logistic-regression-prosocial-chimpanzees."><i class="fa fa-check"></i><b>10.1.1</b> Logistic regression: Prosocial chimpanzees.</a></li>
+<li class="chapter" data-level="10.1.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-chimpanzees-again-condensed."><i class="fa fa-check"></i><b>10.1.2</b> Aggregated binomial: Chimpanzees again, condensed.</a></li>
+<li class="chapter" data-level="10.1.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-graduate-school-admissions."><i class="fa fa-check"></i><b>10.1.3</b> Aggregated binomial: Graduate school admissions.</a></li>
+<li class="chapter" data-level="10.1.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#fitting-binomial-regressions-with-glm."><i class="fa fa-check"></i><b>10.1.4</b> Fitting binomial regressions with <code>glm()</code>.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#poisson-regression"><i class="fa fa-check"></i><b>10.2</b> Poisson regression</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-oceanic-tool-complexity."><i class="fa fa-check"></i><b>10.2.1</b> Example: Oceanic tool complexity.</a></li>
+<li class="chapter" data-level="10.2.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#mcmc-islands."><i class="fa fa-check"></i><b>10.2.2</b> MCMC islands.</a></li>
+<li class="chapter" data-level="10.2.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-exposure-and-the-offset."><i class="fa fa-check"></i><b>10.2.3</b> Example: Exposure and the offset.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#other-count-regressions"><i class="fa fa-check"></i><b>10.3</b> Other count regressions</a><ul>
+<li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
+<li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#reference-9"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html"><i class="fa fa-check"></i><b>11</b> Monsters and Mixtures</a><ul>
+<li class="chapter" data-level="11.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#ordered-categorical-outcomes"><i class="fa fa-check"></i><b>11.1</b> Ordered categorical outcomes</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-moral-intuition."><i class="fa fa-check"></i><b>11.1.1</b> Example: Moral intuition.</a></li>
+<li class="chapter" data-level="11.1.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#describing-an-ordered-distribution-with-intercepts."><i class="fa fa-check"></i><b>11.1.2</b> Describing an ordered distribution with intercepts.</a></li>
+<li class="chapter" data-level="11.1.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#adding-predictor-variables."><i class="fa fa-check"></i><b>11.1.3</b> Adding predictor variables.</a></li>
+<li class="chapter" data-level="11.1.4" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#bonus-figure-11.3-alternative."><i class="fa fa-check"></i><b>11.1.4</b> Bonus: Figure 11.3 alternative.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#zero-inflated-outcomes"><i class="fa fa-check"></i><b>11.2</b> Zero-inflated outcomes</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-zero-inflated-poisson."><i class="fa fa-check"></i><b>11.2.1</b> Example: Zero-inflated Poisson.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersed-outcomes"><i class="fa fa-check"></i><b>11.3</b> Over-dispersed outcomes</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#beta-binomial."><i class="fa fa-check"></i><b>11.3.1</b> Beta-binomial.</a></li>
+<li class="chapter" data-level="11.3.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#negative-binomial-or-gamma-poisson."><i class="fa fa-check"></i><b>11.3.2</b> Negative-binomial or gamma-Poisson.</a></li>
+<li class="chapter" data-level="11.3.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersion-entropy-and-information-criteria."><i class="fa fa-check"></i><b>11.3.3</b> Over-dispersion, entropy, and information criteria.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#reference-10"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#session-info-10"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multilevel-models.html"><a href="multilevel-models.html"><i class="fa fa-check"></i><b>12</b> Multilevel Models</a><ul>
+<li class="chapter" data-level="12.1" data-path="multilevel-models.html"><a href="multilevel-models.html#example-multilevel-tadpoles"><i class="fa fa-check"></i><b>12.1</b> Example: Multilevel tadpoles</a></li>
+<li class="chapter" data-level="12.2" data-path="multilevel-models.html"><a href="multilevel-models.html#varying-effects-and-the-underfittingoverfitting-trade-off"><i class="fa fa-check"></i><b>12.2</b> Varying effects and the underfitting/overfitting trade-off</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="multilevel-models.html"><a href="multilevel-models.html#the-model.-1"><i class="fa fa-check"></i><b>12.2.1</b> The model.</a></li>
+<li class="chapter" data-level="12.2.2" data-path="multilevel-models.html"><a href="multilevel-models.html#assign-values-to-the-parameters."><i class="fa fa-check"></i><b>12.2.2</b> Assign values to the parameters.</a></li>
+<li class="chapter" data-level="12.2.3" data-path="multilevel-models.html"><a href="multilevel-models.html#sumulate-survivors."><i class="fa fa-check"></i><b>12.2.3</b> Sumulate survivors.</a></li>
+<li class="chapter" data-level="12.2.4" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-no-pooling-estimates."><i class="fa fa-check"></i><b>12.2.4</b> Compute the no-pooling estimates.</a></li>
+<li class="chapter" data-level="12.2.5" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-partial-pooling-estimates."><i class="fa fa-check"></i><b>12.2.5</b> Compute the partial-pooling estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
+<li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
+<li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
+<li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html"><i class="fa fa-check"></i><b>13</b> Adventures in Covariance</a><ul>
+<li class="chapter" data-level="13.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-slopes-by-construction"><i class="fa fa-check"></i><b>13.1</b> Varying slopes by construction</a><ul>
+<li class="chapter" data-level="13.1.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-the-population."><i class="fa fa-check"></i><b>13.1.1</b> Simulate the population.</a></li>
+<li class="chapter" data-level="13.1.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-observations."><i class="fa fa-check"></i><b>13.1.2</b> Simulate observations.</a></li>
+<li class="chapter" data-level="13.1.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#the-varying-slopes-model."><i class="fa fa-check"></i><b>13.1.3</b> The varying slopes model.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-admission-decisions-and-gender"><i class="fa fa-check"></i><b>13.2</b> Example: Admission decisions and gender</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-intercepts."><i class="fa fa-check"></i><b>13.2.1</b> Varying intercepts.</a></li>
+<li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
+<li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
+<li class="chapter" data-level="13.2.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#model-comparison.-1"><i class="fa fa-check"></i><b>13.2.4</b> Model comparison.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
+<li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a><ul>
+<li class="chapter" data-level="13.4.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-spatial-autocorrelation-in-oceanic-tools."><i class="fa fa-check"></i><b>13.4.1</b> Example: Spatial autocorrelation in Oceanic tools.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#summary-bonus-another-berkley-admissions-data-like-example."><i class="fa fa-check"></i><b>13.5</b> <del>Summary</del> Bonus: Another Berkley-admissions-data-like example.</a></li>
+<li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#reference-12"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#session-info-12"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html"><i class="fa fa-check"></i><b>14</b> Missing Data and Other Opportunities</a><ul>
+<li class="chapter" data-level="14.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#measurement-error"><i class="fa fa-check"></i><b>14.1</b> Measurement error</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-the-outcome."><i class="fa fa-check"></i><b>14.1.1</b> Error on the outcome.</a></li>
+<li class="chapter" data-level="14.1.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-both-outcome-and-predictor."><i class="fa fa-check"></i><b>14.1.2</b> Error on both outcome and predictor.</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#missing-data"><i class="fa fa-check"></i><b>14.2</b> Missing data</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html"><i class="fa fa-check"></i><b>15</b> <del>Horoscopes</del> Insights</a><ul>
+<li class="chapter" data-level="15.1" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-r-notebooks"><i class="fa fa-check"></i><b>15.1</b> Use R Notebooks</a></li>
+<li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
+<li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
+<li class="chapter" data-level="15.4" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#look-at-your-data"><i class="fa fa-check"></i><b>15.4</b> Look at your data</a></li>
+<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + intercept</code> syntax</a></li>
+<li class="chapter" data-level="15.6" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-workflow"><i class="fa fa-check"></i><b>15.6</b> Annotate your workflow</a></li>
+<li class="chapter" data-level="15.7" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-code"><i class="fa fa-check"></i><b>15.7</b> Annotate your code</a></li>
+<li class="chapter" data-level="15.8" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#break-up-your-workflow"><i class="fa fa-check"></i><b>15.8</b> Break up your workflow</a></li>
+<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.9</b> Read Gelman’s blog</a></li>
+<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.10</b> Check out other social media, too</a></li>
+<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.11</b> Parting wisdom</a></li>
+<li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#reference-14"><i class="fa fa-check"></i>Reference</a></li>
+<li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#session-info-14"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Statistical Rethinking</em> with brms, ggplot2, and the tidyverse</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="interactions" class="section level1">
+<h1><span class="header-section-number">7</span> Interactions</h1>
+<blockquote>
+<p>Every model so far in [McElreath’s text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?… To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. (p. 210)</p>
+</blockquote>
+<div id="building-an-interaction." class="section level2">
+<h2><span class="header-section-number">7.1</span> Building an interaction.</h2>
+<p>“Africa is special” (p. 211). Let’s load the <code>rugged</code> data to see one of the reasons why.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
+<span class="kw">data</span>(rugged)
+d &lt;-<span class="st"> </span>rugged</code></pre></div>
+<p>And here we switch out rethinking for brms.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
+<span class="kw">library</span>(brms)
+<span class="kw">rm</span>(rugged)</code></pre></div>
+<p>We’ll continue to use tidyverse-style syntax to wrangle the data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+
+<span class="co"># make the log version of criterion</span>
+d &lt;-<span class="st"> </span>
+<span class="st">  </span>d <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">log_gdp =</span> <span class="kw">log</span>(rgdppc_<span class="dv">2000</span>))
+
+<span class="co"># extract countries with GDP data</span>
+dd &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">complete.cases</span>(rgdppc_<span class="dv">2000</span>))
+
+<span class="co"># split countries into Africa and not-Africa</span>
+d.A1 &lt;-
+<span class="st">  </span>dd <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)
+
+d.A0 &lt;-
+<span class="st">  </span>dd <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</code></pre></div>
+<p>The first two models predicting <code>log_gdp</code> are univariable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">1</span> &lt;-
+<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d.A1, <span class="dt">family =</span> gaussian,
+      log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged,
+      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">8</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
+                <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)
+
+b7.<span class="dv">2</span> &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">1</span>, 
+         <span class="dt">newdata =</span> d.A0)</code></pre></div>
+<p>In the text, McElreath more or less dared us to figure out how to make Figure 7.2. Here’s the brms-relevant data wrangling.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">rugged =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="fl">6.3</span>, <span class="dt">length.out =</span> <span class="dv">30</span>))
+
+fitd_b7.<span class="dv">1</span> &lt;-
+<span class="st">  </span><span class="kw">fitted</span>(b7.<span class="dv">1</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(nd)
+
+fitd_b7.<span class="dv">2</span> &lt;-
+<span class="st">  </span><span class="kw">fitted</span>(b7.<span class="dv">2</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(nd)
+
+<span class="co"># Here we&#39;ll put both in a single data object, with `fitd_b7.1` stacked atop `fitd_b7.2`</span>
+fitd_both &lt;-
+<span class="st">  </span><span class="kw">full_join</span>(fitd_b7.<span class="dv">1</span>, fitd_b7.<span class="dv">2</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>), <span class="dt">each =</span> <span class="dv">30</span>))</code></pre></div>
+<p>For this chapter, we’ll take our plot theme from the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>, which you can learn more about <a href="https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html">here</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;ggthemes&quot;, dependencies = T)</span>
+<span class="kw">library</span>(ggthemes)</code></pre></div>
+<p>Here’s the plot code for our version of Figure 7.2.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">ifelse</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rugged)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> fitd_both,
+              <span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, 
+                  <span class="dt">ymax =</span> Q97.<span class="dv">5</span>,
+                  <span class="dt">fill =</span> cont_africa),
+              <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> fitd_both,
+              <span class="kw">aes</span>(<span class="dt">y =</span> Estimate, 
+                  <span class="dt">color =</span> cont_africa)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> log_gdp, <span class="dt">color =</span> cont_africa),
+             <span class="dt">size =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_colour_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Terrain Ruggedness Index&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;log GDP from year 2000&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>cont_africa)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-387-1.png" width="528" /></p>
+<div id="adding-a-dummy-variable-doesnt-work." class="section level3">
+<h3><span class="header-section-number">7.1.1</span> Adding a dummy variable doesn’t work.</h3>
+<p>Here’s our model with all the countries, but without the <code>cont_africa</code> dummy.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">3</span> &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">1</span>, 
+         <span class="dt">newdata =</span> dd)</code></pre></div>
+<p>Now we’ll add the dummy.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">4</span> &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">3</span>, 
+         <span class="dt">newdata =</span> dd,
+         <span class="dt">formula =</span> log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged <span class="op">+</span><span class="st"> </span>cont_africa)</code></pre></div>
+<p>And here we can compare the two models with information criteria.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b7.<span class="dv">3</span>, b7.<span class="dv">4</span>)</code></pre></div>
+<pre><code>##               WAIC    SE
+## b7.3        539.48 12.99
+## b7.4        475.94 14.83
+## b7.3 - b7.4  63.54 14.61</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">loo</span>(b7.<span class="dv">3</span>, b7.<span class="dv">4</span>)</code></pre></div>
+<pre><code>##              LOOIC    SE
+## b7.3        539.49 12.99
+## b7.4        475.97 14.84
+## b7.3 - b7.4  63.52 14.61</code></pre>
+<p>Happily, the WAIC and the LOO are in agreement. The model with the dummy, <code>b7.4</code>, fit the data much better. Here are the WAIC model weights.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b7.<span class="dv">3</span>, b7.<span class="dv">4</span>,
+              <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<pre><code>## b7.3 b7.4 
+##    0    1</code></pre>
+<p>As in the text, almost all the weight goes to the multivariable model, <code>b7.4</code>. Before we can plot that model, we need to wrangle a bit.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">rugged      =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="fl">6.3</span>, <span class="dt">length.out =</span> <span class="dv">30</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">           </span><span class="kw">rep</span>(., <span class="dt">times =</span> <span class="dv">2</span>),
+         <span class="dt">cont_africa =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> <span class="dv">30</span>))
+
+fitd_b7.<span class="dv">4</span> &lt;-
+<span class="st">  </span><span class="kw">fitted</span>(b7.<span class="dv">4</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">ifelse</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>))</code></pre></div>
+<p>Behold our Figure 7.3.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">ifelse</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rugged)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">4</span>,
+              <span class="kw">aes</span>(<span class="dt">ymin  =</span> Q2.<span class="dv">5</span>, 
+                  <span class="dt">ymax  =</span> Q97.<span class="dv">5</span>,
+                  <span class="dt">fill  =</span> cont_africa,
+                  <span class="dt">group =</span> cont_africa),
+              <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">4</span>,
+              <span class="kw">aes</span>(<span class="dt">y     =</span> Estimate, 
+                  <span class="dt">color =</span> cont_africa,
+                  <span class="dt">group =</span> cont_africa)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> log_gdp, <span class="dt">color =</span> cont_africa),
+             <span class="dt">size =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_colour_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Terrain Ruggedness Index&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;log GDP from year 2000&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">69</span>, .<span class="dv">94</span>),
+        <span class="dt">legend.title     =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-391-1.png" width="288" /></p>
+</div>
+<div id="adding-a-linear-interaction-does-work." class="section level3">
+<h3><span class="header-section-number">7.1.2</span> Adding a linear interaction does work.</h3>
+<p>Yes, it sure does. But before we fit, here’s the equation:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\text{log_gdp}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
+\mu_i &amp; = &amp; \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i &amp; = &amp; \beta_1 + \beta_3 \text{cont_africa}_i
+\end{eqnarray}
+\]</span></p>
+<p>Fit the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">5</span> &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">4</span>,
+         <span class="dt">formula =</span> log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged<span class="op">*</span>cont_africa)</code></pre></div>
+<p>For kicks, we’ll just use the LOO to compare the last three models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">loo</span>(b7.<span class="dv">3</span>, b7.<span class="dv">4</span>, b7.<span class="dv">5</span>,
+    <span class="dt">cores =</span> <span class="dv">4</span>)  <span class="co"># We can speed things up using the `cores` argument</span></code></pre></div>
+<pre><code>##              LOOIC    SE
+## b7.3        539.49 12.99
+## b7.4        475.97 14.84
+## b7.5        469.30 14.57
+## b7.3 - b7.4  63.52 14.61
+## b7.3 - b7.5  70.20 14.68
+## b7.4 - b7.5   6.68  5.86</code></pre>
+<p>And we can weigh the models based on the LOO rather than the WAIC, too.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b7.<span class="dv">3</span>, b7.<span class="dv">4</span>, b7.<span class="dv">5</span>,
+              <span class="dt">weights =</span> <span class="st">&quot;loo&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<pre><code>##  b7.3  b7.4  b7.5 
+## 0.000 0.034 0.966</code></pre>
+<div id="overthinking-conventional-form-of-interaction." class="section level4">
+<h4><span class="header-section-number">7.1.2.1</span> Overthinking: Conventional form of interaction.</h4>
+<p>The conventional equation for the interaction model might look like:</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\text{log_gdp}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
+\mu_i &amp; = &amp; \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i
+\end{eqnarray}
+\]</span></p>
+<p>Instead of the <code>y ~ 1 + x1*x2</code> approach, which will work fine with <code>brm()</code>, you can use this more explicit syntax.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.5b &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">5</span>,
+         <span class="dt">formula =</span> log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged <span class="op">+</span><span class="st"> </span>cont_africa <span class="op">+</span><span class="st"> </span>rugged<span class="op">:</span>cont_africa)</code></pre></div>
+<p>From here on, I will default to this style of syntax for interactions.</p>
+<p>Since this is the same model, it yields the same information criteria estimates within simulation error.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b7.<span class="dv">5</span>, b7.5b)</code></pre></div>
+<pre><code>##                WAIC    SE
+## b7.5         469.15 14.55
+## b7.5b        469.28 14.53
+## b7.5 - b7.5b  -0.13  0.14</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">loo</span>(b7.<span class="dv">5</span>, b7.5b)</code></pre></div>
+<pre><code>##               LOOIC    SE
+## b7.5         469.30 14.57
+## b7.5b        469.42 14.55
+## b7.5 - b7.5b  -0.12  0.14</code></pre>
+</div>
+</div>
+<div id="plotting-the-interaction." class="section level3">
+<h3><span class="header-section-number">7.1.3</span> Plotting the interaction.</h3>
+<p>Here’s our prep work for the figure.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fitd_b7.<span class="dv">5</span> &lt;-
+<span class="st">  </span><span class="kw">fitted</span>(b7.<span class="dv">5</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># we can use the same `nd` data from last time</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">ifelse</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>))</code></pre></div>
+<p>And here’s the code for our version of Figure 7.4.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">ifelse</span>(cont_africa <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, <span class="st">&quot;Africa&quot;</span>, <span class="st">&quot;not Africa&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rugged)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">5</span>,
+              <span class="kw">aes</span>(<span class="dt">ymin  =</span> Q2.<span class="dv">5</span>, 
+                  <span class="dt">ymax  =</span> Q97.<span class="dv">5</span>,
+                  <span class="dt">fill  =</span> cont_africa,
+                  <span class="dt">group =</span> cont_africa),
+              <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">5</span>,
+              <span class="kw">aes</span>(<span class="dt">y     =</span> Estimate, 
+                  <span class="dt">color =</span> cont_africa,
+                  <span class="dt">group =</span> cont_africa)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> log_gdp, <span class="dt">color =</span> cont_africa),
+             <span class="dt">size =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_colour_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Terrain Ruggedness Index&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;log GDP from year 2000&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>cont_africa)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-395-1.png" width="528" /></p>
+</div>
+<div id="interpreting-an-interaction-estimate." class="section level3">
+<h3><span class="header-section-number">7.1.4</span> Interpreting an interaction estimate.</h3>
+<p>Interpreting interaction estimates is tricky. It’s trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers along. Plotting implied predictions does far more for both our own understanding and for our audience’s.</p>
+<div id="parameters-change-meaning." class="section level4">
+<h4><span class="header-section-number">7.1.4.1</span> Parameters change meaning.</h4>
+<blockquote>
+<p>In a simple linear regression with no interactions, each coefficient says how much the average outcome, <span class="math inline">\(\mu\)</span>, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there’s no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable’s influence.</p>
+<p>Interaction models ruin this paradise. (p. 220)</p>
+</blockquote>
+<p>Return the parameter estimates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b7.<span class="dv">5</span>)</code></pre></div>
+<pre><code>##                          Estimate  Est.Error          Q2.5         Q97.5
+## b_Intercept             9.1823382 0.13894772    8.90659529    9.45228293
+## b_rugged               -0.1832468 0.07735517   -0.33161340   -0.03199895
+## b_cont_africa          -1.8407667 0.22221419   -2.25894413   -1.40785674
+## b_rugged:cont_africa    0.3433508 0.13148168    0.08390145    0.59336056
+## sigma                   0.9514394 0.05071302    0.85997921    1.05643893
+## lp__                 -244.3853233 1.53536617 -248.18162453 -242.34387796</code></pre>
+<p>“Since <span class="math inline">\(\gamma\)</span> (gamma) doesn’t appear in this table—it wasn’t estimated—we have to compute it ourselves” (p. 221). Like in the text, we’ll do so first by working with the point estimates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within Africa</span>
+<span class="kw">fixef</span>(b7.<span class="dv">5</span>)[<span class="dv">2</span>, <span class="dv">1</span>] <span class="op">+</span><span class="st"> </span><span class="kw">fixef</span>(b7.<span class="dv">5</span>)[<span class="dv">4</span>, <span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="dv">1</span></code></pre></div>
+<pre><code>## [1] 0.160104</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># outside Africa</span>
+<span class="kw">fixef</span>(b7.<span class="dv">5</span>)[<span class="dv">2</span>, <span class="dv">1</span>] <span class="op">+</span><span class="st"> </span><span class="kw">fixef</span>(b7.<span class="dv">5</span>)[<span class="dv">4</span>, <span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="dv">0</span></code></pre></div>
+<pre><code>## [1] -0.1832468</code></pre>
+</div>
+<div id="incorporating-uncertainty." class="section level4">
+<h4><span class="header-section-number">7.1.4.2</span> Incorporating uncertainty.</h4>
+<blockquote>
+<p>To get some idea of the uncertainty around those <span class="math inline">\(\gamma\)</span> values, we’ll need to use the whole posterior. Since <span class="math inline">\(\gamma\)</span> depends upon parameters, and those parameters have a posterior distribution, <span class="math inline">\(\gamma\)</span> must also have a posterior distribution. Read the previous sentence again a few times. It’s one of the most important concepts in processing Bayesian model fits. Anything calculated using parameters has a distribution. (p. 212)</p>
+</blockquote>
+<p>Like McElreath, we’ll avoid integral calcus in favor of working with the <code>posterior_samples()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b7.<span class="dv">5</span>) 
+
+post <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">transmute</span>(<span class="dt">gamma_Africa    =</span> b_rugged <span class="op">+</span><span class="st"> `</span><span class="dt">b_rugged:cont_africa</span><span class="st">`</span>,
+            <span class="dt">gamma_notAfrica =</span> b_rugged) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(key, value) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(value))</code></pre></div>
+<pre><code>## # A tibble: 2 x 2
+##   key               mean
+##   &lt;chr&gt;            &lt;dbl&gt;
+## 1 gamma_Africa     0.160
+## 2 gamma_notAfrica -0.183</code></pre>
+<p>And here is our version of Figure 7.5.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">transmute</span>(<span class="dt">gamma_Africa    =</span> b_rugged <span class="op">+</span><span class="st"> `</span><span class="dt">b_rugged:cont_africa</span><span class="st">`</span>,
+            <span class="dt">gamma_notAfrica =</span> b_rugged) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(key, value) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">group =</span> key, <span class="dt">color =</span> key, <span class="dt">fill =</span> key)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_colour_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="kw">expression</span>(gamma), <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Terraine Ruggedness slopes&quot;</span>,
+          <span class="dt">subtitle =</span> <span class="st">&quot;Blue = African nations, Green = others&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-399-1.png" width="288" /></p>
+<p>What proportion of these differences is below zero?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">gamma_Africa    =</span> b_rugged <span class="op">+</span><span class="st"> `</span><span class="dt">b_rugged:cont_africa</span><span class="st">`</span>,
+         <span class="dt">gamma_notAfrica =</span> b_rugged) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">diff            =</span> gamma_Africa <span class="op">-</span>gamma_notAfrica) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Proportion_of_the_difference_below_0 =</span> <span class="kw">sum</span>(diff <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>) <span class="op">/</span><span class="st"> </span><span class="kw">length</span>(diff))</code></pre></div>
+<pre><code>##   Proportion_of_the_difference_below_0
+## 1                              0.00675</code></pre>
+</div>
+</div>
+</div>
+<div id="symmetry-of-the-linear-interaction." class="section level2">
+<h2><span class="header-section-number">7.2</span> Symmetry of the linear interaction.</h2>
+<blockquote>
+<p>Consider for example the GDP and terrain ruggedness problem. The interaction there has two equally valid phrasings.</p>
+<ol style="list-style-type: decimal">
+<li>How much does the influence of ruggedness (on GDP) depend upon whether the nation is in Africa?</li>
+<li>How much does the influence of being in Africa (on GDP) depend upon ruggedness?</li>
+</ol>
+<p>While these two possibilities sound different to most humans, your golem thinks they are identical. (p. 223)</p>
+</blockquote>
+<div id="buridans-interaction." class="section level3">
+<h3><span class="header-section-number">7.2.1</span> Buridan’s interaction.</h3>
+<p>Recall the original equation.</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\text{log_gdp}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
+\mu_i &amp; = &amp; \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i &amp; = &amp; \beta_1 + \beta_3 \text{cont_africa}_i
+\end{eqnarray}
+\]</span></p>
+<p>Next McElreath replaced <span class="math inline">\(\gamma_i\)</span> with the expression for <span class="math inline">\(\mu_i\)</span>.</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\mu_i &amp; = &amp; \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+&amp; = &amp; \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i
+\end{eqnarray}
+\]</span></p>
+<p>And new we’ll factor together the terms containing <span class="math inline">\(\text{cont_africa}_i\)</span>.</p>
+<p><span class="math display">\[\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont_africa}_i\]</span></p>
+<p>And just as in the text, our <span class="math inline">\(G\)</span> term looks a lot like the original <span class="math inline">\(\gamma_i\)</span> term.</p>
+</div>
+<div id="africa-depends-upon-ruggedness." class="section level3">
+<h3><span class="header-section-number">7.2.2</span> Africa depends upon ruggedness.</h3>
+<p>Here is our version of McElreath’s Figure 7.6.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new predictor data for `fitted()`</span>
+nd &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">rugged      =</span> <span class="kw">rep</span>(<span class="kw">range</span>(dd<span class="op">$</span>rugged), <span class="dt">times =</span> <span class="dv">2</span>),
+         <span class="dt">cont_africa =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>,              <span class="dt">each =</span> <span class="dv">2</span>))
+
+<span class="co"># `fitted()`</span>
+fitd_b7.<span class="dv">5</span> &lt;-
+<span class="st">  </span><span class="kw">fitted</span>(b7.<span class="dv">5</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(nd) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ox =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">0.05</span>), <span class="dt">times =</span> <span class="dv">2</span>))
+
+<span class="co"># augment the `dd` data a bit</span>
+dd <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ox =</span> <span class="kw">ifelse</span>(rugged <span class="op">&gt;</span><span class="st"> </span><span class="kw">median</span>(rugged), <span class="fl">0.05</span>, <span class="op">-</span><span class="fl">0.05</span>),
+         <span class="dt">cont_africa =</span> cont_africa <span class="op">+</span><span class="st"> </span>ox) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(cont_africa, <span class="kw">everything</span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="co"># plot</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> cont_africa)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">5</span>,
+              <span class="kw">aes</span>(<span class="dt">ymin  =</span> Q2.<span class="dv">5</span>, 
+                  <span class="dt">ymax  =</span> Q97.<span class="dv">5</span>,
+                  <span class="dt">fill  =</span> <span class="kw">factor</span>(ox),
+                  <span class="dt">group =</span> <span class="kw">factor</span>(ox)),
+              <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> fitd_b7.<span class="dv">5</span>,
+              <span class="kw">aes</span>(<span class="dt">y        =</span> Estimate,
+                  <span class="dt">color    =</span> <span class="kw">factor</span>(ox),
+                  <span class="dt">group    =</span> <span class="kw">factor</span>(ox),
+                  <span class="dt">linetype =</span> <span class="kw">factor</span>(ox))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> log_gdp, <span class="dt">color =</span> <span class="kw">factor</span>(ox)),
+             <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_colour_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Continent&quot;</span>, <span class="dt">breaks =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, 
+                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;other&quot;</span>, <span class="st">&quot;Africa&quot;</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span>.<span class="dv">2</span>, <span class="fl">1.2</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;log GDP from year 2000&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-401-1.png" width="288" /></p>
+</div>
+</div>
+<div id="continuous-interactions" class="section level2">
+<h2><span class="header-section-number">7.3</span> Continuous interactions</h2>
+<p>Though continuous interactions can be more challenging to interpret, they’re just as easy to fit as interactions including dummies.</p>
+<div id="the-data.-1" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> The data.</h3>
+<p>Look at the <code>tulips</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
+<span class="kw">data</span>(tulips)
+d &lt;-<span class="st"> </span>tulips
+<span class="kw">str</span>(d)</code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    27 obs. of  4 variables:
+##  $ bed   : Factor w/ 3 levels &quot;a&quot;,&quot;b&quot;,&quot;c&quot;: 1 1 1 1 1 1 1 1 1 2 ...
+##  $ water : int  1 1 1 2 2 2 3 3 3 1 ...
+##  $ shade : int  1 2 3 1 2 3 1 2 3 1 ...
+##  $ blooms: num  0 0 111 183.5 59.2 ...</code></pre>
+</div>
+<div id="the-un-centered-models." class="section level3">
+<h3><span class="header-section-number">7.3.2</span> The un-centered models.</h3>
+<p>The likelihoods for the next two models are</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\text{blooms}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
+\mu_i &amp; = &amp; \alpha + \beta_1 \text{water}_i + \beta_2 \text{shade}_i \\
+\alpha &amp; \sim &amp; \text{Normal} (0, 100) \\
+\beta_1 &amp; \sim &amp; \text{Normal} (0, 100) \\
+\beta_2 &amp; \sim &amp; \text{Normal} (0, 100) \\
+\sigma &amp; \sim &amp; \text{Uniform} (0, 100) \\
+\end{eqnarray}
+\]</span> and</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\text{blooms}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
+\mu_i &amp; = &amp; \alpha + \beta_1 \text{water} + \beta_2 \text{shade}_i + \beta_3 \text{water}_i \times \text{shade}_i\\
+\alpha &amp; \sim &amp; \text{Normal} (0, 100) \\
+\beta_1 &amp; \sim &amp; \text{Normal} (0, 100) \\
+\beta_2 &amp; \sim &amp; \text{Normal} (0, 100) \\
+\beta_3 &amp; \sim &amp; \text{Normal} (0, 100) \\
+\sigma &amp; \sim &amp; \text{Uniform} (0, 100) \\
+\end{eqnarray}
+\]</span></p>
+<p>Load brms.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
+<span class="kw">library</span>(brms)
+<span class="kw">rm</span>(tulips)</code></pre></div>
+<p>Here we continue with McElreath’s very-flat priors for the multivariable and interaction models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">6</span> &lt;-
+<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
+      blooms <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>water <span class="op">+</span><span class="st"> </span>shade,
+      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> b),
+                <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> sigma)),
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">cores =</span> <span class="dv">4</span>, <span class="dt">chains =</span> <span class="dv">4</span>)</code></pre></div>
+<pre><code>## Warning: There were 44 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<pre><code>## Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">7</span> &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">6</span>, 
+         <span class="dt">formula =</span> blooms <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>water <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>water<span class="op">:</span>shade)</code></pre></div>
+<pre><code>## Warning: There were 6 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+
+## Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+<p>Much like in the text, these models yielded divergent transitions. Here, we’ll try to combat them by following Stan’s advice and “[increase] adapt_delta above 0.8.” While we’re at it, we’ll put better priors on <span class="math inline">\(\sigma\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">6</span> &lt;-
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">6</span>,
+         <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
+                   <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> b),
+                   <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
+         <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.9</span>))
+
+b7.<span class="dv">7</span> &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">6</span>, 
+         <span class="dt">formula =</span> blooms <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>water <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>water<span class="op">:</span>shade)</code></pre></div>
+<p>Increasing <code>adapt_delta</code> did the trick. Instead of <code>coeftab()</code>, we can also use <code>posterior_summary()</code>, which gets us most of the way there.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b7.<span class="dv">6</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>##             Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept    60.98     41.53  -22.32  140.61
+## b_water        74.12     14.22   46.06  101.96
+## b_shade       -40.98     14.70  -69.54  -11.86
+## sigma          61.58      9.07   46.80   81.61
+## lp__         -169.76      1.49 -173.40 -167.86</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b7.<span class="dv">7</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>##               Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept    -106.32     64.25 -224.44   26.34
+## b_water         159.54     29.81   96.06  214.18
+## b_shade          43.50     29.84  -17.30   99.20
+## b_water:shade   -42.98     13.71  -68.31  -14.15
+## sigma            49.85      7.57   37.48   66.87
+## lp__           -170.69      1.70 -174.88 -168.39</code></pre>
+<p>This is an example where HMC yielded point estimates notably different from MAP. However, look at the size of those posterior standard deviations (i.e., ‘Est.Error’ column)! The MAP estimates are well within a fraction of those <span class="math inline">\(SD\)</span>s.</p>
+<p>Anyway, let’s look at WAIC.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b7.<span class="dv">6</span>, b7.<span class="dv">7</span>)</code></pre></div>
+<pre><code>##               WAIC   SE
+## b7.6        304.02 7.63
+## b7.7        293.84 8.06
+## b7.6 - b7.7  10.18 5.31</code></pre>
+<p>Why not compute the WAIC weights?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b7.<span class="dv">6</span>, b7.<span class="dv">7</span>, <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>)</code></pre></div>
+<pre><code>##        b7.6        b7.7 
+## 0.006122731 0.993877269</code></pre>
+<p>As in the text, almost all the weight went to the interaction model, <code>b7.7</code>.</p>
+</div>
+<div id="center-and-re-estimate." class="section level3">
+<h3><span class="header-section-number">7.3.3</span> Center and re-estimate.</h3>
+<p>Here’s a tidyverse way to center the predictors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
+<span class="st">  </span>d <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">shade_c =</span> shade <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(shade),
+         <span class="dt">water_c =</span> water <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(water))</code></pre></div>
+<p>Now refit the models with our shiny new centered predictors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">8</span> &lt;-
+<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
+      blooms <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>water_c <span class="op">+</span><span class="st"> </span>shade_c,
+      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">130</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> b),
+                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.9</span>))
+
+b7.<span class="dv">9</span> &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">update</span>(b7.<span class="dv">8</span>, 
+         <span class="dt">formula =</span> blooms <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>water_c <span class="op">+</span><span class="st"> </span>shade_c <span class="op">+</span><span class="st"> </span>water_c<span class="op">:</span>shade_c)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b7.<span class="dv">8</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>##             Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept   128.97     11.65  106.14  152.10
+## b_water_c      74.14     14.00   46.46  101.42
+## b_shade_c     -40.86     14.46  -69.78  -12.13
+## sigma          61.27      8.65   47.27   81.31
+## lp__         -168.85      1.45 -172.60 -167.03</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b7.<span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>##                   Estimate Est.Error    Q2.5   Q97.5
+## b_Intercept         128.87      9.34  110.17  146.90
+## b_water_c            74.71     11.55   51.74   97.84
+## b_shade_c           -41.01     11.88  -63.99  -17.91
+## b_water_c:shade_c   -51.77     14.45  -80.74  -23.92
+## sigma                49.65      7.48   37.57   66.62
+## lp__               -168.56      1.70 -172.72 -166.30</code></pre>
+<p>And okay fine, if you really want a <code>coeftab()</code>-like summary, here’s a grotesque way to do it.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First, we reformat `b7.8`</span>
+<span class="kw">posterior_summary</span>(b7.<span class="dv">8</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rownames_to_column</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># Now we bind to it the rows of `b7.9`</span>
+<span class="st">  </span><span class="kw">bind_rows</span>(
+    <span class="kw">posterior_summary</span>(b7.<span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">      </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span>
+<span class="st">      </span><span class="kw">rownames_to_column</span>()
+  ) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># Miscellaneous wrangling</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">model =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;b7.8&quot;</span>, <span class="dt">times =</span> <span class="dv">5</span>),
+                   <span class="kw">rep</span>(<span class="st">&quot;b7.9&quot;</span>, <span class="dt">times =</span> <span class="dv">6</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(rowname, Estimate, model) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(rowname <span class="op">!=</span><span class="st"> &quot;lp__&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">spread</span>(<span class="dt">key =</span> model, <span class="dt">value =</span> Estimate) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="dt">parameter =</span> rowname) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate_if</span>(is.double, round, <span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>##           parameter   b7.8   b7.9
+## 1       b_Intercept 128.97 128.87
+## 2         b_shade_c -40.86 -41.01
+## 3         b_water_c  74.14  74.71
+## 4 b_water_c:shade_c     NA -51.77
+## 5             sigma  61.27  49.65</code></pre>
+<p>Anyway, centering helped a lot. Now, not only do the results in the text match up better than those from Stan, but the ‘Est.Error’ values are uniformly smaller.</p>
+<div id="estimation-worked-better." class="section level4">
+<h4><span class="header-section-number">7.3.3.1</span> Estimation worked better.</h4>
+<p>Nothing to add, here.</p>
+</div>
+<div id="estimates-changed-less-across-models." class="section level4">
+<h4><span class="header-section-number">7.3.3.2</span> Estimates changed less across models.</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">fixef</span>(b7.<span class="dv">7</span>)
+k[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>k[<span class="dv">2</span>]<span class="op">*</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>k[<span class="dv">3</span>]<span class="op">*</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>k[<span class="dv">4</span>]<span class="op">*</span><span class="dv">2</span><span class="op">*</span><span class="dv">2</span></code></pre></div>
+<pre><code>## [1] 127.8318</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">fixef</span>(b7.<span class="dv">9</span>)
+k[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>k[<span class="dv">2</span>]<span class="op">*</span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>k[<span class="dv">3</span>]<span class="op">*</span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>k[<span class="dv">4</span>]<span class="op">*</span><span class="dv">0</span><span class="op">*</span><span class="dv">0</span></code></pre></div>
+<pre><code>## [1] 128.8718</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b7.<span class="dv">9</span>)</code></pre></div>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: blooms ~ water_c + shade_c + water_c:shade_c 
+##    Data: d (Number of observations: 27) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Population-Level Effects: 
+##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept         128.87      9.34   110.17   146.90       4000 1.00
+## water_c            74.71     11.55    51.74    97.84       4000 1.00
+## shade_c           -41.01     11.88   -63.99   -17.91       4000 1.00
+## water_c:shade_c   -51.77     14.45   -80.74   -23.92       4000 1.00
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## sigma    49.65      7.48    37.57    66.62       4000 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div id="plotting-implied-predictions." class="section level3">
+<h3><span class="header-section-number">7.3.4</span> Plotting implied predictions.</h3>
+<p>Now we’re ready for the bottom row of Figure 7.7. Here’s our variation on McElreath’s tryptych loop code, adjusted for brms and ggplot2.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># loop over values of water.c and plot predictions</span>
+shade_seq &lt;-<span class="st"> </span><span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>
+
+<span class="cf">for</span>(w <span class="cf">in</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>){
+  <span class="co"># defining the subset of the original data</span>
+  dt &lt;-<span class="st"> </span>d[d<span class="op">$</span>water_c <span class="op">==</span><span class="st"> </span>w, ]
+  <span class="co"># defining our new data</span>
+  nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">water_c =</span> w, <span class="dt">shade_c =</span> shade_seq)
+  <span class="co"># using our sampling skills, like before</span>
+  fitd_<span class="fl">7.9</span> &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">fitted</span>(b7.<span class="dv">9</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">bind_cols</span>(nd)
+  
+  <span class="co"># specifying our custom plot</span>
+  fig &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">ggplot</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> fitd_<span class="fl">7.9</span>, 
+                <span class="kw">aes</span>(<span class="dt">x    =</span> shade_c,
+                    <span class="dt">ymin =</span> Q2.<span class="dv">5</span>,
+                    <span class="dt">ymax =</span> Q97.<span class="dv">5</span>), 
+                <span class="dt">fill =</span> <span class="st">&quot;#CC79A7&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">data =</span> fitd_<span class="fl">7.9</span>, 
+              <span class="kw">aes</span>(<span class="dt">x =</span> shade_c, <span class="dt">y =</span> Estimate), 
+              <span class="dt">color =</span> <span class="st">&quot;#CC79A7&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dt, <span class="kw">aes</span>(<span class="dt">x =</span> shade_c, <span class="dt">y =</span> blooms),
+               <span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;#CC79A7&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>shade_c), 
+                    <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>blooms)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Shade (centered)&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="st">&quot;Blooms&quot;</span>, 
+         <span class="dt">title =</span> <span class="kw">paste</span>(<span class="st">&quot;Water (centered) =&quot;</span>, w)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>))
+  
+  <span class="co"># plotting that joint</span>
+  <span class="kw">plot</span>(fig)
+}</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-412-1.png" width="217.92" /><img src="_main_files/figure-html/unnamed-chunk-412-2.png" width="217.92" /><img src="_main_files/figure-html/unnamed-chunk-412-3.png" width="217.92" /></p>
+<p>But we don’t necessarily need a loop. We can achieve all of McElreath’s Figure 7.7 with <code>fitted()</code>, some data wrangling, and a little help from <code>ggplot2::facet_grid()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fitted() for model b7.8</span>
+<span class="kw">fitted</span>(b7.<span class="dv">8</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># adding fitted() for model b7.9</span>
+<span class="st">  </span><span class="kw">bind_rows</span>(
+    <span class="kw">fitted</span>(b7.<span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">      </span><span class="kw">as_tibble</span>()
+  ) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># We&#39;ll want to index the models</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">fit  =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;b7.8&quot;</span>, <span class="st">&quot;b7.9&quot;</span>), <span class="dt">each =</span> <span class="dv">27</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># Here we add the data, `d`</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(<span class="kw">bind_rows</span>(d, d)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># These will come in handy for `ggplot2::facet_grid()`</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x_grid =</span> <span class="kw">paste</span>(<span class="st">&quot;water_c =&quot;</span>, water_c),
+         <span class="dt">y_grid =</span> <span class="kw">paste</span>(<span class="st">&quot;model: &quot;</span>, fit)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> shade_c)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>,
+                  <span class="dt">ymax =</span> Q97.<span class="dv">5</span>), 
+              <span class="dt">fill =</span> <span class="st">&quot;#CC79A7&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> Estimate), 
+            <span class="dt">color =</span> <span class="st">&quot;#CC79A7&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> blooms, <span class="dt">group =</span> x_grid), 
+             <span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;#CC79A7&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>shade_c), 
+                  <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>blooms)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Shade (centered)&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Blooms&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_pander</span>() <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
+        <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_grid</span>(y_grid <span class="op">~</span><span class="st"> </span>x_grid)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-413-1.png" width="624" /></p>
+</div>
+</div>
+<div id="interactions-in-design-formulas" class="section level2">
+<h2><span class="header-section-number">7.4</span> Interactions in design formulas</h2>
+<p>The brms syntax generally follows the design formulas typical of <code>lm()</code>. Hopefully this is all old hat.</p>
+</div>
+<div id="summary-bonus-marginal_effects" class="section level2">
+<h2><span class="header-section-number">7.5</span> <del>Summary</del> Bonus: <code>marginal_effects()</code></h2>
+<p>The brms package includes the <code>marginal_effects()</code> function as a convenient way to look at simple effects and two-way interactions. Recall the simple univariable model, <code>b7.3</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">3</span><span class="op">$</span>formula</code></pre></div>
+<pre><code>## log_gdp ~ 1 + rugged</code></pre>
+<p>We can look at the regression line and its percentile-based intervals like so:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">marginal_effects</span>(b7.<span class="dv">3</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-415-1.png" width="336" /></p>
+<p>If we nest <code>marginal_effects()</code> within <code>plot()</code> with a <code>points = T</code> argument, we can add the original data to the figure.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.<span class="dv">3</span>), <span class="dt">points =</span> T)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-416-1.png" width="336" /></p>
+<p>We can further customize the plot. For example, we can replace the intervals with a spaghetti plot. While we’re at it, we can use <code>point_args</code> to adjust the <code>geom_jitter()</code> parameters.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.<span class="dv">3</span>,
+                      <span class="dt">spaghetti =</span> T, <span class="dt">nsamples =</span> <span class="dv">200</span>),
+     <span class="dt">points =</span> T,
+     <span class="dt">point_args =</span> <span class="kw">c</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">size =</span> <span class="dv">1</span>))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-417-1.png" width="336" /></p>
+<p>With multiple predictors, things get more complicated. Consider our multivariable, non-interaction model, <code>b7.4</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">4</span><span class="op">$</span>formula</code></pre></div>
+<pre><code>## log_gdp ~ rugged + cont_africa</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">marginal_effects</span>(b7.<span class="dv">4</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-418-1.png" width="336" /><img src="_main_files/figure-html/unnamed-chunk-418-2.png" width="336" /></p>
+<p>We got one plot for each predictor, controlling the other predictor at zero. Note how the plot for <code>cont_africa</code> treated it as a continuous variable. This is because the variable was saved as an integer in the original data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">4</span><span class="op">$</span>data <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
+<pre><code>## Observations: 170
+## Variables: 3
+## $ log_gdp     &lt;dbl&gt; 7.492609, 8.216929, 9.933263, 9.407032, 7.792343, 9.212541, 10.143191, 10.2...
+## $ rugged      &lt;dbl&gt; 0.858, 3.427, 0.769, 0.775, 2.688, 0.006, 0.143, 3.513, 1.672, 1.780, 0.388...
+## $ cont_africa &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, ...</code></pre>
+<p>One way to fix that is to adjust the data set and refit the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_factor &lt;-
+<span class="st">  </span>b7.<span class="dv">4</span><span class="op">$</span>data <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">factor</span>(cont_africa))
+
+b7.4_factor &lt;-<span class="st"> </span><span class="kw">update</span>(b7.<span class="dv">4</span>, <span class="dt">newdata =</span> d_factor)</code></pre></div>
+<p>Using the <code>update()</code> syntax often speeds up the re-fitting process.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">marginal_effects</span>(b7.4_factor)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-421-1.png" width="336" /><img src="_main_files/figure-html/unnamed-chunk-421-2.png" width="336" /></p>
+<p>Now our second marginal plot more clearly expresses the <code>cont_africa</code> predictor as categorical.</p>
+<p>Things get more complicated with the interaction model, <code>b7.5</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">5</span><span class="op">$</span>formula</code></pre></div>
+<pre><code>## log_gdp ~ rugged + cont_africa + rugged:cont_africa</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">marginal_effects</span>(b7.<span class="dv">5</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-422-1.png" width="336" /><img src="_main_files/figure-html/unnamed-chunk-422-2.png" width="336" /><img src="_main_files/figure-html/unnamed-chunk-422-3.png" width="336" /></p>
+<p>The <code>marginal_effects()</code> function defaults to expressing interactions such that the first variable in the term–in this case, <code>rugged</code>–is on the x axis and the second variable in the term–<code>cont_africa</code>, treated as an integer–is depicted in three lines corresponding its mean and its mean +/- one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_factor &lt;-
+<span class="st">  </span>b7.<span class="dv">5</span><span class="op">$</span>data <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cont_africa =</span> <span class="kw">factor</span>(cont_africa))
+
+b7.5_factor &lt;-<span class="st"> </span><span class="kw">update</span>(b7.<span class="dv">5</span>, <span class="dt">newdata =</span> d_factor)</code></pre></div>
+<p>Just for kicks, we’ll use <code>probs = c(.25, .75)</code> to return <a href="http://andrewgelman.com/2016/11/05/why-i-prefer-50-to-95-intervals/">50% intervals</a>, rather than the conventional 95%.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">marginal_effects</span>(b7.5_factor,
+                 <span class="dt">probs =</span> <span class="kw">c</span>(.<span class="dv">25</span>, .<span class="dv">75</span>))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-424-1.png" width="384" /><img src="_main_files/figure-html/unnamed-chunk-424-2.png" width="384" /><img src="_main_files/figure-html/unnamed-chunk-424-3.png" width="384" /></p>
+<p>With the <code>effects</code> argument, we can just return the interaction effect, which is where all the action’s at. While we’re at it, we’ll use <code>plot()</code> to change some of the settings.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.5_factor,
+                      <span class="dt">effects =</span> <span class="st">&quot;rugged:cont_africa&quot;</span>, 
+                      <span class="dt">spaghetti =</span> T, <span class="dt">nsamples =</span> <span class="dv">150</span>),
+     <span class="dt">points =</span> T,
+     <span class="dt">point_args =</span> <span class="kw">c</span>(<span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">1</span>), <span class="dt">mean =</span> F)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-425-1.png" width="384" /></p>
+<p>Note, the ordering of the variables matters for the interaction term. Consider our interaction model for the tulips data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b7.<span class="dv">9</span><span class="op">$</span>formula</code></pre></div>
+<pre><code>## blooms ~ water_c + shade_c + water_c:shade_c</code></pre>
+<p>The plot tells a slightly different story, depending on whether you specify <code>effects = &quot;shade_c:water_c&quot;</code> or <code>effects = &quot;water_c:shade_c&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.<span class="dv">9</span>, 
+                      <span class="dt">effects =</span> <span class="st">&quot;shade_c:water_c&quot;</span>),
+     <span class="dt">points =</span> T)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-427-1.png" width="384" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.<span class="dv">9</span>, 
+                      <span class="dt">effects =</span> <span class="st">&quot;water_c:shade_c&quot;</span>),
+     <span class="dt">points =</span> T)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-427-2.png" width="384" /></p>
+<p>One might want to evaluate the effects of the second term in the interaction–<code>water_c</code>, in this case–at values other than the mean and the mean +/- one standard deviation. When we reproduced the bottom row of Figure 7.7, we expressed the interaction based on values -1, 0, and 1 for <code>water_c</code>. We can do that, here, by using the <code>int_conditions</code> argument. It expects a list, so we’ll put our desired <code>water_c</code> values in just that.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ic &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">list</span>(<span class="dt">water.c =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))
+
+<span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b7.<span class="dv">9</span>, 
+                      <span class="dt">effects =</span> <span class="st">&quot;shade_c:water_c&quot;</span>,
+                      <span class="dt">int_conditions =</span> ic),
+     <span class="dt">points =</span> T)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-428-1.png" width="384" /></p>
+</div>
+<div id="reference-6" class="section level2 unnumbered">
+<h2>Reference</h2>
+<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2016). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
+</div>
+<div id="session-info-6" class="section level2 unnumbered">
+<h2>Session info</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+<pre><code>## R version 3.5.1 (2018-07-02)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.6
+## 
+## Matrix products: default
+## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] ggthemes_3.5.0     forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6        purrr_0.2.5       
+##  [6] readr_1.1.1        tidyr_0.8.1        tibble_1.4.2       tidyverse_1.2.1    brms_2.5.0        
+## [11] Rcpp_0.12.18       rstan_2.17.3       StanHeaders_2.17.2 ggplot2_3.0.0     
+## 
+## loaded via a namespace (and not attached):
+##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
+##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
+##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
+##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
+##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
+##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
+##  [19] bayesplot_1.6.0           labeling_0.3              mnormt_1.5-5             
+##  [22] bridgesampling_0.4-0      rprojroot_1.3-2           coda_0.19-1              
+##  [25] xfun_0.3                  R6_2.2.2                  markdown_0.8             
+##  [28] HDInterval_0.2.0          reshape_0.8.7             assertthat_0.2.0         
+##  [31] promises_1.0.1            scales_0.5.0              beeswarm_0.2.3           
+##  [34] gtable_0.2.0              rlang_0.2.1               extrafontdb_1.0          
+##  [37] lazyeval_0.2.1            broom_0.4.5               inline_0.3.15            
+##  [40] yaml_2.1.19               reshape2_1.4.3            abind_1.4-5              
+##  [43] modelr_0.1.2              threejs_0.3.1             crosstalk_1.0.0          
+##  [46] backports_1.1.2           httpuv_1.4.4.2            rsconnect_0.8.8          
+##  [49] extrafont_0.17            tools_3.5.1               bookdown_0.7             
+##  [52] psych_1.8.4               RColorBrewer_1.1-2        ggridges_0.5.0           
+##  [55] plyr_1.8.4                base64enc_0.1-3           progress_1.2.0           
+##  [58] prettyunits_1.0.2         zoo_1.8-2                 LaplacesDemon_16.1.1     
+##  [61] haven_1.1.2               magrittr_1.5              colourpicker_1.0         
+##  [64] mvtnorm_1.0-8             matrixStats_0.54.0        hms_0.4.2                
+##  [67] shinyjs_1.0               mime_0.5                  evaluate_0.10.1          
+##  [70] arrayhelpers_1.0-20160527 xtable_1.8-2              shinystan_2.5.0          
+##  [73] readxl_1.1.0              gridExtra_2.3             rstantools_1.5.0         
+##  [76] compiler_3.5.1            maps_3.3.0                crayon_1.3.4             
+##  [79] htmltools_0.3.6           later_0.7.3               lubridate_1.7.4          
+##  [82] MASS_7.3-50               Matrix_1.2-14             cli_1.0.0                
+##  [85] bindr_0.1.1               igraph_1.2.1              pkgconfig_2.0.1          
+##  [88] foreign_0.8-70            xml2_1.2.0                svUnit_0.7-12            
+##  [91] dygraphs_1.1.1.5          vipor_0.4.5               rvest_0.3.2              
+##  [94] digest_0.6.15             rmarkdown_1.10            cellranger_1.1.0         
+##  [97] shiny_1.1.0               gtools_3.8.1              nlme_3.1-137             
+## [100] jsonlite_1.5              bindrcpp_0.2.2            mapproj_1.2.6            
+## [103] viridisLite_0.3.0         pillar_1.2.3              lattice_0.20-35          
+## [106] loo_2.0.0                 httr_1.3.1                glue_1.2.0               
+## [109] xts_0.10-2                shinythemes_1.1.1         pander_0.6.2             
+## [112] stringi_1.2.3</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="overfitting-regularization-and-information-criteria.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="markov-chain-monte-carlo.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
