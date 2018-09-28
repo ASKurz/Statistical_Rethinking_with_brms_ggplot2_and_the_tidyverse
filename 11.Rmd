@@ -623,6 +623,8 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
+If you’d like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre’s [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/).
+
 ### Bonus: Figure 11.3 alternative.
 
 I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody’s got time for that. We’ve have clients to serve! Happily, we can go further. Look back at McElreath’s R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here’s the adjusted function:
@@ -1280,4 +1282,12 @@ sessionInfo()
 
 ```{r, echo = F}
 rm(d, logit, d_plot, inits, inits_list, b11.1, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, N, drink, y, b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, stan_funs, b11.5, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+
+ggplot2::theme_set(ggplot2::theme_grey())
+
+bayesplot::color_scheme_set("blue")
 ```
