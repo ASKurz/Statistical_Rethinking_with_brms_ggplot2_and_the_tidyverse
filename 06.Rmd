@@ -19,7 +19,9 @@ The $R^2$ is a popular way to measure how well you can retrodict the data. It tr
 
 $$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} = 1 - \frac{\text{var(residuals)}}{\text{var(outcome)}}$$
 
-McElreath's not a fan, but we will cover the Bayesian version of $R^2$ and how to use it in brms at the end of the chapter.
+By $\text{var()}$, of course, we meant variance (i.e., the `var()` function in R).
+
+McElreath's not a fan of the $R^2$. But it's important in my field, so instead of a summary at the end of the chapter, we will cover the Bayesian version of $R^2$ and how to use it in brms.
 
 ### More parameters always improve fit.
 
@@ -1085,7 +1087,7 @@ And again, our results donâ€™t perfectly match those in the text because a) weâ€
 
 ## Using information criteria
 
-In contrast to model selection, "this section provides a brief example of model *comparison* and *averaging*" (p. 196).
+In contrast to model selection, "this section provides a brief example of model *comparison* and *averaging*" (p. 195, *emphasis* in the original).
 
 ### Model comparison. 
 
@@ -1700,4 +1702,12 @@ sessionInfo()
 
 ```{r, echo = F}
 rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, p11, p12, p13, p14, fitd_b6.14, r2_b6.13, r2_b6.14, r2_combined)
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+
+ggplot2::theme_set(ggplot2::theme_grey())
+
+bayesplot::color_scheme_set("blue")
 ```
