@@ -29,8 +29,8 @@ for (i in 1:num_weeks) {
   if (proposal < 1) proposal <- 10
   if (proposal > 10) proposal <- 1
   # move?
-  prob_move <- proposal/current
-  current <- ifelse(runif(1) < prob_move, proposal, current)
+  prob_move <- proposal / current
+  current   <- ifelse(runif(1) < prob_move, proposal, current)
 }
 ```
 
@@ -226,6 +226,24 @@ Although R didn't bark at us for adding `loo = T, waic = T`, they didn't do anyt
 waic(b8.1)
 (l_b8.1 <- loo(b8.1))
 ```
+
+We don’t work directly with it in this project, but it’s worth pointing out the `elpd` values returned by `loo()` and `waic()` are the expected log pointwise predictive density for new data. It follows the formula
+
+$$\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde{y}_i) \text{log} p (\tilde{y}_i | y) d \tilde{y}_i,$$
+
+> where $p_t (\tilde{y}_i)$ is the distributino representing the true data-generating process for $\tilde{y}_i$. The $p_t (\tilde{y}_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distriubtions are also implicitly conditioned on any predictors in the model. (Vehtari, Gelman, & Gabry, 2016, p. 2).
+
+Later in the paper, we learn the `elpd_loo` (i.e., the Bayesian LOO estimate of out-of-dampel predictive fit) is defined as
+
+$$\text{elpd}_{\text{loo}} = \sum_{i = 1}^n \text{log } p (y_i | y - _i),$$
+
+where
+
+$$p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta$$
+
+"is the leave-one-out predictive density given the data without the $i$th data point" (p. 3).
+
+To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/web/packages/loo/index.html).
 
 ### Checking the chain.
 
@@ -540,4 +558,12 @@ sessionInfo()
 
 ```{r, echo = F}
 rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1_4chains_4cores, post, l_b8.1, b8.2, b8.3, N, y, b8.4, b8.5, left_column, right_column)
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+
+ggplot2::theme_set(ggplot2::theme_grey())
+
+bayesplot::color_scheme_set("blue")
 ```
