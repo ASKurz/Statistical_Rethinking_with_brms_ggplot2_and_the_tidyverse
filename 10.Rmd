@@ -1082,7 +1082,7 @@ psych::lowerCor(posterior_samples(b10.10_c)[, 1:4])
 
 ### Example: Exposure and the offset.
 
-> For the last Poisson example, we’ll look at a case where the exposure varies across observations. When the length of observation, area of sampling, or intensity f sampling varies, the counts we observe also naturally vary. Since a Poisson distribution assumes that the rate of events is constant in time (or space), it’s easy to handle this. All we need to do, as explained on page 312 [of the text], is to add the logarithm of the exposure to the linear model. The term we add is typically called an *offset*. (p. 321, *emphasis* in the original)
+> For the last Poisson example, we’ll look at a case where the exposure varies across observations. When the length of observation, area of sampling, or intensity of sampling varies, the counts we observe also naturally vary. Since a Poisson distribution assumes that the rate of events is constant in time (or space), it’s easy to handle this. All we need to do, as explained on page 312 [of the text], is to add the logarithm of the exposure to the linear model. The term we add is typically called an *offset*. (p. 321, *emphasis* in the original)
 
 Here we simulate our data.
 
@@ -1125,7 +1125,7 @@ The model summary:
 print(b10.15)
 ```
 
-The mode summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It’s a fixed part of the model not unlike the Student-$t$ $\nu$ parameter gets fixed to infinity when you use the Gaussian likelihood.
+The mode summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It’s a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
 
 Here we'll compute the posterior means and 89% HDIs with `tidybayes::mean_hdi()`.
 
@@ -1235,8 +1235,8 @@ b      <- (1:-1)
 career <- rep(NA, N)  # empty vector of choices for each individual
 
 for (i in 1:N) {
-    score <- 0.5*(1:3) + b*family_income[i]
-    p <- softmax(score[1], score[2], score[3])
+    score     <- 0.5 * (1:3) + b * family_income[i]
+    p         <- softmax(score[1], score[2], score[3])
     career[i] <- sample(1:3, size = 1, prob = p)
 }
 ```
@@ -1432,3 +1432,10 @@ sessionInfo()
 rm(d, b10.1, b10.2, b10.3, w_b10.1, w_b10.2, w_b10.3, post, d_plot, b10.4, d_plot_4, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p_10.6, d_text, b10.8, b10.9, loos, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14, nd, ppa_10.9, b10.10_c, num_days, num_weeks, y_new, b10.15, N, income, score, p, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
 ```
 
+```{r, echo = F, message = F, warning = F, results = "hide"}
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+
+ggplot2::theme_set(ggplot2::theme_grey())
+
+bayesplot::color_scheme_set("blue")
+```
