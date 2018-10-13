@@ -1180,11 +1180,10 @@ Here it is, our analogue to Figure 4.7.b.
 ```{r, warning = F, fig.width = 3, fig.height = 2.8}
 d2 %>%
   ggplot(aes(x = weight, y = height)) +
-  geom_ribbon(data = mu_summary, 
+  geom_smooth(data = mu_summary,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = mu_summary, 
-            aes(y = Estimate)) +
+              stat = "identity",
+              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
   coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
@@ -1232,10 +1231,10 @@ d2 %>%
   geom_ribbon(data = pred_height, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_ribbon(data = mu_summary, 
+  geom_smooth(data = mu_summary,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = mu_summary, aes(y = Estimate)) +
+              stat = "identity",
+              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
   coord_cartesian(xlim = range(d2$weight),
@@ -1308,11 +1307,10 @@ ggplot(data = d,
   geom_ribbon(data = pred_quad, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_ribbon(data = fitd_quad, 
+  geom_smooth(data = fitd_quad,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = fitd_quad, 
-            aes(y = Estimate), size = 1/4) +
+              stat = "identity",
+              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
@@ -1367,12 +1365,10 @@ ggplot(data = d,
   geom_ribbon(data = pred_cub, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_ribbon(data = fitd_cub, 
+  geom_smooth(data = fitd_cub,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = fitd_cub, 
-            aes(y = Estimate), 
-            size = 1/4) +
+              stat = "identity",
+              fill = "grey70", color = "black", alpha = 1, size = 1/4) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
@@ -1399,11 +1395,10 @@ ggplot(data = d,
   geom_ribbon(data = pred_line, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_ribbon(data = fitd_line, 
+  geom_smooth(data = fitd_line,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = fitd_line, 
-            aes(y = Estimate), size = 1/4) +
+              stat = "identity",
+              fill = "grey70", color = "black", alpha = 1, size = 1/4) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
@@ -1422,11 +1417,6 @@ ggplot(data = d,
   geom_ribbon(data = pred_line, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_ribbon(data = fitd_line, 
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
-              fill = "grey70") +
-  geom_line(data = fitd_line, 
-            aes(y = Estimate), size = 1/4) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
