@@ -209,14 +209,14 @@ Our mathy ways of summarizing models will be something like
 
 $$
 \begin{eqnarray}
-\text{outcome}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
+\text{criterion}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
 \mu_i & = & \beta \times \text{predictor}_i \\
 \beta & \sim & \text{Normal}(0, 10) \\
 \sigma & \sim & \text{HalfCauchy}(0, 1)
 \end{eqnarray}
 $$
 
-And as McElreath then followed up with, "If that doesn't make much sense, good. That indicates that you are holding the right textbook" (p. 77). Welcome!
+And as McElreath then followed up with, "If that doesn't make much sense, good. That indicates that you are holding the right textbook" (p. 77). Welcome applied statistics!
 
 ### Re-describing the globe tossing model.
 
@@ -376,7 +376,7 @@ As McElreath wrote, we've made a "vaguely bell-shaped density with thick tails. 
 
 ### Grid approximation of the posterior distribution. 
 
-As McElreath explained, you'll never use this for practical data analysis. But I found this useful for understanding what exactly we're doing with Bayesian estimation. So let's play along.
+As McElreath explained, you'll never use this for practical data analysis. But I found this helped me better understanding what exactly we're doing with Bayesian estimation. So let's play along.
 
 ```{r}
 n <- 200
@@ -522,13 +522,14 @@ Now we'll use the amended `grid_function()` to make the posterior.
 ```{r}
 d_grid <-
   d_grid %>% 
-  mutate(log_likelihood = map2(mu, sigma, grid_function)) %>% 
-  unnest() %>% 
+  mutate(log_likelihood = map2_dbl(mu, sigma, grid_function)) %>% 
   mutate(prior_mu       = dnorm(mu,    mean = 178, sd  = 20, log = T),
          prior_sigma    = dunif(sigma, min  = 0,   max = 50, log = T)) %>% 
   mutate(product        = log_likelihood + prior_mu + prior_sigma) %>% 
   mutate(probability    = exp(product - max(product)))
 ```
+
+Did you catch our use of `purrr::map2_dbl()`, there, in place of `purrr::map2()`? It turns out that `purrr::map()` and `purrr::map2()` always return a list (see [here](https://purrr.tidyverse.org/reference/map.html) and [here](https://purrr.tidyverse.org/reference/map2.html)). But as [Phil Straforelli](https://twitter.com/PStrafo) kindly [pointed out](https://twitter.com/PStrafo/status/1046853175917961217), we can add the `_dbl` suffix to those functions, which will instruct the purrr package to return a double vector (i.e., a [common kind of numeric vector](http://r4ds.had.co.nz/vectors.html#important-types-of-atomic-vector)). The advantage of that approach is we no longer need to follow our `map()` or `map2()` lines with `unnest()`. To learn more about the ins and outs of the `map()` family, check out [this section](http://r4ds.had.co.nz/iteration.html#the-map-functions) from *R4DS* or Jenny Bryan's [*purrr tutorial*](https://jennybc.github.io/purrr-tutorial/).
 
 Next we'll `sample_n()` and plot.
 
