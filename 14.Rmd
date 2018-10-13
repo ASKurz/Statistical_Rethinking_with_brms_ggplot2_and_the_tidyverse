@@ -58,8 +58,7 @@ take_sample <- function(seed){
 }
 
 tibble(seed = 2:11) %>% 
-  mutate(value_returned = map(seed, take_sample)) %>% 
-  unnest()
+  mutate(value_returned = map_dbl(seed, take_sample))
 ```
 
 Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like: 
@@ -494,7 +493,7 @@ dlist <- list(
   A       = d$MedianAgeMarriage)
 
 # The `inits`
-inits <- list(Yl = dlist$div_obs)
+inits      <- list(Yl = dlist$div_obs)
 inits_list <- list(inits, inits)
 
 # The models
