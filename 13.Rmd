@@ -1277,11 +1277,10 @@ ftd <-
 # plot
 tidy_rho %>% 
   ggplot(aes(x = logpop)) +
-  geom_ribbon(data = ftd,
-              aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "#394165", alpha = .5) +
-  geom_line(data = ftd,
-            aes(y = Estimate), color = "#100F14", linetype = 1, size = 1.1) + #  80A0C7 100F14
+  geom_smooth(data = ftd,
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
+              stat = "identity",
+              fill = "#394165", color = "#100F14", alpha = .5, size = 1.1) +
   geom_line(aes(y = total_tools, group = group, alpha = correlation^2),
             color = "#80A0C7") +
   geom_point(data = d, 
