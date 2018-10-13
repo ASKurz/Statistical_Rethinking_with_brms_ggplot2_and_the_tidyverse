@@ -105,14 +105,11 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
   ggplot(aes(x = rugged)) +
-  geom_ribbon(data = fitd_both,
-              aes(ymin = Q2.5, 
-                  ymax = Q97.5,
-                  fill = cont_africa),
-              alpha = 1/4) +
-  geom_line(data = fitd_both,
-              aes(y = Estimate, 
-                  color = cont_africa)) +
+  geom_smooth(data = fitd_both,
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
+                  fill = cont_africa, color = cont_africa),
+              stat = "identity", 
+              alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp, color = cont_africa),
              size = 2/3) +
   scale_colour_pander() +
@@ -182,16 +179,11 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
 ggplot(aes(x = rugged)) +
-  geom_ribbon(data = fitd_b7.4,
-              aes(ymin  = Q2.5, 
-                  ymax  = Q97.5,
-                  fill  = cont_africa,
-                  group = cont_africa),
-              alpha = 1/4) +
-  geom_line(data = fitd_b7.4,
-              aes(y     = Estimate, 
-                  color = cont_africa,
-                  group = cont_africa)) +
+  geom_smooth(data = fitd_b7.4,
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
+                  fill = cont_africa, color = cont_africa),
+              stat = "identity", 
+              alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp, color = cont_africa),
              size = 2/3) +
   scale_colour_pander() +
@@ -288,16 +280,11 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
 ggplot(aes(x = rugged)) +
-  geom_ribbon(data = fitd_b7.5,
-              aes(ymin  = Q2.5, 
-                  ymax  = Q97.5,
-                  fill  = cont_africa,
-                  group = cont_africa),
-              alpha = 1/4) +
-  geom_line(data = fitd_b7.5,
-              aes(y     = Estimate, 
-                  color = cont_africa,
-                  group = cont_africa)) +
+  geom_smooth(data = fitd_b7.5,
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
+                  fill = cont_africa, color = cont_africa),
+              stat = "identity", 
+              alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp, color = cont_africa),
              size = 2/3) +
   scale_colour_pander() +
@@ -445,17 +432,11 @@ dd %>%
   
   # plot
   ggplot(aes(x = cont_africa)) +
-  geom_ribbon(data = fitd_b7.5,
-              aes(ymin  = Q2.5, 
-                  ymax  = Q97.5,
-                  fill  = factor(ox),
-                  group = factor(ox)),
-              alpha = 1/4) +
-  geom_line(data = fitd_b7.5,
-              aes(y        = Estimate,
-                  color    = factor(ox),
-                  group    = factor(ox),
-                  linetype = factor(ox))) +
+  geom_smooth(data = fitd_b7.5,
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
+                  fill = factor(ox), color = factor(ox), linetype = factor(ox)),
+              stat = "identity", 
+              alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp, color = factor(ox)),
              alpha = 1/2, shape = 1) +
   scale_colour_pander() +
@@ -640,12 +621,12 @@ Nothing to add, here.
 
 ```{r, warning = F, message = F}
 k <- fixef(b7.7)
-k[1] + k[2]*2 + k[3]*2 + k[4]*2*2
+k[1] + k[2] * 2 + k[3] * 2 + k[4] * 2 * 2
 ```
 
 ```{r, warning = F, message = F}
 k <- fixef(b7.9)
-k[1] + k[2]*0 + k[3]*0 + k[4]*0*0
+k[1] + k[2] * 0 + k[3] * 0 + k[4] * 0 * 0
 ```
 
 ```{r}
@@ -674,15 +655,12 @@ for(w in -1:1){
   # specifying our custom plot
   fig <- 
     ggplot() +
-    geom_ribbon(data = fitd_7.9, 
-                aes(x    = shade_c,
-                    ymin = Q2.5,
-                    ymax = Q97.5), 
-                fill = "#CC79A7", alpha = 1/5) +
-    geom_line(data = fitd_7.9, 
-              aes(x = shade_c, y = Estimate), 
-              color = "#CC79A7") +
-    geom_point(data = dt, aes(x = shade_c, y = blooms),
+    geom_smooth(data = fitd_7.9,
+                aes(x = shade_c, y = Estimate, ymin = Q2.5, ymax = Q97.5),
+                stat = "identity", 
+                fill = "#CC79A7", color = "#CC79A7", alpha = 1/5, size = 1/2) +
+    geom_point(data = dt, 
+               aes(x = shade_c, y = blooms),
                shape = 1, color = "#CC79A7") +
     coord_cartesian(xlim = range(d$shade_c), 
                     ylim = range(d$blooms)) +
@@ -717,11 +695,9 @@ fitted(b7.8) %>%
          y_grid = paste("model: ", fit)) %>% 
   
   ggplot(aes(x = shade_c)) +
-  geom_ribbon(aes(ymin = Q2.5,
-                  ymax = Q97.5), 
-              fill = "#CC79A7", alpha = 1/5) +
-  geom_line(aes(y = Estimate), 
-            color = "#CC79A7") +
+  geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
+              stat = "identity", 
+              fill = "#CC79A7", color = "#CC79A7", alpha = 1/5, size = 1/2) +
   geom_point(aes(y = blooms, group = x_grid), 
              shape = 1, color = "#CC79A7") +
   coord_cartesian(xlim = range(d$shade_c), 
