@@ -212,12 +212,10 @@ d_plot <-
 # the plot
 pp_a %>% 
   ggplot(aes(x = x_axis)) +
-  geom_ribbon(aes(ymin = Q2.5, 
-                  ymax = Q97.5,
-                  group = 0),
-              fill = wes_palette("Moonrise2")[2]) +
-  geom_line(aes(y = pulled_left,
-                group = 0)) +
+  geom_smooth(aes(y = pulled_left, ymin = Q2.5, ymax = Q97.5, group = 0),
+              stat = "identity",
+              fill = wes_palette("Moonrise2")[2], color = "black", 
+              alpha = 1, size = 1/2) +
   geom_line(data = d_plot,
             aes(y = pulled_left, group = actor),
             color = wes_palette("Moonrise2")[1], size = 1/3) +
@@ -332,10 +330,10 @@ ftd <-
 # plot
 ftd %>% 
   ggplot(aes(x = x_axis, y = pulled_left, group = actor)) +
-  geom_ribbon(aes(ymin = Q2.5, 
-                  ymax = Q97.5),
-              fill = wes_palette("Moonrise2")[2]) +
-  geom_line() +
+  geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
+              stat = "identity",
+              fill = wes_palette("Moonrise2")[2], color = "black", 
+              alpha = 1, size = 1/2) +
   geom_line(data = d_plot_4,
             color = wes_palette("Moonrise2")[1], size = 1.25) +
   scale_x_discrete(expand = c(.03, .03)) +
@@ -989,11 +987,11 @@ ppa_10.9 <-
 ppa_10.9 %>%
   ggplot(aes(x     = log_pop,
              group = contact_high)) +
-  geom_ribbon(aes(ymin = Q2.5,
-                  ymax = Q97.5,
-                  fill = contact_high),
-              alpha = 1/4) +
-  geom_line(aes(y = Estimate, color = contact_high)) +
+  geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
+                  fill = contact_high, color = contact_high),
+              stat = "identity",
+              fill = wes_palette("Moonrise2")[2], color = "black", 
+              alpha = 1/4, size = 1/2) +
   geom_text(data = d, 
              aes(y     = total_tools,
                  label = total_tools,
