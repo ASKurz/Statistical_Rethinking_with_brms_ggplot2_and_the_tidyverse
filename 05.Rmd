@@ -139,9 +139,9 @@ fitd_b5.1 <-
 # Plot
 ggplot(data = fitd_b5.1, 
        aes(x = MedianAgeMarriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
+  geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
+              stat = "identity",
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
   geom_point(data = d, 
              aes(x = MedianAgeMarriage_s, y = Divorce), 
              size = 2, color = "firebrick4") +
@@ -188,9 +188,9 @@ fitd_b5.2 <-
 
 ggplot(data = fitd_b5.2, 
        aes(x = Marriage_s, y = Estimate)) +
-  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
+  geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
+              stat = "identity",
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
   geom_point(data = d, 
              aes(x = Marriage_s, y = Divorce), 
              size = 2, color = "firebrick4") +
@@ -450,9 +450,9 @@ fitted(b5.3, newdata = nd) %>%
   ggplot(aes(x = Marriage_s, y = Estimate)) +
   geom_ribbon(aes(ymin = p_ll, ymax = p_ul),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = f_ll, ymax = f_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
+  geom_smooth(aes(ymin = f_ll, ymax = f_ul),
+              stat = "identity",
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
   coord_cartesian(xlim = range(d$Marriage_s),
                   ylim = c(6, 14)) +
   labs(subtitle = "Counterfactual plot for which\nMedianAgeMarriage_s = 0",
@@ -486,9 +486,9 @@ fitted(b5.3, newdata = nd) %>%
   ggplot(aes(x = MedianAgeMarriage_s, y = Estimate)) +
   geom_ribbon(aes(ymin = p_ll, ymax = p_ul),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = f_ll, ymax = f_ul),
-              fill = "firebrick", alpha = 1/5) +
-  geom_line(color = "firebrick4") +
+  geom_smooth(aes(ymin = f_ll, ymax = f_ul),
+              stat = "identity",
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
   coord_cartesian(xlim = range(d$MedianAgeMarriage_s),
                   ylim = c(6, 14)) +
   labs(subtitle = "Counterfactual plot for which\nMarriage_s = 0",
@@ -719,9 +719,9 @@ fitted(b5.5,
   ggplot(aes(x = neocortex.perc, y = Estimate)) +
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
+  geom_smooth(aes(ymin = Q25, ymax = Q75),
+              stat = "identity",
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
   geom_point(data = dcc, 
              aes(x = neocortex.perc, y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -771,9 +771,9 @@ fitted(b5.6,
   ggplot(aes(x = log_mass, y = Estimate)) +
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
+  geom_smooth(aes(ymin = Q25, ymax = Q75),
+              stat = "identity",
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
   geom_point(data = dcc, 
              aes(x = log_mass, y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -830,9 +830,9 @@ b5.7 %>%
   ggplot(aes(x = neocortex.perc, y = Estimate)) +
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
+  geom_smooth(aes(ymin = Q25, ymax = Q75),
+              stat = "identity",
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
   geom_point(data = dcc, aes(x = neocortex.perc, y = kcal.per.g),
              size = 2, color = "firebrick4") +
   coord_cartesian(xlim = range(dcc$neocortex.perc), 
@@ -858,9 +858,9 @@ b5.7 %>%
   ggplot(aes(x = log_mass, y = Estimate)) +
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
               fill = "firebrick", alpha = 1/5) +
-  geom_ribbon(aes(ymin = Q25, ymax = Q75),
-              fill = "firebrick4", alpha = 1/5) +
-  geom_line(color = "firebrick4", size = 1/2) +
+  geom_smooth(aes(ymin = Q25, ymax = Q75),
+              stat = "identity",
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
   geom_point(data = dcc, aes(x = log_mass, y = kcal.per.g),
              size = 2, color = "firebrick4") +
   coord_cartesian(xlim = range(dcc$log_mass), 
@@ -1230,9 +1230,9 @@ We've added 95% interval bands to our version of Figure 5.10.
 ```{r, fig.width = 3.25, fig.height = 2.75}
 d %>% 
   ggplot(aes(x = rho, y = mean)) +
-  geom_line(color = "firebrick4") +
-  geom_ribbon(aes(ymin = ll, ymax = ul),
-              fill = "firebrick", alpha = 1/4) +
+  geom_smooth(aes(ymin = ll, ymax = ul),
+              stat = "identity",
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/2) +
   labs(x = expression(rho),
        y = "parameter SD") +
   coord_cartesian(ylim = c(0, .0072)) +
