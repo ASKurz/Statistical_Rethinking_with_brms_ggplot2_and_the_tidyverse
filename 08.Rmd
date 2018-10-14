@@ -55,7 +55,7 @@ tibble(week   = 1:1e5,
   scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
   coord_cartesian(xlim = 0:100,
                   ylim = 1:10) +
-  labs(title = "Behold: The Metropolis algorithm in action!",
+  labs(title    = "Behold: The Metropolis algorithm in action!",
        subtitle = "The dots show the king's path over the first 100 weeks.") +
   theme_ipsum()
 ```
@@ -69,7 +69,7 @@ tibble(week   = 1:1e5,
 
   ggplot(aes(x = island)) +
   geom_bar() +
-  labs(title = "Old Metropolis shines in the long run.",
+  labs(title    = "Old Metropolis shines in the long run.",
        subtitle = "Sure enough, the time the king spent on each island was\nproportional to its population size.") +
   theme_ipsum()
 ```
@@ -198,14 +198,24 @@ post %>%
   ggpairs()
 ```
 
-
 Since GGally returns a ggplot2 object, you can customize it as you please.
 
 ```{r, fig.width = 8, fig.height = 7, message = F, warning = F}
+my_diag <- function(data, mapping, ...){
+  ggplot(data = data, mapping = mapping) + 
+    geom_density(fill = "grey50")
+}
+
+my_lower <- function(data, mapping, ...){
+  ggplot(data = data, mapping = mapping) + 
+    geom_point(shape = 1, size = 1/2, alpha = 1/6)
+  }
+
 post %>%
   select(b_Intercept:sigma) %>%
-  
-  ggpairs() +
+
+  ggpairs(diag  = list(continuous = my_diag),
+          lower = list(continuous = my_lower)) +
   labs(subtitle = "My custom pairs plot") +
   theme_ipsum()
 ```
@@ -231,9 +241,9 @@ We don’t work directly with it in this project, but it’s worth pointing out 
 
 $$\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde{y}_i) \text{log} p (\tilde{y}_i | y) d \tilde{y}_i,$$
 
-> where $p_t (\tilde{y}_i)$ is the distributino representing the true data-generating process for $\tilde{y}_i$. The $p_t (\tilde{y}_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distriubtions are also implicitly conditioned on any predictors in the model. (Vehtari, Gelman, & Gabry, 2016, p. 2).
+> where $p_t (\tilde{y}_i)$ is the distribution representing the true data-generating process for $\tilde{y}_i$. The $p_t (\tilde{y}_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. (Vehtari, Gelman, & Gabry, 2016, p. 2).
 
-Later in the paper, we learn the `elpd_loo` (i.e., the Bayesian LOO estimate of out-of-dampel predictive fit) is defined as
+Later in the paper, we learn the `elpd_loo` (i.e., the Bayesian LOO estimate of out-of-sample predictive fit) is defined as
 
 $$\text{elpd}_{\text{loo}} = \sum_{i = 1}^n \text{log } p (y_i | y - _i),$$
 
@@ -557,7 +567,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1_4chains_4cores, post, l_b8.1, b8.2, b8.3, N, y, b8.4, b8.5, left_column, right_column)
+rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1_4chains_4cores, post, my_diag, my_lower, l_b8.1, b8.2, b8.3, N, y, b8.4, b8.5, left_column, right_column)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
