@@ -121,7 +121,7 @@ So if you do the algebra, you'll see that you can compute $\alpha$ for a given $
 
 $$\alpha = \sqrt{ \frac{\sigma^2 \Gamma (1/\beta)}{\Gamma (3/\beta)} }$$
 
-I go the formula from [Wikipedia.com](https://en.wikipedia.org/wiki/Generalized_normal_distribution). Don't judge. We can wrap that formula in a custom function, `alpha_per_beta()`, use it to solve for the desired $\beta$ values, and plot. But one more thing: McElreath didn't tell us exactly which $\beta$ values the left panel of Figure 9.2 was based on. So the plot below is my best guess.
+I got the formula from [Wikipedia.com](https://en.wikipedia.org/wiki/Generalized_normal_distribution). Don't judge. We can wrap that formula in a custom function, `alpha_per_beta()`, use it to solve for the desired $\beta$ values, and plot. But one more thing: McElreath didn't tell us exactly which $\beta$ values the left panel of Figure 9.2 was based on. So the plot below is my best guess.
 
 ```{r, fig.width = 3.5, fig.height = 3}
 alpha_per_beta <- function(variance, beta){
@@ -173,7 +173,7 @@ tibble(mu       = 0,
   geom_vline(xintercept = 2, color = "white") +
   geom_line(size = 2, color = ghibli_palette("MarnieMedium2")[6]) +
   coord_cartesian(ylim = c(1.34, 1.42)) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
@@ -185,7 +185,7 @@ But getting back on track:
 
 ### Binomial.
 
-The binomial likelihood entials 
+The binomial likelihood entails 
 
 > counting the numbers of ways that a given observation could arise, according to assumptions... If only two things can happen (blue or white marble, for example), and there's a constant chance $p$ of each across $n$ trials, then the probability of observing $y$ events of type 1 and $n - y$ events of type 2 is: 
 >
@@ -193,7 +193,7 @@ The binomial likelihood entials
 >
 > It may help to note that the fraction with the factorials is just saying how many different ordered sequences of $n$ outcomes have a count of $y$. (p. 275)
 
-For me, that last sentence made more sense when I walked it out in a example. To do so, lets wrap that fraction of factorials into a function.
+For me, that last sentence made more sense when I walked it out in an example. To do so, lets wrap that fraction of factorials into a function.
 
 ```{r}
 count_ways <- function(n, y){
@@ -367,13 +367,13 @@ d %>%
                adjust = 1/4) +
   # note the data statements for the next two geoms
   geom_linerange(data = subset_d %>% group_by(seed) %>% slice(1),
-             aes(ymin = 0, ymax = height),
-             color = ghibli_palette("LaputaMedium")[5]) +
+                 aes(ymin = 0, ymax = height),
+                 color = ghibli_palette("LaputaMedium")[5]) +
   geom_text(data = subset_d %>% group_by(seed) %>% slice(1),
-             aes(y = height + .5, label = distribution)) +
+            aes(y = height + .5, label = distribution)) +
   scale_x_continuous("Entropy",
                      breaks = seq(from = .7, to = 1.2, by = .1)) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]))
 ```
 
@@ -552,7 +552,7 @@ For a little more in this, check out McElreath’s great lecture, [Bayesian Stat
 
 > To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)
 
-These models generally follow the form:
+These models generally follow the form
 
 $$
 \begin{eqnarray}
