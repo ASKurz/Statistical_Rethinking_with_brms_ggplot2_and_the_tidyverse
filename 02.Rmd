@@ -74,7 +74,8 @@ Here's the basic structure of the possibilities per marble draw.
 ```{r}
 tibble(draw            = 1:3,
        marbles         = 4) %>% 
-  mutate(possibilities = marbles ^ draw)
+  mutate(possibilities = marbles ^ draw) %>% 
+  knitr::kable()
 ```
 
 If you walk that out a little, you can structure the data required to approach Figure 2.2.
@@ -103,7 +104,7 @@ d %>%
   scale_y_continuous(breaks = 1:3) +
   scale_fill_manual(values  = c("navy", "white")) +
   theme(panel.grid.minor = element_blank(),
-        legend.position = "none")
+        legend.position  = "none")
 ```
 
 To my mind, the easiest way to connect the dots in the appropriate way is to make two auxiliary tibbles.
@@ -146,7 +147,7 @@ d %>%
   scale_y_continuous(breaks = 1:3) +
   scale_fill_manual(values  = c("navy", "white")) +
   theme(panel.grid.minor = element_blank(),
-        legend.position = "none")
+        legend.position  = "none")
 ```
 
 We've generated the values for `position` (i.e., the x-axis), in such a way that they're all justified to the right, so to speak. But we'd like to center them. For `draw == 1`, we'll need to subtract 0.5 from each. For `draw == 2`, we need to reduce the scale by a factor of 4 and we'll then need to reduce the scale by another factor of 4 for `draw == 3`. The `ifelse()` function will be of use for that.
@@ -198,7 +199,7 @@ d %>%
   scale_y_continuous(breaks = 1:3) +
   scale_fill_manual(values  = c("navy", "white")) +
   theme(panel.grid.minor = element_blank(),
-        legend.position = "none")
+        legend.position  = "none")
 ```
 
 For the final step, we'll use `coord_polar()` to change the [coordinate system](http://sape.inf.usi.ch/quick-reference/ggplot2/coord), giving the plot a mandala-like feel.
@@ -219,7 +220,7 @@ d %>%
   scale_fill_manual(values  = c("navy", "white")) +
   scale_x_continuous(limits = c(0, 4), breaks = NULL) +
   scale_y_continuous(limits = c(0.75, 3), breaks = NULL) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid      = element_blank(),
         legend.position = "none") +
   coord_polar() +
   labs(x = NULL, y = NULL)
@@ -269,7 +270,7 @@ d %>%
   scale_fill_manual(values  = c("navy", "white")) +
   scale_x_continuous(limits = c(0, 4), breaks = NULL) +
   scale_y_continuous(limits = c(0.75, 3), breaks = NULL) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid      = element_blank(),
         legend.position = "none") +
   coord_polar() +
   labs(x = NULL, y = NULL)
@@ -346,7 +347,7 @@ move_over <- function(position, index){
   }
 ```
 
-If you’re new to making your own R functions, check out [Chapter 19](http://r4ds.had.co.nz/functions.html) of *R4DS* or [Chapter 14](https://bookdown.org/rdpeng/rprogdatascience/functions.html) of * R Programming for Data Science*
+If you’re new to making your own R functions, check out [Chapter 19](http://r4ds.had.co.nz/functions.html) of *R4DS* or [Chapter 14](https://bookdown.org/rdpeng/rprogdatascience/functions.html) of *R Programming for Data Science*.
 
 Anyway, now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_over()` to adjust their `x` and `xend` positions to the correct spots.
 
@@ -466,7 +467,7 @@ d %>%
   scale_fill_manual(values  = c("navy", "white")) +
   scale_x_continuous(limits = c(0, 12),     breaks = NULL) +
   scale_y_continuous(limits = c(0.75, 3.5), breaks = NULL) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid      = element_blank(),
         legend.position = "none") +
   coord_polar() +
   labs(x = NULL, y = NULL)
@@ -479,34 +480,36 @@ d %>%
 Here's the table in the middle of page 25.
 
 ```{r}
-(
-  t <-
-    t %>% 
-    rename(`previous counts` = `ways to produce`,
-           `ways to produce` = `draw 1: blue`) %>% 
-    select(p_1:p_4, `ways to produce`, `previous counts`) %>% 
-    mutate(`new count` = `ways to produce` * `previous counts`)
-  )
+t <-
+  t %>% 
+  rename(`previous counts` = `ways to produce`,
+         `ways to produce` = `draw 1: blue`) %>% 
+  select(p_1:p_4, `ways to produce`, `previous counts`) %>% 
+  mutate(`new count` = `ways to produce` * `previous counts`)
+
+t %>% 
+  knitr::kable()
 ```
 
 We might update to reproduce the table a the top of page 26, like this.
 
 ```{r}
-(
-  t <-
-    t %>% 
-    select(p_1:p_4, `new count`) %>% 
-    rename(`prior count`   = `new count`) %>% 
-    mutate(`factory count` = c(0, 3:0)) %>% 
-    mutate(`new count`     = `prior count` * `factory count`)
-  )
+t <-
+  t %>% 
+  select(p_1:p_4, `new count`) %>% 
+  rename(`prior count`   = `new count`) %>% 
+  mutate(`factory count` = c(0, 3:0)) %>% 
+  mutate(`new count`     = `prior count` * `factory count`)
+
+t %>% 
+  knitr::kable()
 ```
 
 To learn more about `dplyr::select()` and `dplyr::rename()`, check out Baert's exhaustive blog post [*Data Wrangling Part 1: Basic to Advanced Ways to Select Columns*](https://suzan.rbind.io/2018/01/dplyr-tutorial-1/).
 
 ### From counts to probability.
 
-The opening sentences are important: "It is helpful to think of this strategy as adhering to a principle of honest ignorance: *When we don't know what caused the data, potential causes that may produce the data in more ways are more plausible*" (p. 26, *emphasis* in the original).
+The opening sentences in this subsection are important: "It is helpful to think of this strategy as adhering to a principle of honest ignorance: *When we don't know what caused the data, potential causes that may produce the data in more ways are more plausible*" (p. 26, *emphasis* in the original).
 
 We can define our updated plausibility as:
 
@@ -564,7 +567,7 @@ We might save our globe-tossing data in a tibble.
 
 ### A data story.
 
-> Bayesian data analysis usually means producing a story for how the data came to be. This story may be *descriptive*, specifying associations that can be used to predict outcomes, given observations. Or it may be *causal*, a theory of how come events produce other events. Typically, any story you intend to be causal may also be descriptive. But many descriptive stories are hard to interpret causally. But all data stories are complete, in the sense that they are sufficient for specifying an algorithm for simulating new data. (p. 28)
+> Bayesian data analysis usually means producing a story for how the data came to be. This story may be *descriptive*, specifying associations that can be used to predict outcomes, given observations. Or it may be *causal*, a theory of how come events produce other events. Typically, any story you intend to be causal may also be descriptive. But many descriptive stories are hard to interpret causally. But all data stories are complete, in the sense that they are sufficient for specifying an algorithm for simulating new data. (p. 28, *emphasis* in the original)
 
 ### Bayesian updating.
 
@@ -602,11 +605,13 @@ d %>%
                              size = n_trials, 
                              prob = p_water),
          ) %>% 
-  # the next three lines allow us to normalize the prior and the likelihood, putting them both in a probability metric 
+  # the next three lines allow us to normalize the prior and the likelihood, 
+  # putting them both in a probability metric 
   group_by(n_trials) %>% 
   mutate(prior      = prior      / sum(prior),
          likelihood = likelihood / sum(likelihood)) %>%   
   
+  # plot!
   ggplot(aes(x = p_water)) +
   geom_line(aes(y = prior), linetype = 2) +
   geom_line(aes(y = likelihood)) +
