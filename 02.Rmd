@@ -675,6 +675,47 @@ For more in this topic, check out his lecture [*Understanding Bayesian Statistic
 
 To learn more about "regularizing or weakly informative priors," check out the [*Prior Choice Recommendations* wiki from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations).
 
+#### Overthinking: Prior as a probability distribution
+
+McElreath said that "for a uniform prior from $a$ to $b$, the probability of any point in the interval is $1 / (b - a)$" (p. 35). Let's try that out. To keep things simple, we'll hold $a$ constant while varying the values for $b$.
+
+```{r}
+tibble(a = 0,
+       b = c(1, 1.5, 2, 3, 9)) %>% 
+  mutate(prob = 1 / (b - a))
+```
+
+I like to verify things with plots.
+
+```{r, fig.width = 8, fig.height = 2}
+tibble(a = 0,
+       b = c(1, 1.5, 2, 3, 9)) %>% 
+  expand(nesting(a, b), parameter_space = seq(from = 0, to = 9, length.out = 500)) %>% 
+  mutate(prob = dunif(parameter_space, a, b),
+         b = str_c("b = ", b)) %>% 
+  
+  ggplot(aes(x = parameter_space, ymin = 0, ymax = prob)) +
+  geom_ribbon() +
+  scale_x_continuous(breaks = c(0, 1:3, 9)) +
+  scale_y_continuous(breaks = c(0, 1/9, 1/3, 1/2, 2/3, 1),
+                     labels = c("0", "1/9", "1/3", "1/2", "2/3", "1")) +
+  theme(panel.grid.minor   = element_blank(),
+        panel.grid.major.x = element_blank()) +
+  facet_wrap(~b, ncol = 5)
+```
+
+And as we'll learn much later in the project, the $Uniform(0, 1)$ distribution is special in that we can also express it as the beta distribution for which $\alpha = 1 \text{ and } \beta = 1$. E.g.,
+
+```{r, fig.width = 2.5, fig.height = 2}
+tibble(parameter_space = seq(from = 0, to = 1, length.out = 50)) %>% 
+  mutate(prob = dbeta(parameter_space, 1, 1)) %>% 
+  
+  ggplot(aes(x = parameter_space, ymin = 0, ymax = prob)) +
+  geom_ribbon() +
+  coord_cartesian(ylim = 0:2) +
+  theme(panel.grid = element_blank())
+```
+
 ### Posterior.
 
 If we continue to focus on the globe tossing example, the posterior probability a toss will be water may be expressed as:
