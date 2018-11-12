@@ -491,23 +491,19 @@ coef(b13.2)$dept_id[ , , "Intercept"]  # this also works: coef(b13.2)$dept_id[ ,
 So to get our brms summaries in a similar format to those in the text, we'll have to combine `coef()` with `fixef()` and `VarCorr()`. 
 
 ```{r} 
-coef(b13.2)$dept_id[, , "Intercept"] %>%
-  as_tibble() %>% 
-  bind_rows(fixef(b13.2) %>% 
-              as_tibble()) %>% 
-  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
-              as_tibble())
+rbind(coef(b13.2)$dept_id[, , "Intercept"],
+      fixef(b13.2),
+      VarCorr(b13.2)$dept_id$sd) %>% 
+  as_tibble()
 ```
 
 And a little more data wrangling will make the summaries easier to read:
 
 ```{r} 
-coef(b13.2)$dept_id[, , "Intercept"] %>%
+rbind(coef(b13.2)$dept_id[, , "Intercept"],
+      fixef(b13.2),
+      VarCorr(b13.2)$dept_id$sd) %>% 
   as_tibble() %>% 
-  bind_rows(fixef(b13.2) %>% 
-              as_tibble()) %>% 
-  bind_rows(VarCorr(b13.2)$dept_id$sd %>% 
-              as_tibble()) %>% 
   mutate(parameter = c(paste("Intercept [", 1:6, "]", sep = ""), 
                        "Intercept", "male", "sigma")) %>% 
   select(parameter, everything()) %>% 
@@ -611,14 +607,11 @@ We may as well keep our doing-things-by-hand kick going. Instead relying on `bay
 
 ```{r, fig.width = 6.5, fig.height = 2.5}
 # As far as I can tell, because `coef()` yields a list, you have to take out the two 
-# random effects one at a time, convert them to tibbles, and reassemble them with `bind_rows()`
-coef(b13.3)$dept_id[, , 1] %>% 
+# random effects one at a time and then bind them together to get them ready for a tibble
+rbind(coef(b13.3)$dept_id[, , 1],
+      coef(b13.3)$dept_id[, , 2]) %>% 
   as_tibble() %>% 
-  bind_rows(
-    coef(b13.3)$dept_id[, , 2] %>% 
-      as_tibble()
-    ) %>% 
-  mutate(param   = c(paste("Intercept", 1:6), paste("male", 1:6)),
+    mutate(param   = c(paste("Intercept", 1:6), paste("male", 1:6)),
          reorder = c(6:1, 12:7)) %>% 
 
   # plot
@@ -863,7 +856,7 @@ tidy(b13.6) %>%
 
 McElreath discussed `rethinking::link()` in the middle of page 407. He showed how his `link(m13.6NC)` code returned a list of four matrices, of which the `p` matrix was of primary interest. The `brms::fitted()` function doesn't work quite the same way, here.
 
-```{r}
+```{r, warning = F, message = F}
 fitted(b13.6,
        summary = F,
        nsamples = 1000) %>% 
@@ -1028,7 +1021,7 @@ But that doesn't appear to be the case. *Sigh*.
 
 ```{r}
 posterior_samples(b13.7) %>% 
-  transmute(rho_squared = 1/(2*(lscale_gplatlon2^2))) %>% 
+  transmute(rho_squared = 1 / (2 * (lscale_gplatlon2^2))) %>% 
   mean_hdi(rho_squared, .width = .89) %>% 
   mutate_if(is.double, round, digits = 3)
 ```
@@ -1382,26 +1375,24 @@ We'll compare the models with information criteria.
 waic(b13.bonus_0, b13.bonus_1, b13.bonus_2)
 ```
 
-The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here's what the random intercepts look like in a coefficient plot.
+The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here we'll practice our `tidybayes::spread_draws()` skills from the end of the last chapter to see what the random intercepts look like in a coefficient plot.
 
-```{r, fig.height = 2.5, fig.width = 9}
-coef(b13.bonus_2)$discipline[, , 2] %>% 
-  as_tibble() %>% 
-  mutate(discipline = c("Chemical sciences", "Physical sciences",
-                        "Physics", "Humanities", "Technical sciences",
-                        "Interdisciplinary", "Earth/life sciences",
-                        "Social sciences", "Medical sciences")) %>%
+```{r, fig.height = 2.75, fig.width = 9}
+b13.bonus_2 %>% 
+  spread_draws(b_male, r_discipline[discipline,term]) %>% 
+  filter(term == "male") %>% 
+  ungroup() %>% 
+  mutate(effect     = b_male + r_discipline,
+         discipline = str_replace(discipline, "[.]", " ")) %>% 
   
-  ggplot(aes(x = reorder(discipline, Estimate), y = Estimate,
-             ymin = Q2.5,
-             ymax = Q97.5)) +
-  geom_hline(yintercept = 0, color = "#E8DCCF", alpha = 1/4) +
-  geom_hline(yintercept = fixef(b13.bonus_2)[2], linetype = 3, color = "#80A0C7") +
-  geom_pointrange(shape = 20, size = 3/4, color = "#8B9DAF") +
+  ggplot(aes(x = effect, y = reorder(discipline, effect))) +
+  geom_vline(xintercept = 0, color = "#E8DCCF", alpha = 1/2) +
+  geom_halfeyeh(.width = .95, size = .9, relative_scale = .9,
+                color = "#80A0C7", fill = "#394165") +
   labs(title    = "Random slopes for the male dummy",
-       subtitle = "The vertical dotted line is the posterior mean of the fixed effect for the\nmale dummy. The dots and horizontal lines are the posterior means and\npercentile-based 95% intervals, respectively. The values are on the log scale.",
+       subtitle = "The dots and horizontal lines are the posterior means and percentile-based\n95% intervals, respectively. The values are on the log scale.",
        x        = NULL, y = NULL) +
-  coord_flip(ylim = -1:1) +
+  coord_cartesian(xlim = c(-1.5, 1.5)) +
   theme_pearl_earring +
   theme(axis.ticks.y = element_blank(),
         axis.text.y  = element_text(hjust = 0))
