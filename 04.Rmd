@@ -563,7 +563,7 @@ d_grid_samples %>%
   facet_wrap(~key, scales= "free")
 ```
 
-Not so Gaussian with that small $n$.
+Sigma's not so Gaussian with that small $n$.
 
 ### Fitting the model with ~~`map()`~~ `brm()`.
 
@@ -575,7 +575,8 @@ b4.1 <-
       height ~ 1,
       prior = c(prior(normal(178, 20), class = Intercept),
                 prior(uniform(0, 50), class = sigma)),
-      iter = 31000, warmup = 30000, chains = 4, cores = 4)
+      iter = 31000, warmup = 30000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in Chapter 8, HMC tends to work better when you default to a half Cauchy for $\sigma$. Here's how to do so.
@@ -586,7 +587,8 @@ b4.1_half_cauchy <-
       height ~ 1,
       prior = c(prior(normal(178, 20), class = Intercept),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 This leads to an important point. After running an HMC model, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in Chapter 8. Here's a typical way to do so in brms.
@@ -625,7 +627,8 @@ b4.2 <-
       height ~ 1,
       prior = c(prior(normal(178, .1), class = Intercept),
                 prior(uniform(0, 50), class = sigma)),
-      iter = 3000, warmup = 2000, chains = 4, cores = 4)
+      iter = 3000, warmup = 2000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 ```{r, fig.width = 6, fig.height = 2.5}
@@ -783,7 +786,8 @@ b4.3 <-
       prior = c(prior(normal(156, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 50), class = sigma)),
-      iter = 41000, warmup = 40000, chains = 4, cores = 4)
+      iter = 41000, warmup = 40000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 This was another example of how using a uniform prior for $\sigma$ required we use an unusually large number of `warmup` iterations before the HMC chains converged on the posterior. Change the prior to `cauchy(0, 1)` and the chains converge with no problem, resulting in much better effective samples, too. Here are the trace plots.
@@ -831,8 +835,7 @@ b4.4 <-
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 50), class = sigma)),
       iter = 46000, warmup = 45000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.8, 
-                     max_treedepth = 10))
+      seed = 4)
 ```
 
 ```{r, fig.width = 6, fig.height = 3.5}
@@ -879,53 +882,57 @@ post %>%
 Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
 
 ```{r b10_through_b352, cache = T, message = F, warning = F}
-N <- 10
+n <- 10
 
 b10 <- 
   brm(data = d2 %>%
-        slice(1:N),  # note our tricky use of `N` and `slice()`
+        slice(1:n),  # note our tricky use of `N` and `slice()`
       family = gaussian,
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 
-N <- 50
+n <- 50
 
 b50 <- 
   brm(data = d2 %>%
-        slice(1:N), 
+        slice(1:n), 
       family = gaussian,
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 
-N <- 150
+n <- 150
 
 b150 <- 
   brm(data = d2 %>%
-        slice(1:N), 
+        slice(1:n), 
       family = gaussian,
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 
-N <- 352
+n <- 352
 
 b352 <- 
   brm(data = d2 %>%
-        slice(1:N), 
+        slice(1:n), 
       family = gaussian,
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 I'm not going to clutter up the document with all the trace plots and coefficient summaries from these four models. But here's how to get that information.
@@ -1273,7 +1280,8 @@ b4.5 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 ```{r, fig.width = 6, fig.height = 4.5}
@@ -1286,13 +1294,13 @@ Our quadratic plot requires new `fitted()`- and `predict()`-oriented wrangling.
 ```{r}
 weight_seq <- tibble(weight_s = seq(from = -2.5, to = 2.5, length.out = 30))
 
-fitd_quad <-
+f_quad <-
   fitted(b4.5, 
          newdata = weight_seq) %>%
   as_tibble() %>%
   bind_cols(weight_seq)
 
-pred_quad <-
+p_quad <-
   predict(b4.5, 
           newdata = weight_seq) %>%
   as_tibble() %>%
@@ -1304,10 +1312,10 @@ Behold the code for our version of Figure 4.9.a. You'll notice how little the co
 ```{r, warning = F, fig.width = 3, fig.height = 3}
 ggplot(data = d, 
        aes(x = weight_s, y = height)) +
-  geom_ribbon(data = pred_quad, 
+  geom_ribbon(data = p_quad, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_smooth(data = fitd_quad,
+  geom_smooth(data = f_quad,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/2) +
@@ -1330,7 +1338,8 @@ b4.6 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 And now we'll fit the good old linear model.
@@ -1342,19 +1351,20 @@ b4.7 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
 ```
 
 Here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.c, the cubic model.
 
 ```{r, warning = F, fig.width = 3, fig.height = 3}
-fitd_cub <-
+f_cub <-
   fitted(b4.6, 
          newdata = weight_seq) %>%
   as_tibble() %>%
   bind_cols(weight_seq)
 
-pred_cub <-
+p_cub <-
   predict(b4.6, 
           newdata = weight_seq) %>%
   as_tibble() %>%
@@ -1362,10 +1372,10 @@ pred_cub <-
 
 ggplot(data = d, 
        aes(x = weight_s, y = height)) +
-  geom_ribbon(data = pred_cub, 
+  geom_ribbon(data = p_cub, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_smooth(data = fitd_cub,
+  geom_smooth(data = f_cub,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/4) +
@@ -1378,13 +1388,13 @@ ggplot(data = d,
 And here's the `fitted()`, `predict()`, and ggplot2 code for Figure 4.9.a, the linear model.
 
 ```{r, warning = F, fig.width = 3, fig.height = 3}
-fitd_line <-
+f_line <-
   fitted(b4.7, 
          newdata = weight_seq) %>%
   as_tibble() %>%
   bind_cols(weight_seq)
 
-pred_line <-
+p_line <-
   predict(b4.7, 
           newdata = weight_seq) %>%
   as_tibble() %>%
@@ -1392,10 +1402,10 @@ pred_line <-
 
 ggplot(data = d, 
        aes(x = weight_s, y = height)) +
-  geom_ribbon(data = pred_line, 
+  geom_ribbon(data = p_line, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_smooth(data = fitd_line,
+  geom_smooth(data = f_line,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/4) +
@@ -1439,7 +1449,7 @@ sessionInfo()
 ```
 
 ```{r, warning = F, echo = F}
-rm(pos, growth, big, small, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, N, b10, b50, b150, b352, post10, post50, post150, post352, p10, p150, p50, p352, multiplot, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, fitd_quad, pred_quad, b4.6, b4.7, fitd_cub, pred_cub, fitd_line, pred_line, at)
+# rm(pos, growth, big, small, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b10, b50, b150, b352, post10, post50, post150, post352, p10, p150, p50, p352, multiplot, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f_quad, p_quad, b4.6, b4.7, f_cub, p_cub, f_line, p_line, at)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
