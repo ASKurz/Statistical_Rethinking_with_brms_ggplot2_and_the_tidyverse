@@ -115,7 +115,8 @@ b5.1 <-
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 The summary:
@@ -131,13 +132,13 @@ We'll employ `fitted()` to make Figure 5.2.b. In preparation for `fitted()` we'l
 nd <- tibble(MedianAgeMarriage_s = seq(from = -3, to = 3.5, length.out = 30))
 
 # Now use `fitted()` to get the model-implied trajectories
-fitd_b5.1 <- 
+f <- 
   fitted(b5.1, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
 # Plot
-ggplot(data = fitd_b5.1, 
+ggplot(data = f, 
        aes(x = MedianAgeMarriage_s, y = Estimate)) +
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
@@ -169,7 +170,8 @@ b5.2 <-
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -181,12 +183,12 @@ Now we'll wangle and plot our version of Figure 5.2.a.
 ```{r, fig.width = 3, fig.height = 3}
 nd <- tibble(Marriage_s = seq(from = -2.5, to = 3.5, length.out = 30))
 
-fitd_b5.2 <- 
+f <- 
   fitted(b5.2, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
-ggplot(data = fitd_b5.2, 
+ggplot(data = f, 
        aes(x = Marriage_s, y = Estimate)) +
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
@@ -233,7 +235,8 @@ b5.3 <-
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -310,7 +313,8 @@ b5.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -320,18 +324,18 @@ print(b5.4)
 With `fitted()`, we compute the expected values for each state (with the exception of Nevada). Since the `MedianAgeMarriage_s` values for each state are in the date we used to fit the model, we’ll omit the `newdata` argument.
 
 ```{r}
-fitd_b5.4 <- 
+f <- 
   fitted(b5.4) %>%
   as_tibble() %>%
   bind_cols(d)
 
-head(fitd_b5.4)
+head(f)
 ```
 
 After a little data processing, we can make Figure 5.3.
 
 ```{r, fig.width = 3, fig.height = 3}
-fitd_b5.4 %>% 
+f %>% 
   
   ggplot(aes(x = MedianAgeMarriage_s, y = Marriage_s)) +
   geom_point(size = 2, shape = 1, color = "firebrick4") +
@@ -349,7 +353,7 @@ We get the residuals with the well-named `residuals()` function. Much like with 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
 ```{r, fig.width = 3, fig.height = 3}
-res_b5.4 <- 
+r <- 
   residuals(b5.4) %>%
   # To use this in ggplot2, we need to make it a tibble or data frame
   as_tibble() %>% 
@@ -361,7 +365,7 @@ text <-
          Divorce = 14.1,
          label = c("slower", "faster"))
 
-res_b5.4 %>% 
+r %>% 
   ggplot(aes(x = Estimate, y = Divorce)) +
   stat_smooth(method = "lm", fullrange = T,
               color = "firebrick4", fill = "firebrick4", 
@@ -371,7 +375,7 @@ res_b5.4 %>%
   geom_text(data = text,
             aes(label = label)) +
   scale_x_continuous(limits = c(-2, 2)) +
-  coord_cartesian(xlim = range(res_b5.4$Estimate),
+  coord_cartesian(xlim = range(r$Estimate),
                   ylim = c(6, 14.1)) +
   labs(x = "Marriage rate residuals") +
   theme_bw() +
@@ -387,7 +391,8 @@ b5.4b <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
@@ -411,7 +416,7 @@ residuals(b5.4b) %>%
   geom_text(data = text,
             aes(label = label)) +
   scale_x_continuous(limits = c(-2, 3)) +
-  coord_cartesian(xlim = range(res_b5.4$Estimate),
+  coord_cartesian(xlim = range(r$Estimate),
                   ylim = c(6, 14.1)) +
   labs(x = "Age of marriage residuals") +
   theme_bw() +
@@ -611,13 +616,13 @@ More McElreath inspiration: "No matter how many predictors you’ve already incl
 #### Overthinking: Simulating spurious association.
 
 ```{r}
-N <- 100                             # number of cases
+n <- 100                             # number of cases
 
 set.seed(135)                        # setting the seed makes the results reproducible
 d <- 
-  tibble(x_real = rnorm(N),          # x_real as Gaussian with mean 0 and SD 1 (i.e., the defaults)
-         x_spur = rnorm(N, x_real),  # x_spur as Gaussian with mean = x_real
-         y =      rnorm(N, x_real))  # y as Gaussian with mean = x_real
+  tibble(x_real = rnorm(n),          # x_real as Gaussian with mean 0 and SD 1 (i.e., the defaults)
+         x_spur = rnorm(n, x_real),  # x_spur as Gaussian with mean = x_real
+         y =      rnorm(n, x_real))  # y as Gaussian with mean = x_real
 ```
 
 Here are the quick `pairs()` plots. 
@@ -634,7 +639,8 @@ brm(data = d, family = gaussian,
     prior = c(prior(normal(0, 10), class = Intercept),
               prior(normal(0, 1), class = b),
               prior(uniform(0, 10), class = sigma)),
-    iter = 2000, warmup = 500, chains = 4, cores = 4) %>% 
+    iter = 2000, warmup = 500, chains = 4, cores = 4,
+    seed = 5) %>% 
   
   fixef() %>% round(digits = 2)
 ```
@@ -676,17 +682,18 @@ b5.5 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to Chapter 14 where we'll learn how to do better. 
 
-Here's how to explicitly drop the cases with missing values on the predictor.
+To compliment how McElreath removed cases with missing values on our variables of interest with Base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
 
 ```{r}
 dcc <- 
   d %>%
-  filter(complete.cases(.))              
+  drop_na(ends_with("_s"))              
 ```
 
 But anyway, let's inspect the parameter summary.
@@ -750,7 +757,8 @@ b5.6 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 1), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.9))
+      control = list(adapt_delta = 0.9),
+      seed = 5)
 ```
 
 ```{r}
@@ -807,7 +815,8 @@ b5.7 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 1), class = sigma)),
       iter = 4000, warmup = 2000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.999))
+      control = list(adapt_delta = 0.999),
+      seed = 5)
 ```
 
 ```{r}
@@ -875,14 +884,14 @@ b5.7 %>%
 #### Overthinking: Simulating a masking relationship.
 
 ```{r}
-N   <- 100     # number of cases
+n   <- 100     # number of cases
 rho <- .7      # correlation between x_pos and x_neg
 
 set.seed(141)  # setting the seed makes the results reproducible
 d <- 
-  tibble(x_pos = rnorm(N),                              # x_pos as a standard Gaussian
-         x_neg = rnorm(N, rho*x_pos, sqrt(1 - rho^2)),  # x_neg correlated with x_pos
-         y     = rnorm(N, x_pos - x_neg))               # y equally associated with x_pos and x_neg
+  tibble(x_pos = rnorm(n),                                # x_pos as a standard Gaussian
+         x_neg = rnorm(n, rho * x_pos, sqrt(1 - rho^2)),  # x_neg correlated with x_pos
+         y     = rnorm(n, x_pos - x_neg))                 # y equally associated with x_pos and x_neg
 ```
 
 Here are the quick `pairs()` plots. 
@@ -899,7 +908,8 @@ b5.O.both <-
       y ~ 1 + x_pos + x_neg,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(cauchy(0, 1), class = sigma)))
+                prior(cauchy(0, 1), class = sigma)),
+      seed = 5)
 
 b5.O.pos <-
   update(b5.O.both, 
@@ -927,14 +937,14 @@ fixef(b5.O.both) %>% round(digits = 2)
 Let's simulate some leg data.
 
 ```{r}
-N <- 100
+n <- 100
 set.seed(531)
 
 d <- 
-  tibble(height    = rnorm(N, mean = 10, sd = 2),
-         leg_prop  = runif(N, min = 0.4, max = 0.5)) %>% 
-  mutate(leg_left  = leg_prop*height + rnorm(N, mean = 0, sd = 0.02),
-         leg_right = leg_prop*height + rnorm(N, mean = 0, sd = 0.02))
+  tibble(height    = rnorm(n, mean = 10, sd = 2),
+         leg_prop  = runif(n, min = 0.4, max = 0.5)) %>% 
+  mutate(leg_left  = leg_prop*height + rnorm(n, mean = 0, sd = 0.02),
+         leg_right = leg_prop*height + rnorm(n, mean = 0, sd = 0.02))
 ```
 
 `leg_left` and `leg_right` are **highly** correlated.
@@ -965,7 +975,8 @@ b5.8 <-
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 Let's inspect the damage.
@@ -1066,7 +1077,8 @@ b5.9 <-
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -1119,7 +1131,8 @@ b5.10 <-
       prior = c(prior(normal(.6, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 
 # kcal.per.g regressed on perc.lactose
 b5.11 <- 
@@ -1254,14 +1267,14 @@ It helped me understand the next example by mapping out the sequence of events M
 Based on the design, let's simulate our data.
 
 ```{r}
-N <- 100
+n <- 100
 
 set.seed(17)
 d <- 
-  tibble(h0        = rnorm(N, mean = 10, sd = 2), 
-         treatment = rep(0:1, each = N / 2),
-         fungus    = rbinom(N, size = 1, prob = .5 - treatment * 0.4),
-         h1        = h0 + rnorm(N, mean = 5 - 3 * fungus, sd = 1))
+  tibble(h0        = rnorm(n, mean = 10, sd = 2), 
+         treatment = rep(0:1, each = n / 2),
+         fungus    = rbinom(n, size = 1, prob = .5 - treatment * 0.4),
+         h1        = h0 + rnorm(n, mean = 5 - 3 * fungus, sd = 1))
 ```
 
 We'll use `head()` to peek at the data.
@@ -1281,7 +1294,8 @@ b5.13 <-
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.99))
+      control = list(adapt_delta = 0.99),
+      seed = 5)
 ```
 
 ```{r}
@@ -1342,7 +1356,8 @@ b5.15 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -1413,7 +1428,8 @@ b5.15b <-
       height ~ 0 + male + female,
       prior = c(prior(normal(178, 100), class = b),
                 prior(cauchy(0, 2), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -1484,7 +1500,8 @@ b5.16 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.8))
+      control = list(adapt_delta = 0.8),
+      seed = 5)
 ```
 
 ```{r}
@@ -1582,7 +1599,8 @@ b5.16_alt <-
       kcal.per.g ~ 0 + clade,
       prior = c(prior(normal(.6, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 500, chains = 4, cores = 4)
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
 ```
 
 ```{r}
@@ -1608,7 +1626,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b5.1, nd, fitd_b5.1, b5.2, fitd_b5.2, b5.3, post, b5.4, fitd_b5.4, res_b5.4, text, b5.4b, N, b5.5, dcc, b5.6, b5.7, rho, b5.O.both, b5.O.pos, b5.O.neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
+# rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, b5.5, dcc, b5.6, b5.7, rho, b5.O.both, b5.O.pos, b5.O.neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
