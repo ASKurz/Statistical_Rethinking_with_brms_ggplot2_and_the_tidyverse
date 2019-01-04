@@ -1311,15 +1311,16 @@ Behold the code for our version of Figure 4.9.a. You'll notice how little the co
 
 ```{r, warning = F, fig.width = 3, fig.height = 3}
 ggplot(data = d, 
-       aes(x = weight_s, y = height)) +
+       aes(x = weight_s)) +
   geom_ribbon(data = p_quad, 
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_smooth(data = f_quad,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/2) +
-  geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
+  geom_point(aes(y = height),
+             color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
@@ -1371,15 +1372,16 @@ p_cub <-
   bind_cols(weight_seq) 
 
 ggplot(data = d, 
-       aes(x = weight_s, y = height)) +
+       aes(x = weight_s)) +
   geom_ribbon(data = p_cub, 
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_smooth(data = f_cub,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/4) +
-  geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
+  geom_point(aes(y = height),
+             color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
@@ -1401,15 +1403,16 @@ p_line <-
   bind_cols(weight_seq) 
 
 ggplot(data = d, 
-       aes(x = weight_s, y = height)) +
+       aes(x = weight_s)) +
   geom_ribbon(data = p_line, 
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
+              aes(ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
   geom_smooth(data = f_line,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "grey70", color = "black", alpha = 1, size = 1/4) +
-  geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
+  geom_point(aes(y = height),
+             color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
@@ -1424,10 +1427,11 @@ at <- c(-2, -1, 0, 1, 2)
 
 ggplot(data = d, 
        aes(x = weight_s, y = height)) +
-  geom_ribbon(data = pred_line, 
+  geom_ribbon(data = p_line, 
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               fill = "grey83") +
-  geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
+  geom_point(aes(y = height),
+             color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank()) +
@@ -1435,7 +1439,7 @@ ggplot(data = d,
   # Here it is!
   scale_x_continuous("standardized weight converted back",
                      breaks = at,
-                     labels = round(at*sd(d$weight) + mean(d$weight), 1))
+                     labels = round(at * sd(d$weight) + mean(d$weight), 1))
 ```
 
 ## Reference {-}
@@ -1449,7 +1453,7 @@ sessionInfo()
 ```
 
 ```{r, warning = F, echo = F}
-# rm(pos, growth, big, small, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b10, b50, b150, b352, post10, post50, post150, post352, p10, p150, p50, p352, multiplot, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f_quad, p_quad, b4.6, b4.7, f_cub, p_cub, f_line, p_line, at)
+rm(pos, growth, big, small, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b10, b50, b150, b352, post10, post50, post150, post352, p10, p150, p50, p352, multiplot, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f_quad, p_quad, b4.6, b4.7, f_cub, p_cub, f_line, p_line, at)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
