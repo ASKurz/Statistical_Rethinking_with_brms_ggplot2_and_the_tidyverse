@@ -438,7 +438,7 @@ nd <-
 fitted(b5.3, newdata = nd) %>% 
   as_tibble() %>% 
   # Since `fitted()` and `predict()` name their intervals the same way, we'll need to
-  # `rename()` then to keep them straight.
+  # `rename()` them to keep them straight.
   rename(f_ll = Q2.5,
          f_ul = Q97.5) %>% 
   # Note how we're just nesting the `predict()` code right inside `bind_cols()`
@@ -1153,7 +1153,7 @@ posterior_interval(b5.10)[2, ] %>% round(digits = 3)
 posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 ```
 
-Now "watch what happens when we place both predictor varaibles in the same regression model" (p. 146)
+Now "watch what happens when we place both predictor varaibles in the same regression model" (p. 146).
 
 ```{r b5.12, cache = T, message = F, warning = F, results = 'hide'}
 b5.12 <- 
@@ -1196,7 +1196,7 @@ ggpairs(data  = d, columns = c(3:4, 6),
         diag  = list(continuous = my_diag),
         lower = list(continuous = my_lower)) + 
   theme_bw() +
-  theme(strip.background = element_rect(fill = "white"),
+  theme(strip.background = element_rect(fill = "white", color = "white"),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
         panel.grid       = element_blank())
@@ -1626,7 +1626,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-# rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, b5.5, dcc, b5.6, b5.7, rho, b5.O.both, b5.O.pos, b5.O.neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
+rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, b5.5, dcc, b5.6, b5.7, rho, b5.O.both, b5.O.pos, b5.O.neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
