@@ -406,7 +406,7 @@ weatherperson %>%
 ```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
-  mutate(person = rep(c("weatherperson", "newcomer"), each = n()/2),
+  mutate(person = rep(c("weatherperson", "newcomer"), each = n() / 2),
          hit    = ifelse(prediction == observed, 1, 1 - prediction - observed)) %>% 
   group_by(person, hit) %>% 
   count() %>% 
@@ -576,7 +576,8 @@ b6.8 <-
                 prior(normal(0, 1000), class = b),
                 prior(cauchy(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      inits = inits_list)  # Here we put our start values in the `brm()` function
+      inits = inits_list,  # Here we put our start values in the `brm()` function
+      seed = 6)
 ```
 
 ```{r}
@@ -639,7 +640,7 @@ I find the `rethinking::sim.train.test()` function opaque. If you're curious, yo
 ```{r, eval = F}
 library(rethinking)
 
-N       <- 20
+n       <- 20
 kseq    <- 1:5
 # I've reduced this number by one order of magnitude to reduce computation time
 n_sim   <- 1e3
@@ -649,17 +650,17 @@ n_cores <- 4
 dev_20 <-
   sapply(kseq, function(k) {
     print(k);
-    r <- mcreplicate(n_sim, sim.train.test(N = N, k = k),
+    r <- mcreplicate(n_sim, sim.train.test(N = n, k = k),
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ]))
     })
 
 # here's our dev object based on N <- 100
-N       <- 100
+n       <- 100
 dev_100 <- 
   sapply(kseq, function(k) {
     print(k);
-    r <- mcreplicate(n_sim, sim.train.test(N = N, k = k), 
+    r <- mcreplicate(n_sim, sim.train.test(N = n, k = k), 
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ]))
     })
@@ -685,12 +686,12 @@ dev_tibble <-
     dev_100 %>%
       as_tibble()
   ) %>% 
-  mutate(N = rep(c("N = 20", "N = 100"), each = 4),
+  mutate(n = rep(c("n = 20", "n = 100"), each = 4),
          statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 2),
          sample    = rep(c("in", "out"), times = 2) %>% rep(., times = 2)) %>% 
-  gather(n_par, value, -N, -statistic, -sample) %>% 
+  gather(n_par, value, -n, -statistic, -sample) %>% 
   spread(key = statistic, value = value) %>% 
-  mutate(N     = factor(N, levels = c("N = 20", "N = 100")),
+  mutate(n     = factor(n, levels = c("n = 20", "n = 100")),
          n_par = str_remove(n_par, "V") %>% as.double()) %>% 
   mutate(n_par = ifelse(sample == "in", n_par - .075, n_par + .075))
 
@@ -726,7 +727,7 @@ dev_tibble %>%
         legend.position  = "none",
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
-  facet_wrap(~N, scale = "free_y")
+  facet_wrap(~n, scale = "free_y")
 ```
 
 Even with a substantially smaller $N$, our simulation results matched up well with those in the text.
@@ -759,7 +760,7 @@ tibble(x = seq(from = - 3.5,
 
 In our version of the plot, darker purple = more regularizing.
 
-But to prepare for Figure 6.9, let's simulate. This time we'll wrap the basic simulation code we used before into a function we'll call `make_sim()`. Our `make_sim()` function has two parameters, `N` and `b_sigma`, both of which come from McElreath's simulation code. So you'll note that instead of hard coding the values for `N` and `b_sigma` within the simulation, we're leaving them adjustable (i.e., `sim.train.test(N = N, k = k, b_sigma = b_sigma)`). Also notice that instead of saving the simulation results as objects, like before, we're just converting them to tibbles with the `as_tibble()` function at the bottom. Our goal is to use `make_sim()` within a `purrr::map2()` statement. The result will be a nested tibble into which we've saved the results of 6 simulations based off of two sample sizes (i.e., `N = c(20, 100)`) and three values of $\sigma$ for our Gaussian $\beta$ prior (i.e., `b_sigma = c(1, .5, .2)`).
+But to prepare for Figure 6.9, let's simulate. This time we'll wrap the basic simulation code we used before into a function we'll call `make_sim()`. Our `make_sim()` function has two parameters, `N` and `b_sigma`, both of which come from McElreath's simulation code. So you'll note that instead of hard coding the values for `N` and `b_sigma` within the simulation, we're leaving them adjustable (i.e., `sim.train.test(N = n, k = k, b_sigma = b_sigma)`). Also notice that instead of saving the simulation results as objects, like before, we're just converting them to tibbles with the `as_tibble()` function at the bottom. Our goal is to use `make_sim()` within a `purrr::map2()` statement. The result will be a nested tibble into which we've saved the results of 6 simulations based off of two sample sizes (i.e., `n = c(20, 100)`) and three values of $\sigma$ for our Gaussian $\beta$ prior (i.e., `b_sigma = c(1, .5, .2)`).
 
 ```{r, eval = F}
 library(rethinking)
@@ -767,10 +768,10 @@ library(rethinking)
 # I've reduced this number by one order of magnitude to reduce computation time
 n_sim <- 1e3
 
-make_sim <- function(N, b_sigma){
+make_sim <- function(n, b_sigma){
   sapply(kseq, function(k) {
     print(k);
-    r <- mcreplicate(n_sim, sim.train.test(N = N, k = k, b_sigma = b_sigma),  # this is an augmented line of code
+    r <- mcreplicate(n_sim, sim.train.test(N = n, k = k, b_sigma = b_sigma),  # this is an augmented line of code
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ])) }) %>% 
     
@@ -779,9 +780,9 @@ make_sim <- function(N, b_sigma){
 }
 
 s <-
-  tibble(N       = rep(c(20, 100), each = 3),
+  tibble(n       = rep(c(20, 100), each = 3),
          b_sigma = rep(c(1, .5, .2), times = 2)) %>% 
-  mutate(sim     = map2(N, b_sigma, make_sim)) %>% 
+  mutate(sim     = map2(n, b_sigma, make_sim)) %>% 
   unnest()
 ```
 
@@ -793,6 +794,9 @@ s <-
 # save("s", file = "06_sims/sim_2.rda")
 
 load("06_sims/sim_2.rda")
+s <-
+  s %>% 
+  rename(n = N)
 ```
 
 We'll follow the same principles for wrangling these data as we did those from the previous simulation, `dev_tibble`. And after wrangling, we'll feed the data directly into the code for our version of Figure 6.9.
@@ -802,9 +806,9 @@ We'll follow the same principles for wrangling these data as we did those from t
 s %>% 
   mutate(statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 3 * 2),
          sample    = rep(c("in", "out"), times = 2) %>% rep(., times = 3 * 2)) %>% 
-  gather(n_par, value, -N, -b_sigma, -statistic, -sample) %>% 
+  gather(n_par, value, -n, -b_sigma, -statistic, -sample) %>% 
   spread(key = statistic, value = value) %>% 
-  mutate(N     = str_c("N = ", N) %>% factor(., levels = c("N = 20", "N = 100")),
+  mutate(n     = str_c("n = ", n) %>% factor(., levels = c("n = 20", "n = 100")),
          n_par = str_remove(n_par, "V") %>% as.double())  %>% 
   
   # now plot
@@ -825,7 +829,7 @@ s %>%
         legend.position  = "none",
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
-  facet_wrap(~N, scale = "free_y")
+  facet_wrap(~n, scale = "free_y")
 ```
 
 Our results don’t perfectly align with those in the text. I suspect his is because we used `1e3` iterations, rather than the `1e4` of the text. If you’d like to wait all night long for the simulation to yield more stable results, be my guest.
@@ -880,7 +884,7 @@ dev_tibble  %>%
   theme(text             = element_text(family = "Courier"),
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
-  facet_wrap(~N, scale = "free_y")
+  facet_wrap(~n, scale = "free_y")
 ```
 
 Again, our numbers aren't the exact same as McElreath's because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points 
@@ -938,7 +942,8 @@ b <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 30), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 6)
 ```
 
 ```{r}
@@ -1072,7 +1077,7 @@ s %>%
   geom_line(aes(y = value, group = b_sigma, color = b_sigma)) +
   scale_color_manual(values = c(carto_pal(7, "BurgYl")[7], carto_pal(7, "BurgYl")[5])) +
   # scale_color_manual(values = c("steelblue", "black")) +
-  labs(subtitle = "N = 20",
+  labs(subtitle = "n = 20",
        x = "number of parameters",
        y = "deviance") +
   theme_classic() +
@@ -1099,7 +1104,7 @@ data(milk)
 
 d <- 
   milk %>%
-  filter(complete.cases(.))
+  drop_na(ends_with("_s"))
 rm(milk)
 
 d <-
@@ -1134,7 +1139,8 @@ b6.11 <-
       prior = c(prior(uniform(-1000, 1000), class = Intercept),
                 prior(uniform(0, 100), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      inits = inits_list)
+      inits = inits_list,
+      seed = 6)
 
 inits <- list(Intercept = mean(d$kcal.per.g),
               neocortex = 0,
@@ -1146,7 +1152,8 @@ b6.12 <-
                 prior(uniform(-1000, 1000), class = b),
                 prior(uniform(0, 100), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      inits = inits_list)
+      inits = inits_list,
+      seed = 6)
 
 inits <- list(Intercept   = mean(d$kcal.per.g),
               `log(mass)` = 0,
@@ -1294,6 +1301,8 @@ compare_waic <- function (..., sort = "WAIC", func = "WAIC")
     new("compareIC", output = result, dSE = dSE.matrix)
 }
 ```
+
+
 
 Our new `compare_waic()` returns the following:
 
@@ -1472,54 +1481,9 @@ my_coef_tab %>%
 
 I'm also not aware of an efficient way in brms to reproduce Figure 6.12 for which McElreath nested his `coeftab()` argument in a `plot()` argument. However, one can build something similar by hand with a little data wrangling.
 
-```{r, fig.width = 4, fig.height = 3, warning = F}
-p11 <- posterior_samples(b6.11)
-p12 <- posterior_samples(b6.12)
-p13 <- posterior_samples(b6.13)
-p14 <- posterior_samples(b6.14)
-
-# This block is just for intermediary information
-# colnames(p11)
-# colnames(p12)
-# colnames(p13)
-# colnames(p14)
-
-# Here we put it all together
-tibble(mdn = c(NA, median(p11[, 1]), median(p12[, 1]), median(p13[, 1]), median(p14[, 1]),
-               NA, NA, median(p12[, 2]), NA, median(p14[, 2]),
-               NA, median(p11[, 2]), NA, median(p13[, 2]), NA,
-               NA, median(p11[, 2]), median(p12[, 3]), median(p13[, 3]), median(p14[, 4])),
-       sd  = c(NA, sd(p11[, 1]), sd(p12[, 1]), sd(p13[, 1]), sd(p14[, 1]),
-               NA, NA, sd(p12[, 2]), NA, sd(p14[, 2]),
-               NA, sd(p11[, 2]), NA, sd(p13[, 2]), NA,
-               NA, sd(p11[, 2]), sd(p12[, 3]), sd(p13[, 3]), sd(p14[, 4])),
-       order = c(20:1)) %>%
-  
-  ggplot(aes(x = mdn, y = order)) +
-  geom_hline(yintercept = 0, color = carto_pal(7, "BurgYl")[2]) +
-  geom_pointrange(aes(x = order, y = mdn, 
-                      ymin = mdn - sd, 
-                      ymax = mdn + sd),
-                  shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
-  scale_x_continuous(breaks = 20:1,
-                     labels = c("intercept", 11:14,
-                                "neocortex", 11:14,
-                                "logmass",   11:14,
-                                "sigma",     11:14)) +
-  coord_flip() +
-  labs(x = NULL, y = NULL,
-       title = "My custom coeftab() plot") +
-  theme_classic() +
-  theme(text             = element_text(family = "Courier"),
-        axis.ticks.y     = element_blank(),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
-```
-
-Making that plot entailed a lot of hand typing values in the tibble, which just begs for human error. If possible, it's better to use functions in a principled way to produce the results. Below is such an attempt.
-
 ```{r, message = F, warning = F, fig.height = 3, fig.width = 4}
 # data wrangling
-my_coef_tab <-
+wrangled_my_coef_tab <-
   my_coef_tab %>%
   complete(term = distinct(., term), model) %>%
   rbind(
@@ -1538,7 +1502,7 @@ my_coef_tab <-
          axis = ifelse(str_detect(axis, "b6."), str_c("      ", axis), axis))
   
 # plot
-ggplot(data = my_coef_tab,
+ggplot(data = wrangled_my_coef_tab,
        aes(x = axis_order,
            y = estimate,
            ymin = lower,
@@ -1546,7 +1510,7 @@ ggplot(data = my_coef_tab,
   theme_classic() +
   geom_hline(yintercept = 0,  color = carto_pal(7, "BurgYl")[2]) +
   geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
-  scale_x_discrete(NULL, labels = my_coef_tab$axis) +
+  scale_x_discrete(NULL, labels = wrangled_my_coef_tab$axis) +
   ggtitle("My other coeftab() plot") +
   coord_flip() +
   theme(text         = element_text(family = "Courier"),
@@ -1556,7 +1520,26 @@ ggplot(data = my_coef_tab,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-I'm sure there are better ways to do this. Have at it--but do [share you code](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues) when you figure it out.
+However, if you’re willing to deviate just a bit from the format of McElreath’s `coeftab()` plot, here’s a more elegant way to work with our `my_coef_tab` tibble.
+
+```{r, message = F, warning = F, fig.height = 3.5, fig.width = 4}
+my_coef_tab %>% 
+  
+  ggplot(aes(x = model, y = estimate, ymin = lower, ymax = upper)) +
+  geom_hline(yintercept = 0,  color = carto_pal(7, "BurgYl")[2]) +
+  geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
+  labs(x = NULL,
+       y = NULL) +
+  coord_flip() +
+  theme_classic() +
+  theme(text         = element_text(family = "Courier"),
+        panel.grid   = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y  = element_text(hjust = 0),
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
+        strip.background = element_rect(color = "transparent")) +
+  facet_wrap(~term, ncol = 1)
+```
 
 #### Rethinking: Barplots suck.
 
@@ -1573,7 +1556,7 @@ nd <-
          mass      = rep(4.5, times = 30))
 
 # we'll get the `b6.14`-implied trajectory with `fitted()`
-fitd_b6.14 <-
+f <-
   fitted(b6.14, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
@@ -1591,9 +1574,9 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
   geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5), 
               fill  = carto_pal(7, "BurgYl")[6], alpha = 1/4) +
   geom_line(color   = carto_pal(7, "BurgYl")[6]) +
-  geom_ribbon(data  = fitd_b6.14, aes(ymin = Q2.5, ymax = Q97.5),
+  geom_ribbon(data  = f, aes(ymin = Q2.5, ymax = Q97.5),
               color = carto_pal(7, "BurgYl")[5], fill = "transparent", linetype = 2) +
-  geom_line(data = fitd_b6.14,
+  geom_line(data = f,
               color = carto_pal(7, "BurgYl")[5], linetype = 2) +
   geom_point(data = d, aes(x = neocortex, y = kcal.per.g), 
              size = 2, color = carto_pal(7, "BurgYl")[7]) +
@@ -1701,7 +1684,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, p11, p12, p13, p14, fitd_b6.14, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, wrangled_my_coef_tab, p11, p12, p13, p14, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
@@ -1711,3 +1694,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
+
