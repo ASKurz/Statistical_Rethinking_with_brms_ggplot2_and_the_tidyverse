@@ -62,7 +62,8 @@ b7.1 <-
       prior = c(prior(normal(8, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4)
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 7)
 
 b7.2 <-
   update(b7.1, 
@@ -75,19 +76,19 @@ In the text, McElreath more or less dared us to figure out how to make Figure 7.
 nd <- 
   tibble(rugged = seq(from = 0, to = 6.3, length.out = 30))
 
-fitd_b7.1 <-
+f_b7.1 <-
   fitted(b7.1, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
-fitd_b7.2 <-
+f_b7.2 <-
   fitted(b7.2, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd)
 
-# Here we'll put both in a single data object, with `fitd_b7.1` stacked atop `fitd_b7.2`
-fitd_both <-
-  full_join(fitd_b7.1, fitd_b7.2) %>%
+# Here we'll put both in a single data object, with `f_b7.1` stacked atop `f_b7.2`
+f <-
+  full_join(f_b7.1, f_b7.2) %>%
   mutate(cont_africa = rep(c("Africa", "not Africa"), each = 30))
 ```
 
@@ -105,7 +106,7 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
   ggplot(aes(x = rugged)) +
-  geom_smooth(data = fitd_both,
+  geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
                   fill = cont_africa, color = cont_africa),
               stat = "identity", 
@@ -126,7 +127,7 @@ dd %>%
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
 
-```{r b7.3, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.3_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.3 <-
   update(b7.1, 
          newdata = dd)
@@ -134,7 +135,7 @@ b7.3 <-
 
 Now we'll add the dummy.
 
-```{r b7.4, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.4_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.4 <-
   update(b7.3, 
          newdata = dd,
@@ -165,7 +166,7 @@ nd <-
            rep(., times = 2),
          cont_africa = rep(0:1, each = 30))
 
-fitd_b7.4 <-
+f <-
   fitted(b7.4, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd) %>%
@@ -179,7 +180,7 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
 ggplot(aes(x = rugged)) +
-  geom_smooth(data = fitd_b7.4,
+  geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
                   fill = cont_africa, color = cont_africa),
               stat = "identity", 
@@ -211,7 +212,7 @@ $$
 
 Fit the model.
 
-```{r b7.5, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.5_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5 <-
   update(b7.4,
          formula = log_gdp ~ 1 + rugged*cont_africa)
@@ -245,7 +246,7 @@ $$
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
-```{r b7.5b, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.5b_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5b <-
   update(b7.5,
          formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa)
@@ -266,7 +267,7 @@ loo(b7.5, b7.5b)
 Here's our prep work for the figure.
 
 ```{r}
-fitd_b7.5 <-
+f <-
   fitted(b7.5, newdata = nd) %>%  # we can use the same `nd` data from last time
   as_tibble() %>%
   bind_cols(nd) %>%
@@ -280,7 +281,7 @@ dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
 ggplot(aes(x = rugged)) +
-  geom_smooth(data = fitd_b7.5,
+  geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
                   fill = cont_africa, color = cont_africa),
               stat = "identity", 
@@ -418,7 +419,7 @@ nd <-
          cont_africa = rep(0:1,              each = 2))
 
 # `fitted()`
-fitd_b7.5 <-
+f <-
   fitted(b7.5, newdata = nd) %>%
   as_tibble() %>%
   bind_cols(nd) %>% 
@@ -432,7 +433,7 @@ dd %>%
   
   # plot
   ggplot(aes(x = cont_africa)) +
-  geom_smooth(data = fitd_b7.5,
+  geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
                   fill = factor(ox), color = factor(ox), linetype = factor(ox)),
               stat = "identity", 
@@ -510,7 +511,8 @@ b7.6 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 100), class = b),
                 prior(uniform(0, 100), class = sigma)),
-      iter = 2000, warmup = 1000, cores = 4, chains = 4)
+      iter = 2000, warmup = 1000, cores = 4, chains = 4,
+      seed = 7)
 
 b7.7 <- 
   update(b7.6, 
@@ -525,7 +527,8 @@ b7.6 <-
          prior = c(prior(normal(0, 100), class = Intercept),
                    prior(normal(0, 100), class = b),
                    prior(cauchy(0, 10), class = sigma)),
-         control = list(adapt_delta = 0.9))
+         control = list(adapt_delta = 0.9),
+      seed = 7)
 
 b7.7 <- 
   update(b7.6, 
@@ -576,7 +579,8 @@ b7.8 <-
                 prior(normal(0, 100), class = b),
                 prior(cauchy(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.9))
+      control = list(adapt_delta = 0.9),
+      seed = 7)
 
 b7.9 <- 
   update(b7.8, 
@@ -588,26 +592,16 @@ posterior_summary(b7.8) %>% round(digits = 2)
 posterior_summary(b7.9) %>% round(digits = 2)
 ```
 
-And okay fine, if you really want a `coeftab()`-like summary, here's a grotesque way to do it.
+And okay fine, if you really want a `coeftab()`-like summary, here's a way to do it.
 
 ```{r}
-# First, we reformat `b7.8`
-posterior_summary(b7.8) %>% 
-  data.frame() %>% 
-  rownames_to_column() %>% 
-  # Now we bind to it the rows of `b7.9`
-  bind_rows(
-    posterior_summary(b7.9) %>% 
-      data.frame() %>%
-      rownames_to_column()
-  ) %>% 
-  # Miscellaneous wrangling
-  mutate(model = c(rep("b7.8", times = 5),
-                   rep("b7.9", times = 6))) %>% 
-  select(rowname, Estimate, model) %>% 
-  filter(rowname != "lp__") %>% 
-  spread(key = model, value = Estimate) %>% 
-  rename(parameter = rowname) %>% 
+tibble(model  = str_c("b7.", 8:9)) %>% 
+  mutate(fit  = purrr::map(model, get)) %>% 
+  mutate(tidy = purrr::map(fit, tidy)) %>% 
+  unnest(tidy) %>% 
+  filter(term != "lp__") %>% 
+  select(term, estimate, model) %>% 
+  spread(key = model, value = estimate) %>% 
   mutate_if(is.double, round, digits = 2)
 ```
 
@@ -850,7 +844,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, fitd_b7.1, fitd_b7.2, fitd_both, b7.3, b7.4, fitd_b7.4, b7.5, b7.5b, fitd_b7.5, post, b7.6, b7.7, b7.8, b7.9, k, shade_seq, fig, d_factor, ic)
+# rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f_b7.1, f_b7.2, f, b7.3, b7.4, b7.5, b7.5b, post, b7.6, b7.7, b7.8, b7.9, k, shade_seq, fig, d_factor, ic)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
