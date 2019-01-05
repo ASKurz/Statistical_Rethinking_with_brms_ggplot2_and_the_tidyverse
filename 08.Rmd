@@ -132,7 +132,8 @@ b8.1 <-
       log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 2), class = sigma)))
+                prior(cauchy(0, 2), class = sigma)),
+      seed = 8)
 ```
 
 Now we have officially ditched the uniform distribution for $\sigma$. We'll only see it again in special cases for pedagogical purposes. Here's the posterior:
@@ -334,7 +335,8 @@ b8.2 <-
                 prior(uniform(0, 1e10), class = sigma)),
       inits = list(list(Intercept = 0, sigma = 1),
                    list(Intercept = 0, sigma = 1)),
-      iter = 4000, warmup = 1000, chains = 2)
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8)
 ```
 
 Those were some silly flat priors. Here's the damage.
@@ -369,7 +371,8 @@ b8.3 <-
                 prior(cauchy(0, 1), class = sigma)),
       inits = list(list(Intercept = 0, sigma = 1),
                    list(Intercept = 0, sigma = 1)),
-      iter = 4000, warmup = 1000, chains = 2)
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8)
 ```
 
 ```{r}
@@ -433,12 +436,12 @@ $$p(x|x_0, \gamma) = \Bigg ( \pi \gamma \Bigg [ 1 + \Big ( \frac{x - x_0}{\gamma
 The Cauchy has no mean and variance, but $x_0$ is the location and $\gamma$ is the scale. Here's our version of the simulation. Note our use of the `cummean()` function.
 
 ```{r, fig.height = 3, fig.width = 4}
-N <- 1e4
+n <- 1e4
 
 set.seed(1e4)
-tibble(y     = rcauchy(N, 0, 5),
+tibble(y     = rcauchy(n, location = 0, scale = 5),
        mu    = cummean(y),
-       index = 1:N) %>% 
+       index = 1:n) %>% 
   
   ggplot(aes(x = index, y = mu)) +
   geom_line() +
@@ -448,22 +451,22 @@ tibble(y     = rcauchy(N, 0, 5),
 The whole thing is quite remarkible. Just for kicks, here we do it again, this time with eight simulations.
 
 ```{r, fig.height = 4, fig.width = 10}
-N <- 1e4
+n <- 1e4
 
 set.seed(1)
-tibble(a = rcauchy(N, 0, 5),
-       b = rcauchy(N, 0, 5),
-       c = rcauchy(N, 0, 5),
-       d = rcauchy(N, 0, 5),
-       e = rcauchy(N, 0, 5),
-       f = rcauchy(N, 0, 5),
-       g = rcauchy(N, 0, 5),
-       h = rcauchy(N, 0, 5)) %>% 
+tibble(a = rcauchy(n, location = 0, scale = 5),
+       b = rcauchy(n, location = 0, scale = 5),
+       c = rcauchy(n, location = 0, scale = 5),
+       d = rcauchy(n, location = 0, scale = 5),
+       e = rcauchy(n, location = 0, scale = 5),
+       f = rcauchy(n, location = 0, scale = 5),
+       g = rcauchy(n, location = 0, scale = 5),
+       h = rcauchy(n, location = 0, scale = 5)) %>% 
   gather() %>% 
   group_by(key) %>% 
   mutate(mu = cummean(value)) %>% 
   ungroup() %>% 
-  mutate(index = rep(1:N, times = 8)) %>% 
+  mutate(index = rep(1:n, times = 8)) %>% 
 
   ggplot(aes(x = index, y = mu)) +
   geom_line(aes(color = key)) +
@@ -495,7 +498,7 @@ b8.4 <-
       inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
                    list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
-      seed = 8.4)
+      seed = 8)
 ```
 
 Our model results don't perfectly mirror McElreath's, but they're identical in spirit.
@@ -517,7 +520,8 @@ b8.5 <-
                 prior(cauchy(0, 1), class = sigma)),
       inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
                    list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
-      iter = 4000, warmup = 1000, chains = 2)
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8)
 ```
 
 ```{r}
@@ -567,7 +571,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1_4chains_4cores, post, my_diag, my_lower, l_b8.1, b8.2, b8.3, N, y, b8.4, b8.5, left_column, right_column)
+rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1_4chains_4cores, post, my_diag, my_lower, l_b8.1, b8.2, b8.3, n, y, b8.4, b8.5, left_column, right_column)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
