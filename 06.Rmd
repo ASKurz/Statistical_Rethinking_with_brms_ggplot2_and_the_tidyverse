@@ -1452,18 +1452,15 @@ The brms package doesn't have anything like rethinking's `coeftab()` function. H
 tidy(b6.14)
 ```
 
-Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a `rbind()` and a little indexing, we can save the summaries for all four models in a single tibble.
+Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a little `purrr::map()` code, you can save the `brm()` fits and their `tidy()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
 
 ```{r}
 my_coef_tab <-
-  rbind(tidy(b6.11), tidy(b6.12), tidy(b6.13), tidy(b6.14)) %>%
-  mutate(model = c(rep("b6.11", times = nrow(tidy(b6.11))),
-                   rep("b6.12", times = nrow(tidy(b6.12))),
-                   rep("b6.13", times = nrow(tidy(b6.13))),
-                   rep("b6.14", times = nrow(tidy(b6.14))))
-         ) %>%
-  filter(term != "lp__") %>%
-  select(model, everything())
+  tibble(model = c("b6.11", "b6.12", "b6.13", "b6.14")) %>% 
+  mutate(fit   = purrr::map(model, get)) %>% 
+  mutate(tidy  = purrr::map(fit, tidy)) %>% 
+  unnest(tidy) %>% 
+  filter(term != "lp__")
 
 head(my_coef_tab)
 ```
