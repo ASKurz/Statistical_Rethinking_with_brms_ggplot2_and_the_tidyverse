@@ -128,7 +128,7 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-For Figure 6.3, we'll make each plot individually and them glue them together with `gridExtra::grid.arrange()`. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
+For Figure 6.3, we’ll make each plot individually and them glue them together with `gridExtra::grid.arrange()`. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
 ```{r}
 p <-
@@ -352,7 +352,7 @@ weatherperson %>%
         text = element_text(family = "Courier"))
 ```
 
-Here's how the newcomer faired:
+Here's how the newcomer fared:
 
 ```{r, fig.width = 6, fig.height = 1.5}
 newcomer <-
@@ -544,7 +544,7 @@ lm(data = d,
 
 #### Overthinking: Computing deviance.
 
-To follow along with the text, we'll need to standardize `mass` before we compute deviance.
+To follow along with the text, we’ll need to standardize `mass` before we compute deviance.
 
 ```{r}
 d <-
@@ -558,7 +558,7 @@ Open brms.
 library(brms)
 ```
 
-Now we'll specify the initial values and fit the model.
+Now we’ll specify the initial values and fit the model.
 
 ```{r b6.8, cache = T, message = F, warning = F}
 # Here we specify our starting values
@@ -589,20 +589,20 @@ print(b6.8)
 Anyway, the brms function `log_lik()` returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row.
 
 ```{r}
-dfLL <-
+ll <-
   b6.8 %>%
   log_lik() %>%
   as_tibble()
 
-dfLL %>%
+ll %>%
   glimpse()
 ```
 
 Deviance is the sum of the occasion-level LLs multiplied by -2.
 
 ```{r}
-dfLL <-
-  dfLL %>%
+ll <-
+  ll %>%
   mutate(sums     = rowSums(.),
          deviance = -2 * sums)
 ```
@@ -612,12 +612,12 @@ Because we used HMC, deviance is a distribution rather than a single number.
 ```{r, fig.width = 3.75, fig.height = 2.5, warning = F, message = F}
 library(tidybayes)
 
-dfLL %>%
+ll %>%
   ggplot(aes(x = deviance, y = 0)) +
   geom_halfeyeh(fill = carto_pal(7, "BurgYl")[5], color = carto_pal(7, "BurgYl")[7],
                 point_interval = median_qi, .width = .95) +
-  scale_x_continuous(breaks = quantile(dfLL$deviance, c(.025, .5, .975)),
-                     labels = quantile(dfLL$deviance, c(.025, .5, .975)) %>% round(1)) +
+  scale_x_continuous(breaks = quantile(ll$deviance, c(.025, .5, .975)),
+                     labels = quantile(ll$deviance, c(.025, .5, .975)) %>% round(1)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "The deviance distribution") +
   theme_classic() +
@@ -840,9 +840,11 @@ For more on this how to choose your priors, consider Gelman, Simpson, and Betanc
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.5.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.7.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
 
-> The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is nonzero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 68)
+> The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is non- zero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 70)
+
+And to dive even deeper into the horseshoe prior, check out Michael Betancourt's tutorial, [*Bayes Sparse Regression*](https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html#35_the_horseshoe).
 
 ## Information criteria
 
@@ -953,7 +955,7 @@ print(b)
 In brms, you return the loglikelihood with `log_lik()`.
 
 ```{r, results = "hide"}
-dfLL <-
+ll <-
   b %>%
   log_lik() %>%
   as_tibble()
@@ -963,7 +965,7 @@ Computing the lppd, the "Bayesian deviance", takes a bit of leg work.
 
 ```{r}
 dfmean <-
-  dfLL %>%
+  ll %>%
   exp() %>%
   summarise_all(mean) %>%
   gather(key, means) %>%
@@ -981,7 +983,7 @@ Comupting the effective number of parameters, $p_{\text{WAIC}}$, isn't much bett
 
 ```{r}
 dfvar <-
-  dfLL %>%
+  ll %>%
   summarise_all(var) %>%
   gather(key, vars) %>%
   select(vars) 
@@ -1226,91 +1228,7 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
   knitr::kable()
 ```
 
-Our table didn't quite reproduce the table McElreath's `compare()` function returns. However, José Roberto has [provided the code](http://jroberayalas.netlify.com/post/notes-on-statistical-rethinking-chapter-6-overfitting-regularization-and-information-criteria/) that replicates McElreath's `compare()`. It gives us a new function, which he calls `compare_waic()`
-
-```{r, warning = F, message = F}
-# ... are the fitted models
-compare_waic <- function (..., sort = "WAIC", func = "WAIC") 
-{
-    mnames <- as.list(substitute(list(...)))[-1L]
-    
-    L <- list(...)
-    if (is.list(L[[1]]) && length(L) == 1) {L <- L[[1]]}
-    
-    classes <- as.character(sapply(L, class))
-    if (any(classes != classes[1])) {
-        warning("Not all model fits of same class.\nThis is usually a bad idea, because it implies they were fit by different algorithms.\nCheck yourself, before you wreck yourself.")
-    }
-    
-    nobs_list <- try(sapply(L, nobs))
-    if (any(nobs_list != nobs_list[1])) {
-        nobs_out <- paste(mnames, nobs_list, "\n")
-        nobs_out <- concat(nobs_out)
-        warning(concat("Different numbers of observations found for at least two models.\nInformation criteria only valid for comparing models fit to exactly same observations.\nNumber of observations for each model:\n", 
-                       nobs_out))
-    }
-    
-    dSE.matrix <- matrix(NA, nrow = length(L), ncol = length(L))
-    
-    if (func == "WAIC") {
-        WAIC.list <- lapply(L, function(z) WAIC(z, pointwise = TRUE))
-        
-        ### The next three lines have been augmented from Roberto's code
-        
-        p.list  <- sapply(WAIC.list, function(x) x$estimates["p_waic", "Estimate"])
-        se.list <- sapply(WAIC.list, function(x) x$estimates["waic", "SE"])
-        IC.list <- sapply(WAIC.list, function(x) x$estimates["waic", "Estimate"])
-        #mnames <- sapply(WAIC.list, function(x) x$model_name)
-        colnames(dSE.matrix) <- mnames
-        rownames(dSE.matrix) <- mnames
-        for (i in 1:(length(L) - 1)) {
-            for (j in (i + 1):length(L)) {
-                waic_ptw1 <- WAIC.list[[i]]$pointwise[ , 3]
-                waic_ptw2 <- WAIC.list[[j]]$pointwise[ , 3]
-                dSE.matrix[i, j] <- as.numeric(sqrt(length(waic_ptw1) * 
-                                                        var(waic_ptw1 - waic_ptw2)))
-                dSE.matrix[j, i] <- dSE.matrix[i, j]
-            }
-        }
-    }
-    
-    #if (!(the_func %in% c("DIC", "WAIC", "LOO"))) {
-    #    IC.list <- lapply(L, function(z) func(z))
-    #}
-    IC.list <- unlist(IC.list)
-    dIC <- IC.list - min(IC.list)
-    w.IC <- rethinking::ICweights(IC.list)
-    if (func == "WAIC") {
-        topm <- which(dIC == 0)
-        dSEcol <- dSE.matrix[, topm]
-        result <- data.frame(WAIC = IC.list, pWAIC = p.list, 
-                             dWAIC = dIC, weight = w.IC, SE = se.list, dSE = dSEcol)
-    }
-    
-    #if (!(the_func %in% c("DIC", "WAIC", "LOO"))) {
-    #    result <- data.frame(IC = IC.list, dIC = dIC, weight = w.IC)
-    #}
-    rownames(result) <- mnames
-    if (!is.null(sort)) {
-        if (sort != FALSE) {
-            if (sort == "WAIC") 
-                sort <- func
-            result <- result[order(result[[sort]]), ]
-        }
-    }
-    new("compareIC", output = result, dSE = dSE.matrix)
-}
-```
-
-
-
-Our new `compare_waic()` returns the following:
-
-```{r demo_compare_waic}
-compare_waic(b6.11, b6.12, b6.13, b6.14)
-```
-
-Without Roberto's `compare_waic()`, I'm not aware of a convenient way to plot the WAIC comparisons of brms models the way McElreath does with rethinking. However, one can get the basic comparison plot with a little data processing. It helps to examine the structure of your WAIC objects. For example:
+I'm not aware of a convenient way to plot the WAIC comparisons of brms models the way McElreath does with rethinking. However, one can get the basic comparison plot with a little data processing. It helps to examine the structure of your WAIC objects. For example:
 
 ```{r}
 glimpse(w_b6.11)
@@ -1327,7 +1245,7 @@ w_b6.11$estimates["waic", "SE"]
 Alternatively, you could do `w.b6.11$estimates[3, 1]` and `w.b6.11$estimates[3, 2]`. But instead of indexing the elements piecemeal, we might make a function that converts `waic()$estimates` to a tidy tibble formatted towards the end of making plotting easy. We'll call the function `waic_tibble()`.
 
 ```{r}
-waic_tibble <- function(...){
+waic_tibble <- function(...) {
   tibble(model_name = rep(waic(...)$model_name, times = 3)) %>% 
     bind_cols(
       waic(...)$estimates %>% 
@@ -1365,34 +1283,6 @@ waic_tibble(b6.11) %>%
   theme_classic() +
   theme(text = element_text(family = "Courier"),
         axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
-```
-
-However, with Roberto's `compare_waic()`, you can simply do:
-
-```{r, fig.width = 4.5, fig.height = 2, warning = F}
-compare_waic(b6.14, b6.13, b6.12, b6.11) %>% 
-  plot()
-```
-
-That yielded a base R plot. If you're stubborn and would like to stick with ggplot2, you could do something like:
-
-```{r, fig.width = 4.5, fig.height = 1.25, warning = F, message = F}
-compare_waic(b6.11, b6.12, b6.13, b6.14)@output %>% 
-  rownames_to_column() %>% 
-  mutate(model = rowname) %>% 
-  
-  ggplot() +
-  geom_pointrange(aes(x = model, y = WAIC, 
-                      ymin = WAIC - SE, 
-                      ymax = WAIC + SE),
-                  shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
-  coord_flip() +
-  labs(x = NULL, y = NULL,
-       title = "Another custom WAIC plot") +
-  theme_classic() +
-  theme(text             = element_text(family = "Courier"),
-        axis.ticks.y     = element_blank(),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
@@ -1681,7 +1571,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, dfLL, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, compare_waic, waic_tibble, w_d, diff, my_coef_tab, wrangled_my_coef_tab, p11, p12, p13, p14, f, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, waic_tibble, w_d, diff, my_coef_tab, wrangled_my_coef_tab, p11, p12, p13, p14, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
