@@ -123,7 +123,7 @@ To my mind, the easiest way to connect the dots in the appropriate way is to mak
 (
   lines_2 <-
   tibble(x    = rep(((1:4^2) / 4), each = 4),
-         xend = (1:4^3)/(4^2),
+         xend = (1:4^3) / (4^2),
          y    = 2,
          yend = 3)
   )
@@ -218,12 +218,11 @@ d %>%
   geom_point(aes(fill = fill),
              shape = 21, size = 4) +
   scale_fill_manual(values  = c("navy", "white")) +
-  scale_x_continuous(limits = c(0, 4), breaks = NULL) +
-  scale_y_continuous(limits = c(0.75, 3), breaks = NULL) +
+  scale_x_continuous(NULL, limits = c(0, 4), breaks = NULL) +
+  scale_y_continuous(NULL, limits = c(0.75, 3), breaks = NULL) +
   theme(panel.grid      = element_blank(),
         legend.position = "none") +
-  coord_polar() +
-  labs(x = NULL, y = NULL)
+  coord_polar()
 ```
 
 To make our version of Figure 2.3, we'll have to add an index to tell us which paths remain logically valid after each choice. We'll call the index `remain`.
@@ -268,12 +267,11 @@ d %>%
   # it's the alpha parameter that makes elements semitransparent
   scale_alpha_manual(values = c(1/10, 1)) +
   scale_fill_manual(values  = c("navy", "white")) +
-  scale_x_continuous(limits = c(0, 4), breaks = NULL) +
-  scale_y_continuous(limits = c(0.75, 3), breaks = NULL) +
+  scale_x_continuous(NULL, limits = c(0, 4), breaks = NULL) +
+  scale_y_continuous(NULL, limits = c(0.75, 3), breaks = NULL) +
   theme(panel.grid      = element_blank(),
         legend.position = "none") +
-  coord_polar() +
-  labs(x = NULL, y = NULL)
+  coord_polar()
 ```
 
 Letting "w" = a white dot and "b" = a blue dot, we might recreate the table in the middle of page 23 like so.
@@ -465,12 +463,11 @@ d %>%
   scale_size_continuous(range = c(3, 1.5)) +
   scale_alpha_manual(values = c(1/10, 1)) +
   scale_fill_manual(values  = c("navy", "white")) +
-  scale_x_continuous(limits = c(0, 12),     breaks = NULL) +
-  scale_y_continuous(limits = c(0.75, 3.5), breaks = NULL) +
+  scale_x_continuous(NULL, limits = c(0, 12),     breaks = NULL) +
+  scale_y_continuous(NULL, limits = c(0.75, 3.5), breaks = NULL) +
   theme(panel.grid      = element_blank(),
         legend.position = "none") +
-  coord_polar() +
-  labs(x = NULL, y = NULL)
+  coord_polar()
 ```
 
 ### Using prior information.
@@ -703,7 +700,7 @@ tibble(a = 0,
   facet_wrap(~b, ncol = 5)
 ```
 
-And as we'll learn much later in the project, the $Uniform(0, 1)$ distribution is special in that we can also express it as the beta distribution for which $\alpha = 1 \text{ and } \beta = 1$. E.g.,
+And as we'll learn much later in the project, the $\text{Uniform} (0, 1)$ distribution is special in that we can also express it as the beta distribution for which $\alpha = 1 \text{ and } \beta = 1$. E.g.,
 
 ```{r, fig.width = 2.5, fig.height = 2}
 tibble(parameter_space = seq(from = 0, to = 1, length.out = 50)) %>% 
@@ -929,20 +926,34 @@ Here we'll re-fit the last model from above wherein $w = 24$ and $n = 36$.
 ```{r globe_qa_brms, cache = T, message = F, results = 'hide'}
 globe_qa_brms <-
   brm(data = list(w = 24), 
-      family = binomial(link = "identity"),
+      family = binomial,
       w | trials(36) ~ 1,
-      prior = prior(normal(.5, 1), class = Intercept),
-      control = list(adapt_delta = 0.9))
+      prior(normal(0, 1.5), class = Intercept),
+      seed = 4)
 ```
 
-With brms, the `posterior_summary()` function is an analogue to `rethinking::precis()`. We will, however, need to use `round()` to reduce the output to a reasonable number of decimal places.
+The model output looks like so.
 
 ```{r}
-posterior_summary(globe_qa_brms) %>% 
-  round(digits = 2)
+print(globe_qa_brms)
 ```
 
-The `b_Intercept` row is the probability. Don’t worry about the second line, for now. We’ll explain the details of brms modeling in later chapters.
+There’s a lot going on in that output, which we’ll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll learn about in Chapter 10, the brms default is to use a link function for binomial regression. In this case, that function was the logit, which is indicated in the second line of the output,  `Links: mu = logit`. That also means that the summary is not in the probability metric. But no worries. We can transform the results back into a proper probability metric with the `brms::inv_logit_scaled()` function. We'll then plot the results to compare them with those from `rethinking::map()`, above.
+
+```{r, fig.width = 3, fig.height = 2.75}
+posterior_samples(globe_qa_brms) %>% 
+  transmute(p = inv_logit_scaled(b_Intercept),
+            n = "n = 36") %>%
+
+  ggplot(aes(x = p)) +
+  geom_density(fill = "black") +
+  labs(x = "proportion water") +
+  xlim(0, 1) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~n)
+```
+
+If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4.
 
 ## Reference {-}
 
