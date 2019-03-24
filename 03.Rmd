@@ -46,55 +46,43 @@ Here we use grid approximation, again, to generate samples.
 
 ```{r}
 # how many grid points would you like?
-n <- 1000
+n <- 1001
 n_success <- 6
 n_tirals  <- 9
 
 (
   d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
-       # note we're still using a flat uniform prior
+         # note we're still using a flat uniform prior
          prior      = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
-  mutate(posterior  = likelihood * prior) %>% 
-  mutate(posterior  = posterior / sum(posterior))
+  mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
   )
 ```
 
-Now we're ready to sample.
+Now we'll use the `dplyr::sample_n()` function to sample rows from `d`, saving them as `sample`.
 
 ```{r}
-samples <- sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)
+# how many samples would you like?
+n_samples <- 1e4
+
+# make it reproducible
+set.seed(3)
+
+samples <-
+  d %>% 
+  sample_n(size = n_samples, weight = posterior, replace = T)
 
 glimpse(samples)
 ```
 
-We'll plot the zigzagging left panel of Figure 3.1 with `geom_line()`. But before we do, we'll need to add a variable numbering the samples. And even before that, perhaps you noticed that `glimpse(samples)` told us `samples` is a numeric vector. Since ggplot2 requires we use data frames, of which tibbles are special case, we'll use `as_tibble()` to convert `samples` to a tibble.
-
-```{r}
-samples <-
-  samples %>% 
-  as_tibble() %>% 
-  mutate(sample_number = 1:n()) 
-
-head(samples)
-```
-
-But notice what happened. When we simply converted the `samples` vector with `as_tibble()`, that vector was renamed quite generically as `value`. One way around this is with `rename()` (i.e., `rename(samples = value)`). But this is already becoming cumbersome. Here's a more compact way.
-
-```{r}
-samples <-
-  tibble(samples = sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)) %>% 
-  mutate(sample_number = 1:n())
-
-glimpse(samples)
-```
-
-This time we just made `samples` a vector within a tibble from the start. Anyway, here's the right panel for Figure 3.1.
+We'll plot the zigzagging left panel of Figure 3.1 with `geom_line()`. But before we do, we'll need to add a variable numbering the samples.
 
 ```{r, fig.width = 4, fig.height = 3}
 samples %>% 
-  ggplot(aes(x = sample_number, y = samples)) +
+  mutate(sample_number = 1:n()) %>% 
+  
+  ggplot(aes(x = sample_number, y = p_grid)) +
   geom_line(size = 1/10) +
   labs(x = "sample number",
        y = "proportion of water (p)")
@@ -104,7 +92,7 @@ We'll make the density in the right panel with `geom_density()`.
 
 ```{r, fig.width = 4, fig.height = 3}
 samples %>% 
-  ggplot(aes(x = samples)) +
+  ggplot(aes(x = p_grid)) +
   geom_density(fill = "black") +
   coord_cartesian(xlim = 0:1) +
   xlab("proportion of water (p)")
@@ -130,16 +118,16 @@ If what you want is a frequency based on filtering by `samples`, then you might 
 
 ```{r}
 samples %>% 
-  filter(samples < .5) %>% 
-  summarise(sum = n() / 1e4)
+  filter(p_grid < .5) %>% 
+  summarise(sum = n() / n_samples)
 ```
 
 You can use `&` within `filter()`, too.
 
 ```{r}
 samples %>% 
-  filter(samples > .5 & samples < .75) %>% 
-  summarise(sum = n() / 1e4)
+  filter(p_grid > .5 & p_grid < .75) %>% 
+  summarise(sum = n() / n_samples)
 ```
 
 ### Intervals of defined mass.
@@ -169,17 +157,17 @@ d %>%
 
 We'll come back for the lower two panels in a bit.
 
-Since we've saved our `samples` vector within the well-named `samples` tibble, we'll have to index with `$` within `quantile`.
+Since we've saved our `p_grid` samples within the well-named `samples` tibble, we'll have to index with `$` within `quantile`.
 
 ```{r}
-(q_80 <- quantile(samples$samples, prob = .8))
+(q_80 <- quantile(samples$p_grid, prob = .8))
 ```
 
 That value will come in handy for the lower left panel of Figure 3.2, so we saved it. But anyways, we could `select()` the `samples` vector, extract it from the tibble with `pull()`, and then pump it into `quantile()`:
 
 ```{r}
 samples %>% 
-  select(samples) %>% 
+  select(p_grid) %>% 
   pull() %>% 
   quantile(prob = .8)
 ```
@@ -188,21 +176,21 @@ And we might also use `quantile()` within `summarise()`.
 
 ```{r}
 samples %>% 
-  summarise(`80th percentile` = quantile(samples, p = .8))
+  summarise(`80th percentile` = quantile(p_grid, p = .8))
 ```
 
 Here's the `summarise()` approach with two probabilities:
 
 ```{r}
 samples %>% 
-  summarise(`10th percentile` = quantile(samples, p = .1),
-            `90th percentile` = quantile(samples, p = .9))
+  summarise(`10th percentile` = quantile(p_grid, p = .1),
+            `90th percentile` = quantile(p_grid, p = .9))
 ```
 
 The tydiverse approach is nice in that that family of functions typically returns a data frame. But sometimes you just want your values in a numeric vector for the sake of quick indexing. In that case, base R `quantile()` shines.
 
 ```{r}
-(q_10_and_90 <- quantile(samples$samples, prob = c(.1, .9)))
+(q_10_and_90 <- quantile(samples$p_grid, prob = c(.1, .9)))
 ```
 
 Now we have our cutoff values saved as `q_80` and `q_10_and_90`, we're ready to make the bottom panels of Figure 3.2.
@@ -244,21 +232,25 @@ n_tirals  <- 3
 d <-
   d %>% 
   mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
-  mutate(posterior  = likelihood * prior) %>% 
-  mutate(posterior  = posterior / sum(posterior))
+  mutate(posterior  = (likelihood * prior) / sum(posterior))
+
+# make the next part reproducible
+set.seed(3)
 
 # here's our new samples tibble
 (
-  samples <- tibble(samples = sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T))
+  samples <-
+    d %>% 
+    sample_n(size = n_samples, weight = posterior, replace = T)
 )
 ```
 
 The `rethinking::PI()` function works like a nice shorthand for `quantile()`.
 
 ```{r}
-quantile(samples$samples, prob = c(.25, .75))
+quantile(samples$p_grid, prob = c(.25, .75))
 
-rethinking::PI(samples$samples, prob = .5)
+rethinking::PI(samples$p_grid, prob = .5)
 ```
 
 Now's a good time to introduce Matthew Kay's [tidybayes package](https://github.com/mjskay/tidybayes), which offers an [array of convenience functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
@@ -266,13 +258,13 @@ Now's a good time to introduce Matthew Kay's [tidybayes package](https://github.
 ```{r, message = F, warning = F}
 library(tidybayes)
 
-median_qi(samples$samples, .width = .5)
+median_qi(samples$p_grid, .width = .5)
 ```
 
 The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
 ```{r}
-median_qi(samples$samples, .width = c(.5, .8, .99))
+median_qi(samples$p_grid, .width = c(.5, .8, .99))
 ```
 
 The `.width` column in the output indexed which line presented which interval.
@@ -280,31 +272,34 @@ The `.width` column in the output indexed which line presented which interval.
 Now let's use the `rethinking::HPDI()` function to return 50% highest posterior density intervals (HPDIs).
 
 ```{r}
-rethinking::HPDI(samples$samples, prob = .5)
+rethinking::HPDI(samples$p_grid, prob = .5)
 ```
 
 The reason I introduce tidybayes now is that the functions of the brms package only support percentile-based intervals of the type we computed with `quantile()` and `median_qi()`. But tidybayes also supports HPDIs.
 
 ```{r}
-mode_hdi(samples$samples, .width = .5)
+mode_hdi(samples$p_grid, .width = .5)
 ```
 
 This time we used the mode as the measure of central tendency. With this family of tidybayes functions, you specify the measure of central tendency in the prefix (i.e., `mean`, `median`, or `mode`) and then the type of interval you'd like (i.e., `qi` or `hdi`).
 
-If you just want to extract a quick value out of, say, `mode_hdi()`, you could do so with brackets. E.g., here we pull the lower bound of the 50% HPDI.
+If all you want are the intervals without the measure of central tendency or all that other technical information, tidybayes also offers the handy `qi()` and `hdi()` functions. 
 
 ```{r}
-median_qi(samples$samples, .width = .5)[, "ymin"]
+qi(samples$p_grid, .width = .5)
+hdi(samples$p_grid, .width = .5)
 ```
 
-Now we have that skill, we can use it to make Figure 3.3.
+
+These are nice in that they yield simple numeric vectors, making them particularly useful to use as references within ggplot2. Now we have that skill, we can use it to make Figure 3.3.
 
 ```{r, fig.width = 3, fig.height = 2.5}
 # lower left panel
 d %>% 
   ggplot(aes(x = p_grid)) +
-  geom_ribbon(data = d %>% filter(p_grid > median_qi(samples$samples, .width = .5)[, "ymin"] & 
-                                    p_grid < median_qi(samples$samples, .width = .5)[, "ymax"]),
+  # check out our sweet `qi()` indexing
+  geom_ribbon(data = d %>% filter(p_grid > qi(samples$p_grid, .width = .5)[1] & 
+                                    p_grid < qi(samples$p_grid, .width = .5)[2]),
               aes(ymin = 0, ymax = posterior),
               fill = "grey75") +
   geom_line(aes(y = posterior)) +
@@ -315,8 +310,8 @@ d %>%
 # lower right panel
 d %>% 
   ggplot(aes(x = p_grid)) +
-  geom_ribbon(data = d %>% filter(p_grid > median_hdi(samples$samples, .width = .5)[, "ymin"] & 
-                                    p_grid < median_hdi(samples$samples, .width = .5)[, "ymax"]),
+  geom_ribbon(data = d %>% filter(p_grid > hdi(samples$p_grid, .width = .5)[1] & 
+                                    p_grid < hdi(samples$p_grid, .width = .5)[2]),
               aes(ymin = 0, ymax = posterior),
               fill = "grey75") +
   geom_line(aes(y = posterior)) +
@@ -342,25 +337,33 @@ d %>%
   slice(1)
 ```
 
-Here's the `rethinking::chainmode()` method.
+Or we could use the handy `dplyr::top_n()` function.
 
 ```{r}
-rethinking::chainmode(samples$samples, adj = 0.01)
+d %>% 
+  select(posterior) %>% 
+  top_n(n = 1)
 ```
 
-And you can also do whis with `mode_hdi()` or `mode_qi()`.
+We can get th emode with `mode_hdi()` or `mode_qi()`.
 
 ```{r}
-samples %>% mode_hdi(samples)
-samples %>% mode_qi(samples)
+samples %>% mode_hdi(p_grid)
+samples %>% mode_qi(p_grid)
+```
+
+But if all you want is the mode itself, you can just use `tidybayes::Mode()`.
+
+```{r}
+Mode(samples$p_grid)
 ```
 
 But medians and means are typical, too.
 
 ```{r}
 samples %>% 
-  summarise(mean   = mean(samples),
-            median = median(samples))
+  summarise(mean   = mean(p_grid),
+            median = median(p_grid))
 ```
 
 We can inspect the three types of point estimate in the left panel of Figure 3.4. First we'll bundle the three point estimates together in a tibble.
@@ -368,15 +371,15 @@ We can inspect the three types of point estimate in the left panel of Figure 3.4
 ```{r}
 (
   point_estimates <-
-  samples %>% mean_qi(samples) %>% 
   bind_rows(
-    samples %>% median_qi(samples),
-    samples %>% mode_qi(samples)
+    samples %>% mean_qi(p_grid),
+    samples %>% median_qi(p_grid),
+    samples %>% mode_qi(p_grid)
   ) %>% 
-  select(samples, .point) %>% 
+  select(p_grid, .point) %>% 
   # these last two columns will help us annotate  
-  mutate(x = samples + c(-.03, .03, -.03),
-         y = c(.0005, .00125, .002))
+  mutate(x = p_grid + c(-.03, .03, -.03),
+         y = c(.1, .25, .4))
 )
 ```
 
@@ -387,7 +390,7 @@ d %>%
   ggplot(aes(x = p_grid)) +
   geom_ribbon(aes(ymin = 0, ymax = posterior),
               fill = "grey75") +
-  geom_vline(xintercept = point_estimates$samples) +
+  geom_vline(xintercept = point_estimates$p_grid) +
   geom_text(data = point_estimates,
             aes(x = x, y = y, label = .point),
             angle = 90) +
@@ -449,7 +452,7 @@ We saved the exact minimum value as `min_loss[1]`, which is `r min_loss[1]`. Wit
 
 ```{r}
 samples %>% 
-  summarise(posterior_median = median(samples))
+  summarise(posterior_median = median(p_grid))
 ```
 
 The quadratic loss $(d - p)^2$ suggests we should use the mean instead. Let's investigate.
@@ -491,7 +494,7 @@ Based on quadratic loss $(d - p)^2$, the exact minimum value is `r min_loss[1]`.
 
 ```{r}
 samples %>% 
-  summarise(posterior_meaan = mean(samples))
+  summarise(posterior_meaan = mean(p_grid))
 ```
 
 ## Sampling to simulate prediction
@@ -521,14 +524,14 @@ tibble(n           = 2,
 If we're going to simulate, we should probably [set our seed](https://stackoverflow.com/questions/13605271/reasons-for-using-the-set-seed-function). Doing so makes the results reproducible.
 
 ```{r}
-set.seed(331)
+set.seed(3)
 rbinom(1, size = 2, prob = .7)
 ```
 
 Here are ten reproducible draws.
 
 ```{r}
-set.seed(331)
+set.seed(3)
 rbinom(10, size = 2, prob = .7)
 ```
 
@@ -538,7 +541,7 @@ Now generate 100,000 (i.e., `1e5`) reproducible dummy observations.
 # how many would you like?
 n_draws <- 1e5
 
-set.seed(331)
+set.seed(3)
 d <- tibble(draws = rbinom(n_draws, size = 2, prob = .7))
 
 d %>% 
@@ -547,10 +550,12 @@ d %>%
   mutate(proportion = n / nrow(d))
 ```
 
+As McElreath mused in the text, those simulated `proportion` values are very close to the analytically calculated values in our `density` column a few code blocks up.
+
 Here's the simulation updated so $n = 9$, which we plot in our version of Figure 3.5.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-set.seed(331)
+set.seed(3)
 d <- tibble(draws = rbinom(n_draws, size = 9, prob = .7))
 
 # the histogram
@@ -571,7 +576,7 @@ McElreath suggested we play around with different values of `size` and `prob`. W
 n_draws <- 1e5
 
 simulate_binom <- function(n, probability){
-  set.seed(331)
+  set.seed(3)
   rbinom(n_draws, size = n, prob = probability) 
 }
 
@@ -608,92 +613,116 @@ If you're new to applied statistics, you might be surprised how often mistakes a
 
 #### Did the software work?
 
-Let this haunt your dreams: "There is no way to really be sure that software works correctly" (p. 64). You’re welcome.
+Let this haunt your dreams: "There is no way to really be sure that software works correctly" (p. 64).
+
+If you’d like to dive deeper into these dark waters, check out one my favorite talks from StanCon 2018, [*Esther Williams in the Harold Holt Memorial Swimming Pool*](https://youtu.be/pKZLJPrZLhU?t=26285), by the ineffable [Dan Simpson](https://twitter.com/dan_p_simpson). If Simpson doesn’t end up drowning you, see Gabry and Simpson’s talk at the Royal Statistical Society 2018, [*Visualization in Bayesian workflow*](https://www.youtube.com/watch?v=E8vdXoJId8M), a follow-up blog [*Maybe it’s time to let the old ways die; or We broke R-hat so now we have to fix it*](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/), and that blog’s associated pre-print by Vehtari, Gelman, Simpson, Carpenter, and Bürkner [*Rank-normalization, folding, and localization: An improved Rˆ for assessing convergence of MCMC*](https://arxiv.org/abs/1903.08008).
 
 #### Is the model adequate?
 
-Let's update our `simulate_binom()` golem to keep the number of trials constant at 9.
+> The implied predictions of the model are uncertain in two ways, and it’s important to be aware of both.
+>
+> First, there is observation uncertainty. For any unique value of the parameter $p$, there is a unique implied pattern of observations that the model expects. These patterns of observations are the same gardens of forking data that you explored in the previous chapter. These patterns are also what you sampled in the previous section. There is uncertainty in the predicted observations, because even if you know $p$ with certainty, you won’t know the next globe toss with certainty (unless $p = 0$ or $p = 1$).
+>
+> Second, there is uncertainty about $p$. The posterior distribution over $p$ embodies this uncertainty. And since there is uncertainty about $p$, there is uncertainty about everything that depends upon $p$. The uncertainty in $p$ will interact with the sampling variation, when we try to assess what the model tells us about outcomes.
+>
+> We’d like to *propagate* the parameter uncertainty--carry it forward--as we evaluate the implied predictions. All that is required is averaging over the posterior density for $p$, while computing the predictions. For each possible value of the parameter $p$, there is an implied distribution of outcomes. So if you were to compute the sampling distribution of outcomes at each value of $p$, then you could average all of these prediction distributions together, using the posterior probabilities of each value of $p$, to get a posterior predictive distribution. (p. 56, *emphasis* in the original)
 
-```{r, fig.width = 3.5, fig.height = 3}
-n_draws     <- 1e4
-n_trials    <- 9
-probability <- .6
-
-set.seed(331)
-tibble(draws = rbinom(n_draws, size = n_trials, prob = probability)) %>% 
-  
-  ggplot(aes(x = draws)) +
-  geom_histogram(binwidth = 1, center = 0,
-                 color = "grey92", size = 1/10) +
-  scale_x_continuous("simulated water count",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
-  ylab("frequency") +
-  coord_cartesian(xlim = 0:9) +
-  theme(panel.grid = element_blank())
-```
-
-But notice that in this simulation we held $p$ at a constant .6. There was no posterior uncertainty packed into the model. Let's refresh ourselves on what the model was:
+All this is depicted in Figure 3.6. To get ready to make our version, let's first refresh our original grid approximation `d`.
 
 ```{r}
 # how many grid points would you like?
-n <- 1000
+n <- 1001
 n_success <- 6
 n_tirals  <- 9
 
-d <-
+(
+  d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
+         # note we're still using a flat uniform prior
          prior      = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
-  mutate(posterior  = likelihood * prior) %>% 
-  mutate(posterior  = posterior / sum(posterior))
-
-# samples!
-set.seed(33.22)
-samples <-
-  tibble(samples = sample(d$p_grid, prob = d$posterior, size = 1e4, replace = T)) 
-
-head(samples)
+  mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
+  )
 ```
 
-Let's use it to simulate and make the middle panels of Figure 3.6.
-
-```{r, fig.width = 8, fig.height = 1.75}
-# the simulation
-set.seed(3322)
-samples <-
-  samples %>% 
-  mutate(w   = rbinom(n_draws, size =  n_trials,  prob = samples),
-         key = str_c("p = ", round(samples, digits = 1)))
-
-# the plot
-samples  %>% 
-  filter(key != "p = 1") %>%
-  ggplot(aes(x = w)) +
-  geom_histogram(binwidth = 1, center = 0,
-                 color = "grey92", size = 1/10) +
-  scale_x_continuous("dummy water count",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = 0:9) +
-  theme(panel.grid = element_blank()) +
-  facet_wrap(~ key, ncol = 9, scales = "free_y") 
-```
-
-The top panel of Figure 3.6 is just the density of `samples`.
+We can make our version of the top of Figure 3.6 with a little tricky `filter`ing.
 
 ```{r, fig.width = 7, fig.height = 2}
-samples %>% 
-
-  ggplot(aes(x = samples)) +
-  geom_density(fill = "grey50", color = "transparent") +
-  scale_x_continuous("probability of water",
-                     breaks = c(0, .5, 1)) +
+d %>% 
+  ggplot(aes(x = p_grid)) +
+  geom_ribbon(aes(ymin = 0, ymax = posterior),
+              color = "grey67", fill = "grey67") +
+  geom_segment(data = . %>% 
+                 filter(p_grid %in% c(seq(from = .1, to = .9, by = .1), 3 / 10)),
+               aes(xend = p_grid,
+                   y = 0, yend = posterior, size = posterior),
+               color = "grey33", show.legend = F) +
+  geom_point(data = . %>%
+               filter(p_grid %in% c(seq(from = .1, to = .9, by = .1), 3 / 10)),
+             aes(y = posterior)) +
+  annotate(geom = "text", 
+           x = .08, y = .0025,
+           label = "Posterior probability") +
+  scale_size_continuous(range = c(0, 1)) +
+  scale_x_continuous("probability of water", breaks = c(0:10) / 10) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Posterior probability") +
   theme(panel.grid = element_blank())
 ```
 
-And the bottom panel is the histogram of `w` without faceting by levels of `samples`.
+Note how we weighted the widths of the vertical lines by the `posterior` density.
+
+We'll need to do a bit of wrangling before we're ready to make the plot in the middle panel of Figure 3.6.
+
+```{r}
+n_draws <- 1e5
+
+simulate_binom <- function(probability){
+  set.seed(3)
+  rbinom(n_draws, size = 9, prob = probability) 
+}
+
+d_small <-
+  tibble(probability = seq(from = .1, to = .9, by = .1)) %>% 
+  mutate(draws       = purrr::map(probability, simulate_binom)) %>% 
+  unnest(draws) %>% 
+  mutate(label       = str_c("p = ", probability))
+
+head(d_small)
+```
+
+Now we're ready to plot.
+
+```{r, fig.width = 8, fig.height = 1.75}
+d_small %>%
+  ggplot(aes(x = draws)) +
+  geom_histogram(binwidth = 1, center = 0,
+                 color = "grey92", size = 1/10) +
+  scale_x_continuous(NULL, breaks = seq(from = 0, to = 9, by = 3)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(subtitle = "Sampling distributions") +
+  coord_cartesian(xlim = 0:9) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~ label, ncol = 9) 
+```
+
+To make the plot at the bottom of Figure 3.6, we'll redefine our `samples`, this time including the `w` variable (see the R code 3.26 block in the text).
+
+```{r}
+# how many samples would you like?
+n_samples <- 1e4
+
+# make it reproducible
+set.seed(3)
+
+samples <-
+  d %>% 
+  sample_n(size = n_samples, weight = posterior, replace = T) %>% 
+  mutate(w = purrr::map_dbl(p_grid, rbinom, n = 1, size = 9))
+
+glimpse(samples)
+```
+
+Here's our histogram.
 
 ```{r, fig.width = 3, fig.height = 2}
 samples %>% 
@@ -704,7 +733,8 @@ samples %>%
                      breaks = seq(from = 0, to = 9, by = 3)) +
   scale_y_continuous(NULL, breaks = NULL) +
   ggtitle("Posterior predictive distribution") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = 0:9,
+                  ylim = 0:3000) +
   theme(panel.grid = element_blank())
 ```
 
@@ -720,23 +750,22 @@ Notice this collapses (i.e., aggregated) over the sequences within the individua
 rbinom(9, size = 1, prob = .6)
 ```
 
-would be the disaggregated version of just one of the numerals returned by `rbinom()` when `size = 9`. So let's try simulating again with unaggregated samples.
+would be the disaggregated version of just one of the numerals returned by `rbinom()` when `size = 9`. So let's try simulating again with un-aggregated samples. We'll keep adding to our `samples` tibble. In addition to the disaggregated `draws` based on the $p$ values listed in `p_grid`, we'll also want to add a row index for each of those `p_grid` values--it'll come in handy when we plot.
 
 ```{r}
-simulate_disaggregated_binom <- function(samples){
-  set.seed(37)
-  rbinom(9, size = 1, prob = samples)
-}
+# make it reproducible
+set.seed(3)
 
-(
-  disaggregated_samples <-
+samples <-
   samples %>% 
-  select(samples) %>% 
-  mutate(iteration = 1:n(),
-         draws = map(samples, simulate_disaggregated_binom)) %>% 
-  unnest()
-  )
+  mutate(iter  = 1:n(),
+         draws = purrr::map(p_grid, rbinom, n = 9, size = 1)) %>% 
+  unnest(draws)
+
+glimpse(samples)
 ```
+
+The main action is in the `draws` column.
 
 Now we have to count the longest sequences. The base R [`rle()` function](https://www.rdocumentation.org/packages/base/versions/3.3/topics/rle) will help with that. Consider McElreath's sequence of tosses.
 
@@ -759,8 +788,8 @@ rle(tosses)$lengths %>% max()
 Now let's apply our method to the data and plot.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-disaggregated_samples %>% 
-  group_by(iteration) %>% 
+samples %>% 
+  group_by(iter) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% max()) %>% 
   
   ggplot(aes(x = longest_run_length)) +
@@ -791,8 +820,8 @@ rle(tosses)$lengths %>% length()
 With that new trick, we're ready to make the right panel of Figure 3.7.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-disaggregated_samples %>% 
-  group_by(iteration) %>% 
+samples %>% 
+  group_by(iter) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% length()) %>% 
   
   ggplot(aes(x = longest_run_length)) +
@@ -823,8 +852,10 @@ b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
       w | trials(9) ~ 1,
-      prior = prior(beta(1, 1), class = Intercept),
-      control = list(adapt_delta = .99))
+      # this is a flat prior
+      prior(beta(1, 1), class = Intercept),
+      seed = 3,
+      control = list(adapt_delta = .999))
 ```
 
 We’ll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
@@ -839,64 +870,50 @@ As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the 
 Much like the way we used the `samples()` function to simulate probability values, above, we can do so with `fitted()` within the brms framework. But we will have to specify `scale = "linear"` in order to return results in the probability metric. By default, `brms::fitted()` will return summary information. Since we want actual simulation draws, we'll specify `summary = F`.
 
 ```{r}
-fitted_samples <-
+f <-
   fitted(b3.1, summary = F,
          scale = "linear") %>% 
-  as_tibble()
+  as_tibble() %>% 
+  set_names("p")
 
-glimpse(fitted_samples)
+glimpse(f)
 ```
 
 By default, we have a generically-named vector `V1` of 4000 samples. We'll explain the defaults in later chapters. For now, notice we can view these in a density.
 
-```{r, fig.width = 7, fig.height = 2}
-fitted_samples %>% 
-
-  ggplot(aes(x = V1)) +
-  geom_density(fill = "grey50", color = "transparent") +
+```{r, fig.width = 7, fig.height = 2, message = F}
+f %>% 
+  ggplot(aes(x = p)) +
+  geom_density(fill = "grey50", color = "grey50") +
+  annotate(geom = "text", 
+           x = .08, y = 2.5,
+           label = "Posterior probability") +
   scale_x_continuous("probability of water",
-                     breaks = c(0, .5, 1)) +
+                     breaks = c(0, .5, 1),
+                     limits = 0:1) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Posterior probability") +
   theme(panel.grid = element_blank())
 ```
 
-Looks a lot like the posterior probability density at the top of Figure 3.6, doesn't it? Much like we did with `samples`, we can use this distribution of probabilities to predict histograms of "w" counts.
+Looks a lot like the posterior probability density at the top of Figure 3.6, doesn't it? Much like we did with `samples`, we can use this distribution of probabilities to predict histograms of `w` counts. With those in hand, we can make an analogue to the histogram in the bottom panel of Figure 3.6.
 
-```{r, fig.width = 8, fig.height = 1.75}
+```{r, fig.width = 3, fig.height = 2, warning = F, message = F}
 # the simulation
-set.seed(33.22)
-fitted_samples <-
-  fitted_samples %>% 
-  mutate(w   = rbinom(n(), size =  n_trials,  prob = V1)) %>%
-  mutate(key = str_c("p = ", round(V1, digits = 1)))
+set.seed(3)
+
+f <-
+  f %>% 
+  mutate(w = rbinom(n(), size = n_trials,  prob = p))
 
 # the plot
-fitted_samples  %>% 
-  filter(key != "p = 1") %>%
-  ggplot(aes(x = w)) +
-  geom_histogram(binwidth = 1, center = 0,
-                 color = "grey92", size = 1/10) +
-  scale_x_continuous("dummy water count",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = 0:9) +
-  theme(panel.grid = element_blank()) +
-  facet_wrap(~ key, ncol = 9, scales = "free_y") 
-```
-
-And also like with `samples`, we can omit the `facet_wrap()` function to make histogram in the bottom panel of Figure 3.6.
-
-```{r, fig.width = 3, fig.height = 2}
-fitted_samples %>% 
+f %>% 
   ggplot(aes(x = w)) +
   geom_histogram(binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
   scale_x_continuous("number of water samples",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
-  scale_y_continuous(NULL, breaks = NULL) +
+                     breaks = seq(from = 0, to = 9, by = 3), limits = c(0, 9)) +
+  scale_y_continuous(NULL, breaks = NULL, limits = c(0, 1200)) +
   ggtitle("Posterior predictive distribution") +
-  coord_cartesian(xlim = 0:9) +
   theme(panel.grid = element_blank())
 ```
 
@@ -912,8 +929,8 @@ As you might imagine, we can use the output from `fitted()` to return disaggrega
 sessionInfo()
 ```
 
-```{r, echo = F, warning = F, message = F}
-rm(n, n_success, n_tirals, d, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, probability, simulate_disaggregated_binom, disaggregated_samples, tosses, b3.1, fitted_samples)
+```{r, echo = F}
+rm(n, n_success, n_tirals, d, n_samples, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
