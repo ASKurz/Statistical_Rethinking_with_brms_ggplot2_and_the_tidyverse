@@ -1277,7 +1277,7 @@ Based on the design, let's simulate our data.
 ```{r}
 n <- 100
 
-set.seed(17)
+set.seed(5)
 d <- 
   tibble(h0        = rnorm(n, mean = 10, sd = 2), 
          treatment = rep(0:1, each = n / 2),
@@ -1294,7 +1294,7 @@ d %>%
 
 These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = 0.99`.
 
-```{r b5.13, cache = T, message = F, warning = F}
+```{r b5.13_, cache = T, message = F, warning = F}
 b5.13 <- 
   brm(data = d, family = gaussian,
       h1 ~ 1 + h0 + treatment + fungus,
@@ -1312,7 +1312,7 @@ print(b5.13)
 
 Now fit the model after excluding `fungus`, our post-treatment variable.
 
-```{r b5.14, cache = T, message = F, warning = F, results = 'hide'}
+```{r b5.14_u, cache = T, message = F, warning = F, results = 'hide'}
 b5.14 <- 
   update(b5.13, 
          formula = h1 ~ 1 + h0 + treatment)
@@ -1357,7 +1357,7 @@ Let's fit the first `height` model with the `male` dummy.
 
 Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating Chapter 8, I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
 
-```{r b5.15, cache = T, message = F, warning = F}
+```{r b5.15_, cache = T, message = F, warning = F}
 b5.15 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + male,
@@ -1367,6 +1367,8 @@ b5.15 <-
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5)
 ```
+
+Check the summary.
 
 ```{r}
 print(b5.15)
@@ -1430,7 +1432,7 @@ d <-
 
 Everyone has their own idiosyncratic way of coding. One of my quirks is I always explicitly specify a model’s intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don’t have to do this, of course. You could just code `y ~ x` to get the same results. The `brm()` function assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: ` height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
 
-```{r b5.15b, cache = T, message = F, warning = F}
+```{r b5.15_b, cache = T, message = F, warning = F}
 b5.15b <- 
   brm(data = d, family = gaussian,
       height ~ 0 + male + female,
@@ -1487,7 +1489,7 @@ d %>%
   distinct(clade)
 ```
 
-As `clade` has 4 categories, let's convert these to 4 dummy variables.
+As `clade` has 4 categories, let's use `ifelse()` to convert these to 4 dummy variables.
 
 ```{r}
 d <- 
@@ -1508,7 +1510,6 @@ b5.16 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.8),
       seed = 5)
 ```
 
@@ -1586,7 +1587,7 @@ quantile(post$mu_nwm - post$mu_owm, probs = c(.5, .025, .975))
 # tidyverse + tidybayes
 post %>%
   transmute(dif = mu_nwm - mu_owm) %>%
-  median_qi(dif)
+  median_qi()
 ```
 
 ### Adding regular predictor variables.
@@ -1601,7 +1602,7 @@ The corresponding `formula` argument within `brm()` would be `kcal.per.g ~ 1 + c
 
 Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
 
-```{r b5.16_alt, cache = T, message = F, warning = F}
+```{r b5.16_alt_, cache = T, message = F, warning = F}
 b5.16_alt <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 0 + clade,
