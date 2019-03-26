@@ -105,10 +105,9 @@ fits <-
 
 fits %>% 
   ggplot(aes(x = r2, y = formula, label = r2_text)) +
-  geom_text(color = carto_pal(7, "BurgYl")[7], size = 3.5)  +
-  labs(x = expression(italic(R)^2),
-       y = NULL) +
-  scale_x_continuous(limits = 0:1, breaks = 0:1) +
+  geom_text(color = carto_pal(7, "BurgYl")[7], size = 3.5) +
+  scale_x_continuous(expression(italic(R)^2), limits = 0:1, breaks = 0:1) +
+  ylab(NULL) +
   theme_classic() +
   theme(axis.text.y  = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
@@ -135,10 +134,9 @@ p <-
   d %>% 
   ggplot(aes(x = mass, y = brain)) +
   geom_point(color = carto_pal(7, "BurgYl")[7]) +
-  scale_x_continuous(limits = c(33, 62), expand = c(0, 0)) +
+  scale_x_continuous("body mass (kg)", limits = c(33, 62), expand = c(0, 0)) +
   coord_cartesian(ylim = c(300, 1500)) +
-  labs(x = "body mass (kg)",
-       y = "brain volume (cc)") +
+  ylab("brain volume (cc)") +
   theme_classic() +
   theme(text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
@@ -271,7 +269,7 @@ make_lines <- function(row){
 
 Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We’ll then feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
 
-```{r}
+```{r, warning = F, message = F}
 (
   lines <-
   tibble(row = 1:7) %>% 
@@ -560,13 +558,13 @@ library(brms)
 
 Now we’ll specify the initial values and fit the model.
 
-```{r b6.8, cache = T, message = F, warning = F}
+```{r b6.8_, cache = T, message = F, warning = F}
 # Here we specify our starting values
 inits <- list(Intercept = mean(d$brain),
               mass_s    = 0,
               sigma     = sd(d$brain))
 
-inits_list <-list(inits, inits, inits, inits)
+inits_list <- list(inits, inits, inits, inits)
 
 # The model
 b6.8 <- 
@@ -576,7 +574,7 @@ b6.8 <-
                 prior(normal(0, 1000), class = b),
                 prior(cauchy(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      inits = inits_list,  # Here we put our start values in the `brm()` function
+      inits = inits_list,  # here we insert our start values
       seed = 6)
 ```
 
@@ -584,21 +582,21 @@ b6.8 <-
 print(b6.8)
 ```
 
-**Details about `inits`**: You don’t have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains—four in this example. And then you put your—in this case—four lists inside a list. Lists within lists. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
+**Details about `inits`**: You don’t have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. Lists within lists. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
 
-Anyway, the brms function `log_lik()` returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row.
+Anyway, the brms function `log_lik()` returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/name-repair.html) within the `as_tibble()` function. 
 
 ```{r}
 ll <-
   b6.8 %>%
   log_lik() %>%
-  as_tibble()
+  as_tibble(.name_repair = ~ d$species)
 
 ll %>%
   glimpse()
 ```
 
-Deviance is the sum of the occasion-level LLs multiplied by -2.
+Deviance is the sum of the occasion-level LLs multiplied by -2. Why by -2? "The -2 in front doesn't do anything important. It's there for historical reasons" (p. 182). If you follow footnote 93 at the end of that sentence in the text, you'll learn "under somewhat general conditions, for many common model types, a difference between two deviances has a chi-squared distribution. The factor of 2 is there to scale it that way" (p. 451).
 
 ```{r}
 ll <-
@@ -686,7 +684,7 @@ dev_tibble <-
     dev_100 %>%
       as_tibble()
   ) %>% 
-  mutate(n = rep(c("n = 20", "n = 100"), each = 4),
+  mutate(n         = rep(c("n = 20", "n = 100"), each = 4),
          statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 2),
          sample    = rep(c("in", "out"), times = 2) %>% rep(., times = 2)) %>% 
   gather(n_par, value, -n, -statistic, -sample) %>% 
@@ -743,15 +741,15 @@ tibble(x = seq(from = - 3.5,
                to   = 3.5, 
                by   = .01)) %>%
   
-  ggplot(aes(x = x)) +
-  geom_ribbon(aes(ymin = 0, ymax = dnorm(x, mean = 0, sd = 0.2)), 
+  ggplot(aes(x = x, ymin = 0)) +
+  geom_ribbon(aes(ymax = dnorm(x, mean = 0, sd = 0.2)), 
               fill = carto_pal(7, "BurgYl")[7], alpha = 1/2) +
-  geom_ribbon(aes(ymin = 0, ymax = dnorm(x, mean = 0, sd = 0.5)), 
+  geom_ribbon(aes(ymax = dnorm(x, mean = 0, sd = 0.5)), 
               fill = carto_pal(7, "BurgYl")[6], alpha = 1/2) +
-  geom_ribbon(aes(ymin = 0, ymax = dnorm(x, mean = 0, sd = 1)), 
+  geom_ribbon(aes(ymax = dnorm(x, mean = 0, sd = 1)), 
               fill = carto_pal(7, "BurgYl")[5], alpha = 1/2) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = "parameter value") +
+  xlab("parameter value") +
   coord_cartesian(xlim = c(-3, 3)) +
   theme_classic() +
   theme(text = element_text(family = "Courier"),
@@ -817,7 +815,7 @@ s %>%
   geom_line(aes(color = sample, size = b_sigma %>% as.character())) +
   # this function contains the data from the previous simulation
   geom_point(data = dev_tibble, 
-             aes(x = n_par, y = mean, group = sample, fill = sample),
+             aes(group = sample, fill = sample),
              color = "black", shape = 21, size = 2.5, stroke = .1) +
   scale_fill_manual(values = c(carto_pal(7, "BurgYl")[7], carto_pal(7, "BurgYl")[5])) +
   scale_color_manual(values = c(carto_pal(7, "BurgYl")[7], carto_pal(7, "BurgYl")[5])) +
@@ -840,7 +838,7 @@ For more on this how to choose your priors, consider Gelman, Simpson, and Betanc
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.7.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.8.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
 
 > The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is non- zero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 70)
 
@@ -935,7 +933,7 @@ You'll see how to compute the WAIC in brms in just a bit.
 
 Here is how to fit the pre-WAIC model in brms.
 
-```{r b, cache = T, message = F, warning = F}
+```{r fit_b, cache = T, message = F, warning = F}
 data(cars)
 
 b <- 
@@ -948,13 +946,15 @@ b <-
       seed = 6)
 ```
 
+Here's the summary.
+
 ```{r}
-print(b) 
+print(b)
 ```
 
 In brms, you return the loglikelihood with `log_lik()`.
 
-```{r, results = "hide"}
+```{r, results = "hide", message = F}
 ll <-
   b %>%
   log_lik() %>%
@@ -1003,7 +1003,13 @@ Finally, here's what we've been working so hard for: our hand calculated WAIC va
 waic(b)
 ```
 
-Here's how we get the WAIC standard error.
+Before we move on, did you notice the `elpd_waic` row in the tibble `waic()` returned? That value is the `lppd` minus the `pwaic`, but without multiplying the result by -2. E.g., 
+
+```{r}
+lppd - pwaic
+```
+
+That tidbit will come in handy a little bit later. But for now, here's how we compute the WAIC standard error.
 
 ```{r}
 dfmean %>%
@@ -1129,7 +1135,7 @@ library(brms)
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-```{r b6.11_through_b6.14, cache = T, message = F, warning = F, results = 'hide'}
+```{r b6.11_to_b6.14, cache = T, message = F, warning = F, results = 'hide'}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
@@ -1147,6 +1153,8 @@ b6.11 <-
 inits <- list(Intercept = mean(d$kcal.per.g),
               neocortex = 0,
               sigma     = sd(d$kcal.per.g))
+inits_list <-list(inits, inits, inits, inits)
+
 b6.12 <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 1 + neocortex,
@@ -1160,6 +1168,8 @@ b6.12 <-
 inits <- list(Intercept   = mean(d$kcal.per.g),
               `log(mass)` = 0,
               sigma       = sd(d$kcal.per.g))
+inits_list <-list(inits, inits, inits, inits)
+
 b6.13 <-
   update(b6.12, 
          newdata = d,
@@ -1170,6 +1180,8 @@ inits <- list(Intercept   = mean(d$kcal.per.g),
               neocortex   = 0,
               `log(mass)` = 0,
               sigma       = sd(d$kcal.per.g))
+inits_list <-list(inits, inits, inits, inits)
+
 b6.14 <- 
   update(b6.13, 
          newdata = d,
@@ -1189,22 +1201,63 @@ waic(b6.14)
 
 Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
 
-There are two basic ways to compare WAIC values from multiple models. In the first, you add more model names into the `waic()` function.
+There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
-```{r waic, cache = T, message = F, warning = F}
-waic(b6.11, b6.12, b6.13, b6.14)
+```{r w_b6.11, cache = T, message = F, warning = F}
+waic(b6.11)
 ```
 
-Alternatively, you first save each model's `waic()` output in its own object, and then feed to those objects into `compare_ic()`.
+The WAIC and its standard error are on the bottom row. the $p_\text{WAIC}$ and its SE are stacked atop that. And look there on the top row. Remember how we pointed out, above, that the WAIC by multiplying `(lppd - pwaic)` by -2? Well, if you just do the subtraction without multiplying the result by -2, you get the `elpd_waic`. File that away, it'll become important in a bit.
 
-```{r w_b6.11_throughw_b6.14, cache = T, message = F, warning = F}
-w_b6.11 <- waic(b6.11)
-w_b6.12 <- waic(b6.12)
-w_b6.13 <- waic(b6.13)
-w_b6.14 <- waic(b6.14)
+Part of the suggestd workflow for using information criteria with brms (i.e., execute `?loo.brmsfit`) is to add the estimates to the `brm()` fit object itseld. You do that with the `add_criterion()` function. Here's how we'd do so with `b6.11`.
 
-compare_ic(w_b6.11, w_b6.12, w_b6.13, w_b6.14)
+```{r}
+b6.11 <- add_criterion(b6.11, "waic")
 ```
+
+With that in place, here's how you'd extract the WAIC information.
+
+```{r}
+b6.11$waic
+```
+
+*Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output. But second, it set’s you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
+
+```{r w_b6.12_through_b6.14, cache = T}
+# compute and save the WAIC information for the next three models
+b6.12 <- add_criterion(b6.12, "waic")
+b6.13 <- add_criterion(b6.13, "waic")
+b6.14 <- add_criterion(b6.14, "waic")
+
+# compare the WAIC estimates
+w <- loo_compare(b6.11, b6.12, b6.13, b6.14,
+                 criterion = "waic")
+
+print(w)
+```
+
+Now you don’t have to save those results as an object, like we just did with `w`. But that’ll serve some pedagogical purposes in just a bit. So go with it. With respect to the output, notice the `elpd_diff` column and the adjacent `se_diff` column. Those are our WAIC differences. The models have been rank ordered from the lowest (i.e., `b6.14`) to the highest (i.e., `b6.12`). The scores listed are the differences of ` b6.14` minus the comparison model. Since `b6.14` is the comparison model in the top row, the values are naturally 0 (i.e., $x – x = 0$). But now here’s another critical thing to understand. Since the brms version 2.8.0 update, WAIC and LOO differences are no longer reported in the -2 * x metric. Remember how we keep rehearsing that multiplying `(lppd - pwaic)` by -2 is a historic artifact associated with the chi-square? We’ll, the makers of the loo package aren’t fans and they no longer support the conversion. 
+
+So here’s the deal. The substantive interpretations of the differences presented in an `elpd_diff` metric will be the same as if presented in a WAIC metric. But if we want to compare our `elpd_diff` results to those in the text, we will have to multiply them by -2. And also, if we want the associated standard error in the proper metric, we'll need to multiply the `se_diff` column by 2--you wouldn't multiply by -2 because that would return a negative standard error, which would be silly. Here's a quick way to do so.
+
+```{r}
+cbind(waic_diff = w[, 1] * -2,
+      se        = w[, 2] * 2)
+```
+
+One more thing. On page 198, and on many other pages to follow in the text, McElreath used the `rethinking::compare()` function to return a rich table of information about the WAIC information for several models. If we’re tricky, we can do something similar with `loo_compare`. To learn how, let's peer further into the structure of our `w` object. 
+
+```{r}
+str(w)
+```
+
+When we used `print(w)`, a few code blocks earlier, it only returned two columns. It appears we actually have eight. We can see the full output with the `simplify = F` argument.
+
+```{r}
+print(w, simplify = F)
+```
+
+The results are quite analogous to those from `rethinking::compare()`. Again, the difference estimates are in the metric of the $\text{elpd}$. But the interpretation is the same and we can convert them to the traditional information criteria metric with simple multiplication. As we'll see later, this basic workflow applies to the LOO, too.
 
 If you want to get those WAIC weights, you can use the `brms::model_weights()` function like so:
 
@@ -1228,109 +1281,101 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
   knitr::kable()
 ```
 
-I'm not aware of a convenient way to plot the WAIC comparisons of brms models the way McElreath does with rethinking. However, one can get the basic comparison plot with a little data processing. It helps to examine the structure of your WAIC objects. For example:
-
-```{r}
-glimpse(w_b6.11)
-```
-
-We can index the point estimate for model `b6.11`'s WAIC as `w.b6.11$estimates["waic", "Estimate"]` and the standard error as `w.b6.11$estimates["waic", "SE"]`.
-
-```{r}
-w_b6.11$estimates["waic", "Estimate"]
-
-w_b6.11$estimates["waic", "SE"]
-```
-
-Alternatively, you could do `w.b6.11$estimates[3, 1]` and `w.b6.11$estimates[3, 2]`. But instead of indexing the elements piecemeal, we might make a function that converts `waic()$estimates` to a tidy tibble formatted towards the end of making plotting easy. We'll call the function `waic_tibble()`.
-
-```{r}
-waic_tibble <- function(...) {
-  tibble(model_name = rep(waic(...)$model_name, times = 3)) %>% 
-    bind_cols(
-      waic(...)$estimates %>% 
-        data.frame() %>% 
-        rownames_to_column() %>% 
-        rename(statistic = rowname,
-               estimate  = Estimate,
-               se        = SE)
-    )
-}
-
-# for example
-waic_tibble(b6.11)
-```
-
-Now we'll use `waic_tibble()` and `bind_rows()` to make a multi-model tibble suitable for plotting the WAIC estimates.
+With a little `[]` subsetting and light wrangling, we can convert the contents of our `w` object to a format suitable for plotting the WAIC estimates.
 
 ```{r, fig.width = 4.5, fig.height = 1.25}
-waic_tibble(b6.11) %>% 
-  bind_rows(
-    waic_tibble(b6.12),
-    waic_tibble(b6.13),
-    waic_tibble(b6.14)
-  ) %>% 
-  filter(statistic == "waic") %>% 
+w[, 7:8] %>% 
+  data.frame() %>% 
+  rownames_to_column(var = "model_name") %>% 
   
   ggplot(aes(x    = model_name, 
-             y    = estimate, 
-             ymin = estimate - se, 
-             ymax = estimate + se)) +
+             y    = waic, 
+             ymin = waic - se_waic, 
+             ymax = waic + se_waic)) +
   geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
   coord_flip() +
   labs(x = NULL, y = NULL,
        title = "My custom WAIC plot") +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        axis.ticks.y = element_blank(),
+  theme(text             = element_text(family = "Courier"),
+        axis.ticks.y     = element_blank(),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
 
 ```{r, message = F, warning = F}
-LOO(b6.11)
-
 loo(b6.11)
 ```
 
-The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+
+
+```{r}
+waic(b6.11, b6.14)
+```
+
+To put all this model comparison in perspective, 
+
+> in this analysis, the best model has more than 90% of the model weight. That's pretty good. But with only 12 cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don't get too excited. If we take the standard error of the difference from the [`loo_compare()`] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [`b6.14` and `b6.11`]) on [`r round(w[4, 1] * -2, 2)`] with a standard deviation of [`r round(w[4, 2] * 2, 2)`]. (p. 200)
+
+Here are those two values in the $\text{elpd}$ metric.
+
+```{r}
+w[4, 1:2]
+```
+
+And here we convert them to the WAIC metric.
+
+```{r}
+round(w[4, 1] * -2, 2)
+round(w[4, 2] * 2, 2)
+```
+
+If it's easier to see, here's the same information in a tibble.
+
+```{r}
+tibble(value             = c("difference", "se"),
+       elpd              = w[4, 1:2],
+       conversion_factor = c(-2, 2)) %>% 
+  mutate(waic            = elpd * conversion_factor)
+```
 
 Before we forget, McElreath gave some perspective difference between the models with the highest and lowest WAIC values (p. 200).
 
-```{r}
-(w_d <- waic(b6.11, b6.14))
-```
-
-If you use `str()` to look at the structure of our `w_d` object, you'll see we can subset to the difference score portion with `w_d$ic_diffs__`. And since `w_d$ic_diffs__` is a numeric vector, we can extract the two numerals with the `[]` notation.
+But to the point, we can extract the two numerals and plug them into `rnorm()`.
 
 ```{r}
-set.seed(6.26)
+# how many draws would you like?
+n <- 1e5
 
+set.seed(6)
+
+# simulate
 diff <-
-  tibble(diff = rnorm(1e5 , 
-                      mean = w_d$ic_diffs__[1], 
-                      sd   = w_d$ic_diffs__[2]))
+  tibble(diff = rnorm(n, 
+                      mean = w[4, 1] * -2, 
+                      sd   = w[4, 2] *  2))
 
 diff %>% 
-  summarise(the_probability_a_difference_is_negative = sum(diff < 0) / n())
+  summarise(the_probability_a_difference_is_negative = sum(diff < 0) / n)
 ```
 
 In case you're curious, this is a graphic version of what we just did.
 
 ```{r, fig.width = 3, fig.height = 2.25}
-ggplot(data = tibble(diff = -20:30),
-       aes(x = diff)) +
-  geom_ribbon(aes(ymin = 0, ymax = dnorm(diff, w_d$ic_diffs__[1], w_d$ic_diffs__[2])),
+tibble(diff = -20:30) %>% 
+  ggplot(aes(x = diff, ymin = 0)) +
+  geom_ribbon(aes(ymax = dnorm(diff, w[4, 1] * -2, w[4, 2] * 2)),
               fill = carto_pal(7, "BurgYl")[7]) +
   geom_ribbon(data = tibble(diff = -20:0),
-              aes(ymin = 0, ymax = dnorm(diff, w_d$ic_diffs__[1], w_d$ic_diffs__[2])),
+              aes(ymax = dnorm(diff, w[4, 1] * -2, w[4, 2] * 2)),
               fill = carto_pal(7, "BurgYl")[5]) + 
   geom_vline(xintercept = 0, linetype = 3,
              color = carto_pal(7, "BurgYl")[3]) +
   scale_y_continuous(NULL, breaks = NULL) +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
+  theme(text             = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
@@ -1440,7 +1485,7 @@ Within the current brms framework, you can do model-averaged predictions with th
 # we need new data for both the `fitted()` and `pp_average()` functions
 nd <- 
   tibble(neocortex = seq(from = .5, to = .8, length.out = 30),
-         mass      = rep(4.5, times = 30))
+         mass      = 4.5)
 
 # we'll get the `b6.14`-implied trajectory with `fitted()`
 f <-
@@ -1465,7 +1510,7 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
               color = carto_pal(7, "BurgYl")[5], fill = "transparent", linetype = 2) +
   geom_line(data = f,
               color = carto_pal(7, "BurgYl")[5], linetype = 2) +
-  geom_point(data = d, aes(x = neocortex, y = kcal.per.g), 
+  geom_point(data = d, aes(y = kcal.per.g), 
              size = 2, color = carto_pal(7, "BurgYl")[7]) +
   labs(y = "kcal.per.g") +
   coord_cartesian(xlim = range(d$neocortex), 
@@ -1571,7 +1616,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w_b6.11, w_b6.12, w_b6.13, w_b6.14, waic_tibble, w_d, diff, my_coef_tab, wrangled_my_coef_tab, p11, p12, p13, p14, f, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
