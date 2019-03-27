@@ -8,7 +8,7 @@ output:
 
 # Big Entropy and the Generalized Linear Model
 
-> …Statistical models force many choices upon us. Some of these choices are distributions that represent uncertainty. We must choose, for each parameter, a prior distribution. And we must choose a likelihood function, which serves as a distribution of data. There are conventional choices, such as wide Gaussian priors and the Gaussian likelihood of linear regression. These conventional choices work unreasonably well in many circumstances. But very often the conventional choices are not the best choices. Inference can be more powerful when we use all of the information, and doing so usually requires going beyond convention.
+> ...Statistical models force many choices upon us. Some of these choices are distributions that represent uncertainty. We must choose, for each parameter, a prior distribution. And we must choose a likelihood function, which serves as a distribution of data. There are conventional choices, such as wide Gaussian priors and the Gaussian likelihood of linear regression. These conventional choices work unreasonably well in many circumstances. But very often the conventional choices are not the best choices. Inference can be more powerful when we use all of the information, and doing so usually requires going beyond convention.
 >
 > To go beyond convention, it helps to have some principles to guide choice. When an engineer wants to make an unconventional bridge, engineering principles help guide choice. When a researcher wants to build an unconventional model, entropy provides one useful principle to guide choice of probability distributions: Bet on the distribution with the biggest entropy. (p. 267)
 
@@ -17,6 +17,7 @@ output:
 > In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
 >
 >$$H(p) = - \sum_i p_i \text{ log } p_i$$
+>
 > This function is known as *information entropy*. (p. 268, *emphasis* in the original)
 
 Let's execute the code for the pebbles-in-buckets example.
@@ -43,6 +44,7 @@ d %>%
 We're almost ready to plot. Which brings us to color. For the plots in this chapter, we'll be taking our color palettes from the [ghibli package](https://github.com/ewenme/ghibli), which provides palettes based on scenes from anime films by the Studio Ghibli.
 
 ```{r, message = F, warning = F}
+# install.packages("ghibli", dependencies = T)
 library(ghibli)
 ```
 
@@ -424,8 +426,8 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
   mutate(probability = .35 + x * .5) %>% 
 
   ggplot(aes(x = x, y = probability)) +
-  geom_rect(aes(xmin = -1, xmax = 3,
-                ymin = 0,  ymax = 1),
+  geom_rect(xmin = -1, xmax = 3,
+            ymin = 0,  ymax = 1,
             fill = ghibli_palette("MononokeMedium")[5]) +
   geom_hline(yintercept = 0:1, linetype = 2, color = ghibli_palette("MononokeMedium")[7]) +
   geom_line(aes(linetype = probability > 1, color = probability > 1),
@@ -476,7 +478,7 @@ tibble(x = seq(from = 0, to = 5, length.out = length_out)) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:4) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~label, scales = "free_y", labeller = label_parsed)
@@ -496,7 +498,7 @@ tibble(x = seq(from = -5, to = 5, length.out = length_out)) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = -4:4) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -516,7 +518,7 @@ tibble(x = 0:20) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:10) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -536,7 +538,7 @@ tibble(x = 0:10) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:10) +
-  theme(panel.grid = element_blank(),
+  theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -647,7 +649,7 @@ grid.arrange(p1, p2, ncol = 2)
 This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
 
 ```{r}
-set.seed(100)
+set.seed(8)
 (
   d <-
   tibble(x = rep(0:1, each = 100)) %>% 
@@ -682,9 +684,9 @@ library(brms)
 
 For such a model, we have two formulas: one for $\mu$ and one for $\sigma$. We wrap both within the `bf()` function. 
 
-```{r b9.1, cache = T, warning = F, message = F, results = 'hide'}
+```{r b9.1_, cache = T, warning = F, message = F, results = 'hide'}
 b9.1 <- 
-  brm(data = d, 
+  brm(data = d,
       family = gaussian,
       bf(y ~ 1, sigma ~ 1 + x),
       prior = c(prior(normal(100, 10), class = Intercept),
@@ -709,7 +711,7 @@ head(post)
 
 With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of `y` based on the `x` dummy and then examine them in a plot.
 
-```{r, fig.width = 3.5, fig.height = 3}
+```{r, fig.width = 3.5, fig.height = 2.5}
 post %>% 
   transmute(`x == 0` = exp(b_sigma_Intercept + b_sigma_x * 0),
             `x == 1` = exp(b_sigma_Intercept + b_sigma_x * 1)) %>% 
@@ -720,8 +722,9 @@ post %>%
                 point_interval = median_qi, .width = .95) +
   scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
                                    ghibli_palette("KikiMedium")[6])) +
-  labs(x = NULL, y = NULL,
+  labs(x = expression(sigma[x]), y = NULL,
        subtitle = expression(paste("Model-implied ", italic(SD), "s by group x"))) +
+  coord_cartesian(ylim = c(1.5, 2)) +
   theme(panel.grid       = element_blank(),
         axis.ticks.y     = element_blank(),
         legend.position  = "none",
@@ -736,7 +739,7 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright).
+For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/).
 
 But getting back to the text,
 
