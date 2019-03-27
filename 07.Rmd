@@ -55,7 +55,7 @@ d.A0 <-
 
 The first two models predicting `log_gdp` are univariable.
 
-```{r b7.1_and_b7.2, cache = T, warning = F, message = F, results = "hide"}
+```{r b7.1_b7.2, cache = T, warning = F, message = F, results = "hide"}
 b7.1 <-
   brm(data = d.A1, family = gaussian,
       log_gdp ~ 1 + rugged,
@@ -129,7 +129,7 @@ Here's our model with all the countries, but without the `cont_africa` dummy.
 
 ```{r b7.3_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.3 <-
-  update(b7.1, 
+  update(b7.1,
          newdata = dd)
 ```
 
@@ -137,17 +137,26 @@ Now we'll add the dummy.
 
 ```{r b7.4_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.4 <-
-  update(b7.3, 
+  update(b7.3,
          newdata = dd,
-         formula = log_gdp ~ 1 + rugged + cont_africa)
+         formula = log_gdp ~ 1 + rugged + cont_africa) 
 ```
 
-And here we can compare the two models with information criteria.
+Using the skills from Chapter 6, let's compute the information criteria for the two models. Note how with the `add_criterion()` function, you can compute both the LOO and the WAIC at once.
+
+```{r ic_b7.3_b7.4, cache = T}
+b7.3 <- add_criterion(b7.3, c("loo", "waic"))
+b7.4 <- add_criterion(b7.4, c("loo", "waic"))
+```
+
+Here we'll compare the models with the `loo_compare()` function, first by the WAIC and then by the LOO.
 
 ```{r}
-waic(b7.3, b7.4)
+loo_compare(b7.3, b7.4,
+            criterion = "waic")
 
-loo(b7.3, b7.4)
+loo_compare(b7.3, b7.4,
+            criterion = "loo")
 ```
 
 Happily, the WAIC and the LOO are in agreement. The model with the dummy, `b7.4`, fit the data much better. Here are the WAIC model weights.
@@ -158,7 +167,7 @@ model_weights(b7.3, b7.4,
   round(digits = 3)
 ```
 
-As in the text, almost all the weight goes to the multivariable model, `b7.4`. Before we can plot that model, we need to wrangle a bit.
+As in the text, almost all the weight went to the multivariable model, `b7.4`. Before we can plot that model, we need to wrangle a bit.
 
 ```{r}
 nd <- 
@@ -215,17 +224,28 @@ Fit the model.
 ```{r b7.5_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5 <-
   update(b7.4,
-         formula = log_gdp ~ 1 + rugged*cont_africa)
+         formula = log_gdp ~ 1 + rugged*cont_africa) 
 ```
 
 For kicks, we'll just use the LOO to compare the last three models.
 
-```{r}
-loo(b7.3, b7.4, b7.5,
-    cores = 4)  # We can speed things up using the `cores` argument
+```{r ic_b7.5, cache = T}
+b7.5 <- add_criterion(b7.5, c("loo", "waic"))
+
+l <- loo_compare(b7.3, b7.4, b7.5,
+                 criterion = "loo")
+
+print(l, simplify = F)
 ```
 
-And we can weigh the models based on the LOO rather than the WAIC, too.
+And recall, if we want those LOO difference scores in the traditional metric like McElreath displayed in the text, we can do a quick conversion.
+
+```{r}
+cbind(loo_diff = l[, 1] * -2,
+      se       = l[, 2] *  2)
+```
+
+And we can weight the models based on the LOO rather than the WAIC, too.
 
 ```{r}
 model_weights(b7.3, b7.4, b7.5,
@@ -249,17 +269,18 @@ Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you 
 ```{r b7.5b_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5b <-
   update(b7.5,
-         formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa)
+         formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa) 
 ```
 
 From here on, I will default to this style of syntax for interactions.
 
-Since this is the same model, it yields the same information criteria estimates within simulation error.
+Since this is the same model, it yields the same information criteria estimates within simulation error. Here we'll confirm that with the LOO.
 
 ```{r ics_b7.5_and_b7.5b, cache = T}
-waic(b7.5, b7.5b)
+b7.5b <- add_criterion(b7.5b, c("loo", "waic"))
 
-loo(b7.5, b7.5b)
+b7.5$loo
+b7.5b$loo
 ```
 
 ### Plotting the interaction.
@@ -280,13 +301,13 @@ And here's the code for our version of Figure 7.4.
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
-ggplot(aes(x = rugged)) +
+  ggplot(aes(x = rugged, color = cont_africa)) +
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = cont_africa, color = cont_africa),
+                  fill = cont_africa),
               stat = "identity", 
               alpha = 1/4, size = 1/2) +
-  geom_point(aes(y = log_gdp, color = cont_africa),
+  geom_point(aes(y = log_gdp),
              size = 2/3) +
   scale_colour_pander() +
   scale_fill_pander() +
@@ -300,7 +321,7 @@ ggplot(aes(x = rugged)) +
 
 ### Interpreting an interaction estimate.
 
-Interpreting interaction estimates is tricky. It’s trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers along. Plotting implied predictions does far more for both our own understanding and for our audience’s.
+> Interpreting interaction estimates is tricky. It’s trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers along. Plotting implied predictions does far more for both our own understanding and for our audience’s. (p. 219)
 
 #### Parameters change meaning.
 
@@ -377,7 +398,7 @@ post %>%
 > Consider for example the GDP and terrain ruggedness problem. The interaction there has two equally valid phrasings.
 >
 > 1. How much does the influence of ruggedness (on GDP) depend upon whether the nation is in Africa?
->2. How much does the influence of being in Africa (on GDP) depend upon ruggedness?
+> 2. How much does the influence of being in Africa (on GDP) depend upon ruggedness?
 >
 > While these two possibilities sound different to most humans, your golem thinks they are identical. (p. 223)
 
@@ -427,18 +448,18 @@ f <-
 
 # augment the `dd` data a bit
 dd %>% 
-  mutate(ox = ifelse(rugged > median(rugged), 0.05, -0.05),
+  mutate(ox          = ifelse(rugged > median(rugged), 0.05, -0.05),
          cont_africa = cont_africa + ox) %>%
   select(cont_africa, everything()) %>%
   
   # plot
-  ggplot(aes(x = cont_africa)) +
+  ggplot(aes(x = cont_africa, color = factor(ox))) +
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = factor(ox), color = factor(ox), linetype = factor(ox)),
+                  fill = factor(ox), linetype = factor(ox)),
               stat = "identity", 
               alpha = 1/4, size = 1/2) +
-  geom_point(aes(y = log_gdp, color = factor(ox)),
+  geom_point(aes(y = log_gdp),
              alpha = 1/2, shape = 1) +
   scale_colour_pander() +
   scale_fill_pander() +
@@ -528,7 +549,7 @@ b7.6 <-
                    prior(normal(0, 100), class = b),
                    prior(cauchy(0, 10), class = sigma)),
          control = list(adapt_delta = 0.9),
-      seed = 7)
+         seed = 7)
 
 b7.7 <- 
   update(b7.6, 
@@ -547,7 +568,19 @@ This is an example where HMC yielded point estimates notably different from MAP.
 Anyway, let's look at WAIC.
 
 ```{r waic_b7.6_and_b7.7, cache = T}
-waic(b7.6, b7.7)
+b7.6 <- add_criterion(b7.6, "waic")
+b7.7 <- add_criterion(b7.7, "waic")
+
+w <- loo_compare(b7.6, b7.7, criterion = "waic")
+
+print(w, simplify = F)
+```
+
+Here we use our `cbind()` trick to convert the difference from the $\text{elpd}$ metric to the more traditional WAIC metric.
+
+```{r}
+cbind(waic_diff = w[, 1] * -2,
+      se        = w[, 2] *  2)
 ```
 
 Why not compute the WAIC weights?
@@ -559,6 +592,8 @@ model_weights(b7.6, b7.7, weights = "waic")
 As in the text, almost all the weight went to the interaction model, `b7.7`.
 
 ### Center and re-estimate.
+
+> To *center* a variable means to create a new variable that contains the same information as the original, but has a new mean of zero. For example, to make centered versions of `shade` and `water`, just subtract the mean of the original from each value. (p. 230, *emphasis* in the original)
 
 Here's a tidyverse way to center the predictors.
 
@@ -587,6 +622,8 @@ b7.9 <-
          formula = blooms ~ 1 + water_c + shade_c + water_c:shade_c)
 ```
 
+Check out the results.
+
 ```{r}
 posterior_summary(b7.8) %>% round(digits = 2)
 posterior_summary(b7.9) %>% round(digits = 2)
@@ -597,7 +634,7 @@ And okay fine, if you really want a `coeftab()`-like summary, here's a way to do
 ```{r}
 tibble(model  = str_c("b7.", 8:9)) %>% 
   mutate(fit  = purrr::map(model, get)) %>% 
-  mutate(tidy = purrr::map(fit, tidy)) %>% 
+  mutate(tidy = purrr::map(fit, broom::tidy)) %>% 
   unnest(tidy) %>% 
   filter(term != "lp__") %>% 
   select(term, estimate, model) %>% 
@@ -613,15 +650,31 @@ Nothing to add, here.
 
 #### Estimates changed less across models.
 
-```{r, warning = F, message = F}
+On page 231, we read:
+
+> The interaction parameter always factors into generating a prediction. Consider for example a tulip at the average moisture and shade levels, 2 in each case. The expected blooms for such a tulip is: 
+
+$$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = \alpha + \beta_\text{water} (2) + \beta_\text{shade} (2) + \beta_{\text{water} \times \text{shade}} (2 \times 2)$$
+
+> So to figure out the effect of increasing water by 1 unit, you have to use all of the $\beta$ parameters. Plugging in the [HMC] values for the un-centered interaction model, [`b7.7`], we get:
+
+$$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = -107.1 + 159.9 (2) + 44.0 (2) -43.2 (2 \times 2)$$
+
+With our brms workflow, we use `fixef()` to compute the predictions.
+
+```{r}
 k <- fixef(b7.7)
 k[1] + k[2] * 2 + k[3] * 2 + k[4] * 2 * 2
 ```
 
-```{r, warning = F, message = F}
+Even though or HMC parameters differ a bit from the MAP estimates McElreath reported in the text, the value they predicted matches quite closely with the one in the text. Same thing for the next one.
+
+```{r}
 k <- fixef(b7.9)
 k[1] + k[2] * 0 + k[3] * 0 + k[4] * 0 * 0
 ```
+
+Here are the coefficients from the centered model.
 
 ```{r}
 print(b7.9)
@@ -632,24 +685,24 @@ print(b7.9)
 Now we're ready for the bottom row of Figure 7.7. Here's our variation on McElreath's tryptych loop code, adjusted for brms and ggplot2.
 
 ```{r, fig.height = 2, fig.width = 2.27}
-# loop over values of water.c and plot predictions
+# loop over values of `water_c` and plot predictions
 shade_seq <- -1:1
 
 for(w in -1:1){
-  # defining the subset of the original data
+  # define the subset of the original data
   dt <- d[d$water_c == w, ]
   # defining our new data
   nd <- tibble(water_c = w, shade_c = shade_seq)
-  # using our sampling skills, like before
-  fitd_7.9 <- 
+  # use our sampling skills, like before
+  f <- 
     fitted(b7.9, newdata = nd) %>%
     as_tibble() %>%
     bind_cols(nd)
   
-  # specifying our custom plot
+  # specify our custom plot
   fig <- 
     ggplot() +
-    geom_smooth(data = fitd_7.9,
+    geom_smooth(data = f,
                 aes(x = shade_c, y = Estimate, ymin = Q2.5, ymax = Q97.5),
                 stat = "identity", 
                 fill = "#CC79A7", color = "#CC79A7", alpha = 1/5, size = 1/2) +
@@ -664,7 +717,7 @@ for(w in -1:1){
     theme_pander() + 
     theme(text = element_text(family = "Times"))
   
-  # plotting that joint
+  # plot that joint
   plot(fig)
 }
 ```
@@ -672,22 +725,23 @@ for(w in -1:1){
 But we don't necessarily need a loop. We can achieve all of McElreath's Figure 7.7 with `fitted()`, some data wrangling, and a little help from `ggplot2::facet_grid()`.
 
 ```{r, fig.height = 4, fig.width = 6.5}
-# fitted() for model b7.8
+# `fitted()` for model b7.8
 fitted(b7.8) %>%
   as_tibble() %>%
-  # adding fitted() for model b7.9
+  # add `fitted()` for model b7.9
   bind_rows(
     fitted(b7.9) %>% 
       as_tibble()
   ) %>% 
-  # We'll want to index the models
+  # we'll want to index the models
   mutate(fit  = rep(c("b7.8", "b7.9"), each = 27)) %>% 
-  # Here we add the data, `d`
+  # here we add the data, `d`
   bind_cols(bind_rows(d, d)) %>% 
-  # These will come in handy for `ggplot2::facet_grid()`
+  # these will come in handy for `ggplot2::facet_grid()`
   mutate(x_grid = paste("water_c =", water_c),
          y_grid = paste("model: ", fit)) %>% 
   
+  # plot!
   ggplot(aes(x = shade_c)) +
   geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity", 
@@ -699,7 +753,7 @@ fitted(b7.8) %>%
   scale_x_continuous("Shade (centered)", breaks = c(-1, 0, 1)) +
   ylab("Blooms") +
   theme_pander() + 
-  theme(text = element_text(family = "Times"),
+  theme(text             = element_text(family = "Times"),
         panel.background = element_rect(color = "black")) +
   facet_grid(y_grid ~ x_grid)
 ```
@@ -741,6 +795,7 @@ With multiple predictors, things get more complicated. Consider our multivariabl
 
 ```{r, fig.height = 3, fig.width = 3.5}
 b7.4$formula
+
 marginal_effects(b7.4)
 ```
 
@@ -773,6 +828,7 @@ Things get more complicated with the interaction model, `b7.5`.
 
 ```{r, fig.height = 3, fig.width = 3.5}
 b7.5$formula
+
 marginal_effects(b7.5)
 ```
 
@@ -844,7 +900,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f_b7.1, f_b7.2, f, b7.3, b7.4, b7.5, b7.5b, post, b7.6, b7.7, b7.8, b7.9, k, shade_seq, fig, d_factor, ic)
+rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f_b7.1, f_b7.2, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6, b7.7, w, b7.8, b7.9, k, shade_seq, fig, d_factor, b7.4_factor, b7.5_factor, dt, ic)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
