@@ -48,14 +48,14 @@ Here we use grid approximation, again, to generate samples.
 # how many grid points would you like?
 n <- 1001
 n_success <- 6
-n_tirals  <- 9
+n_trials  <- 9
 
 (
   d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
          # note we're still using a flat uniform prior
          prior      = 1) %>% 
-  mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
+  mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
   mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
   )
 ```
@@ -226,12 +226,12 @@ We've already defined `p_grid` and `prior` within `d`, above. Here we'll reuse t
 ```{r}
 # here we update the `dbinom()` parameters
 n_success <- 3
-n_tirals  <- 3
+n_trials  <- 3
 
 # update d
 d <-
   d %>% 
-  mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
+  mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
   mutate(posterior  = (likelihood * prior) / sum(posterior))
 
 # make the next part reproducible
@@ -633,14 +633,14 @@ All this is depicted in Figure 3.6. To get ready to make our version, let's firs
 # how many grid points would you like?
 n <- 1001
 n_success <- 6
-n_tirals  <- 9
+n_trials  <- 9
 
 (
   d <-
   tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
          # note we're still using a flat uniform prior
          prior      = 1) %>% 
-  mutate(likelihood = dbinom(n_success, size = n_tirals, prob = p_grid)) %>% 
+  mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
   mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
   )
 ```
@@ -930,7 +930,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(n, n_success, n_tirals, d, n_samples, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
+rm(n, n_success, n_trials, d, n_samples, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
