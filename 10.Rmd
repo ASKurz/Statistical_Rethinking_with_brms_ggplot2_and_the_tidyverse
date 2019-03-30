@@ -41,7 +41,7 @@ d <- chimpanzees
 Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 rm(chimpanzees)
 ```
@@ -58,7 +58,7 @@ $$
 
 In the `brm()` `formula` syntax, the `|` bar indicates we have extra supplementary information about our criterion, `pulled_left`. In this case, that information is that each value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
 
-```{r b10.1, cache = T, warning = F, message = F, results = "hide"}
+```{r b10.1_, cache = T, warning = F, message = F, results = "hide"}
 b10.1 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 1,
@@ -87,7 +87,7 @@ fixef(b10.1) %>%
 
 The next two chimp models add predictors in the usual way.
 
-```{r b10.2_and b10.3, cache = T, warning = F, message = F, results = "hide"}
+```{r b10.2_and_b10.3, cache = T, warning = F, message = F, results = "hide"}
 b10.2 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 1 + prosoc_left,
@@ -101,16 +101,28 @@ b10.3 <-
          formula = pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left)
 ```
 
-Before comparing our models, we'll first save their WAIC estimates as objects. These will come in handy in just a bit.
+Compute the WAIC for each model and save the results within the brmfit objects.
 
-```{r w_b10.1_through_w_b10.3, cache = T, warning = F, message = F}
-w_b10.1 <- waic(b10.1)
-w_b10.2 <- waic(b10.2)
-w_b10.3 <- waic(b10.3)
+```{r, warning = F, message = F}
+b10.1 <- add_criterion(b10.1, "waic")
+b10.2 <- add_criterion(b10.2, "waic")
+b10.3 <- add_criterion(b10.3, "waic")
 ```
 
+Compare them with the `loo_compare()` and make sure to add the `criterion = "waic"` argument.
+
 ```{r}
-compare_ic(w_b10.1, w_b10.2, w_b10.3)
+w <- loo_compare(b10.1, b10.2, b10.3, criterion = "waic")
+
+print(w, simplify = F)
+```
+
+Recall our `cbind()` trick to convert the differences from the $\text{elpd}$ metric to the WAIC metric.
+
+```{r}
+cbind(waic_diff = w[, 1] * -2,
+      se        = w[, 2] *  2) %>% 
+  round(digits = 2)
 ```
 
 For this chapter, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s `Moonrise2` palette.
@@ -139,14 +151,14 @@ theme_set(theme_default() +
 Finally, here's our WAIC plot.
 
 ```{r, fig.width = 4.5, fig.height = 1.25}
-tibble(model = c("b10.1", "b10.2", "b10.3"),
-       waic  = c(w_b10.1$estimates[3, 1], w_b10.2$estimates[3, 1], w_b10.3$estimates[3, 1]),
-       se    = c(w_b10.1$estimates[3, 2], w_b10.2$estimates[3, 2], w_b10.3$estimates[3, 2])) %>%
-
+w %>%
+  data.frame() %>% 
+  rownames_to_column(var = "model") %>% 
+  
   ggplot() +
   geom_pointrange(aes(x = reorder(model, -waic), y = waic,
-                      ymin = waic - se,
-                      ymax = waic + se,
+                      ymin = waic - se_waic,
+                      ymax = waic + se_waic,
                       color = model),
                   shape = 16) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1:2, 4)]) +
@@ -159,7 +171,7 @@ tibble(model = c("b10.1", "b10.2", "b10.3"),
 
 The full model, `b10.3`, did not have the lowest WAIC value. Though note how wide those standard error bars are relative to the point estimates. There's a lot of model uncertainty there. Here are the WAIC weights.
 
-```{r model_weights, cache = T, message = F}
+```{r model_weights, message = F}
 model_weights(b10.1, b10.2, b10.3, 
               weights = "waic")
 ```
@@ -177,13 +189,13 @@ fixef(b10.3)[2] %>%
   exp()
 ```
 
-Given an estimated value of 4, the probability of a pull, all else equal, would be:
+Given an estimated value of 4, the probability of a pull, all else equal, would be close to 1.
 
 ```{r}
 inv_logit_scaled(4)
 ```
 
-Adding the coefficient, `fixef(b10.3)[2]`, would yield:
+Adding the coefficient, `fixef(b10.3)[2]`, would yield an even higher estimate.
 
 ```{r}
 (4 + fixef(b10.3)[2]) %>%
@@ -264,7 +276,7 @@ $$
 
 Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice that we used the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model are of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
 
-```{r b10.4, cache = T, message = F, warning = F}
+```{r b10.4_, cache = T, message = F, warning = F}
 b10.4 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left ,
@@ -304,8 +316,8 @@ post %>%
   geom_density(color = "transparent",
                fill = wes_palette("Moonrise2")[1]) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = NULL,
-       title = "Actor 2's large and uncertain intercept",
+  labs(x        = NULL,
+       title    = "Actor 2's large and uncertain intercept",
        subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.")
 ```
 
@@ -379,23 +391,50 @@ d_aggregated %>%
   filter(actor %in% c(1, 2))
 ```
 
-To fit an aggregated binomial model in brms, we augment`<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$.
+To fit an aggregated binomial model in brms, we augment the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$.
 
-```{r b10.5, cache = T, message = F, results = "hide"}
+```{r b10.5_, cache = T, message = F, results = "hide"}
 b10.5 <-
   brm(data = d_aggregated, family = binomial,
-      x | trials(18) ~ 1 + prosoc_left + condition:prosoc_left ,
+      x | trials(18) ~ 1 + prosoc_left + condition:prosoc_left,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
-      iter = 2500, warmup = 500, cores = 2, chains = 2,
+      iter = 2500, warmup = 500, cores = 2, chains = 2, 
       seed = 10)
 ```
 
 We might compare `b10.3` with `b10.5` like this.
 
-```{r, message = F, warning = F}
+```{r}
 fixef(b10.3) %>% round(digits = 2)
 fixef(b10.5) %>% round(digits = 2)
+```
+
+A coefficient plot can offer a complimentary perspective.
+
+```{r, fig.width = 4.5, fig.height = 2.5, warning = F, message = F}
+library(broom)
+
+# wrangle
+tibble(model  = str_c("b10.", c(3, 5))) %>% 
+  mutate(fit  = map(model, get)) %>% 
+  mutate(tidy = map(fit, tidy)) %>% 
+  unnest(tidy) %>% 
+  filter(term != "lp__") %>% 
+  
+  # plot
+  ggplot() +
+  geom_pointrange(aes(x = model, y = estimate,
+                      ymin = lower,
+                      ymax = upper,
+                      color = term),
+                  shape = 16) +
+  scale_color_manual(values = wes_palette("Moonrise2")[c(1:2, 4)]) +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme(axis.ticks.y    = element_blank(),
+        legend.position = "none") +
+  facet_wrap(~term, ncol = 1)
 ```
 
 The two are close within rounding error.
@@ -414,7 +453,7 @@ d <- UCBadmit
 Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 rm(UCBadmit)
 
@@ -449,7 +488,7 @@ b10.6 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10) 
 
 b10.7 <-
   brm(data = d, family = binomial,
@@ -459,30 +498,48 @@ b10.7 <-
       seed = 10)
 ```
 
+Compute the information criteria for each model and save the results within the brmfit objects.
+
+```{r}
+b10.6 <- add_criterion(b10.6, "waic")
+b10.7 <- add_criterion(b10.7, "waic")
+```
+
 Here's the WAIC comparison.
 
 ```{r}
-waic(b10.6, b10.7)
+w <- loo_compare(b10.6, b10.7, criterion = "waic")
+
+print(w, simplify = F)
 ```
+
+If you prefer the difference in the WAIC metric, use our `cbind()` conversion method from above.
 
 **Bonus: Information criteria digression.**
 
 Let's see what happens if we switch to the LOO.
 
 ```{r}
-l_b10.6 <- loo(b10.6)
-l_b10.7 <- loo(b10.7)
+b10.6 <- add_criterion(b10.6, "loo")
+b10.7 <- add_criterion(b10.7, "loo")
 ```
 
 If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/web/packages/loo/loo.pdf). As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics). Each case in the data gets its own $k$ value and we like it when those $k$s are low. The makers of the loo package get worried when those $k$s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
 
 First things first, if you explicitly open the loo package, you’ll have access to some handy diagnostic functions.
 
-```{r, message = F}
+```{r, message = F, warning = F}
 library(loo)
 ```
 
-Using the loo-object for model `b10.6`, which we've named `l_b10.6`, let's take a look at the `pareto_k_table()` function.
+We'll be leveraging those $k$ values with the `pareto_k_table()` and `pareto_k_ids()` functions. Both functions take objects created by the `loo()` or `psis()` functions. So, before we can get busy, we'll first make two objects with the `loo()`.
+
+```{r}
+l_b10.6 <- loo(b10.6)
+l_b10.7 <- loo(b10.7)
+```
+
+There are those warning messages, again. Using the loo-object for model `b10.6`, which we've named `l_b10.6`, let's take a look at the `pareto_k_table()` function.
 
 ```{r}
 pareto_k_table(l_b10.6) 
@@ -516,11 +573,13 @@ Part of the warning message for model `b10.6` read:
 
 > It is recommended to set 'reloo = TRUE' in order to calculate the ELPD without the assumption that these observations are negligible. This will refit the model [$n$] times to compute the ELPDs for the problematic observations directly.
 
-Let's do that:
+Let's do that.
 
 ```{r l_b10.6_reloo, cache = T, warning = F, message = F, results = 'hide'}
 l_b10.6_reloo <- loo(b10.6, reloo = T)
 ```
+
+Check the results.
 
 ```{r}
 l_b10.6_reloo
@@ -532,14 +591,14 @@ Now that looks better. We'll do the same thing for model `b10.7`.
 l_b10.7_reloo <- loo(b10.7, reloo = T)
 ```
 
-Okay, let's compare our PSIS-LOO values before and after adjusting `loo()` with `reloo = T`.
+Okay, let's compare models with formal $\text{elpd}_{\text{loo}}$ differences before and after adjusting with `reloo = T`.
 
 ```{r}
-compare_ic(l_b10.6, l_b10.7)
-compare_ic(l_b10.6_reloo, l_b10.7_reloo)
+loo_compare(l_b10.6, l_b10.7)
+loo_compare(l_b10.6_reloo, l_b10.7_reloo)
 ```
 
-In this case, the results are kinda similar. But holy smokes, look at the size of those *SE*s! Anyway, watch out for this in your real-world data. You also might check out this [vignette on how the loo package’s Pareto $k$ can help detect outliers](https://github.com/ASKurz/Student-s-t_regression).
+In this case, the results are kinda similar. The standard errors for the differences are huge compared to the point estimates, suggesting large uncertainty. Watch out for this in your real-world data.
 
 But this has all been a tangent from the central thrust of this section. 
 
@@ -630,7 +689,7 @@ b10.8 <-
       admit | trials(applications) ~ 0 + dept,
       prior(normal(0, 10), class = b),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10) 
 
 b10.9 <-
   update(b10.8,
@@ -638,16 +697,17 @@ b10.9 <-
          formula = admit | trials(applications) ~ 0 + dept + male)
 ```
 
-Here we compare all four models by the LOO.
+Let's make two more `loo()` objects using `reloo = T`.
 
-```{r loo_b10.6_through_b10.9, message = F, warning = F, results = 'hide'}
-loos <- loo(b10.6, b10.7, b10.8, b10.9, 
-            reloo = T,
-            cores = 2)
+```{r reloo_b10.8_and_b10.9, message = F, warning = F, results = 'hide'}
+l_b10.8_reloo <- loo(b10.8, reloo = T)
+l_b10.9_reloo <- loo(b10.9, reloo = T)
 ```
 
+Now compare them.
+
 ```{r}
-loos
+loo_compare(l_b10.6_reloo, l_b10.7_reloo, l_b10.8_reloo, l_b10.9_reloo)
 ```
 
 Here are the LOO weights.
@@ -729,13 +789,13 @@ x <- c(rep(-1, 9), rep(1, 11))
 
 Fit the `b.good` model.
 
-```{r b.good, cache = T, message = F, warning = F, results = "hide"}
+```{r fit_b.good, cache = T, message = F, warning = F, results = "hide"}
 b.good <-
   brm(data = list(y = y, x = x), family = binomial,
       y ~ 1 + x,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
-      seed = 10)
+      seed = 10) 
 ```
 
 Our model summary will differ a bit from the one in the text. It seems this is because of the MAP/HMC contrast and our choice of priors.
@@ -744,7 +804,7 @@ Our model summary will differ a bit from the one in the text. It seems this is b
 print(b.good)
 ```
 
-You might experiment with different prior $SD$s to see how they influence the posterior $SD$s. Anyways, here's the `pairs()` plot McElreath excluded from the text:
+You might experiment with different prior $SD$s to see how they influence the posterior $SD$s. Anyways, here's the `pairs()` plot McElreath excluded from the text.
 
 ```{r, fig.width = 3.25, fig.height = 3}
 pairs(b.good,
@@ -760,7 +820,7 @@ That posterior, my friends, is not multivariate Gaussian. The plot deserves and 
 We'll simulate our sweet count data.
 
 ```{r}
-set.seed(10.2) # make the results reproducible
+set.seed(10) # make the results reproducible
 
 tibble(y = rbinom(1e5, 1000, 1/1000)) %>% 
   summarise(y_mean     = mean(y),
@@ -793,7 +853,7 @@ d <- Kline
 Switch from rethinking to brms.
 
 ```{r, message = F, warning = F}
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 rm(Kline)
 
@@ -831,7 +891,7 @@ b10.10 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b)),
       iter = 3000, warmup = 1000, chains = 4, cores = 4,
-      seed = 10)
+      seed = 10) 
 ```
 
 ```{r}
@@ -853,7 +913,7 @@ post %>%
 And here's the coefficient plot via `bayesplot::mcmc_intervals()`:
 
 ```{r, fig.width = 8, fig.height = 1.25}
-# We'll set a renewed color theme
+# we'll set a renewed color theme
 color_scheme_set(c(wes_palette("Moonrise2")[2],
                    wes_palette("Moonrise2")[1], 
                    wes_palette("Moonrise2")[4], 
@@ -927,7 +987,7 @@ post %>%
 
 Here we deconstruct model `b10.10`, bit by bit.
 
-```{r b10.11_through_b10.14_seed10, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.11_through_b10.14_seed_10, cache = T, message = F, warning = F, results = "hide"}
 # no interaction
 b10.11 <- 
   update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high)
@@ -942,50 +1002,64 @@ b10.13 <-
 
 # intercept only
 b10.14 <-
-  update(b10.10, formula = total_tools ~ 1)
+  update(b10.10, formula = total_tools ~ 1,
+         seed = 10)
 ```
 
-I know we got all excited with the LOO, above. Let's just be lazy and go WAIC, here. [Though beware, the LOO opens up a similar can of worms, here, to what we dealt with above.]
+I know we got all excited with the LOO, above. Let's just be lazy and go WAIC, here. [Though beware, the LOO opens up a similar can of worms, here.]
 
 ```{r w_b10.10_through_w_b10.14, cache = T}
-w_b10.10 <- waic(b10.10)
-w_b10.11 <- waic(b10.11)
-w_b10.12 <- waic(b10.12)
-w_b10.13 <- waic(b10.13)
-w_b10.14 <- waic(b10.14)
+b10.10 <- add_criterion(b10.10, criterion = "waic")
+b10.11 <- add_criterion(b10.11, criterion = "waic")
+b10.12 <- add_criterion(b10.12, criterion = "waic")
+b10.13 <- add_criterion(b10.13, criterion = "waic")
+b10.14 <- add_criterion(b10.14, criterion = "waic")
 ```
+
+Now compare them.
 
 ```{r}
-compare_ic(w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14)
+w <- loo_compare(b10.10, b10.11, b10.12, b10.13, b10.14, criterion = "waic")
+
+cbind(waic_diff = w[, 1] * -2,
+      se        = w[, 2] *  2) %>% 
+  round(digits = 2)
 ```
 
-```{r, fig.width = 4.5, fig.height = 1.25}
-tibble(model = c("b10.10", "b10.11", "b10.12", "b10.13", "b10.14"),
-       waic  = c(w_b10.10$estimates[3, 1], w_b10.11$estimates[3, 1], w_b10.12$estimates[3, 1], w_b10.13$estimates[3, 1], w_b10.14$estimates[3, 1]),
-       se    = c(w_b10.10$estimates[3, 2], w_b10.11$estimates[3, 2], w_b10.12$estimates[3, 2], w_b10.13$estimates[3, 2], w_b10.14$estimates[3, 2])) %>%
+Let's get those WAIC weights, too.
 
-  ggplot() +
-  geom_pointrange(aes(x    = reorder(model, -waic), 
-                      y    = waic,
-                      ymin = waic - se,
-                      ymax = waic + se,
-                      color = model),
-                  shape = 16) +
+```{r}
+model_weights(b10.10, b10.11, b10.12, b10.13, b10.14, weights = "waic") %>% 
+  round(digits = 2)
+```
+
+Now wrangle `w` a little and make the WAIC plot.
+
+```{r, fig.width = 4.5, fig.height = 1.25}
+w %>% 
+  data.frame() %>% 
+  rownames_to_column(var = "model") %>%
+  
+  ggplot(aes(x = reorder(model, -waic), 
+             y    = waic,
+             ymin = waic - se_waic,
+             ymax = waic + se_waic,
+             color = model)) +
+  geom_pointrange(shape = 16, show.legend = F) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1, 2, 1, 1, 1)]) +
   coord_flip() +
   labs(x = NULL, y = NULL,
        title = "WAIC") +
-  theme(axis.ticks.y    = element_blank(),
-        legend.position = "none")
+  theme(axis.ticks.y    = element_blank())
 ```
 
 Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf), you'll find several weighting schemes.
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
 nd <-
-  tibble(log_pop      = seq(from = 6.5, to = 13, length.out = 50) %>% 
-           rep(., times = 2),
-         contact_high = rep(0:1, each = 50))
+  tibble(contact_high = 0:1) %>% 
+  expand(contact_high,
+         log_pop = seq(from = 6.5, to = 13, length.out = 50))
 
 ppa <- 
   pp_average(b10.10, b10.11, b10.12,
@@ -1001,7 +1075,6 @@ ppa %>%
   geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
                   fill = contact_high, color = contact_high),
               stat = "identity",
-              fill = wes_palette("Moonrise2")[2], color = "black", 
               alpha = 1/4, size = 1/2) +
   geom_text(data = d, 
              aes(y     = total_tools,
@@ -1097,13 +1170,13 @@ psych::lowerCor(posterior_samples(b10.10_c)[, 1:4])
 Here we simulate our data.
 
 ```{r}
-set.seed(3838)
+set.seed(10)
 
 num_days  <- 30
 y         <- rpois(num_days, 1.5)
 
 num_weeks <- 4
-y_new     <- rpois(num_weeks, 0.5*7)
+y_new     <- rpois(num_weeks, 0.5 * 7)
 ```
 
 Let's make them tidy and add `log_days`.
@@ -1136,7 +1209,7 @@ The model summary:
 print(b10.15)
 ```
 
-The mode summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It’s a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
+The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It’s a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
 
 Here we'll compute the posterior means and 89% HDIs with `tidybayes::mean_hdi()`.
 
@@ -1176,7 +1249,6 @@ $$\text{Pr} (k |s_1, s_2, ..., s_K) = \frac{\text{exp} (s_k)}{\sum_{i = 1}^K \te
 Let's simulate the data.
 
 ```{r, warning = F, message = F}
-detach(package:brms)
 library(rethinking)
 
 # simulate career choices among 500 individuals
@@ -1191,7 +1263,7 @@ p <- softmax(score[1], score[2], score[3])
 # outcome career holds event type values, not counts
 career <- rep(NA, n)  # empty vector of choices for each individual
 
-set.seed(2078)
+set.seed(10)
 # sample chosen career for each individual
 for(i in 1:n) career[i] <- sample(1:3, size = 1, prob = p)
 ```
@@ -1208,16 +1280,16 @@ career %>%
 Switch out rethinking for brms.
 
 ```{r, message = F, warning = F}
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-Here's my naive attempt to fit the model in brms.
+Here's my naïve attempt to fit the model in brms.
 
-```{r b10.16, cache = T, message = F, warning = F}
+```{r b10.16_seed_10, cache = T, message = F, warning = F}
 b10.16 <-
   brm(data = list(career = career), 
-      family = categorical(link = "logit"),
+      family = categorical(link = logit),
       career ~ 1,
       prior(normal(0, 5), class = Intercept),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
@@ -1233,12 +1305,11 @@ print(b10.16)
 Here's the second data simulation, this time based on McElreath's R code 10.58.
 
 ```{r, warning = F, message = F}
-detach(package:brms)
 library(rethinking)
 
 n <- 100
 
-set.seed(2078)
+set.seed(10)
 # simulate family incomes for each individual
 family_income <- runif(n)
 
@@ -1256,17 +1327,17 @@ for (i in 1:n) {
 Switch out rethinking for brms.
 
 ```{r, message = F, warning = F}
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 ```
 
 Here's the brms version of McElreath's `m10.17`.
 
-```{r b10.17, cache = T, message = F, warning = F}
+```{r b10.17_seed_10, cache = T, message = F, warning = F}
 b10.17 <-
   brm(data = list(career        = career,  # note how we used a list instead of a tibble
                   family_income = family_income), 
-      family = categorical(link = "logit"),
+      family = categorical(link = logit),
       career ~ 1 + family_income,
       prior = c(prior(normal(0, 5), class = Intercept),
                 prior(normal(0, 5), class = b)),
@@ -1293,7 +1364,7 @@ data(UCBadmit)
 d <- UCBadmit
 rm(UCBadmit)
 
-detach(package:rethinking)
+detach(package:rethinking, unload = T)
 library(brms)
 ```
 
@@ -1313,13 +1384,13 @@ b_pois <-
   brm(data = d %>%
         mutate(rej = reject),  # 'reject' is a reserved word
       family = poisson,
-      cbind(admit, rej) ~ 1,
+      mvbind(admit, rej) ~ 1,
       prior(normal(0, 100), class = Intercept),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
       seed = 10)
 ```
 
-Note, the `cbind()` syntax made `b_pois` a multivariate Poisson model. Starting with version 2.0.0., [brms supports a variety of multivariate models](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b_pois`.
+Note, the `mvbind()` syntax made `b_pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b_pois`.
 
 ```{r, fig.height = 2.5, fig.width = 6.5}
 # extract the samples
@@ -1385,11 +1456,11 @@ Here we simulate exemplar data.
 ```{r}
 # simulate
 n <- 100
-set.seed(10.32)
+set.seed(10)
 x <- runif(n)
 
-set.seed(10.32)
-y <- rgeom(n, prob = inv_logit_scaled(-1 + 2*x))
+set.seed(10)
+y <- rgeom(n, prob = inv_logit_scaled(-1 + 2 * x))
 ```
 
 In case you're curious, here are the data.
@@ -1401,9 +1472,9 @@ list(y = y, x = x) %>%
   geom_point(size = 3/5, alpha = 2/3)
 ```
 
-Our geometric model:
+We fit the geometric model using `family = geometric(link = log)`.
 
-```{r b10.18, cache = T, warning = F, message = F}
+```{r b10.18_seed_10, cache = T, warning = F, message = F}
 b10.18 <-
   brm(data = list(y = y, x = x), 
       family = geometric(link = log),
@@ -1445,7 +1516,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b10.1, b10.2, b10.3, w_b10.1, w_b10.2, w_b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, d_text, b10.8, b10.9, loos, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, w_b10.10, w_b10.11, w_b10.12, w_b10.13, w_b10.14, nd, ppa, b10.10_c, num_days, num_weeks, y_new, b10.15, n, income, score, p, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
+rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, d_text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
