@@ -101,11 +101,10 @@ d %>%
   geom_point(shape = 21, colour = "grey92", 
              size = 2.5, stroke = 1) +
   scale_x_continuous(breaks = 1:7) +
-  scale_y_continuous(breaks = c(0, .5, 1)) +
-  coord_cartesian(ylim = c(0, 1)) +
-  labs(y = "cumulative proportion") +
+  scale_y_continuous("cumulative proportion", breaks = c(0, .5, 1)) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
                       high = canva_pal("Green fields")(4)[1]) +
+  coord_cartesian(ylim = c(0, 1)) +
   theme_hc() +
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
@@ -126,17 +125,17 @@ d %>%
   mutate(cum_pr_k = cumsum(pr_k)) %>% 
   filter(response < 7) %>% 
   
-  # We can do the logit() conversion right in ggplot2
+  # we can do the `logit()` conversion right in ggplot2
   ggplot(aes(x = response, y = logit(cum_pr_k), 
              fill = response)) +
   geom_line(color = canva_pal("Green fields")(4)[2]) +
   geom_point(shape = 21, colour = "grey92", 
              size = 2.5, stroke = 1) +
   scale_x_continuous(breaks = 1:7) +
-  coord_cartesian(xlim = c(1, 7)) +
-  labs(y = "log-cumulative-odds") +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
                       high = canva_pal("Green fields")(4)[1]) +
+  coord_cartesian(xlim = c(1, 7)) +
+  ylab("log-cumulative-odds") +
   theme_hc() +
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
@@ -162,12 +161,12 @@ ggplot(data = d_plot,
              size = 2.5, stroke = 1) +
   geom_linerange(aes(ymin = 0, ymax = cum_pr_k),
                  alpha = 1/2, color = canva_pal("Green fields")(4)[1]) +
-  # There are probably more elegant ways to do this part.
+  # there must be more elegant ways to do this part
   geom_linerange(data = . %>% 
                    mutate(discrete_probability =
                             ifelse(response == 1, cum_pr_k,
                                    cum_pr_k - pr_k)),
-                 aes(x = response + .025,
+                 aes(x    = response + .025,
                      ymin = ifelse(response == 1, 0, discrete_probability), 
                      ymax = cum_pr_k),
                  color = "black") +
@@ -177,13 +176,12 @@ ggplot(data = d_plot,
             aes(label = text),
             size = 4) +
   scale_x_continuous(breaks = 1:7) +
-  scale_y_continuous(breaks = c(0, .5, 1)) +
-  coord_cartesian(ylim = c(0, 1)) +
-  labs(y = "cumulative proportion") +
+  scale_y_continuous("cumulative proportion", breaks = c(0, .5, 1)) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
                       high = canva_pal("Green fields")(4)[1]) +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
+  coord_cartesian(ylim = c(0, 1)) +
   theme_hc() +
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
@@ -205,7 +203,7 @@ $$
 Whereas in `rethinking::map()` you indicate the likelihood by `<criterion> ~ dordlogit(phi , c(<the thresholds>)`, in `brms::brm()` you code `family = cumulative`. Here's the intercepts-only model:
 
 ```{r b11.1, cache = T, message = F, warning = F}
-# Here are our starting values, which we specify with the `inits` argument in brm()
+# define the start values
 inits <- list(`Intercept[1]` = -2,
               `Intercept[2]` = -1,
               `Intercept[3]` = 0,
@@ -220,7 +218,7 @@ b11.1 <-
       response ~ 1,
       prior(normal(0, 10), class = Intercept),
       iter = 2000, warmup = 1000, cores = 2, chains = 2,
-      inits = inits_list,  # Here we add our start values
+      inits = inits_list,  # here we add our start values
       seed = 11)
 ```
 
@@ -268,14 +266,14 @@ $$
 I'm not aware that brms has an equivalent to the `rethinking::dordlogit()` function. So here we'll make it by hand. The code comes from McElreath's [GitHub page](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/distributions.r).
 
 ```{r}
-# First, we needed to specify the `logistic()` function, which is apart of the `dordlogit()` function
+# first, we needed to specify the `logistic()` function, which is apart of the `dordlogit()` function
 logistic <- function(x) {
     p <- 1 / (1 + exp(-x))
     p <- ifelse(x == Inf, 1, p)
     p
     }
 
-# Now we get down to it
+# now we get down to it
 dordlogit <- 
   function(x, phi, a, log = FALSE) {
     a  <- c(as.numeric(a), Inf)
@@ -323,7 +321,7 @@ This made me wonder how this would compare if we were lazy and ignored the categ
 ```{r lazy_model, cache = T, message = F, warning = F}
 brm(data = d, family = gaussian,
     response ~ 1,
-    # In this case, 4 (i.e., the middle response) seems to be the conservative place to put the mean
+    # in this case, 4 (i.e., the middle response) seems to be the conservative place to put the mean
     prior = c(prior(normal(4, 10), class = Intercept),
               prior(cauchy(0, 1), class = sigma)),
     iter = 2000, warmup = 1000, cores = 4, chains = 4,
@@ -348,7 +346,7 @@ sum(pk * (1:7))
 So the rule is we *subtract the linear model from each interecept*. Let's fit our multivariable models.
 
 ```{r b11.2_and_b11.3, cache = T, message = F, results = "hide"}
-# Start values for b11.2
+# start values for b11.2
 inits <- list(`Intercept[1]` = -1.9,
               `Intercept[2]` = -1.2,
               `Intercept[3]` = -0.7,
@@ -368,7 +366,7 @@ b11.2 <-
       inits = list(inits, inits),
       seed = 11)
 
-# Start values for b11.3
+# start values for b11.3
 inits <- list(`Intercept[1]`      = -1.9,
               `Intercept[2]`      = -1.2,
               `Intercept[3]`      = -0.7,
@@ -407,20 +405,32 @@ tibble(model  = str_c("b11.", 1:3)) %>%
 
 If you really wanted that last `nobs` row at the bottom, you could elaborate on this code: `b11.1$data %>% count()`. Also, if you want a proper `coeftab()` function for brms, McElreath's code lives [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r). Give it a whirl.
 
-Anyway, here are the WAIC comparisons. *Caution: This took some time to compute.*
+Here we compute the WAIC. *Caution: This took some time to compute.*
 
-```{r waic_b11.1_through_b11.3, cache = T}
-waic(b11.1, b11.2, b11.3)
+```{r}
+b11.1 <- add_criterion(b11.1, "waic")
+b11.2 <- add_criterion(b11.2, "waic")
+b11.3 <- add_criterion(b11.3, "waic")
 ```
+
+Now compare the models.
+
+```{r}
+loo_compare(b11.1, b11.2, b11.3, criterion = "waic") %>% 
+  print(simplify = F)
+```
+
+Here are the WAIC weights.
 
 ```{r model_weights_b11.1_through_b11.3, cache = T}
 model_weights(b11.1, b11.2, b11.3,
-              weights = "waic")
+              weights = "waic") %>% 
+  round(digits = 3)
 ```
 
 McElreath made Figure 11.3 by extracting the samples of his `m11.3`, saving them as `post`, and working some hairy base R `plot()` code. We'll take a different route and use `brms::fitted()`. This will take substantial data wrangling, but hopefully it'll be instructive. Let's first take a look at the initial `fitted()` output for the beginnings of Figure 11.3.a.
 
-```{r}
+```{r, warning = F, message = F}
 nd <-
   tibble(action    = 0,
          contact   = 0, 
@@ -438,7 +448,7 @@ fitted(b11.3,
 
 Hopefully by now it’s clear why we needed the `nd` tibble, which we made use of in the `newdata = nd` argument. Because we set `summary = F`, we get draws from the posterior instead of summaries. With `max_iter`, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by `brms::fitted()` default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two `intention` values the draw is based on (i.e., 1 stands for `intention == 0`, 2, stands for `intention == 1`). The numbers on the right of the decimals are the seven response options for `response`. For each posterior draw, you get one of those for each value of `intention`. Finally, it might not be immediately apparent, but the values are in the probability scale, just like `pk` on page 338.
 
-Now we know what we have in hand, it’s just a matter of careful wrangling to get those probabilities into a more useful format to insert into ggplot2. I’ve extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.
+Now we know what we have in hand, it’s just a matter of careful wrangling to get those probabilities into a more useful format to feed into ggplot2. I’ve extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.
 
 ```{r, fig.width = 2.5, fig.height = 3.5}
 nd <-
@@ -453,30 +463,30 @@ fitted(b11.3,
         subset  = 1:max_iter,
         summary = F) %>% 
   as_tibble() %>%
-  # We convert the data to the long format
+  # we convert the data to the long format
   gather() %>%
-  # We need an variable to index which posterior iteration we're working with
+  # we need an variable to index which posterior iteration we're working with
   mutate(iter = rep(1:max_iter, times = 14)) %>%
-  # This step isn’t technically necessary, but I prefer my iter index at the far left.
+  # this step isn’t technically necessary, but I prefer my `iter` index at the far left.
   select(iter, everything()) %>% 
-  # Here we extract the `intention` and `response` information out of the `key` vector and spread it into two vectors.
+  # here we extract the `intention` and `response` information out of the `key` vector and spread it into two vectors.
   separate(key, into = c("intention", "rating")) %>% 
-  # That step produced two character vectors. They’ll be more useful as numbers
+  # that step produced two character vectors. they’ll be more useful as numbers
   mutate(intention = intention %>% as.double(),
          rating    =  rating %>% as.double()) %>%
-  # Here we convert `intention` into its proper 0:1 metric
+  # here we convert `intention` into its proper 0:1 metric
   mutate(intention = intention -1) %>%
-  # This isn't necessary, but it helps me understand exactly what metric the values are currently in
+  # this isn't necessary, but it helps me understand exactly what metric the values are currently in
   rename(pk = value) %>% 
-  # This step is based on McElreath's R code 11.10 on page 338
+  # this step is based on McElreath's R code 11.10 on page 338
   mutate(`pk:rating` = pk * rating) %>% 
-  # I’m not sure how to succinctly explain this. You’re just going to have to trust me.
+  # I’m not sure how to succinctly explain this. you’re just going to have to trust me
   group_by(iter, intention) %>% 
-  # This is very important for the next step.
+  # this is very important for the next step.
   arrange(iter, intention, rating) %>% 
-  # Here we take our `pk` values and make culmulative sums. Why? Take a long hard look at Figure 11.2. 
+  # here we take our `pk` values and make culmulative sums. why? take a long hard look at Figure 11.2. 
   mutate(probability = cumsum(pk)) %>% 
-  # `rating == 7` is unnecessary. These `probability` values are by definition 1.
+  # `rating == 7` is unnecessary. these `probability` values are by definition 1
   filter(rating < 7) %>% 
   
   ggplot(aes(x = intention, 
@@ -484,7 +494,7 @@ fitted(b11.3,
              color = probability)) +
   geom_line(aes(group = interaction(iter, rating)),
             alpha = 1/10) +
-  # Note how we made a new data object for `geom_text()`
+  # note how we made a new data object for `geom_text()`
   geom_text(data = tibble(text        = 1:7,
                           intention   = seq(from = .9, to = .1, length.out = 7),
                           probability = c(.05, .12, .20, .35, .53, .71, .87)),
@@ -493,10 +503,10 @@ fitted(b11.3,
   scale_x_continuous(breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(ylim = 0:1) +
-  labs(subtitle = "action = 0,\ncontact = 0",
-       x        = "intention") +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
+  labs(subtitle = "action = 0,\ncontact = 0",
+       x        = "intention") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
@@ -558,11 +568,11 @@ p1 <-
             size = 3) +
   scale_x_continuous(breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
+  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
   labs(subtitle = "action = 0,\ncontact = 0",
        x        = "intention") +
-  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
-                       high = canva_pal("Green fields")(4)[1]) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
@@ -585,11 +595,11 @@ p2 <-
             size = 3) +
   scale_x_continuous(breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
+  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
   labs(subtitle = "action = 1,\ncontact = 0",
        x        = "intention") +
-  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
-                       high = canva_pal("Green fields")(4)[1]) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
@@ -612,11 +622,11 @@ p3 <-
             size = 3) +
   scale_x_continuous(breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
+  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
   labs(subtitle = "action = 0,\ncontact = 1",
        x        = "intention") +
-  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
-                       high = canva_pal("Green fields")(4)[1]) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
@@ -659,8 +669,8 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
     mutate(`pk:rating` = pk * rating) %>% 
     group_by(iter, intention) %>% 
     
-    # Everything above this point is identical to the previous custom function.
-    # All we do is replace the last few lines with this one line of code. 
+    # everything above this point is identical to the previous custom function.
+    # all we do is replace the last few lines with this one line of code. 
     summarise(mean_rating = sum(`pk:rating`))
 }
 ```
@@ -668,7 +678,7 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
 Our handy homemade but monstrously-named `make_data_for_an_alternative_fiture()` function works very much like its predecessor. You’ll see.
 
 ```{r, fig.width = 7, fig.height = 3.5}
-# Alternative to Figure 11.3.a
+# alternative to Figure 11.3.a
 p1 <-
   make_data_for_an_alternative_fiture(action   = 0, 
                                       contact  = 0, 
@@ -676,17 +686,15 @@ p1 <-
   
   ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_line(alpha = 1/10, color = canva_pal("Green fields")(4)[1]) +
-  scale_x_continuous(breaks = 0:1) +
-  scale_y_continuous(breaks = 1:7) +
+  scale_x_continuous("intention", breaks = 0:1) +
+  scale_y_continuous("response", breaks = 1:7) +
   coord_cartesian(ylim = 1:7) +
-  labs(subtitle = "action = 0,\ncontact = 0",
-       x = "intention",
-       y = "response") +
+  labs(subtitle = "action = 0,\ncontact = 0") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
 
-# Alternative to Figure 11.3.b
+# alternative to Figure 11.3.b
 p2 <-
   make_data_for_an_alternative_fiture(action   = 1, 
                                       contact  = 0, 
@@ -694,17 +702,15 @@ p2 <-
   
  ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_line(alpha = 1/10, color = canva_pal("Green fields")(4)[1]) +
-  scale_x_continuous(breaks = 0:1) +
-  scale_y_continuous(breaks = 1:7) +
+  scale_x_continuous("intention", breaks = 0:1) +
+  scale_y_continuous("response", breaks = 1:7) +
   coord_cartesian(ylim = 1:7) +
-  labs(subtitle = "action = 1,\ncontact = 0",
-       x = "intention",
-       y = "response") +
+  labs(subtitle = "action = 1,\ncontact = 0") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
 
-# Alternative to Figure 11.3.c
+# alternative to Figure 11.3.c
 p3 <-
   make_data_for_an_alternative_fiture(action   = 0, 
                                       contact  = 1, 
@@ -712,12 +718,10 @@ p3 <-
   
   ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_line(alpha = 1/10, color = canva_pal("Green fields")(4)[1]) +
-  scale_x_continuous(breaks = 0:1) +
-  scale_y_continuous(breaks = 1:7) +
+  scale_x_continuous("intention", breaks = 0:1) +
+  scale_y_continuous("response", breaks = 1:7) +
   coord_cartesian(ylim = 1:7) +
-  labs(subtitle = "action = 0,\ncontact = 1",
-       x = "intention",
-       y = "response") +
+  labs(subtitle = "action = 0,\ncontact = 1") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
@@ -748,7 +752,7 @@ rate_work  <- 1    # average 1 manuscript per day
 n <- 365
 
 # simulate days monks drink
-set.seed(0.2)
+set.seed(11)
 drink <- rbinom(n, 1, prob_drink)
 
 # simulate manuscripts completed
@@ -768,7 +772,7 @@ d <-
   
   ggplot(data = d, aes(x = Y)) +
   geom_histogram(aes(fill = zeros),
-                 binwidth = 1, color = "grey92") +
+                 binwidth = 1, size = 1/10, color = "grey92") +
   scale_fill_manual(values = c(canva_pal("Green fields")(4)[1], 
                                canva_pal("Green fields")(4)[2], 
                                canva_pal("Green fields")(4)[1])) +
@@ -823,14 +827,14 @@ b11.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(beta(2, 2), class = zi)),  # the brms default is beta(1, 1)
       cores = 4,
-      seed = 11)
+      seed = 11) 
 ```
 
 ```{r}
 print(b11.4)
 ```
 
-The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about 0.06. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of `r round(posterior_summary(b11.4)[2, 1], 3)`. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
+The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about zero. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of `r round(posterior_summary(b11.4)[2, 1], 3)`. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
 
 In the `prior` argument, we used `beta(2, 2)` for `zi` and also mentioned in the margin that the brms default is `beta(1, 1)`. To give you a sense of the priors, let's plot them.
 
@@ -846,9 +850,9 @@ tibble(`zi prior`= seq(from = 0, to = 1, length.out = 50)) %>%
   geom_ribbon(aes(fill = prior)) +
   scale_fill_manual(values = c(canva_pal("Green fields")(4)[4],
                                canva_pal("Green fields")(4)[2])) +
-  theme_hc() +
-  scale_x_continuous(breaks = c(0, .5, 1)) +
+  scale_x_continuous("prior for zi", breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
+  theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none") +
   facet_wrap(~prior)
@@ -928,7 +932,7 @@ With $\mu$ and $\kappa$ in hand, we can even find the $SD$ of a beta distributio
 
 $$\sigma = \sqrt{\mu (1 - \mu) / (\kappa + 1)}$$
 
-I'm explicate all this because McElreath's `pbar` is $\mu = \frac{\alpha}{\alpha + \beta}$ and his `theta` is $\kappa = \alpha + \beta$. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
+I explicate all this because McElreath's `pbar` is $\mu = \frac{\alpha}{\alpha + \beta}$ and his `theta` is $\kappa = \alpha + \beta$. This is great news because it means that we can understand what McElreath did with his `beta2()` function in terms of base R's `dbeta()` function. Which also means that we can understand the distribution of the beta parameters used in `brms::brm()`. To demonstrate, let's walk through McElreath's R code 11.25.
 
 ```{r, fig.width = 4, fig.height = 3}
 pbar  <- 0.5
@@ -939,12 +943,10 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
                   ymin = 0, 
                   ymax = rethinking::dbeta2(x, pbar, theta)),
               fill = canva_pal("Green fields")(4)[1]) +
-  scale_x_continuous(breaks = c(0, .5, 1)) +
+  scale_x_continuous("probability space", breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = expression(paste("The ", beta, " distribution")),
-       subtitle = expression(paste("Defined in terms of ", mu, " (i.e., pbar) and ", kappa, " (i.e., theta)")),
-       x = "probability space",
-       y = "density") +
+  ggtitle(expression(paste("The ", beta, " distribution")),
+          subtitle = expression(paste("Defined in terms of ", mu, " (i.e., pbar) and ", kappa, " (i.e., theta)"))) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
@@ -975,12 +977,10 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
                   ymin = 0, 
                   ymax = dbeta(x, 2.5, 2.5)),
               fill = canva_pal("Green fields")(4)[4]) +
-  scale_x_continuous(breaks = c(0, .5, 1)) +
+  scale_x_continuous("probability space", breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = expression(paste("The ", beta, " distribution")),
-       subtitle = expression(paste("This time defined in terms of ", alpha, " and ", beta)),
-       x = "probability space",
-       y = "density") +
+  ggtitle(expression(paste("The ", beta, " distribution")),
+          subtitle = expression(paste("This time defined in terms of ", alpha, " and ", beta))) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
@@ -1003,10 +1003,8 @@ tibble(pbar = c(.25, .5, .75)) %>%
                   ymin = 0, 
                   ymax = density),
               fill = canva_pal("Green fields")(4)[4]) +
-  scale_x_continuous(breaks = c(0, .5, 1)) +
+  scale_x_continuous("probability space", breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, labels = NULL) +
-  labs(x = "probability space",
-       y = "density") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         axis.ticks.y    = element_blank()) +
@@ -1026,7 +1024,7 @@ $$
 \end{eqnarray}
 $$
 
-Here the size $n = \text{applications}$.
+Here the size $n = \text{applications}$. In case you're confused, yes, our statistical model is not the one McElreath presented at the top of page 348 in the text. If you look closely, the statistical formula he presented does not match up with the one implied by his R code 11.26. Our statistical formula and the `brm()` model we'll be fitting, below, correspond to his R code 11.26.
 
 Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
@@ -1046,7 +1044,7 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-I’m not going to go into great detail explaining the ins and outs of making custom distributions for `brm()`. You've got Bürkner's vignette for that. For our purposes, we need two preparatory steps. First, we need to use the `custom_family()` function to define the name and parameters of the beta-binomial distribution for use in `brm()`. Second, we have to define some relevant Stan functions.
+I’m not going to go into great detail explaining the ins and outs of making custom distributions for `brm()`. You've got Bürkner's vignette for that. For our purposes, we need two preparatory steps. First, we need to use the `custom_family()` function to define the name and parameters of the beta-binomial distribution for use in `brm()`. Second, we have to define some functions for Stan which are not defined in Stan itself. We'll save them as `stan_funs`. Third, we'll make a `stanvar()` statement which will allow us to pass our `stan_funs` to `brm()`.
 
 ```{r}
 beta_binomial2 <- 
@@ -1064,19 +1062,22 @@ stan_funs <- "
     return beta_binomial_rng(T, mu * phi, (1 - mu) * phi);
   }
 "
+
+stanvars <- 
+  stanvar(scode = stan_funs, block = "functions")
 ```
 
 With that out of the way, we’re almost ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing: $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar{p}$, Bürkner simply called $\mu$.
-
+  
 ```{r b11.5, cache = T, warning = F, message = F}
 b11.5 <-
   brm(data = d, 
-      family = beta_binomial2,  # Here's our custom likelihood
+      family = beta_binomial2,  # here's our custom likelihood
       admit | trials(applications) ~ 1,
       prior = c(prior(normal(0, 2), class = Intercept),
                 prior(exponential(1), class = phi)),
       iter = 4000, warmup = 1000, cores = 2, chains = 2,
-      stan_funs = stan_funs,
+      stanvars = stanvars,  # note our `stanvars`
       seed = 11)
 ```
 
@@ -1102,34 +1103,44 @@ post %>%
   mutate_if(is.double, round, digits = 3)
 ```
 
+To stay within the tidyverse while making the many thin lines in Figure 11.5.a, we're going to need to do a bit of data processing. First, we'll want a variable to index the rows in `post` (i.e., to index the posterior draws). And we'll want to convert the `b_Intercept` to the $\bar{p}$ metric with the `inv_logit_scaled()` function. Then we'll use `sample_n()` to randomly draw a subset of the posterior draws. Then with the `expand()` function, we'll insert a tightly-spaced sequence of `x` values ranging between 0 and 1--the parameter space of beta distribution. Finally, we'll use `pmap_dbl()` to compute the density values for the `rethinking::dbeta2` distribution corresponding to the unique combination of `x`, `p_bar`, and `phi` values in each row.
 
-With our `post` object in hand, here's our Figure 11.5.a.
+```{r}
+set.seed(11)
+
+lines <-
+  post %>% 
+  mutate(iter  = 1:n(),
+         p_bar = inv_logit_scaled(b_Intercept)) %>% 
+  sample_n(size = 100) %>% 
+  expand(nesting(iter, p_bar, phi),
+         x = seq(from = 0, to = 1, by = .005)) %>% 
+  mutate(density = pmap_dbl(list(x, p_bar, phi), rethinking::dbeta2))
+
+str(lines)
+```
+
+All that was just for the thin lines. To make the thicker line for the posterior mean, we’ll get tricky with `stat_function()`.
 
 ```{r, fig.width = 4, fig.height = 3.5}
-tibble(x = 0:1) %>%
-  ggplot(aes(x = x)) + 
+lines %>% 
+  ggplot(aes(x = x, y = density)) + 
   stat_function(fun = rethinking::dbeta2,
                 args = list(prob  = mean(inv_logit_scaled(post[, 1])),
                             theta = mean(post[, 2])),
                 color = canva_pal("Green fields")(4)[4],
                 size = 1.5) +
-  mapply(function(prob, theta) {
-    stat_function(fun   = rethinking::dbeta2, 
-                  args  = list(prob = prob, theta = theta), 
-                  alpha = .2, 
-                  color = canva_pal("Green fields")(4)[4])
-  }, 
-  # Enter `prob` and `theta`, here
-  prob  = inv_logit_scaled(post[1:100, 1]),
-  theta = post[1:100, 2]) +
+  geom_line(aes(group = iter),
+            alpha = .2, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(ylim = 0:3) +
-  labs(x = "probability admit") +
+  xlab("probability admit") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
+  
 ```
 
-I got the idea to nest `stat_function()` within `mapply()` from [shadow's answer to this Stack Overflow question](http://stackoverflow.com/questions/27009641/plot-multiple-normal-curves-in-same-plot).
+There are other ways to do this. For ideas, check out my blog post [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/).
 
 Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
@@ -1288,7 +1299,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, inits, inits_list, b11.1, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, prob_drink, rate_work, n, drink, y, b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, stan_funs, b11.5, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
+rm(d, logit, d_plot, inits, inits_list, b11.1, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_data_for_an_alternative_fiture, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
