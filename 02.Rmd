@@ -926,9 +926,11 @@ Here we'll re-fit the last model from above wherein $w = 24$ and $n = 36$.
 ```{r globe_qa_brms, cache = T, message = F, results = 'hide'}
 globe_qa_brms <-
   brm(data = list(w = 24), 
-      family = binomial,
+      family = binomial(link = "identity"),
       w | trials(36) ~ 1,
-      prior(normal(0, 1.5), class = Intercept),
+      prior(beta(1, 1), class = Intercept),
+      iter = 4000, warmup = 1000,
+      control = list(adapt_delta = .9),
       seed = 4)
 ```
 
@@ -938,14 +940,15 @@ The model output looks like so.
 print(globe_qa_brms)
 ```
 
-There’s a lot going on in that output, which we’ll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll learn about in Chapter 10, the brms default is to use a link function for binomial regression. In this case, that function was the logit, which is indicated in the second line of the output,  `Links: mu = logit`. That also means that the summary is not in the probability metric. But no worries. We can transform the results back into a proper probability metric with the `brms::inv_logit_scaled()` function. We'll then plot the results to compare them with those from `rethinking::map()`, above.
+There’s a lot going on in that output, which we’ll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll also learn in Chapter 4, the intercept of a regression model with no predictors is the same as its mean. In the special case of a model using the binomial likelihood, the mean is the probability of a 1 in a given trial, $\theta$. 
+
+Let's plot the results of our model and compare them with those from `rethinking::map()`, above.
 
 ```{r, fig.width = 3, fig.height = 2.75}
 posterior_samples(globe_qa_brms) %>% 
-  transmute(p = inv_logit_scaled(b_Intercept),
-            n = "n = 36") %>%
+  mutate(n = "n = 36") %>%
 
-  ggplot(aes(x = p)) +
+  ggplot(aes(x = b_Intercept)) +
   geom_density(fill = "black") +
   labs(x = "proportion water") +
   xlim(0, 1) +
@@ -953,7 +956,7 @@ posterior_samples(globe_qa_brms) %>%
   facet_wrap(~n)
 ```
 
-If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4.
+If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4 and we'll learn a lot about regression with the binomial likelihood in Chapter 10.
 
 ## Reference {-}
 
