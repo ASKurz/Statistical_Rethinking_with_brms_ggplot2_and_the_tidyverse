@@ -33,9 +33,8 @@ sigma_a <-  1    # std dev in intercepts
 sigma_b <-  0.5  # std dev in slopes
 rho     <- -.7   # correlation between intercepts and slopes
 
-# The next three lines of code simply combine the terms, above
-mu <- c(a, b)
-
+# the next three lines of code simply combine the terms, above
+mu     <- c(a, b)
 cov_ab <- sigma_a * sigma_b * rho
 sigma  <- matrix(c(sigma_a^2, cov_ab, 
                    cov_ab, sigma_b^2), ncol = 2)
@@ -63,15 +62,11 @@ sigma <- diag(sigmas) %*% rho %*% diag(sigmas)
 # how many cafes would you like?
 n_cafes <- 20
 
-set.seed(5)  # used to replicate example
+set.seed(13)  # used to replicate example
 vary_effects <- 
-  MASS::mvrnorm(n_cafes, mu, sigma)
-
-vary_effects <-
-  vary_effects %>% 
-  as_tibble() %>% 
-  rename(a_cafe = V1,
-         b_cafe = V2)
+  MASS::mvrnorm(n_cafes, mu, sigma) %>% 
+  data.frame() %>% 
+  set_names("a_cafe", "b_cafe")
 
 head(vary_effects)
 ```
@@ -89,7 +84,7 @@ dutchmasters$pearl_earring
 
 We'll name our custom theme `theme_pearl_earring`.
 
-```{r, warning = F, message = F}
+```{r}
 theme_pearl_earring <-
   theme(text       = element_text(color = "#E8DCCF", family = "Courier"),
         strip.text = element_text(color = "#E8DCCF", family = "Courier"),
@@ -115,7 +110,7 @@ vary_effects %>%
   theme_pearl_earring
 ```
 
-Again, these are not "data." This is a distribution of *parameters*.
+Again, these are not "data." Figure 13.2 shows a distribution of *parameters*.
 
 ### Simulate observations.
 
@@ -125,7 +120,7 @@ Here we put those simulated parameters to use.
 n_visits <- 10
 sigma    <-  0.5  # std dev within cafes
 
-set.seed(5)  # used to replicate example
+set.seed(13)  # used to replicate example
 d <-
   vary_effects %>% 
   mutate(cafe      = 1:n_cafes) %>% 
@@ -155,10 +150,10 @@ d %>%
   geom_point(aes(color = afternoon), size = 2) +
   geom_line(color = "#8B9DAF") +
   scale_color_manual(values = c("#80A0C7", "#EEDA9D")) +
-  scale_x_continuous(breaks = 1:10,
+  scale_x_continuous(NULL, breaks = 1:10,
                      labels = rep(c("M", "A"), times = 5)) +
-  coord_cartesian(ylim = 0:8) +
-  labs(x = NULL, y = "wait time in minutes") +
+  coord_cartesian(ylim = 0:4) +
+  ylab("wait time in minutes") +
   theme_pearl_earring +
   theme(legend.position = "none",
         axis.ticks.x    = element_blank()) +
@@ -195,17 +190,17 @@ library(rethinking)
 
 n_sim <- 1e5
 
-set.seed(133)
+set.seed(13)
 r_1 <- 
   rlkjcorr(n_sim, K = 2, eta = 1) %>%
   as_tibble()
 
-set.seed(133)
+set.seed(13)
 r_2 <- 
   rlkjcorr(n_sim, K = 2, eta = 2) %>%
   as_tibble()
 
-set.seed(133)
+set.seed(13)
 r_4 <- 
   rlkjcorr(n_sim, K = 2, eta = 4) %>%
   as_tibble()
@@ -248,7 +243,8 @@ As defined above, our first model has both varying intercepts and `afternoon` sl
                 prior(cauchy(0, 2), class = sd),
                 prior(cauchy(0, 2), class = sigma),
                 prior(lkj(2), class = cor)),
-      iter = 5000, warmup = 2000, chains = 2, cores = 2)
+      iter = 5000, warmup = 2000, chains = 2, cores = 2,
+      seed = 13)
 ```
 
 With Figure 13.4, we assess how the posterior for the correlation of the random effects compares to its prior.
@@ -262,10 +258,10 @@ post %>%
                color = "transparent", fill = "#EEDA9D", alpha = 3/4) +
   geom_density(color = "transparent", fill = "#A65141", alpha = 9/10) +
   annotate("text", label = "posterior", 
-           x = -0.2, y = 2.2, 
+           x = -0.35, y = 2.2, 
            color = "#A65141", family = "Courier") +
   annotate("text", label = "prior", 
-           x = 0, y = 0.85, 
+           x = 0, y = 0.9, 
            color = "#EEDA9D", alpha = 2/3, family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab("correlation") +
@@ -284,7 +280,7 @@ Here's the code to extract the relevant elements from the `coef()` list, convert
 
 ```{r}
 partially_pooled_params <-
-  # With this line we select each of the 20 cafe's posterior mean (i.e., Estimate)
+  # with this line we select each of the 20 cafe's posterior mean (i.e., Estimate)
   # for both `Intercept` and `afternoon`
   coef(b13.1)$cafe[ , 1, 1:2] %>%
   as_tibble() %>%               # convert the two vectors to a tibble
@@ -299,14 +295,14 @@ Like McElreath, we'll compute the unpooled estimates directly from the data.
 # compute unpooled estimates directly from data
 un_pooled_params <-
   d %>%
-  # With these two lines, we compute the mean value for each cafe's wait time 
-  # in the morning and then the afternoon.
+  # with these two lines, we compute the mean value for each cafe's wait time 
+  # in the morning and then the afternoon
   group_by(afternoon, cafe) %>%
   summarise(mean = mean(wait)) %>%
-  ungroup() %>%  # Ungrouping allows us to alter afternoon, one of the grouping variables
+  ungroup() %>%  # ungrouping allows us to alter afternoon, one of the grouping variables
   mutate(afternoon = ifelse(afternoon == 0, "Intercept", "Slope")) %>%
   spread(key = afternoon, value = mean) %>%  # use `spread()` just as in the previous block
-  mutate(Slope = Slope - Intercept)          # Finally, here's our slope!
+  mutate(Slope = Slope - Intercept)          # finally, here's our slope!
 
 # Here we combine the partially-pooled and unpooled means into a single data object, 
 # which will make plotting easier.
@@ -316,7 +312,7 @@ params <-
   # index whether the estimates are pooled
   mutate(pooled = rep(c("partially", "not"), each = nrow(.)/2)) 
 
-# Here's a glimpse at what we've been working for
+# here's a glimpse at what we've been working for
 params %>%
   slice(c(1:5, 36:40))
 ```
@@ -356,10 +352,10 @@ partially_pooled_estimates <-
          cafe      = 1:n()) %>%  # Add the `cafe` index
   select(cafe, everything()) 
 
-# Compute unpooled estimates directly from data
+# compute unpooled estimates directly from data
 un_pooled_estimates <-
   d %>%
-  # As above, with these two lines, we compute each cafe's mean wait value by time of day.
+  # as above, with these two lines, we compute each cafe's mean wait value by time of day
   group_by(afternoon, cafe) %>% 
   summarise(mean = mean(wait)) %>%
   ungroup() %>%  # ungrouping allows us to alter the grouping variable, afternoon
@@ -375,7 +371,7 @@ The code for Figure 13.5.b.
 
 ```{r, fig.width = 4.7, fig.height = 3}
 ggplot(data = estimates, aes(x = morning, y = afternoon)) +
-  # Nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the 
+  # nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the 
   # ten-layered semitransparent ellipses we did with ten lines of `stat_ellipse()` 
   # functions in the previous plot
   mapply(function(level) {
@@ -444,6 +440,7 @@ b13.2 <-
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 2), class = sd)),
       iter = 4500, warmup = 500, chains = 3, cores = 3,
+      seed = 13,
       control = list(adapt_delta = 0.99))
 ```
 
@@ -453,14 +450,14 @@ Since we don't have a `depth=2` argument in `brms::summary()`, we'll have to get
 b13.2$fit
 ```
 
-However, notice that the group-specific parameters don't match up with those in the text. Though our `r_dept_id[1,Intercept]` had a posterior mean of 1.27, the number for `a_dept[1]` in the text is 0.67. This is because the brms package presented the random effects in the **non-centered** metric. The rethinking package, in contrast, presented the random effects in the **centered** metric. On page 399, McElreath wrote:
+However, notice that the group-specific parameters don't match up with those in the text. Though our `r_dept_id[1,Intercept]` had a posterior mean of 1.25, the number for `a_dept[1]` in the text is 0.67. This is because the brms package presented the random effects in the **non-centered** metric. The rethinking package, in contrast, presented the random effects in the **centered** metric. On page 399, McElreath wrote:
 
 > Remember, the values above are the $\alpha_{DEPT}$ estimates, and so they are deviations from the global mean $\alpha$, which in this case has posterior mean -0.58. So department A, "[1]" in the table, has the highest average admission rate. Department F, "[6]" in the table, has the lowest.
 
 Here's another fun fact:
 
 ```{r}
-# Numbers taken from the mean column on page 399 in the text
+# numbers taken from the mean column on page 399 in the text
 c(0.67, 0.63, -0.59, -0.62, -1.06, -2.61) %>% mean()
 ```
 
@@ -493,8 +490,7 @@ So to get our brms summaries in a similar format to those in the text, we'll hav
 ```{r} 
 rbind(coef(b13.2)$dept_id[, , "Intercept"],
       fixef(b13.2),
-      VarCorr(b13.2)$dept_id$sd) %>% 
-  as_tibble()
+      VarCorr(b13.2)$dept_id$sd)
 ```
 
 And a little more data wrangling will make the summaries easier to read:
@@ -551,6 +547,7 @@ b13.3 <-
                 prior(cauchy(0, 2), class = sd),
                 prior(lkj(2), class = cor)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
+      seed = 13,
       control = list(adapt_delta = .99,
                      max_treedepth = 12))
 ```
@@ -568,8 +565,8 @@ post %>%
   ggplot(aes(x = iter, y = value, group = chain, color = chain)) +
   geom_line(size = 1/15) +
   scale_color_manual(values = c("#80A0C7", "#B1934A", "#A65141", "#EEDA9D")) +
-  labs(x = NULL, y = NULL) +
-  scale_x_continuous(breaks = c(1001, 5000)) +
+  scale_x_continuous(NULL, breaks = c(1001, 5000)) +
+  ylab(NULL) +
   theme_pearl_earring +
   theme(legend.position  = c(.825, .06),
         legend.direction = "horizontal") +
@@ -580,14 +577,15 @@ Our chains look great. While we're at it, let's examine the $\hat{R}$ vales in a
 
 ```{r, fig.width = 8, fig.height = 3.25}
 rhat(b13.3) %>% 
-  as.data.frame() %>% 
+  data.frame() %>% 
   rownames_to_column() %>% 
-  filter(rowname != "lp__") %>% 
+  set_names("parameter", "rhat") %>% 
+  filter(parameter != "lp__") %>% 
   
-  ggplot(aes(x = `.`, y = reorder(rowname, `.`))) + 
-  geom_segment(aes(xend = 1, yend = rowname),
+  ggplot(aes(x = rhat, y = reorder(parameter, rhat))) + 
+  geom_segment(aes(xend = 1, yend = parameter),
                color = "#EEDA9D") +
-  geom_point(aes(color = `.` > 1), 
+  geom_point(aes(color = rhat > 1), 
              size = 2) +
   scale_color_manual(values = c("#80A0C7", "#A65141")) +
   labs(x = NULL, y = NULL) +
@@ -606,12 +604,12 @@ coef(b13.3)
 We may as well keep our doing-things-by-hand kick going. Instead relying on `bayesplog::mcmc_intervals()` or `tidybayes::pointintervalh()` to make our coefficient plot, we’ll combine `geom_pointrange()` and `coord_flip()`. But we will need to wrangle a bit to get those brms-based **centered** random effects into a usefully-formatted tidy tibble.
 
 ```{r, fig.width = 6.5, fig.height = 2.5}
-# As far as I can tell, because `coef()` yields a list, you have to take out the two 
+# as far as I can tell, because `coef()` yields a list, you have to take out the two 
 # random effects one at a time and then bind them together to get them ready for a tibble
 rbind(coef(b13.3)$dept_id[, , 1],
       coef(b13.3)$dept_id[, , 2]) %>% 
   as_tibble() %>% 
-    mutate(param   = c(paste("Intercept", 1:6), paste("male", 1:6)),
+  mutate(param   = c(paste("Intercept", 1:6), paste("male", 1:6)),
          reorder = c(6:1, 12:7)) %>% 
 
   # plot
@@ -655,17 +653,16 @@ post %>%
 Much like for Figure 13.5.b, above, it'll take a little data processing before we're ready to reproduce Figure 13.6.b. 
 
 ```{r}
-# Here we put the partially-pooled estimate summaries in a tibble
+# here we put the partially-pooled estimate summaries in a tibble
 partially_pooled_params <-
   coef(b13.3)$dept_id[ , 1, ] %>%
   as_tibble() %>%
-  rename(intercept = Intercept,
-         slope     = male) %>%
+  set_names("intercept", "slope") %>%
   mutate(dept = 1:n()) %>%
   select(dept, everything())
 
-# In order to calculate the unpooled estimates from the data, we'll need a function that 
-# can convert probabilities into the logit metric. If you do the algebra, this is just
+# in order to calculate the unpooled estimates from the data, we'll need a function that 
+# can convert probabilities into the logit metric. if you do the algebra, this is just
 # a transformation of the `inv_logit_scaled()` function.
 prob_to_logit <- function(x){
   -log((1 / x) -1)
@@ -680,15 +677,15 @@ un_pooled_params <-
   mutate(male = ifelse(male == 0, "intercept", "slope")) %>%
   spread(key  = male, value = prob_admit) %>%
   rename(dept = dept_id) %>%
-  mutate(intercept = prob_to_logit(intercept),  # Here we put our `prob_to_logit()` function to work
+  mutate(intercept = prob_to_logit(intercept),  # here we put our `prob_to_logit()` function to work
          slope     = prob_to_logit(slope)) %>%
   mutate(slope     = slope - intercept)
 
-# Here we combine the partially-pooled and unpooled means into a single data object.
+# here we combine the partially-pooled and unpooled means into a single data object
 params <-
   bind_rows(partially_pooled_params, un_pooled_params) %>%
   mutate(pooled      = rep(c("partially", "not"), each = n() / 2)) %>%
-  mutate(dept_letter = rep(LETTERS[1:6], times = 2))  # This will help with plotting
+  mutate(dept_letter = rep(LETTERS[1:6], times = 2))  # this will help with plotting
 
 params
 ```
@@ -730,14 +727,27 @@ b13.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(cauchy(0, 2), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
+      seed = 13,
       control = list(adapt_delta = .99,
                      max_treedepth = 12))
 ```
 
 Compare the three models by the WAIC.
 
-```{r waic_b13.2_through_b13.4, cache = T}
-waic(b13.2, b13.3, b13.4)
+```{r}
+b13.2 <- add_criterion(b13.2, "waic")
+b13.3 <- add_criterion(b13.3, "waic")
+b13.4 <- add_criterion(b13.4, "waic")
+
+loo_compare(b13.2, b13.3, b13.4, criterion = "waic") %>% 
+  print(simplify = F)
+```
+
+In terms of the WAIC estimates and $\text{elpd}$ differences, the models are similar. The story changes when we look at the WAIC weights.
+
+```{r}
+model_weights(b13.2, b13.3, b13.4, weights = "waic") %>% 
+  round(digits = 3)
 ```
 
 > The varying slopes model, [`b13.3`], dominates [the other two]. This is despite the fact that the *average* slope in [`b13.3`] is nearly zero. The average isn’t what matters, however. It is the individual slopes, one for each department, that matter. If we wish to generalize to new departments, the variation in slopes suggest that it’ll be worth paying attention to gender, even if the average slope is nearly zero in the population. (pp. 402--403, *emphasis* in the original)
@@ -790,14 +800,15 @@ Let’s fit this beast.
 ```{r b13.6, cache = T, message = F, warning = F, results = 'hide'}
 b13.6 <- 
   brm(data = d, family = binomial,
-      pulled_left ~ 1 + prosoc_left + condition:prosoc_left +
+      pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left +
         (1 + prosoc_left + condition:prosoc_left | actor) +
         (1 + prosoc_left + condition:prosoc_left | block_id),
       prior = c(prior(normal(0, 1), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 2), class = sd),
                 prior(lkj(4), class = cor)),
-      iter = 5000, warmup = 1000, chains = 3, cores = 3)
+      iter = 5000, warmup = 1000, chains = 3, cores = 3,
+      seed = 13)
 ```
 
 Even though it's not apparent in the syntax, our model `b13.6` was already fit using the [non-centered parameterization. Behind the scenes, Bürkner has brms do this automatically](https://github.com/paul-buerkner/brms/issues/211). It's been that way all along. 
@@ -835,7 +846,7 @@ neff %>%
   theme_pearl_earring
 ```
 
-As in the last chapter, we'll use the `bayesplot::mcmc_neff()` function to examine the ratio of n.eff and the fill number of post-warm-up iterations, *N*. Ideally, that ratio is closer to 1 than not.
+As in the last chapter, we'll use the `bayesplot::mcmc_neff()` function to examine the ratio of n.eff and the fill number of post-warm-up iterations, $N$. Ideally, that ratio is closer to 1 than not.
 
 ```{r, warning = F, message = F, fig.height = 3.5}
 library(bayesplot)
@@ -870,21 +881,26 @@ Moving forward, before we can follow along with McElreath’s R code 13.27, we n
 ```{r b12.5_redo, cache = T, message = F, warning = F, results = "hide"}
 b12.5 <- 
   brm(data = d, family = binomial,
-      pulled_left ~ 1 + prosoc_left + condition:prosoc_left + 
+      pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left + 
         (1 | actor) + (1 | block_id),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sd)),
-      iter = 5000, warmup = 1000, chains = 3, cores = 3)
+      iter = 5000, warmup = 1000, chains = 3, cores = 3,
+      seed = 13)
 ```
 
-Now we can compare them with `waic()`.
+Now we can compare them by the WAIC.
 
-```{r waic_b13.6_and_b12.5, cache = T, message = F, warning = F}
-waic(b13.6, b12.5)
+```{r, message = F, warning = F}
+b13.6 <- add_criterion(b13.6, "waic")
+b12.5 <- add_criterion(b12.5, "waic")
+
+loo_compare(b13.6, b12.5, criterion = "waic") %>% 
+  print(simplify = F)
 ```
 
-```{r mw_b13.6_and_b12.5, cache = T, message = F}
+```{r, message = F}
 model_weights(b13.6, b12.5, weights = "waic")
 ```
 
@@ -893,7 +909,6 @@ model_weights(b13.6, b12.5, weights = "waic")
 ## Continuous categories and the Gaussian process
 
 > There is a way to apply the varying effects approach to continuous categories… The general approach is known as Gaussian process regression. This name is unfortunately wholly uninformative about what it is for and how it works.
->
 >
 We’ll proceed to work through a basic example that demonstrates both what it is for and how it works. The general purpose is to define some dimension along which cases differ. This might be individual differences in age. Or it could be differences in location. Then we measure the distance between each pair of cases. What the model then does is estimate a function for the covariance between pairs of cases at different distances. This covariance function provides one continuous category generalization of the varying effects approach. (p. 410)
 
@@ -929,9 +944,8 @@ d_mat %>%
   geom_text(aes(label = round(distance, digits = 1)),
             size = 3, family = "Courier", color = "#100F14") +
   scale_fill_gradient(low = "#FCF9F0", high = "#A65141") +
-  scale_x_discrete(position = "top", expand = c(0, 0)) +
-  scale_y_discrete(expand = c(0, 0)) +
-  labs(x = NULL, y = NULL) +
+  scale_x_discrete(NULL, position = "top", expand = c(0, 0)) +
+  scale_y_discrete(NULL, expand = c(0, 0)) +
   theme_pearl_earring +
   theme(axis.ticks  = element_blank(),
         axis.text.y = element_text(hjust = 0))
@@ -956,6 +970,8 @@ tibble(
                      labels = c(0, ".5", 1)) +
   theme_pearl_earring
 ```
+
+Load the data.
 
 ```{r}
 data(Kline2) # load the ordinary data, now with coordinates
@@ -987,6 +1003,7 @@ b13.7 <-
                 prior(inv_gamma(2.874624, 0.393695), class = lscale),
                 prior(cauchy(0, 1), class = sdgp)),
       iter = 1e4, warmup = 2000, chains = 4, cores = 4,
+      seed = 13,
       control = list(adapt_delta = 0.999,
                      max_treedepth = 12))
 ```
@@ -1030,12 +1047,12 @@ Oh man, that isn't even close to the 2.67 McElreath reported in the text. The pl
 
 ```{r}
 get_prior(data = d, family = poisson,
-      total_tools ~ 1 + gp(lat, lon2) + logpop)
+          total_tools ~ 1 + gp(lat, lon2) + logpop)
 ```
 
-That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on Michael Betancourt [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
+That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha) [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
 
-Now that we’ve started, we may as well keep going down the comparison train. Let’s reproduce McElreath’s model with rethinking. 
+Now that we’ve hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath’s model with rethinking. 
 
 Switch out brms for rethinking.
 
@@ -1044,6 +1061,7 @@ detach(package:brms, unload = T)
 library(rethinking)
 ```
 
+Now fit the `rethinking::map2stan()` model.
 
 ```{r m13.7, cache = T, message = F, warning = F, results = "hide"}
 m13.7 <- map2stan(
@@ -1077,13 +1095,12 @@ library(brms)
 post_b13.7 <- posterior_samples(b13.7)
 ```
 
-Here's the model intercept posterior, by package:
+Here's the model intercept posterior, by package.
 
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "a"] %>% 
-  bind_rows(post_b13.7[, "b_Intercept"] %>% 
-              as_tibble() %>% 
-              rename(a = value)) %>% 
+  bind_rows(post_b13.7%>% 
+              transmute(a = b_Intercept)) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = a, fill = package)) +
@@ -1095,13 +1112,13 @@ post_m13.7[, "a"] %>%
   theme_pearl_earring
 ```
 
-The slope:
+Now check the slopes.
 
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "bp"] %>% 
-  bind_rows(post_b13.7[, "b_logpop"] %>% 
-              as_tibble() %>% 
-              rename(bp = value)) %>% 
+  bind_rows(post_b13.7 %>% 
+              transmute(bp = b_logpop)
+              ) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = bp, fill = package)) +
@@ -1113,14 +1130,12 @@ post_m13.7[, "bp"] %>%
   theme_pearl_earring
 ```
 
-This one, $\eta^2$, required a little transformation:
-
+This one, $\eta^2$, required a little transformation.
+              
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "etasq"] %>% 
-  bind_rows(post_b13.7[, "sdgp_gplatlon2"] %>% 
-              as_tibble() %>%
-              mutate(value = value^2) %>% 
-              rename(etasq = value)) %>% 
+  bind_rows(post_b13.7 %>% 
+              transmute(etasq = sdgp_gplatlon2^2)) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = etasq, fill = package)) +
@@ -1134,14 +1149,12 @@ post_m13.7[, "etasq"] %>%
 ```
 
 $\rho^2$ required more extensive transformation of the brms posterior:
-
+              
 ```{r, fig.width = 8, fig.height = 2.5}
 post_m13.7[, "rhosq"] %>%
-  bind_rows(post_b13.7[, "lscale_gplatlon2"] %>% 
-              as_tibble() %>%
-              transmute(value = 1/(2*(value^2))) %>%
-              # transmute(value = value^2) %>% 
-              rename(rhosq = value)) %>% 
+  bind_rows(post_b13.7%>% 
+              transmute(rhosq = 1 / (2 * (lscale_gplatlon2^2)))
+            ) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = rhosq, fill = package)) +
@@ -1161,24 +1174,29 @@ I'm in clinical psychology. Folks in my field don't tend to use Gaussian process
 Anyways, here's our brms + ggplot2 version of Figure 13.9.
 
 ```{r, fig.width = 4.24, fig.height = 3}
-ggplot(data = tibble(x = c(0, 50.2)), aes(x = x)) +
-  mapply(function(etasq, rhosq) {
-    stat_function(fun = function(x, etasq, rhosq) etasq*exp(-rhosq*x^2), 
-                  args = list(etasq = etasq, rhosq = rhosq), 
-                  size = 1/4,
-                  alpha = 1/4,
-                  color = "#EEDA9D")
-  }, 
-  etasq = post_b13.7[1:100, "sdgp_gplatlon2"]^2,
-  rhosq = post_b13.7[1:100, "lscale_gplatlon2"]^2*.5
-  ) +
-  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *exp(-median(post_b13.7[1:100, "lscale_gplatlon2"] )^2*.5*x^2),
+# for `sample_n()`
+set.seed(13)
+
+# wrangle
+post_b13.7 %>% 
+  transmute(iter  = 1:n(),
+            etasq = sdgp_gplatlon2^2,
+            rhosq = lscale_gplatlon2^2 * .5) %>% 
+  sample_n(100) %>% 
+  expand(nesting(iter, etasq, rhosq),
+         x = seq(from = 0, to = 55, by = 1)) %>% 
+  mutate(covariance = etasq * exp(-rhosq * x^2)) %>% 
+  
+  # plot
+  ggplot(aes(x = x, y = covariance)) +
+  geom_line(aes(group = iter),
+            size = 1/4, alpha = 1/4, color = "#EEDA9D") +
+  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *exp(-median(post_b13.7$lscale_gplatlon2)^2 *.5 * x^2),
                 color = "#EEDA9D", size = 1.1) +
-  coord_cartesian(ylim = 0:1) +
-  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 10),
-                     expand = c(0, 0)) +
-  labs(x = "distance (thousand km)", 
-       y = "covariance") +
+  scale_x_continuous("distance (thousand km)", expand = c(0, 0),
+                     breaks = seq(from = 0, to = 50, by = 10)) +
+  coord_cartesian(xlim = 0:50,
+                  ylim = 0:1) +
   theme_pearl_earring
 ```
 
@@ -1203,6 +1221,7 @@ And we'll continue to follow suit and change these to a correlation matrix.
 ```{r}
 # convert to correlation matrix
 rho <- round(cov2cor(k), 2)
+
 # add row/col names for convenience
 colnames(rho) <- c("Ml","Ti","SC","Ya","Fi","Tr","Ch","Mn","To","Ha")
 rownames(rho) <- colnames(rho)
@@ -1223,11 +1242,11 @@ As far as I can figure, you still have to get `rho` into a tidy data frame befor
 ```{r}
 tidy_rho <-
   rho %>%
-  as.data.frame() %>% 
+  data.frame() %>% 
   rownames_to_column() %>% 
   bind_cols(d %>% select(culture, logpop, total_tools, lon2, lat)) %>% 
   gather(colname, correlation, -rowname, -culture, -logpop, -total_tools, -lon2, -lat) %>% 
-  mutate(group = paste(pmin(rowname, colname), pmax(rowname, colname))) %>% 
+  mutate(group = str_c(pmin(rowname, colname), pmax(rowname, colname))) %>%
   select(rowname, colname, group, culture, everything())
 
 head(tidy_rho)
@@ -1255,14 +1274,14 @@ tidy_rho %>%
 Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here's our version of Figure 13.10.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
-# new data for fitted()
+# new data for `fitted()`
 nd <- 
   tibble(logpop = seq(from = 6, to = 14, length.out = 30),
          lat    = median(d$lat),
          lon2   = median(d$lon2))
 
-# fitted()
-ftd <-
+# `fitted()`
+f <-
   fitted(b13.7, newdata = nd) %>% 
   as_tibble() %>% 
   bind_cols(nd)
@@ -1270,7 +1289,7 @@ ftd <-
 # plot
 tidy_rho %>% 
   ggplot(aes(x = logpop)) +
-  geom_smooth(data = ftd,
+  geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = "#394165", color = "#100F14", alpha = .5, size = 1.1) +
@@ -1323,10 +1342,11 @@ First, we’ll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ 
 b13.bonus_0 <- 
   brm(data = funding, family = binomial,
       awards | trials(applications) ~ 1 + male,
-      # Note our continued use of weakly-regularizing priors
+      # note our continued use of weakly-regularizing priors
       prior = c(prior(normal(0, 4), class = Intercept),
                 prior(normal(0, 4), class = b)),
-      iter = 5000, warmup = 1000, chains = 4, cores = 4)
+      iter = 5000, warmup = 1000, chains = 4, cores = 4,
+      seed = 13)
 ```
 
 If you inspect them, the chains look great. Here are the posterior summaries:
@@ -1341,10 +1361,10 @@ Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided 
 
 ```{r}
 posterior_samples(b13.bonus_0) %>%
-  summarise(One_sided_Bayesian_p_value = filter(., b_male <= 0) %>% nrow()/nrow(.))
+  summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
-Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications. 
+Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications.
 
 Just like in section 13.2, let's fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the `male` dummy slopes to vary by discipline.
 
@@ -1356,7 +1376,8 @@ b13.bonus_1 <-
                 prior(normal(0, 4), class = b),
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .99))
+      control = list(adapt_delta = .99),
+      seed = 13)
 
 b13.bonus_2 <- 
   brm(data = funding, family = binomial,
@@ -1366,13 +1387,20 @@ b13.bonus_2 <-
                 prior(cauchy(0, 1), class = sd),
                 prior(lkj(4), class = cor)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .99))
+      control = list(adapt_delta = .99),
+      seed = 13)
 ```
 
 We'll compare the models with information criteria.
 
 ```{r}
-waic(b13.bonus_0, b13.bonus_1, b13.bonus_2)
+b13.bonus_0 <- add_criterion(b13.bonus_0, "waic")
+b13.bonus_1 <- add_criterion(b13.bonus_1, "waic")
+b13.bonus_2 <- add_criterion(b13.bonus_2, "waic")
+
+loo_compare(b13.bonus_0, b13.bonus_1, b13.bonus_2,
+            criterion = "waic") %>% 
+  print(simplify = F)
 ```
 
 The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here we'll practice our `tidybayes::spread_draws()` skills from the end of the last chapter to see what the random intercepts look like in a coefficient plot.
@@ -1410,7 +1438,7 @@ And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the fu
 
 ```{r}
 posterior_samples(b13.bonus_2) %>%
-  summarise(One_sided_Bayesian_p_value = filter(., b_male <= 0) %>% nrow()/nrow(.))
+  summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
 So, the estimate of the gender bias is small and consistent with the null hypothesis. Which is good! We want gender equality for things like funding success.
@@ -1426,7 +1454,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, results = "hide", warning = F, message = F}
-rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, rho, n_sim, r_1, r_2, r_4, sigma, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, nd, ftd, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2)
+rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, n_sim, r_1, r_2, r_4, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, i, j, nd, f, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2, tidy_rho)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
