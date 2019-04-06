@@ -45,8 +45,9 @@ data("BTdata", package = "MCMCglmm")
 fit1 <- 
   brm(data = BTdata,
       family = gaussian,
-      cbind(tarsus, back) ~ sex + hatchdate + (1|p|fosternest) + (1|q|dam), 
-      chains = 2, cores = 2)
+      mvbind(tarsus, back) ~ sex + hatchdate + (1|p|fosternest) + (1|q|dam), 
+      chains = 2, cores = 2,
+      seed = 15)
 ```
 
 Five minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another five minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `fit1` object outside of R with the `save()` function.
@@ -76,7 +77,66 @@ fit1$data %>%
   head()
 ```
 
-I believe Bürkner recently added an argument in `brms:brm()` that will help you do this, too. I haven’t played with it, yet. But if you’re curious, you can find out more [here](https://github.com/paul-buerkner/brms/issues/472).
+As an alternative, Bürkner recently added a `file` argument in `brms:brm()` that will help you do this, too. The origins of the argument live [here](https://github.com/paul-buerkner/brms/issues/472). By default, `file` is set to `NULL`. To make use of it, specify a character string. `file` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
+
+```{r fit2, cache = T, message = F, results = "hide"}
+fit2 <- 
+  brm(data = BTdata,
+      family = gaussian,
+      mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
+      chains = 2, cores = 2,
+      seed = 15,
+      file = "fit2")
+```
+
+Now `fit2` is saved outside of R, I can safely remove it and then reload it.
+
+```{r}
+rm(fit2)
+```
+
+We might load `fit2` with the `readRDS()` function.
+
+```{r}
+fit2 <- readRDS("fit2.rds")
+```
+
+Now we can work with `fit2` as desired.
+
+```{r}
+fixef(fit2) %>% 
+  round(digits = 3)
+```
+
+The `file` method has another handy feature. Let's remove `fit2` one more time to see.
+
+```{r}
+rm(fit2)
+```
+
+If you’ve fit a `brm()` model once and saved the results with `file`, executing the same `brm()` code will nor re-fit the model. Rather, it will just load and return the model from the `.rds` file. 
+
+```{r, message = F, results = "hide"}
+fit2 <- 
+  brm(data = BTdata,
+      family = gaussian,
+      mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
+      chains = 2, cores = 2,
+      seed = 15,
+      file = "fit2")
+```
+
+It takes just a fraction of a second. Once again, we're ready to work with the fit.
+
+```{r}
+fit2$formula
+```
+
+And if you'd like to remind yourself what the name of that external file was, you can extract it from the `brm()` fit object.
+
+```{r}
+fit2$file
+```
 
 ## Build your models slowly
 
@@ -86,8 +146,9 @@ Even if that was the final model I was interested in as a scientist, I still wou
 
 ```{r fit0, cache = T, message = F, results = "hide"}
 fit0 <- 
-  brm(cbind(tarsus, back) ~ 1, 
-      data = BTdata, chains = 2, cores = 2)
+  brm(mvbind(tarsus, back) ~ 1, 
+      data = BTdata, chains = 2, cores = 2,
+      file = "fit0")
 ```
 
 ```{r, message = F, fig.width = 6.5, fig.height = 5.5}
@@ -98,9 +159,9 @@ print(fit0)
 
 If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$s at 1). If that wasn't what I intended, I'd rather catch it here than spend five minutes fitting the more complicated `fit1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
 
-Note, this is not the same as [$p$-hacking](http://journals.sagepub.com/doi/abs/10.1177/0956797611417632) or [wandering aimlessly down the garden of forking paths](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf). We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch mistakes like data cleaning failures, coding goofs, and the like.
+Note, this is not the same as [$p$-hacking](http://journals.sagepub.com/doi/abs/10.1177/0956797611417632) or [wandering aimlessly down the garden of forking paths](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf). We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
 
-So, when I'm working on a project, I fit one or a few simplified models before fitting my complicated model of theoretical interest. This is especially the case when I'm working with model types that are new to me or that I haven't worked with in a while. I document each step in my R Notebook files and I save the fit objects for each in external files. I have caught surprises, this way. Hopefully this will help you catch your mistakes, too.
+So, when I'm working on a project, I fit one or a few simplified models before fitting my complicated model of theoretical interest. This is especially the case when I'm working with model types that are new to me or that I haven't worked with in a while. I document each step in my R Notebook files and I save the fit objects for each in external files. I have caught surprises this way. Hopefully this will help you catch your mistakes, too.
 
 ## Look at your data
 
@@ -108,13 +169,13 @@ Relatedly, and perhaps even a precursor, you should [always plot your data](http
 
 ## Use the `0 + intercept` syntax
 
-We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered your predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.4.0), we read:
+We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered your predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.8.0), we read:
 
-> Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 142) 
+> Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 153) 
 
 We get a little more information from the *Parameterization of the population-level intercept* subsection of the *`brmsformula`* section:
 
-> This behavior can be avoided by using the reserved (and internally generated) variable `intercept`. Instead of `y ~ x`, you may write `y ~ 0 + intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on `b` will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 30)
+> This behavior can be avoided by using the reserved (and internally generated) variable `intercept`. Instead of `y ~ x`, you may write `y ~ 0 + intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on `b` will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 32)
 
 We didn’t bother with this for most of the project because our priors on the `Intercept` were often vague and the predictors were often on small enough scales (e.g., the mean of a dummy variable is close to 0) that it just didn’t matter. But this will not always be the case. Set your `Intercept` priors with care.
 
@@ -171,6 +232,8 @@ If you’re not on it, consider joining academic [twitter](https://www.chronicle
 * [Mara Averick](https://twitter.com/dataandme?lang=en)
 * [Matthew Kay](https://twitter.com/mjskay?lang=en)
 * [Matti Vuorre](https://twitter.com/vuorre?lang=en)
+* [Tristan Mahr](https://twitter.com/tjmahr)
+* [Danielle Navarro](https://twitter.com/djnavarro)
 
 [I’m on twitter](https://twitter.com/SolomonKurz?lang=en), too.
 
@@ -180,7 +243,7 @@ I’ve already mentioned Gelman’s blog. [McElreath has one, too](http://elevan
 
 Also, do check out the [Stan Forums](https://discourse.mc-stan.org). They have a special [brms tag](https://discourse.mc-stan.org/c/interfaces/brms) there, under which you can find all kinds of hot brms talk.
 
-But if you’re new to the world of asking for help with your code online, you might acquaint yourself with the notion of a [minimally reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example). In short, a good minimally reproducible example helps others help you. If you fail to do this, prepare to receive some skark.
+But if you’re new to the world of asking for help with your code online, you might acquaint yourself with the notion of a [minimally reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example). In short, a good minimally reproducible example helps others help you. If you fail to do this, prepare for some skark.
 
 ## Parting wisdom
 
@@ -190,7 +253,7 @@ Okay, that’s enough from me. Let’s start wrapping this project up with some 
 > 
 > The data and its analysis are the scientific product. The paper is just an advertisement. If you do your honest best to design, conduct, and document your research, so that others can build directly upon it, you can make a difference. (p. 443)
 
-Toward that end, also check out the [OSF](https://osf.io) and their YouTube channel, [here](https://www.youtube.com/channel/UCGPlVf8FsQ23BehDLFrQa-g). Katie Corker gets the last words: ["Open science is stronger because we’re doing this together."](https://cos.io/blog/open-science-is-a-behavior/)
+Toward that end, also check out the [OSF](https://osf.io) and their YouTube channel, [here](https://www.youtube.com/channel/UCGPlVf8FsQ23BehDLFrQa-g). [Katie Corker](https://twitter.com/katiecorker) gets the last words: ["Open science is stronger because we’re doing this together."](https://cos.io/blog/open-science-is-a-behavior/)
 
 ## Reference {-}
 
@@ -203,6 +266,6 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(BTdata, fit1, fit0)
+rm(BTdata, fit1, fit2, fit0)
 ```
 
