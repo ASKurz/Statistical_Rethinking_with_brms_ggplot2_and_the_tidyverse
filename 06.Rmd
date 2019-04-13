@@ -1283,7 +1283,7 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
 
 With a little `[]` subsetting and light wrangling, we can convert the contents of our `w` object to a format suitable for plotting the WAIC estimates.
 
-```{r, fig.width = 4.5, fig.height = 1.25}
+```{r w_plot, fig.width = 4.5, fig.height = 1.25}
 w[, 7:8] %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
@@ -1304,37 +1304,32 @@ w[, 7:8] %>%
 
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
 
-```{r, message = F, warning = F}
+```{r loo_b6.11, message = F, warning = F}
 loo(b6.11)
 ```
 
 The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
 
-
-```{r}
-waic(b6.11, b6.14)
-```
-
-To put all this model comparison in perspective, 
+Let's get back on track with the text. To put all this model comparison in perspective, 
 
 > in this analysis, the best model has more than 90% of the model weight. That's pretty good. But with only 12 cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don't get too excited. If we take the standard error of the difference from the [`loo_compare()`] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [`b6.14` and `b6.11`]) on [`r round(w[4, 1] * -2, 2)`] with a standard deviation of [`r round(w[4, 2] * 2, 2)`]. (p. 200)
 
 Here are those two values in the $\text{elpd}$ metric.
 
-```{r}
+```{r elpd_diff}
 w[4, 1:2]
 ```
 
 And here we convert them to the WAIC metric.
 
-```{r}
+```{r round_waic_diff}
 round(w[4, 1] * -2, 2)
 round(w[4, 2] * 2, 2)
 ```
 
 If it's easier to see, here's the same information in a tibble.
 
-```{r}
+```{r elpd_to_waic_tibble}
 tibble(value             = c("difference", "se"),
        elpd              = w[4, 1:2],
        conversion_factor = c(-2, 2)) %>% 
@@ -1345,7 +1340,7 @@ Before we forget, McElreath gave some perspective difference between the models 
 
 But to the point, we can extract the two numerals and plug them into `rnorm()`.
 
-```{r}
+```{r plug_waic_diff_into_rnorm}
 # how many draws would you like?
 n <- 1e5
 
@@ -1363,7 +1358,7 @@ diff %>%
 
 In case you're curious, this is a graphic version of what we just did.
 
-```{r, fig.width = 3, fig.height = 2.25}
+```{r plot_WAIC_diff, fig.width = 3, fig.height = 2.25}
 tibble(diff = -20:30) %>% 
   ggplot(aes(x = diff, ymin = 0)) +
   geom_ribbon(aes(ymax = dnorm(diff, w[4, 1] * -2, w[4, 2] * 2)),
@@ -1383,13 +1378,13 @@ tibble(diff = -20:30) %>%
 
 The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `broom::tidy()` function, which will save the summary statistics for our model parameters. For example, this is what it will produce for the full model, `b6.14`.
 
-```{r}
+```{r tidy_b6.14}
 tidy(b6.14)
 ```
 
 Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a little `purrr::map()` code, you can save the `brm()` fits and their `tidy()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
 
-```{r}
+```{r my_coef_tab}
 my_coef_tab <-
   tibble(model = c("b6.11", "b6.12", "b6.13", "b6.14")) %>% 
   mutate(fit   = purrr::map(model, get)) %>% 
