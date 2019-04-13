@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2018-09-26">
+<meta name="date" content="2018-12-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -333,6 +333,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -365,6 +372,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
 <li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
 </ul></li>
+<li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -447,18 +455,39 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(.<span class="dv">75</span>, <span class="fl">4.25</span>),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">75</span>, <span class="fl">5.25</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-7-1.png" width="120" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-3-1.png" width="120" /></p>
 <p>As a quick aside, check out Suzan Baert’s blog post <a href="https://suzan.rbind.io/2018/02/dplyr-tutorial-2/"><em>Data Wrangling Part 2: Transforming your columns into the right shape</em></a> for an extensive discussion on <code>dplyr::mutate()</code> and <code>dplyr::gather()</code>.</p>
 <p>Here’s the basic structure of the possibilities per marble draw.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">draw            =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,
        <span class="dt">marbles         =</span> <span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">possibilities =</span> marbles <span class="op">^</span><span class="st"> </span>draw)</code></pre></div>
-<pre><code>## # A tibble: 3 x 3
-##    draw marbles possibilities
-##   &lt;int&gt;   &lt;dbl&gt;         &lt;dbl&gt;
-## 1     1       4             4
-## 2     2       4            16
-## 3     3       4            64</code></pre>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">possibilities =</span> marbles <span class="op">^</span><span class="st"> </span>draw) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">draw</th>
+<th align="right">marbles</th>
+<th align="right">possibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">64</td>
+</tr>
+</tbody>
+</table>
 <p>If you walk that out a little, you can structure the data required to approach Figure 2.2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
   d &lt;-
@@ -492,8 +521,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
-        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="768" /></p>
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
 <p>To my mind, the easiest way to connect the dots in the appropriate way is to make two auxiliary tibbles.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># these will connect the dots from the first and second draws</span>
 (
@@ -560,8 +589,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
-        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="768" /></p>
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="768" /></p>
 <p>We’ve generated the values for <code>position</code> (i.e., the x-axis), in such a way that they’re all justified to the right, so to speak. But we’d like to center them. For <code>draw == 1</code>, we’ll need to subtract 0.5 from each. For <code>draw == 2</code>, we need to reduce the scale by a factor of 4 and we’ll then need to reduce the scale by another factor of 4 for <code>draw == 3</code>. The <code>ifelse()</code> function will be of use for that.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -647,8 +676,8 @@ d</code></pre></div>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
-        <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-15-1.png" width="768" /></p>
+        <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-11-1.png" width="768" /></p>
 <p>For the final step, we’ll use <code>coord_polar()</code> to change the <a href="http://sape.inf.usi.ch/quick-reference/ggplot2/coord">coordinate system</a>, giving the plot a mandala-like feel.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> position, <span class="dt">y =</span> draw)) <span class="op">+</span>
@@ -665,11 +694,11 @@ d</code></pre></div>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-16-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="384" /></p>
 <p>To make our version of Figure 2.3, we’ll have to add an index to tell us which paths remain logically valid after each choice. We’ll call the index <code>remain</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lines_<span class="dv">1</span> &lt;-
 <span class="st">  </span>lines_<span class="dv">1</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -712,11 +741,11 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-17-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-13-1.png" width="384" /></p>
 <p>Letting “w” = a white dot and “b” = a blue dot, we might recreate the table in the middle of page 23 like so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># If we make two custom functions, here, it will simplify the code within `mutate()`, below</span>
 n_blue &lt;-<span class="st"> </span><span class="cf">function</span>(x){
@@ -856,7 +885,7 @@ t <span class="op">%&gt;%</span><span class="st"> </span>
                 position <span class="op">+</span><span class="st"> </span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span><span class="dv">2</span>)
          )
   }</code></pre></div>
-<p>If you’re new to making your own R functions, check out <a href="http://r4ds.had.co.nz/functions.html">Chapter 19</a> of <em>R4DS</em> or <a href="https://bookdown.org/rdpeng/rprogdatascience/functions.html">Chapter 14</a> of * R Programming for Data Science*</p>
+<p>If you’re new to making your own R functions, check out <a href="http://r4ds.had.co.nz/functions.html">Chapter 19</a> of <em>R4DS</em> or <a href="https://bookdown.org/rdpeng/rprogdatascience/functions.html">Chapter 14</a> of <em>R Programming for Data Science</em>.</p>
 <p>Anyway, now we’ll make our new <code>lines_1</code> and <code>lines_2</code> data, for which we’ll use <code>move_over()</code> to adjust their <code>x</code> and <code>xend</code> positions to the correct spots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
   lines_<span class="dv">1</span> &lt;-
@@ -992,11 +1021,11 @@ lines_<span class="dv">2</span> &lt;-
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">12</span>),     <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="fl">3.5</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="using-prior-information." class="section level3">
 <h3><span class="header-section-number">2.1.2</span> Using prior information.</h3>
@@ -1004,44 +1033,150 @@ lines_<span class="dv">2</span> &lt;-
 <p>We may have prior information about the relative plausibility of each conjecture. This prior information could arise from knowledge of how the contents of the bag were generated. It could also arise from previous data. Or we might want to act as if we had prior information, so we can build conservatism into the analysis. Whatever the source, it would help to have a way to use prior information. Luckily there is a natural solution: Just multiply the prior count by the new count. (p. 25)</p>
 </blockquote>
 <p>Here’s the table in the middle of page 25.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
-  t &lt;-
-<span class="st">    </span>t <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">previous counts</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">ways to produce</span><span class="st">`</span>,
-           <span class="st">`</span><span class="dt">ways to produce</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">draw 1: blue</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">select</span>(p_<span class="dv">1</span><span class="op">:</span>p_<span class="dv">4</span>, <span class="st">`</span><span class="dt">ways to produce</span><span class="st">`</span>, <span class="st">`</span><span class="dt">previous counts</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">new count</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">ways to produce</span><span class="st">`</span> <span class="op">*</span><span class="st"> `</span><span class="dt">previous counts</span><span class="st">`</span>)
-  )</code></pre></div>
-<pre><code>## # A tibble: 5 x 7
-##   p_1   p_2   p_3   p_4   `ways to produce` `previous counts` `new count`
-##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;dbl&gt;             &lt;dbl&gt;       &lt;dbl&gt;
-## 1 w     w     w     w                     0                 0           0
-## 2 b     w     w     w                     1                 3           3
-## 3 b     b     w     w                     2                 8          16
-## 4 b     b     b     w                     3                 9          27
-## 5 b     b     b     b                     4                 0           0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">t &lt;-
+<span class="st">  </span>t <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">previous counts</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">ways to produce</span><span class="st">`</span>,
+         <span class="st">`</span><span class="dt">ways to produce</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">draw 1: blue</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(p_<span class="dv">1</span><span class="op">:</span>p_<span class="dv">4</span>, <span class="st">`</span><span class="dt">ways to produce</span><span class="st">`</span>, <span class="st">`</span><span class="dt">previous counts</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">new count</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">ways to produce</span><span class="st">`</span> <span class="op">*</span><span class="st"> `</span><span class="dt">previous counts</span><span class="st">`</span>)
+
+t <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">p_1</th>
+<th align="left">p_2</th>
+<th align="left">p_3</th>
+<th align="left">p_4</th>
+<th align="right">ways to produce</th>
+<th align="right">previous counts</th>
+<th align="right">new count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">2</td>
+<td align="right">8</td>
+<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="right">3</td>
+<td align="right">9</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
 <p>We might update to reproduce the table a the top of page 26, like this.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
-  t &lt;-
-<span class="st">    </span>t <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">select</span>(p_<span class="dv">1</span><span class="op">:</span>p_<span class="dv">4</span>, <span class="st">`</span><span class="dt">new count</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">prior count</span><span class="st">`</span>   =<span class="st"> `</span><span class="dt">new count</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">factory count</span><span class="st">`</span> =<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">3</span><span class="op">:</span><span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">new count</span><span class="st">`</span>     =<span class="st"> `</span><span class="dt">prior count</span><span class="st">`</span> <span class="op">*</span><span class="st"> `</span><span class="dt">factory count</span><span class="st">`</span>)
-  )</code></pre></div>
-<pre><code>## # A tibble: 5 x 7
-##   p_1   p_2   p_3   p_4   `prior count` `factory count` `new count`
-##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;         &lt;dbl&gt;           &lt;dbl&gt;       &lt;dbl&gt;
-## 1 w     w     w     w                 0               0           0
-## 2 b     w     w     w                 3               3           9
-## 3 b     b     w     w                16               2          32
-## 4 b     b     b     w                27               1          27
-## 5 b     b     b     b                 0               0           0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">t &lt;-
+<span class="st">  </span>t <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(p_<span class="dv">1</span><span class="op">:</span>p_<span class="dv">4</span>, <span class="st">`</span><span class="dt">new count</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">prior count</span><span class="st">`</span>   =<span class="st"> `</span><span class="dt">new count</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">factory count</span><span class="st">`</span> =<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">3</span><span class="op">:</span><span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">new count</span><span class="st">`</span>     =<span class="st"> `</span><span class="dt">prior count</span><span class="st">`</span> <span class="op">*</span><span class="st"> `</span><span class="dt">factory count</span><span class="st">`</span>)
+
+t <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">p_1</th>
+<th align="left">p_2</th>
+<th align="left">p_3</th>
+<th align="left">p_4</th>
+<th align="right">prior count</th>
+<th align="right">factory count</th>
+<th align="right">new count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">3</td>
+<td align="right">3</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="left">w</td>
+<td align="right">16</td>
+<td align="right">2</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">w</td>
+<td align="right">27</td>
+<td align="right">1</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="left">b</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
 <p>To learn more about <code>dplyr::select()</code> and <code>dplyr::rename()</code>, check out Baert’s exhaustive blog post <a href="https://suzan.rbind.io/2018/01/dplyr-tutorial-1/"><em>Data Wrangling Part 1: Basic to Advanced Ways to Select Columns</em></a>.</p>
 </div>
 <div id="from-counts-to-probability." class="section level3">
 <h3><span class="header-section-number">2.1.3</span> From counts to probability.</h3>
-<p>The opening sentences are important: “It is helpful to think of this strategy as adhering to a principle of honest ignorance: <em>When we don’t know what caused the data, potential causes that may produce the data in more ways are more plausible</em>” (p. 26, <em>emphasis</em> in the original).</p>
+<p>The opening sentences in this subsection are important: “It is helpful to think of this strategy as adhering to a principle of honest ignorance: <em>When we don’t know what caused the data, potential causes that may produce the data in more ways are more plausible</em>” (p. 26, <em>emphasis</em> in the original).</p>
 <p>We can define our updated plausibility as:</p>
 <center>
 <p>plausibility of <img src="Pictures/theta_02.png" /> after seeing <img src="Pictures/data_02.png" /></p>
@@ -1096,7 +1231,7 @@ ways <span class="op">/</span><span class="st"> </span><span class="kw">sum</spa
 <div id="a-data-story." class="section level3">
 <h3><span class="header-section-number">2.2.1</span> A data story.</h3>
 <blockquote>
-<p>Bayesian data analysis usually means producing a story for how the data came to be. This story may be <em>descriptive</em>, specifying associations that can be used to predict outcomes, given observations. Or it may be <em>causal</em>, a theory of how come events produce other events. Typically, any story you intend to be causal may also be descriptive. But many descriptive stories are hard to interpret causally. But all data stories are complete, in the sense that they are sufficient for specifying an algorithm for simulating new data. (p. 28)</p>
+<p>Bayesian data analysis usually means producing a story for how the data came to be. This story may be <em>descriptive</em>, specifying associations that can be used to predict outcomes, given observations. Or it may be <em>causal</em>, a theory of how come events produce other events. Typically, any story you intend to be causal may also be descriptive. But many descriptive stories are hard to interpret causally. But all data stories are complete, in the sense that they are sufficient for specifying an algorithm for simulating new data. (p. 28, <em>emphasis</em> in the original)</p>
 </blockquote>
 </div>
 <div id="bayesian-updating." class="section level3">
@@ -1124,28 +1259,29 @@ ways <span class="op">/</span><span class="st"> </span><span class="kw">sum</spa
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sequence_length &lt;-<span class="st"> </span><span class="dv">50</span>
 
 d <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">expand</span>(n_trials, 
+<span class="st">  </span><span class="kw">expand</span>(<span class="kw">nesting</span>(n_trials, toss, n_success), 
          <span class="dt">p_water =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> sequence_length)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">left_join</span>(d, <span class="dt">by =</span> <span class="st">&quot;n_trials&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(p_water) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="co"># you can learn more about lagging here: https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lag or here: https://dplyr.tidyverse.org/reference/lead-lag.html</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lagged_n_success =</span> <span class="kw">lag</span>(n_success, <span class="dt">k =</span> <span class="dv">1</span>),
-         <span class="dt">lagged_n_trials  =</span> <span class="kw">lag</span>(n_trials,  <span class="dt">k =</span> <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st"> </span><span class="co"># you can learn more about lagging here: https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lag or here: https://dplyr.tidyverse.org/reference/lead-lag.html</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lagged_n_trials  =</span> <span class="kw">lag</span>(n_trials,  <span class="dt">k =</span> <span class="dv">1</span>),
+         <span class="dt">lagged_n_success =</span> <span class="kw">lag</span>(n_success, <span class="dt">k =</span> <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prior =</span> <span class="kw">ifelse</span>(n_trials <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, .<span class="dv">5</span>,
-                                     <span class="kw">dbinom</span>(<span class="dt">x    =</span> lagged_n_success, 
-                                            <span class="dt">size =</span> lagged_n_trials, 
-                                            <span class="dt">prob =</span> p_water)),
-         <span class="dt">strip =</span> <span class="kw">str_c</span>(<span class="st">&quot;n = &quot;</span>, n_trials),
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prior      =</span> <span class="kw">ifelse</span>(n_trials <span class="op">==</span><span class="st"> </span><span class="dv">1</span>, .<span class="dv">5</span>,
+                             <span class="kw">dbinom</span>(<span class="dt">x    =</span> lagged_n_success, 
+                                    <span class="dt">size =</span> lagged_n_trials, 
+                                    <span class="dt">prob =</span> p_water)),
          <span class="dt">likelihood =</span> <span class="kw">dbinom</span>(<span class="dt">x    =</span> n_success, 
                              <span class="dt">size =</span> n_trials, 
                              <span class="dt">prob =</span> p_water),
+         <span class="dt">strip      =</span> <span class="kw">str_c</span>(<span class="st">&quot;n = &quot;</span>, n_trials)
          ) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="co"># the next three lines allow us to normalize the prior and the likelihood, putting them both in a probability metric </span>
+<span class="st">  </span><span class="co"># the next three lines allow us to normalize the prior and the likelihood, </span>
+<span class="st">  </span><span class="co"># putting them both in a probability metric </span>
 <span class="st">  </span><span class="kw">group_by</span>(n_trials) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prior      =</span> prior      <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(prior),
          <span class="dt">likelihood =</span> likelihood <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(likelihood)) <span class="op">%&gt;%</span><span class="st">   </span>
 <span class="st">  </span>
+<span class="st">  </span><span class="co"># plot!</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> p_water)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> prior), <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> likelihood)) <span class="op">+</span>
@@ -1153,9 +1289,9 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="st">&quot;plausibility&quot;</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-26-1.png" width="576" /></p>
 <p>If it wasn’t clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don’t normalize (i.e., divide the density by the sum of the density), their respective heights don’t match up with those in the text. Furthermore, it’s the normalization that makes them directly comparable.</p>
-<p>To learn more about <code>dplyr::group_by()</code> and its opposite <code>dplyr::ungroup()</code>, check out <a href="http://r4ds.had.co.nz/transform.html"><em>R4DS</em>, Chapter 5</a>. For more on <code>left_join()</code>, check out <em>R4DS</em> Chapters <a href="http://r4ds.had.co.nz/tidy-data.html#spreading-and-gathering">12.3</a> and <a href="http://r4ds.had.co.nz/relational-data.html#mutating-joins">13.4</a>. And to learn about <code>tidyr::expand()</code>, go <a href="https://tidyr.tidyverse.org/reference/expand.html">here</a>.</p>
+<p>To learn more about <code>dplyr::group_by()</code> and its opposite <code>dplyr::ungroup()</code>, check out <a href="http://r4ds.had.co.nz/transform.html"><em>R4DS</em>, Chapter 5</a>. To learn about <code>tidyr::expand()</code>, go <a href="https://tidyr.tidyverse.org/reference/expand.html">here</a>.</p>
 </div>
 <div id="evaluate." class="section level3">
 <h3><span class="header-section-number">2.2.3</span> Evaluate.</h3>
@@ -1187,7 +1323,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;probability&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;binomial likelihood&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-32-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-28-1.png" width="288" /></p>
 </div>
 <div id="parameters." class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Parameters.</h3>
@@ -1203,6 +1339,46 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <p>So where do priors come from? They are engineering assumptions, chosen to help the machine learn. The flat prior in Figure 2.5 is very common, but it is hardly ever the best prior. You’ll see later in the book that priors that gently nudge the machine usually improve inference. Such priors are sometimes called regularizing or weakly informative priors. (p. 35)</p>
 </blockquote>
 <p>To learn more about “regularizing or weakly informative priors,” check out the <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations"><em>Prior Choice Recommendations</em> wiki from the Stan team</a>.</p>
+<div id="overthinking-prior-as-a-probability-distribution" class="section level4">
+<h4><span class="header-section-number">2.3.3.1</span> Overthinking: Prior as a probability distribution</h4>
+<p>McElreath said that “for a uniform prior from <span class="math inline">\(a\)</span> to <span class="math inline">\(b\)</span>, the probability of any point in the interval is <span class="math inline">\(1 / (b - a)\)</span>” (p. 35). Let’s try that out. To keep things simple, we’ll hold <span class="math inline">\(a\)</span> constant while varying the values for <span class="math inline">\(b\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">a =</span> <span class="dv">0</span>,
+       <span class="dt">b =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">9</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(b <span class="op">-</span><span class="st"> </span>a))</code></pre></div>
+<pre><code>## # A tibble: 5 x 3
+##       a     b  prob
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0   1   1    
+## 2     0   1.5 0.667
+## 3     0   2   0.5  
+## 4     0   3   0.333
+## 5     0   9   0.111</code></pre>
+<p>I like to verify things with plots.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">a =</span> <span class="dv">0</span>,
+       <span class="dt">b =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">9</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">expand</span>(<span class="kw">nesting</span>(a, b), <span class="dt">parameter_space =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">9</span>, <span class="dt">length.out =</span> <span class="dv">500</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="kw">dunif</span>(parameter_space, a, b),
+         <span class="dt">b =</span> <span class="kw">str_c</span>(<span class="st">&quot;b = &quot;</span>, b)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> parameter_space, <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> prob)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">9</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">9</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dv">1</span>),
+                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;1/9&quot;</span>, <span class="st">&quot;1/3&quot;</span>, <span class="st">&quot;1/2&quot;</span>, <span class="st">&quot;2/3&quot;</span>, <span class="st">&quot;1&quot;</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor   =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>b, <span class="dt">ncol =</span> <span class="dv">5</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="768" /></p>
+<p>And as we’ll learn much later in the project, the <span class="math inline">\(Uniform(0, 1)\)</span> distribution is special in that we can also express it as the beta distribution for which <span class="math inline">\(\alpha = 1 \text{ and } \beta = 1\)</span>. E.g.,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">parameter_space =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="kw">dbeta</span>(parameter_space, <span class="dv">1</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> parameter_space, <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> prob)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-31-1.png" width="240" /></p>
+</div>
 </div>
 <div id="posterior." class="section level3">
 <h3><span class="header-section-number">2.3.4</span> Posterior.</h3>
@@ -1222,7 +1398,7 @@ d &lt;-
 <span class="st">  </span><span class="kw">expand</span>(probability, <span class="dt">row =</span> <span class="kw">c</span>(<span class="st">&quot;flat&quot;</span>, <span class="st">&quot;stepped&quot;</span>, <span class="st">&quot;Laplace&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">arrange</span>(row, probability) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prior =</span> <span class="kw">ifelse</span>(row <span class="op">==</span><span class="st"> &quot;flat&quot;</span>, <span class="dv">1</span>,
-                        <span class="kw">ifelse</span>(row <span class="op">==</span><span class="st"> &quot;stepped&quot;</span>, <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> sequence_length<span class="op">/</span><span class="dv">2</span>),
+                        <span class="kw">ifelse</span>(row <span class="op">==</span><span class="st"> &quot;stepped&quot;</span>, <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> sequence_length <span class="op">/</span><span class="st"> </span><span class="dv">2</span>),
                                <span class="kw">exp</span>(<span class="op">-</span><span class="kw">abs</span>(probability <span class="op">-</span><span class="st"> </span>.<span class="dv">5</span>) <span class="op">/</span><span class="st"> </span>.<span class="dv">25</span>) <span class="op">/</span><span class="st"> </span>( <span class="dv">2</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">25</span>))),
          <span class="dt">likelihood =</span> <span class="kw">dbinom</span>(<span class="dt">x =</span> <span class="dv">6</span>, <span class="dt">size =</span> <span class="dv">9</span>, <span class="dt">prob =</span> probability)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(row) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1275,7 +1451,7 @@ p3 &lt;-
 <span class="kw">library</span>(gridExtra)
 
 <span class="kw">grid.arrange</span>(p1, p2, p3, <span class="dt">ncol =</span> <span class="dv">3</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-34-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-33-1.png" width="576" /></p>
 <p>I’m not sure if it’s the same McElreath used in the text, but the formula I used for the tirangle-shaped prior is the <a href="http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html">Laplace distribution</a> with a location of .5 and a dispersion of .25.</p>
 <p>Also, to learn all about <code>dplyr::filter()</code>, check out Baert’s <a href="https://suzan.rbind.io/2018/02/dplyr-tutorial-3/"><em>Data Wrangling Part 3: Basic and more advanced ways to filter rows</em></a>.</p>
 <div id="grid-approximation." class="section level3">
@@ -1320,7 +1496,7 @@ p3 &lt;-
        <span class="dt">x =</span> <span class="st">&quot;probability of water&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;posterior probability&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-36-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-35-1.png" width="288" /></p>
 <p>Here it is with just 5 points, the left hand panel of Figure 2.7.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">p_grid            =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">5</span>),
        <span class="dt">prior             =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span>
@@ -1335,7 +1511,7 @@ p3 &lt;-
        <span class="dt">x =</span> <span class="st">&quot;probability of water&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;posterior probability&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-37-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-36-1.png" width="288" /></p>
 </div>
 <div id="quadratic-approximation." class="section level3">
 <h3><span class="header-section-number">2.4.2</span> Quadratic approximation.</h3>
@@ -1358,16 +1534,16 @@ globe_qa &lt;-
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">globe_qa_<span class="dv">18</span> &lt;-
 <span class="st">  </span>rethinking<span class="op">::</span><span class="kw">map</span>(
     <span class="kw">alist</span>(
-      w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">9</span><span class="op">*</span><span class="dv">2</span>, p),
+      w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">9</span> <span class="op">*</span><span class="st"> </span><span class="dv">2</span>, p),
       p <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)
-    ), <span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">6</span><span class="op">*</span><span class="dv">2</span>))
+    ), <span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">6</span>  <span class="op">*</span><span class="dv">2</span>))
 
 globe_qa_<span class="dv">36</span> &lt;-
 <span class="st">  </span>rethinking<span class="op">::</span><span class="kw">map</span>(
     <span class="kw">alist</span>(
-      w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">9</span><span class="op">*</span><span class="dv">4</span>, p),
+      w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">9</span> <span class="op">*</span><span class="st"> </span><span class="dv">4</span>, p),
       p <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>, <span class="dv">1</span>)
-    ), <span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">6</span><span class="op">*</span><span class="dv">4</span>))
+    ), <span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">6</span> <span class="op">*</span><span class="st"> </span><span class="dv">4</span>))
 
 <span class="kw">precis</span>(globe_qa_<span class="dv">18</span>)</code></pre></div>
 <pre><code>##   Mean StdDev 5.5% 94.5%
@@ -1401,7 +1577,7 @@ globe_qa_<span class="dv">36</span> &lt;-
        <span class="dt">y =</span> <span class="st">&quot;density&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-40-1.png" width="768" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="768" /></p>
 </div>
 <div id="markov-chain-monte-carlo." class="section level3">
 <h3><span class="header-section-number">2.4.3</span> Markov chain Monte Carlo.</h3>
@@ -1418,8 +1594,8 @@ globe_qa_<span class="dv">36</span> &lt;-
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(globe_qa_brms) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##             Estimate Est.Error  Q2.5 Q97.5
-## b_Intercept     0.66      0.08  0.50  0.79
-## lp__           -3.39      0.66 -5.24 -2.90</code></pre>
+## b_Intercept     0.66      0.07  0.51   0.8
+## lp__           -3.36      0.67 -5.31  -2.9</code></pre>
 <p>The <code>b_Intercept</code> row is the probability. Don’t worry about the second line, for now. We’ll explain the details of brms modeling in later chapters.</p>
 </div>
 </div>
@@ -1435,58 +1611,58 @@ globe_qa_<span class="dv">36</span> &lt;-
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] brms_2.5.0         Rcpp_0.12.18       rethinking_1.59    rstan_2.17.3       StanHeaders_2.17.2
-##  [6] gridExtra_2.3      forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6        purrr_0.2.5       
-## [11] readr_1.1.1        tidyr_0.8.1        tibble_1.4.2       ggplot2_3.0.0      tidyverse_1.2.1   
+##  [1] viridis_0.5.1      viridisLite_0.3.0  ggbeeswarm_0.6.0   dutchmasters_0.1.0 ghibli_0.1.1      
+##  [6] hrbrthemes_0.5.0.1 broom_0.4.5        rcartocolor_0.0.22 loo_2.0.0          ggthemes_3.5.0    
+## [11] wesanderson_0.3.6  GGally_1.4.0       tidybayes_1.0.3    bayesplot_1.6.0    fiftystater_1.0.1 
+## [16] ggrepel_0.8.0      brms_2.5.0         Rcpp_0.12.18       rethinking_1.59    rstan_2.17.3      
+## [21] StanHeaders_2.17.2 gridExtra_2.3      bindrcpp_0.2.2     forcats_0.3.0      stringr_1.3.1     
+## [26] dplyr_0.7.6        purrr_0.2.5        readr_1.1.1        tidyr_0.8.1        tibble_1.4.2      
+## [31] ggplot2_3.0.0      tidyverse_1.2.1   
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
-##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
-##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
-##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
-##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
-##  [19] bayesplot_1.6.0           labeling_0.3              mnormt_1.5-5             
-##  [22] bridgesampling_0.4-0      rprojroot_1.3-2           coda_0.19-1              
-##  [25] xfun_0.3                  R6_2.2.2                  markdown_0.8             
-##  [28] HDInterval_0.2.0          reshape_0.8.7             assertthat_0.2.0         
-##  [31] promises_1.0.1            scales_0.5.0              beeswarm_0.2.3           
-##  [34] gtable_0.2.0              rlang_0.2.1               extrafontdb_1.0          
-##  [37] lazyeval_0.2.1            broom_0.4.5               inline_0.3.15            
-##  [40] yaml_2.1.19               reshape2_1.4.3            abind_1.4-5              
-##  [43] modelr_0.1.2              threejs_0.3.1             crosstalk_1.0.0          
-##  [46] backports_1.1.2           httpuv_1.4.4.2            rsconnect_0.8.8          
-##  [49] extrafont_0.17            tools_3.5.1               bookdown_0.7             
-##  [52] psych_1.8.4               RColorBrewer_1.1-2        ggridges_0.5.0           
-##  [55] plyr_1.8.4                base64enc_0.1-3           progress_1.2.0           
-##  [58] prettyunits_1.0.2         zoo_1.8-2                 LaplacesDemon_16.1.1     
-##  [61] haven_1.1.2               magrittr_1.5              colourpicker_1.0         
-##  [64] mvtnorm_1.0-8             tidybayes_1.0.1           matrixStats_0.54.0       
-##  [67] hms_0.4.2                 shinyjs_1.0               mime_0.5                 
-##  [70] evaluate_0.10.1           arrayhelpers_1.0-20160527 xtable_1.8-2             
-##  [73] shinystan_2.5.0           readxl_1.1.0              rstantools_1.5.0         
-##  [76] compiler_3.5.1            maps_3.3.0                crayon_1.3.4             
-##  [79] htmltools_0.3.6           later_0.7.3               lubridate_1.7.4          
-##  [82] MASS_7.3-50               Matrix_1.2-14             cli_1.0.0                
-##  [85] bindr_0.1.1               igraph_1.2.1              pkgconfig_2.0.1          
-##  [88] foreign_0.8-70            xml2_1.2.0                svUnit_0.7-12            
-##  [91] dygraphs_1.1.1.5          vipor_0.4.5               rvest_0.3.2              
-##  [94] digest_0.6.15             rmarkdown_1.10            cellranger_1.1.0         
-##  [97] shiny_1.1.0               gtools_3.8.1              nlme_3.1-137             
-## [100] jsonlite_1.5              bindrcpp_0.2.2            mapproj_1.2.6            
-## [103] pillar_1.2.3              lattice_0.20-35           loo_2.0.0                
-## [106] httr_1.3.1                glue_1.2.0                xts_0.10-2               
-## [109] shinythemes_1.1.1         pander_0.6.2              stringi_1.2.3</code></pre>
+##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
+##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
+##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
+## [10] DT_0.4                    mvtnorm_1.0-8             lubridate_1.7.4          
+## [13] xml2_1.2.0                codetools_0.2-15          bridgesampling_0.4-0     
+## [16] extrafont_0.17            mnormt_1.5-5              knitr_1.20               
+## [19] shinythemes_1.1.1         jsonlite_1.5              Rttf2pt1_1.3.7           
+## [22] shiny_1.1.0               compiler_3.5.1            httr_1.3.1               
+## [25] backports_1.1.2           assertthat_0.2.0          Matrix_1.2-14            
+## [28] lazyeval_0.2.1            cli_1.0.0                 later_0.7.3              
+## [31] htmltools_0.3.6           tools_3.5.1               igraph_1.2.1             
+## [34] coda_0.19-1               gtable_0.2.0              glue_1.3.0               
+## [37] reshape2_1.4.3            cellranger_1.1.0          nlme_3.1-137             
+## [40] extrafontdb_1.0           crosstalk_1.0.0           psych_1.8.4              
+## [43] xfun_0.3                  rvest_0.3.2               mime_0.5                 
+## [46] miniUI_0.1.1.1            gtools_3.8.1              MASS_7.3-50              
+## [49] zoo_1.8-2                 scales_0.5.0              colourpicker_1.0         
+## [52] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
+## [55] inline_0.3.15             RColorBrewer_1.1-2        shinystan_2.5.0          
+## [58] yaml_2.1.19               reshape_0.8.7             stringi_1.2.3            
+## [61] highr_0.7                 dygraphs_1.1.1.5          rlang_0.3.0.1            
+## [64] pkgconfig_2.0.1           matrixStats_0.54.0        evaluate_0.10.1          
+## [67] lattice_0.20-35           bindr_0.1.1               rstantools_1.5.0         
+## [70] htmlwidgets_1.2           labeling_0.3              tidyselect_0.2.4         
+## [73] plyr_1.8.4                magrittr_1.5              bookdown_0.7             
+## [76] R6_2.2.2                  pillar_1.2.3              haven_1.1.2              
+## [79] foreign_0.8-70            withr_2.1.2               xts_0.10-2               
+## [82] abind_1.4-5               modelr_0.1.2              crayon_1.3.4             
+## [85] arrayhelpers_1.0-20160527 utf8_1.1.4                rmarkdown_1.10           
+## [88] grid_3.5.1                readxl_1.1.0              threejs_0.3.1            
+## [91] digest_0.6.15             xtable_1.8-2              httpuv_1.4.4.2           
+## [94] stats4_3.5.1              munsell_0.5.0             beeswarm_0.2.3           
+## [97] vipor_0.4.5               shinyjs_1.0</code></pre>
 
 </div>
 </div>
