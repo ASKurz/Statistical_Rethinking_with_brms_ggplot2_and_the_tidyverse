@@ -137,7 +137,7 @@ f <-
   # tack the `nd` data onto the `fitted()` results
   bind_cols(nd)
 
-# Plot
+# plot
 ggplot(data = f, 
        aes(x = MedianAgeMarriage_s, y = Estimate)) +
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
@@ -355,7 +355,7 @@ With our residuals in hand, we just need a little more data processing to make F
 ```{r, fig.width = 3, fig.height = 3}
 r <- 
   residuals(b5.4) %>%
-  # To use this in ggplot2, we need to make it a tibble or data frame
+  # to use this in ggplot2, we need to make it a tibble or data frame
   as_tibble() %>% 
   bind_cols(d)
 
@@ -885,8 +885,8 @@ b5.7 %>%
 #### Overthinking: Simulating a masking relationship.
 
 ```{r}
-n   <- 100     # number of cases
-rho <- .7      # correlation between x_pos and x_neg
+n   <- 100   # number of cases
+rho <- .7    # correlation between x_pos and x_neg
 
 set.seed(5)  # setting the seed makes the results reproducible
 d <- 
@@ -1001,7 +1001,7 @@ stanplot(b5.8,
   labs(title    = "The coefficient plot for the two-leg model",
        subtitle = "Holy smokes; look at the widths of those betas!") +
   theme_bw() +
-  theme(text = element_text(size = 14),
+  theme(text         = element_text(size = 14),
         panel.grid   = element_blank(),
         axis.ticks.y = element_blank(),
         axis.text.y  = element_text(hjust = 0))
@@ -1128,7 +1128,7 @@ library(brms)
 We'll follow the text and fit the two univariable models, first. Note our use of the `update()` function.
 
 ```{r b5.10_b5.11, cache = T, message = F, warning = F, results = 'hide'}
-# kcal.per.g regressed on perc.fat
+# `kcal.per.g` regressed on `perc.fat`
 b5.10 <- 
   brm(data = d, family = gaussian,
       kcal.per.g ~ 1 + perc.fat,
@@ -1138,7 +1138,7 @@ b5.10 <-
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5)
 
-# kcal.per.g regressed on perc.lactose
+# `kcal.per.g` regressed on `perc.lactose`
 b5.11 <- 
   update(b5.10,
          newdata = d,
@@ -1197,7 +1197,7 @@ my_lower <- function(data, mapping, ...){
     geom_point(color = "firebrick", alpha = .8, size = 1/4)
   }
 
-# Then plug those custom functions into `ggpairs()`
+# then plug those custom functions into `ggpairs()`
 ggpairs(data  = d, columns = c(3:4, 6),
         diag  = list(continuous = my_diag),
         lower = list(continuous = my_lower)) + 
