@@ -6,6 +6,10 @@ output:
   github_document
 ---
 
+```{r set-options_06, echo = FALSE, cache = FALSE}
+options(width = 100)
+```
+
 # Overfitting, Regularization, and Information Criteria
 
 In this chapter we contend with two contrasting kinds of statistical error:
@@ -40,7 +44,7 @@ library(tidyverse)
 
 Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/web/packages/rcartocolor/index.html), which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
 
-```{r}
+```{r, warning = F, message = F}
 # install.packages("rcartocolor", dependencies = T)
 library(rcartocolor)
 ```
@@ -1205,21 +1209,21 @@ There are a few ways to approach information criteria within the brms framework.
 waic(b6.11)
 ```
 
-The WAIC and its standard error are on the bottom row. the $p_\text{WAIC}$ and its SE are stacked atop that. And look there on the top row. Remember how we pointed out, above, that the WAIC by multiplying `(lppd - pwaic)` by -2? Well, if you just do the subtraction without multiplying the result by -2, you get the `elpd_waic`. File that away, it'll become important in a bit.
+The WAIC and its standard error are on the bottom row. The $p_\text{WAIC}$ and its SE are stacked atop that. And look there on the top row. Remember how we pointed out, above, that we get the WAIC by multiplying `(lppd - pwaic)` by -2? Well, if you just do the subtraction without multiplying the result by -2, you get the `elpd_waic`. File that away. It'll become important in a bit.
 
-Part of the suggestd workflow for using information criteria with brms (i.e., execute `?loo.brmsfit`) is to add the estimates to the `brm()` fit object itseld. You do that with the `add_criterion()` function. Here's how we'd do so with `b6.11`.
+Following the version 2.8.0 update, part of the suggested workflow for using information criteria with brms (i.e., execute `?loo.brmsfit`) is to add the estimates to the `brm()` fit object itself. You do that with the `add_criterion()` function. Here's how we'd do so with `b6.11`.
 
 ```{r}
 b6.11 <- add_criterion(b6.11, "waic")
 ```
 
-With that in place, here's how you'd extract the WAIC information.
+With that in place, here's how you'd extract the WAIC information from the fit object.
 
 ```{r}
 b6.11$waic
 ```
 
-*Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output. But second, it set’s you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
+*Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output, which can be convenient. But second, it sets you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
 
 ```{r w_b6.12_through_b6.14}
 # compute and save the WAIC information for the next three models
@@ -1234,9 +1238,9 @@ w <- loo_compare(b6.11, b6.12, b6.13, b6.14,
 print(w)
 ```
 
-Now you don’t have to save those results as an object, like we just did with `w`. But that’ll serve some pedagogical purposes in just a bit. So go with it. With respect to the output, notice the `elpd_diff` column and the adjacent `se_diff` column. Those are our WAIC differences. The models have been rank ordered from the lowest (i.e., `b6.14`) to the highest (i.e., `b6.12`). The scores listed are the differences of ` b6.14` minus the comparison model. Since `b6.14` is the comparison model in the top row, the values are naturally 0 (i.e., $x – x = 0$). But now here’s another critical thing to understand. Since the brms version 2.8.0 update, WAIC and LOO differences are no longer reported in the -2 * x metric. Remember how we keep rehearsing that multiplying `(lppd - pwaic)` by -2 is a historic artifact associated with the chi-square? We’ll, the makers of the loo package aren’t fans and they no longer support the conversion. 
+You don’t have to save those results as an object like we just did with `w`. But that’ll serve some pedagogical purposes in just a bit. So go with it. With respect to the output, notice the `elpd_diff` column and the adjacent `se_diff` column. Those are our WAIC differences. The models have been rank ordered from the lowest (i.e., `b6.14`) to the highest (i.e., `b6.12`). The scores listed are the differences of ` b6.14` minus the comparison model. Since `b6.14` is the comparison model in the top row, the values are naturally 0 (i.e., $x – x = 0$). But now here’s another critical thing to understand: Since the brms version 2.8.0 update, WAIC and LOO differences are no longer reported in the $-2 * x$ metric. Remember how we keep rehearsing that multiplying `(lppd - pwaic)` by -2 is a historic artifact associated with the frequentist chi-square test? We’ll, the makers of the loo package aren’t fans and they no longer support the conversion. 
 
-So here’s the deal. The substantive interpretations of the differences presented in an `elpd_diff` metric will be the same as if presented in a WAIC metric. But if we want to compare our `elpd_diff` results to those in the text, we will have to multiply them by -2. And also, if we want the associated standard error in the proper metric, we'll need to multiply the `se_diff` column by 2--you wouldn't multiply by -2 because that would return a negative standard error, which would be silly. Here's a quick way to do so.
+So here’s the deal. The substantive interpretations of the differences presented in an `elpd_diff` metric will be the same as if presented in a WAIC metric. But if we want to compare our `elpd_diff` results to those in the text, we will have to multiply them by -2. And also, if we want the associated standard error in the proper metric, we'll need to multiply the `se_diff` column by 2. You wouldn't multiply by -2 because that would return a negative standard error, which would be silly. Here's a quick way to do so.
 
 ```{r}
 cbind(waic_diff = w[, 1] * -2,
@@ -1380,7 +1384,7 @@ The brms package doesn't have anything like rethinking's `coeftab()` function. H
 tidy(b6.14)
 ```
 
-Note, `tidy()` also grabs the log posterior (i.e., "lp__"), which we'll exclude for our purposes. With a little `purrr::map()` code, you can save the `brm()` fits and their `tidy()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
+Note, `tidy()` also grabs the log posterior (i.e., `lp__`), which we'll exclude for our purposes. With a little `purrr::map()` code, you can save the `brm()` fits and their `tidy()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
 
 ```{r my_coef_tab}
 my_coef_tab <-
@@ -1397,7 +1401,7 @@ Just a little more work and we'll have a table analogous to the one McElreath pr
 
 ```{r}
 my_coef_tab %>%
-  # Learn more about dplyr::complete() here: https://rdrr.io/cran/tidyr/man/expand.html
+  # learn more about dplyr::complete() here: https://rdrr.io/cran/tidyr/man/expand.html
   complete(term = distinct(., term), model) %>%
   select(model, term, estimate) %>%
   mutate(estimate = round(estimate, digits = 2)) %>%
