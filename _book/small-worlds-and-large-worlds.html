@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <title>2 Small Worlds and Large Worlds | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:title" content="2 Small Worlds and Large Worlds | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:title" content="2 Small Worlds and Large Worlds | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta name="twitter:site" content="@SolomonKurz" />
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2018-12-07">
+<meta name="date" content="2019-04-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="sampling-the-imaginary.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -100,6 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
@@ -183,7 +185,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
-<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
@@ -511,7 +513,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  8     1        2 w    
 ##  9     1.25     2 b    
 ## 10     1.5      2 w    
-## # ... with 74 more rows</code></pre>
+## # … with 74 more rows</code></pre>
 <p>See what I did there with the parentheses? If you assign a value to an object in R (e.g., <code>dog &lt;- 1</code>) and just hit return, nothing will immediately pop up in the <a href="http://r4ds.had.co.nz/introduction.html#rstudio">console</a>. You have to actually execute <code>dog</code> before R will return <code>1</code>. But if you wrap the code within parentheses (e.g., <code>(dog &lt;- 1)</code>), R will perform the assignment and return the value as if you had executed <code>dog</code>.</p>
 <p>But we digress. Here’s the initial plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -555,7 +557,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 (
   lines_<span class="dv">2</span> &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x    =</span> <span class="kw">rep</span>(((<span class="dv">1</span><span class="op">:</span><span class="dv">4</span><span class="op">^</span><span class="dv">2</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>), <span class="dt">each =</span> <span class="dv">4</span>),
-         <span class="dt">xend =</span> (<span class="dv">1</span><span class="op">:</span><span class="dv">4</span><span class="op">^</span><span class="dv">3</span>)<span class="op">/</span>(<span class="dv">4</span><span class="op">^</span><span class="dv">2</span>),
+         <span class="dt">xend =</span> (<span class="dv">1</span><span class="op">:</span><span class="dv">4</span><span class="op">^</span><span class="dv">3</span>) <span class="op">/</span><span class="st"> </span>(<span class="dv">4</span><span class="op">^</span><span class="dv">2</span>),
          <span class="dt">y    =</span> <span class="dv">2</span>,
          <span class="dt">yend =</span> <span class="dv">3</span>)
   )</code></pre></div>
@@ -572,7 +574,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  8  0.5  0.5        2     3
 ##  9  0.75 0.562      2     3
 ## 10  0.75 0.625      2     3
-## # ... with 54 more rows</code></pre>
+## # … with 54 more rows</code></pre>
 <p>We can use the <code>lines_1</code> and <code>lines_2</code> data in the plot with two <code>geom_segment()</code> functions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> position, <span class="dt">y =</span> draw)) <span class="op">+</span>
@@ -613,7 +615,7 @@ d</code></pre></div>
 ##  8    0.875     2 w           0.125
 ##  9    1.12      2 b           0.125
 ## 10    1.38      2 w           0.125
-## # ... with 74 more rows</code></pre>
+## # … with 74 more rows</code></pre>
 <p>We’ll follow the same logic for the <code>lines_1</code> and <code>lines_2</code> data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
   lines_<span class="dv">1</span> &lt;-
@@ -659,7 +661,7 @@ d</code></pre></div>
 ##  8 0.375 0.469      2     3
 ##  9 0.625 0.531      2     3
 ## 10 0.625 0.594      2     3
-## # ... with 54 more rows</code></pre>
+## # … with 54 more rows</code></pre>
 <p>Now the plot’s looking closer.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> position, <span class="dt">y =</span> draw)) <span class="op">+</span>
@@ -692,12 +694,11 @@ d</code></pre></div>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> fill),
              <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="384" /></p>
 <p>To make our version of Figure 2.3, we’ll have to add an index to tell us which paths remain logically valid after each choice. We’ll call the index <code>remain</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lines_<span class="dv">1</span> &lt;-
@@ -739,12 +740,11 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># it&#39;s the alpha parameter that makes elements semitransparent</span>
 <span class="st">  </span><span class="kw">scale_alpha_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">10</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="dv">3</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-13-1.png" width="384" /></p>
 <p>Letting “w” = a white dot and “b” = a blue dot, we might recreate the table in the middle of page 23 like so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># If we make two custom functions, here, it will simplify the code within `mutate()`, below</span>
@@ -877,7 +877,7 @@ t <span class="op">%&gt;%</span><span class="st"> </span>
 ##  8    0.875     2 b           0.125 a        
 ##  9    1.12      2 w           0.125 a        
 ## 10    1.38      2 b           0.125 a        
-## # ... with 242 more rows</code></pre>
+## # … with 242 more rows</code></pre>
 <p>Both <code>lines_1</code> and <code>lines_2</code> require adjustments for <code>x</code> and <code>xend</code>. Our current approach is a nested <code>ifelse()</code>. Rather than copy and paste that multi-line <code>ifelse()</code> code for all four, let’s wrap it in a compact function, which we’ll call <code>move_over()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">move_over &lt;-<span class="st"> </span><span class="cf">function</span>(position, index){
   <span class="kw">ifelse</span>(index <span class="op">==</span><span class="st"> &quot;a&quot;</span>, position,
@@ -914,7 +914,7 @@ t <span class="op">%&gt;%</span><span class="st"> </span>
 ##  8   1.5 1.88      1     2 a        
 ##  9   2.5 2.12      1     2 a        
 ## 10   2.5 2.38      1     2 a        
-## # ... with 38 more rows</code></pre>
+## # … with 38 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(
   lines_<span class="dv">2</span> &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x    =</span> <span class="kw">rep</span>(((<span class="dv">1</span><span class="op">:</span><span class="dv">4</span><span class="op">^</span><span class="dv">2</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>), <span class="dt">each =</span> <span class="dv">4</span>)  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rep</span>(., <span class="dt">times =</span> <span class="dv">3</span>),
@@ -942,7 +942,7 @@ t <span class="op">%&gt;%</span><span class="st"> </span>
 ##  8 0.375 0.469      2     3 a        
 ##  9 0.625 0.531      2     3 a        
 ## 10 0.625 0.594      2     3 a        
-## # ... with 182 more rows</code></pre>
+## # … with 182 more rows</code></pre>
 <p>For the last data wrangling step, we add the <code>remain</code> indices to help us determine which parts to make semitransparent. I’m not sure of a slick way to do this, so these are the result of brute force counting.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>
 <span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1019,12 +1019,11 @@ lines_<span class="dv">2</span> &lt;-
 <span class="st">  </span><span class="kw">scale_size_continuous</span>(<span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="fl">1.5</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_alpha_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">10</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">12</span>),     <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="fl">3.5</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">12</span>),     <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="fl">0.75</span>, <span class="fl">3.5</span>), <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_polar</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="using-prior-information." class="section level3">
@@ -1369,7 +1368,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>b, <span class="dt">ncol =</span> <span class="dv">5</span>)</code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="768" /></p>
-<p>And as we’ll learn much later in the project, the <span class="math inline">\(Uniform(0, 1)\)</span> distribution is special in that we can also express it as the beta distribution for which <span class="math inline">\(\alpha = 1 \text{ and } \beta = 1\)</span>. E.g.,</p>
+<p>And as we’ll learn much later in the project, the <span class="math inline">\(\text{Uniform} (0, 1)\)</span> distribution is special in that we can also express it as the beta distribution for which <span class="math inline">\(\alpha = 1 \text{ and } \beta = 1\)</span>. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">parameter_space =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="kw">dbeta</span>(parameter_space, <span class="dv">1</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
@@ -1528,8 +1527,8 @@ globe_qa &lt;-
 
 <span class="co"># display summary of quadratic approximation</span>
 <span class="kw">precis</span>(globe_qa)</code></pre></div>
-<pre><code>##   Mean StdDev 5.5% 94.5%
-## p 0.67   0.16 0.42  0.92</code></pre>
+<pre><code>##        mean        sd     5.5%     94.5%
+## p 0.6666677 0.1571335 0.415538 0.9177975</code></pre>
 <p>In preparation for Figure 2.8, here’s the model with <span class="math inline">\(n = 18\)</span> and <span class="math inline">\(n = 36\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">globe_qa_<span class="dv">18</span> &lt;-
 <span class="st">  </span>rethinking<span class="op">::</span><span class="kw">map</span>(
@@ -1546,11 +1545,11 @@ globe_qa_<span class="dv">36</span> &lt;-
     ), <span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">6</span> <span class="op">*</span><span class="st"> </span><span class="dv">4</span>))
 
 <span class="kw">precis</span>(globe_qa_<span class="dv">18</span>)</code></pre></div>
-<pre><code>##   Mean StdDev 5.5% 94.5%
-## p 0.67   0.11 0.49  0.84</code></pre>
+<pre><code>##        mean        sd      5.5%     94.5%
+## p 0.6666662 0.1111104 0.4890902 0.8442421</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">precis</span>(globe_qa_<span class="dv">36</span>)</code></pre></div>
-<pre><code>##   Mean StdDev 5.5% 94.5%
-## p 0.67   0.08 0.54  0.79</code></pre>
+<pre><code>##        mean         sd      5.5%     94.5%
+## p 0.6666668 0.07856688 0.5411017 0.7922318</code></pre>
 <p>Here’s the legwork for Figure 2.8.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n_grid &lt;-<span class="st"> </span><span class="dv">100</span>
 
@@ -1588,15 +1587,39 @@ globe_qa_<span class="dv">36</span> &lt;-
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">w =</span> <span class="dv">24</span>), 
       <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;identity&quot;</span>),
       w <span class="op">|</span><span class="st"> </span><span class="kw">trials</span>(<span class="dv">36</span>) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
-      <span class="dt">prior =</span> <span class="kw">prior</span>(<span class="kw">normal</span>(.<span class="dv">5</span>, <span class="dv">1</span>), <span class="dt">class =</span> Intercept),
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.9</span>))</code></pre></div>
-<p>With brms, the <code>posterior_summary()</code> function is an analogue to <code>rethinking::precis()</code>. We will, however, need to use <code>round()</code> to reduce the output to a reasonable number of decimal places.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(globe_qa_brms) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
-<pre><code>##             Estimate Est.Error  Q2.5 Q97.5
-## b_Intercept     0.66      0.07  0.51   0.8
-## lp__           -3.36      0.67 -5.31  -2.9</code></pre>
-<p>The <code>b_Intercept</code> row is the probability. Don’t worry about the second line, for now. We’ll explain the details of brms modeling in later chapters.</p>
+      <span class="kw">prior</span>(<span class="kw">beta</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">class =</span> Intercept),
+      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>,
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">9</span>),
+      <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
+<p>The model output looks like so.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(globe_qa_brms)</code></pre></div>
+<pre><code>##  Family: binomial 
+##   Links: mu = identity 
+## Formula: w | trials(36) ~ 1 
+##    Data: list(w = 24) (Number of observations: 1) 
+## Samples: 4 chains, each with iter = 4000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 12000
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept     0.66      0.08     0.50     0.80       3579 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+<p>There’s a lot going on in that output, which we’ll start to clarify in Chapter 4. For now, focus on the ‘Intercept’ line. As we’ll also learn in Chapter 4, the intercept of a regression model with no predictors is the same as its mean. In the special case of a model using the binomial likelihood, the mean is the probability of a 1 in a given trial, <span class="math inline">\(\theta\)</span>.</p>
+<p>Let’s plot the results of our model and compare them with those from <code>rethinking::map()</code>, above.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(globe_qa_brms) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n =</span> <span class="st">&quot;n = 36&quot;</span>) <span class="op">%&gt;%</span>
+
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_Intercept)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">fill =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;proportion water&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlim</span>(<span class="dv">0</span>, <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-42-1.png" width="288" /></p>
+<p>If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4 and we’ll learn a lot about regression with the binomial likelihood in Chapter 10.</p>
 </div>
 </div>
 <div id="reference-1" class="section level2 unnumbered">
@@ -1611,7 +1634,7 @@ globe_qa_<span class="dv">36</span> &lt;-
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -1621,48 +1644,51 @@ globe_qa_<span class="dv">36</span> &lt;-
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] viridis_0.5.1      viridisLite_0.3.0  ggbeeswarm_0.6.0   dutchmasters_0.1.0 ghibli_0.1.1      
-##  [6] hrbrthemes_0.5.0.1 broom_0.4.5        rcartocolor_0.0.22 loo_2.0.0          ggthemes_3.5.0    
-## [11] wesanderson_0.3.6  GGally_1.4.0       tidybayes_1.0.3    bayesplot_1.6.0    fiftystater_1.0.1 
-## [16] ggrepel_0.8.0      brms_2.5.0         Rcpp_0.12.18       rethinking_1.59    rstan_2.17.3      
-## [21] StanHeaders_2.17.2 gridExtra_2.3      bindrcpp_0.2.2     forcats_0.3.0      stringr_1.3.1     
-## [26] dplyr_0.7.6        purrr_0.2.5        readr_1.1.1        tidyr_0.8.1        tibble_1.4.2      
-## [31] ggplot2_3.0.0      tidyverse_1.2.1   
+##  [1] viridis_0.5.1          viridisLite_0.3.0      ggbeeswarm_0.6.0       dutchmasters_0.1.0    
+##  [5] ghibli_0.2.0           hrbrthemes_0.6.0       broom_0.5.1            rcartocolor_1.0.0     
+##  [9] loo_2.1.0              ggthemes_4.0.1         wesanderson_0.3.6.9000 GGally_1.4.0          
+## [13] tidybayes_1.0.4        bayesplot_1.6.0        fiftystater_1.0.1      bindrcpp_0.2.2        
+## [17] ggrepel_0.8.0          brms_2.8.0             Rcpp_1.0.0             rethinking_1.80       
+## [21] rstan_2.18.2           StanHeaders_2.18.0-1   gridExtra_2.3          forcats_0.3.0         
+## [25] stringr_1.3.1          dplyr_0.8.0.1          purrr_0.2.5            readr_1.1.1           
+## [29] tidyr_0.8.1            tibble_2.1.1           ggplot2_3.1.0          tidyverse_1.2.1       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
-##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
-##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
-## [10] DT_0.4                    mvtnorm_1.0-8             lubridate_1.7.4          
-## [13] xml2_1.2.0                codetools_0.2-15          bridgesampling_0.4-0     
-## [16] extrafont_0.17            mnormt_1.5-5              knitr_1.20               
-## [19] shinythemes_1.1.1         jsonlite_1.5              Rttf2pt1_1.3.7           
-## [22] shiny_1.1.0               compiler_3.5.1            httr_1.3.1               
-## [25] backports_1.1.2           assertthat_0.2.0          Matrix_1.2-14            
-## [28] lazyeval_0.2.1            cli_1.0.0                 later_0.7.3              
-## [31] htmltools_0.3.6           tools_3.5.1               igraph_1.2.1             
-## [34] coda_0.19-1               gtable_0.2.0              glue_1.3.0               
-## [37] reshape2_1.4.3            cellranger_1.1.0          nlme_3.1-137             
-## [40] extrafontdb_1.0           crosstalk_1.0.0           psych_1.8.4              
-## [43] xfun_0.3                  rvest_0.3.2               mime_0.5                 
-## [46] miniUI_0.1.1.1            gtools_3.8.1              MASS_7.3-50              
-## [49] zoo_1.8-2                 scales_0.5.0              colourpicker_1.0         
-## [52] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
-## [55] inline_0.3.15             RColorBrewer_1.1-2        shinystan_2.5.0          
-## [58] yaml_2.1.19               reshape_0.8.7             stringi_1.2.3            
-## [61] highr_0.7                 dygraphs_1.1.1.5          rlang_0.3.0.1            
-## [64] pkgconfig_2.0.1           matrixStats_0.54.0        evaluate_0.10.1          
-## [67] lattice_0.20-35           bindr_0.1.1               rstantools_1.5.0         
-## [70] htmlwidgets_1.2           labeling_0.3              tidyselect_0.2.4         
-## [73] plyr_1.8.4                magrittr_1.5              bookdown_0.7             
-## [76] R6_2.2.2                  pillar_1.2.3              haven_1.1.2              
-## [79] foreign_0.8-70            withr_2.1.2               xts_0.10-2               
-## [82] abind_1.4-5               modelr_0.1.2              crayon_1.3.4             
-## [85] arrayhelpers_1.0-20160527 utf8_1.1.4                rmarkdown_1.10           
-## [88] grid_3.5.1                readxl_1.1.0              threejs_0.3.1            
-## [91] digest_0.6.15             xtable_1.8-2              httpuv_1.4.4.2           
-## [94] stats4_3.5.1              munsell_0.5.0             beeswarm_0.2.3           
-## [97] vipor_0.4.5               shinyjs_1.0</code></pre>
+##   [1] readxl_1.1.0              backports_1.1.2           plyr_1.8.4               
+##   [4] igraph_1.2.1              lazyeval_0.2.1            svUnit_0.7-12            
+##   [7] crosstalk_1.0.0           rstantools_1.5.0          inline_0.3.15            
+##  [10] digest_0.6.18             htmltools_0.3.6           rsconnect_0.8.8          
+##  [13] fansi_0.4.0               magrittr_1.5              modelr_0.1.2             
+##  [16] extrafont_0.17            matrixStats_0.54.0        xts_0.10-2               
+##  [19] extrafontdb_1.0           prettyunits_1.0.2         colorspace_1.3-2         
+##  [22] rvest_0.3.2               haven_1.1.2               xfun_0.3                 
+##  [25] callr_3.1.0               crayon_1.3.4              jsonlite_1.5             
+##  [28] bindr_0.1.1               zoo_1.8-2                 glue_1.3.0               
+##  [31] gtable_0.2.0              pkgbuild_1.0.2            Rttf2pt1_1.3.7           
+##  [34] abind_1.4-5               scales_1.0.0              mvtnorm_1.0-8            
+##  [37] miniUI_0.1.1.1            xtable_1.8-2              ggstance_0.3             
+##  [40] stats4_3.5.1              DT_0.4                    htmlwidgets_1.2          
+##  [43] httr_1.3.1                threejs_0.3.1             arrayhelpers_1.0-20160527
+##  [46] RColorBrewer_1.1-2        pkgconfig_2.0.2           reshape_0.8.7            
+##  [49] utf8_1.1.4                tidyselect_0.2.5          labeling_0.3             
+##  [52] rlang_0.3.1               reshape2_1.4.3            later_0.7.3              
+##  [55] munsell_0.5.0             cellranger_1.1.0          tools_3.5.1              
+##  [58] cli_1.0.1                 generics_0.0.2            pacman_0.4.6             
+##  [61] ggridges_0.5.0            evaluate_0.10.1           yaml_2.1.19              
+##  [64] processx_3.2.1            knitr_1.20                nlme_3.1-137             
+##  [67] mime_0.5                  xml2_1.2.0                compiler_3.5.1           
+##  [70] shinythemes_1.1.1         rstudioapi_0.7            beeswarm_0.2.3           
+##  [73] stringi_1.2.3             highr_0.7                 ps_1.2.1                 
+##  [76] Brobdingnag_1.2-5         gdtools_0.1.7             lattice_0.20-35          
+##  [79] Matrix_1.2-14             markdown_0.8              shinyjs_1.0              
+##  [82] pillar_1.3.1              bridgesampling_0.4-0      httpuv_1.4.4.2           
+##  [85] R6_2.3.0                  bookdown_0.9              promises_1.0.1           
+##  [88] vipor_0.4.5               codetools_0.2-15          colourpicker_1.0         
+##  [91] MASS_7.3-50               gtools_3.8.1              assertthat_0.2.0         
+##  [94] rprojroot_1.3-2           withr_2.1.2               shinystan_2.5.0          
+##  [97] hms_0.4.2                 grid_3.5.1                coda_0.19-2              
+## [100] rmarkdown_1.10            shiny_1.1.0               lubridate_1.7.4          
+## [103] base64enc_0.1-3           dygraphs_1.1.1.5</code></pre>
 
 </div>
 </div>
@@ -1692,7 +1718,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -1702,6 +1728,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
@@ -1719,7 +1749,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
