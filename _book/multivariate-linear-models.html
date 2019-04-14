@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <title>5 Multivariate Linear Models | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:title" content="5 Multivariate Linear Models | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:title" content="5 Multivariate Linear Models | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta name="twitter:site" content="@SolomonKurz" />
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2018-09-26">
+<meta name="date" content="2019-04-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="overfitting-regularization-and-information-criteria.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -100,6 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
@@ -183,7 +185,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
-<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
@@ -333,6 +335,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -365,6 +374,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
 <li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
 </ul></li>
+<li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -435,13 +445,12 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_text_repel</span>(<span class="dt">data =</span> d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Loc <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>, <span class="st">&quot;OK&quot;</span>, <span class="st">&quot;AR&quot;</span>, <span class="st">&quot;AL&quot;</span>, <span class="st">&quot;GA&quot;</span>, <span class="st">&quot;SC&quot;</span>, <span class="st">&quot;NJ&quot;</span>)),  
                   <span class="kw">aes</span>(<span class="dt">label =</span> Loc), 
                   <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">seed =</span> <span class="dv">1042</span>) <span class="op">+</span><span class="st">  </span><span class="co"># this makes it reproducible</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">55</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Waffle Houses per million&quot;</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">55</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">ylim =</span> <span class="dv">5</span><span class="op">:</span><span class="dv">15</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Waffle Houses per million&quot;</span>, 
-       <span class="dt">y =</span> <span class="st">&quot;Divorce rate&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce rate&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())  </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-207-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-4-1.png" width="288" /></p>
 <p>With <code>coord_map()</code> and help from the <a href="https://cran.r-project.org/web/packages/fiftystater/index.html">fiftystater package</a> (which gives us access to lat/long data for all fifty states via <code>fifty_states</code>), we can plot our three major variables in a map format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(fiftystater)
 
@@ -469,7 +478,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-208-1.png" width="768" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-5-1.png" width="768" /></p>
 <p>One of the advantages of this visualization method is it just became clear that Nevada is missing from the <code>WaffleDivorce</code> data. Execute <code>d %&gt;% distinct(Location)</code> to see for yourself. Those missing data should motivate the skills we’ll cover in Chapter 14. But let’s get back on track.</p>
 <p>Here we’ll officially standardize the predictor, <code>MedianAgeMarriage</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
@@ -483,8 +492,9 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">10</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
-<p>The summary:</p>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
+<p>Check the summary.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">1</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -495,41 +505,42 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept               9.69      0.22     9.26    10.12       5624 1.00
-## MedianAgeMarriage_s    -1.04      0.21    -1.45    -0.62       5608 1.00
+## Intercept               9.68      0.22     9.25    10.11       5675 1.00
+## MedianAgeMarriage_s    -1.04      0.22    -1.45    -0.59       5945 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.52      0.16     1.24     1.87       6000 1.00
+## sigma     1.52      0.16     1.24     1.87       4029 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>We’ll employ <code>fitted()</code> to make Figure 5.2.b. In preparation for <code>fitted()</code> we’ll make a new tibble, <code>nd</code>, composed of a handful of densely-packed values for our predictor, <code>MedianAgeMarriage_s</code>. With the <code>newdata</code> argument, we’ll use those values to return model-implied expected values for <code>Divorce</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Determine the range of `MedianAgeMarriage_s` values we&#39;d like to feed into `fitted()`</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define the range of `MedianAgeMarriage_s` values we&#39;d like to feed into `fitted()`</span>
 nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">MedianAgeMarriage_s =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">3</span>, <span class="dt">to =</span> <span class="fl">3.5</span>, <span class="dt">length.out =</span> <span class="dv">30</span>))
 
-<span class="co"># Now use `fitted()` to get the model-implied trajectories</span>
-fitd_b5.<span class="dv">1</span> &lt;-<span class="st"> </span>
+<span class="co"># now use `fitted()` to get the model-implied trajectories</span>
+f &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">fitted</span>(b5.<span class="dv">1</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># tack the `nd` data onto the `fitted()` results</span>
 <span class="st">  </span><span class="kw">bind_cols</span>(nd)
 
-<span class="co"># Plot</span>
-<span class="kw">ggplot</span>(<span class="dt">data =</span> fitd_b5.<span class="dv">1</span>, 
+<span class="co"># plot</span>
+<span class="kw">ggplot</span>(<span class="dt">data =</span> f, 
        <span class="kw">aes</span>(<span class="dt">x =</span> MedianAgeMarriage_s, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> d, 
-             <span class="kw">aes</span>(<span class="dt">x =</span> MedianAgeMarriage_s, <span class="dt">y =</span> Divorce), 
+             <span class="kw">aes</span>(<span class="dt">y =</span> Divorce), 
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>MedianAgeMarriage_s), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())                   </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-211-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="288" /></p>
 <p>Before fitting the next model, we’ll standardize <code>Marriage</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
@@ -541,7 +552,8 @@ fitd_b5.<span class="dv">1</span> &lt;-<span class="st"> </span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">10</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">2</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -552,12 +564,12 @@ fitd_b5.<span class="dv">1</span> &lt;-<span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##            Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept      9.69      0.25     9.20    10.17       5636 1.00
-## Marriage_s     0.64      0.24     0.16     1.11       5626 1.00
+## Intercept      9.69      0.25     9.20    10.18       5516 1.00
+## Marriage_s     0.64      0.25     0.16     1.12       5229 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.75      0.18     1.43     2.15       4933 1.00
+## sigma     1.75      0.18     1.44     2.15       4519 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -565,25 +577,25 @@ fitd_b5.<span class="dv">1</span> &lt;-<span class="st"> </span>
 <p>Now we’ll wangle and plot our version of Figure 5.2.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">Marriage_s =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="fl">2.5</span>, <span class="dt">to =</span> <span class="fl">3.5</span>, <span class="dt">length.out =</span> <span class="dv">30</span>))
 
-fitd_b5.<span class="dv">2</span> &lt;-<span class="st"> </span>
+f &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">fitted</span>(b5.<span class="dv">2</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">bind_cols</span>(nd)
 
-<span class="kw">ggplot</span>(<span class="dt">data =</span> fitd_b5.<span class="dv">2</span>, 
+<span class="kw">ggplot</span>(<span class="dt">data =</span> f, 
        <span class="kw">aes</span>(<span class="dt">x =</span> Marriage_s, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> d, 
-             <span class="kw">aes</span>(<span class="dt">x =</span> Marriage_s, <span class="dt">y =</span> Divorce), 
+             <span class="kw">aes</span>(<span class="dt">y =</span> Divorce), 
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>Marriage_s), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>Divorce)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())                   </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-214-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-11-1.png" width="288" /></p>
 <blockquote>
 <p>But merely comparing parameter means between different bivariate regressions is no way to decide which predictor is better Both of these predictors could provide independent value, or they could be redundant, or one could eliminate the value of the other. So we’ll build a multivariate model with the goal of measuring the partial value of each predictor. The question we want answered is:</p>
 <blockquote>
@@ -616,7 +628,8 @@ fitd_b5.<span class="dv">2</span> &lt;-<span class="st"> </span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">10</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">3</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -627,20 +640,20 @@ fitd_b5.<span class="dv">2</span> &lt;-<span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept               9.69      0.22     9.27    10.11       5164 1.00
-## Marriage_s             -0.12      0.30    -0.70     0.47       3705 1.00
-## MedianAgeMarriage_s    -1.12      0.30    -1.70    -0.52       3839 1.00
+## Intercept               9.68      0.22     9.26    10.11       5396 1.00
+## Marriage_s             -0.13      0.29    -0.68     0.43       3810 1.00
+## MedianAgeMarriage_s    -1.13      0.29    -1.70    -0.54       3908 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.52      0.16     1.25     1.88       5157 1.00
+## sigma     1.52      0.16     1.24     1.88       4923 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>The <code>stanplot()</code> function is an easy way to get a default coefficient plot. You just put the brmsfit object into the function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">stanplot</span>(b5.<span class="dv">3</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-216-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
 <p>There are numerous ways to make a coefficient plot. Another is with the <code>mcmc_intervals()</code> function from the <a href="https://cran.r-project.org/web/packages/bayesplot/index.html">bayesplot package</a>. A nice feature of the bayesplot package is its convenient way to alter the color scheme with the <code>color_scheme_set()</code> function. Here, for example, we’ll make the theme <code>red</code>. But note how the <code>mcmc_intervals()</code> function requires you to work with the <code>posterior_samples()</code> instead of the brmsfit object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;bayesplot&quot;, dependencies = T)</span>
 <span class="kw">library</span>(bayesplot)
@@ -656,7 +669,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b5.
         <span class="dt">axis.line.x  =</span> <span class="kw">element_line</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>),
         <span class="dt">axis.line.y  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-217-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
 <p>Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html">this vignette</a>.</p>
 <p>The <code>tidybaes::stat_pointintervalh()</code> function offers a third way, this time with a more ground-up ggplot2 workflow.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
@@ -676,7 +689,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">panel.grid.major.y =</span> <span class="kw">element_line</span>(<span class="dt">color =</span> <span class="kw">alpha</span>(<span class="st">&quot;firebrick4&quot;</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="dt">linetype =</span> <span class="dv">3</span>),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-218-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-15-1.png" width="576" /></p>
 <p>The substantive interpretation of all those coefficient plots is: “<em>Once we know median age at marriage for a State, there is little or no additive predictive power in also knowing the rate of marriage in that State</em>” (p. 126, <em>emphasis</em> in the original).</p>
 </div>
 <div id="plotting-multivariate-posteriors." class="section level3">
@@ -696,7 +709,8 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">4</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -707,37 +721,39 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept               0.00      0.10    -0.21     0.20       4252 1.00
-## MedianAgeMarriage_s    -0.71      0.10    -0.91    -0.51       5222 1.00
+## Intercept               0.00      0.10    -0.20     0.20       5540 1.00
+## MedianAgeMarriage_s    -0.71      0.10    -0.91    -0.51       4941 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.72      0.08     0.59     0.89       4506 1.00
+## sigma     0.72      0.08     0.59     0.89       5352 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>With <code>fitted()</code>, we compute the expected values for each state (with the exception of Nevada). Since the <code>MedianAgeMarriage_s</code> values for each state are in the date we used to fit the model, we’ll omit the <code>newdata</code> argument.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fitd_b5.<span class="dv">4</span> &lt;-<span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">fitted</span>(b5.<span class="dv">4</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">bind_cols</span>(d)
 
-<span class="kw">head</span>(fitd_b5.<span class="dv">4</span>)</code></pre></div>
+<span class="kw">head</span>(f)</code></pre></div>
 <pre><code>## # A tibble: 6 x 19
-##   Estimate Est.Error    Q2.5  Q97.5 Location Loc   Population MedianAgeMarria… Marriage Marriage.SE
-##      &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;    &lt;fct&gt;      &lt;dbl&gt;            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;
-## 1    0.433     0.122  0.195   0.677 Alabama  AL          4.78             25.3     20.2        1.27
-## 2    0.490     0.126  0.244   0.743 Alaska   AK          0.71             25.2     26          2.93
-## 3    0.146     0.106 -0.0627  0.358 Arizona  AZ          6.33             25.8     20.3        0.98
-## 4    1.01      0.180  0.657   1.36  Arkansas AR          2.92             24.3     26.4        1.7 
-## 5   -0.428     0.119 -0.667  -0.193 Califor… CA         37.2              26.8     19.1        0.39
-## 6    0.203     0.108 -0.0110  0.419 Colorado CO          5.03             25.7     23.5        1.24
-## # ... with 9 more variables: Divorce &lt;dbl&gt;, Divorce.SE &lt;dbl&gt;, WaffleHouses &lt;int&gt;, South &lt;int&gt;,
-## #   Slaves1860 &lt;int&gt;, Population1860 &lt;int&gt;, PropSlaves1860 &lt;dbl&gt;, MedianAgeMarriage_s &lt;dbl&gt;,
+##   Estimate Est.Error     Q2.5  Q97.5 Location Loc   Population
+##      &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;    &lt;fct&gt;      &lt;dbl&gt;
+## 1    0.433     0.119  2.00e-1  0.667 Alabama  AL          4.78
+## 2    0.490     0.124  2.48e-1  0.733 Alaska   AK          0.71
+## 3    0.146     0.105 -5.52e-2  0.354 Arizona  AZ          6.33
+## 4    1.01      0.176  6.56e-1  1.35  Arkansas AR          2.92
+## 5   -0.427     0.121 -6.65e-1 -0.194 Califor… CA         37.2 
+## 6    0.203     0.107 -8.95e-4  0.414 Colorado CO          5.03
+## # … with 12 more variables: MedianAgeMarriage &lt;dbl&gt;, Marriage &lt;dbl&gt;,
+## #   Marriage.SE &lt;dbl&gt;, Divorce &lt;dbl&gt;, Divorce.SE &lt;dbl&gt;,
+## #   WaffleHouses &lt;int&gt;, South &lt;int&gt;, Slaves1860 &lt;int&gt;,
+## #   Population1860 &lt;int&gt;, PropSlaves1860 &lt;dbl&gt;, MedianAgeMarriage_s &lt;dbl&gt;,
 ## #   Marriage_s &lt;dbl&gt;</code></pre>
 <p>After a little data processing, we can make Figure 5.3.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fitd_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> MedianAgeMarriage_s, <span class="dt">y =</span> Marriage_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
@@ -748,12 +764,12 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>Marriage_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())     </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-221-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-18-1.png" width="288" /></p>
 <p>We get the residuals with the well-named <code>residuals()</code> function. Much like with <code>brms::fitted()</code>, <code>brms::residuals()</code> returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: <code>Estimate</code>, <code>Est.Error</code>, <code>Q2.5</code>, and <code>Q97.5</code>. See the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> for details.</p>
 <p>With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_b5.<span class="dv">4</span> &lt;-<span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">residuals</span>(b5.<span class="dv">4</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="co"># To use this in ggplot2, we need to make it a tibble or data frame</span>
+<span class="st">  </span><span class="co"># to use this in ggplot2, we need to make it a tibble or data frame</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_cols</span>(d)
 
@@ -763,7 +779,7 @@ text &lt;-
          <span class="dt">Divorce =</span> <span class="fl">14.1</span>,
          <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;slower&quot;</span>, <span class="st">&quot;faster&quot;</span>))
 
-res_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st"> </span>
+r <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Estimate, <span class="dt">y =</span> Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">fullrange =</span> T,
               <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, 
@@ -772,13 +788,12 @@ res_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st">
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> text,
             <span class="kw">aes</span>(<span class="dt">label =</span> label)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(res_b5.<span class="dv">4</span><span class="op">$</span>Estimate),
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Marriage rate residuals&quot;</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(r<span class="op">$</span>Estimate),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="fl">14.1</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Marriage rate residuals&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-222-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="288" /></p>
 <p>To get the <code>MedianAgeMarriage_s</code> residuals, we have to fit the corresponding model first.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.4b &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -786,7 +801,8 @@ res_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st">
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <p>And now we’ll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">text &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">Estimate =</span> <span class="kw">c</span>(<span class="op">-</span><span class="st"> </span><span class="fl">0.7</span>, <span class="fl">0.5</span>),
@@ -805,13 +821,12 @@ res_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st">
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> text,
             <span class="kw">aes</span>(<span class="dt">label =</span> label)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(res_b5.<span class="dv">4</span><span class="op">$</span>Estimate),
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Age of marriage residuals&quot;</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(r<span class="op">$</span>Estimate),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="fl">14.1</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Age of marriage residuals&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())  </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-223-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
 </div>
 <div id="counterfactual-plots." class="section level4">
 <h4><span class="header-section-number">5.1.3.2</span> Counterfactual plots.</h4>
@@ -819,46 +834,46 @@ res_b5.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st">
 <p>A second sort of inferential plot displays the implied predictions of the model. I call these plots <em>counterfactual</em>, because they can be produced for any values of the predictor variable you like, even unobserved or impossible combinations like very high median age of marriage and very high marriage rate. There are no States with this combination, but in a counterfactual plot, you can ask the model for a prediction for such a State. (p. 129, <em>emphasis</em> in the original)</p>
 </blockquote>
 <p>Making Figure 5.5.a requires a little more data wrangling than before.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We need new `nd` data</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we need new `nd` data</span>
 nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">Marriage_s          =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">3</span>, <span class="dt">to =</span> <span class="dv">3</span>, <span class="dt">length.out =</span> <span class="dv">30</span>),
-         <span class="dt">MedianAgeMarriage_s =</span> <span class="kw">rep</span>(<span class="kw">mean</span>(d<span class="op">$</span>MedianAgeMarriage_s), <span class="dt">times =</span> <span class="dv">30</span>))
-  
+         <span class="dt">MedianAgeMarriage_s =</span> <span class="kw">mean</span>(d<span class="op">$</span>MedianAgeMarriage_s))
+
 <span class="kw">fitted</span>(b5.<span class="dv">3</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="co"># Since `fitted()` and `predict()` name their intervals the same way, we&#39;ll need to</span>
-<span class="st">  </span><span class="co"># `rename()` then to keep them straight.</span>
+<span class="st">  </span><span class="co"># since `fitted()` and `predict()` name their intervals the same way, </span>
+<span class="st">  </span><span class="co"># we&#39;ll need to `rename()` them to keep them straight</span>
 <span class="st">  </span><span class="kw">rename</span>(<span class="dt">f_ll =</span> Q2.<span class="dv">5</span>,
          <span class="dt">f_ul =</span> Q97.<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="co"># Note how we&#39;re just nesting the `predict()` code right inside `bind_cols()`</span>
+<span class="st">  </span><span class="co"># note how we&#39;re just nesting the `predict()` code right inside `bind_cols()`</span>
 <span class="st">  </span><span class="kw">bind_cols</span>(
     <span class="kw">predict</span>(b5.<span class="dv">3</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">      </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">      </span><span class="co"># Since we only need the intervals, we&#39;ll use `transmute()` rather than `mutate()`</span>
+<span class="st">      </span><span class="co"># since we only need the intervals, we&#39;ll use `transmute()` rather than `mutate()`</span>
 <span class="st">      </span><span class="kw">transmute</span>(<span class="dt">p_ll =</span> Q2.<span class="dv">5</span>,
-                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>)
-  ) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_cols</span>(nd) <span class="op">%&gt;%</span><span class="st"> </span>
+                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>),
+    <span class="co"># now tack on the `nd` data</span>
+    nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
-<span class="st">  </span><span class="co"># We&#39;re finally ready to plot</span>
+<span class="st">  </span><span class="co"># we&#39;re finally ready to plot</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Marriage_s, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> p_ll, <span class="dt">ymax =</span> p_ul),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> f_ll, <span class="dt">ymax =</span> f_ul),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> f_ll, <span class="dt">ymax =</span> f_ul),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>Marriage_s),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Counterfactual plot for which</span><span class="ch">\n</span><span class="st">MedianAgeMarriage_s = 0&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())     </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-224-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-21-1.png" width="288" /></p>
 <p>We follow the same process for Figure 5.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data</span>
 nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">MedianAgeMarriage_s =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">3</span>, <span class="dt">to =</span> <span class="fl">3.5</span>, <span class="dt">length.out =</span> <span class="dv">30</span>),
-         <span class="dt">Marriage_s          =</span> <span class="kw">rep</span>(<span class="kw">mean</span>(d<span class="op">$</span>Marriage_s), <span class="dt">times =</span> <span class="dv">30</span>))
+         <span class="dt">Marriage_s          =</span> <span class="kw">mean</span>(d<span class="op">$</span>Marriage_s))
   
 <span class="co"># `fitted()` + `predict()`</span>
 <span class="kw">fitted</span>(b5.<span class="dv">3</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -869,24 +884,24 @@ nd &lt;-<span class="st"> </span>
     <span class="kw">predict</span>(b5.<span class="dv">3</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">      </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">      </span><span class="kw">transmute</span>(<span class="dt">p_ll =</span> Q2.<span class="dv">5</span>,
-                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>)
+                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>),
+    nd
   ) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_cols</span>(nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="co"># plot</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> MedianAgeMarriage_s, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> p_ll, <span class="dt">ymax =</span> p_ul),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> f_ll, <span class="dt">ymax =</span> f_ul),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> f_ll, <span class="dt">ymax =</span> f_ul),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>MedianAgeMarriage_s),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="dv">14</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Counterfactual plot for which</span><span class="ch">\n</span><span class="st">Marriage_s = 0&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())   </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-225-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-22-1.png" width="288" /></p>
 <blockquote>
 <p>A tension with such plots, however, lies in their counterfactual nature. In the small world of the model, it is possible to change median age of marriage without also changing the marriage rate. But is this also possible in the large world of reality? Probably not…</p>
 <p>…If our goal is to intervene in the world, there may not be any realistic way to manipulate each predictor without also manipulating the others. This is a serious obstacle to applied science, whether you are an ecologist, an economist, or an epidemiologist [or a psychologist] (p. 131)</p>
@@ -912,10 +927,11 @@ nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> . <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Loc <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;UT&quot;</span>)),
             <span class="kw">aes</span>(<span class="dt">label =</span> Loc), 
             <span class="dt">hjust =</span> <span class="dv">0</span>, <span class="dt">nudge_x =</span> <span class="op">-</span><span class="st"> </span><span class="fl">0.65</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Observed divorce&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Predicted divorce&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Observed divorce&quot;</span>, 
+       <span class="dt">y =</span> <span class="st">&quot;Predicted divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-226-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-23-1.png" width="288" /></p>
 <p>In order to make Figure 5.6.b, we need to clarify the relationships among <code>fitted()</code>, <code>predict()</code>, and <code>residuals()</code>. Here’s my attempt in a table.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="st">`</span><span class="dt">brms function</span><span class="st">`</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;fitted&quot;</span>, <span class="st">&quot;predict&quot;</span>, <span class="st">&quot;residual&quot;</span>),
        <span class="dt">mean  =</span> <span class="kw">c</span>(<span class="st">&quot;same as the data&quot;</span>, <span class="st">&quot;same as the data&quot;</span>, <span class="st">&quot;in a deviance-score metric&quot;</span>),
@@ -956,14 +972,14 @@ nd &lt;-<span class="st"> </span>
     <span class="kw">predict</span>(b5.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">      </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">      </span><span class="kw">transmute</span>(<span class="dt">p_ll =</span> Q2.<span class="dv">5</span>,
-                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>)
+                <span class="dt">p_ul =</span> Q97.<span class="dv">5</span>),
+    d
   ) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_cols</span>(d) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="co"># here we put our `predict()` intervals into a deviance metric</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">p_ll =</span> Divorce <span class="op">-</span><span class="st"> </span>p_ll,
          <span class="dt">p_ul =</span> Divorce <span class="op">-</span><span class="st"> </span>p_ul) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
-<span class="st">  </span><span class="co"># The plot</span>
+<span class="st">  </span><span class="co"># now plot!</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">reorder</span>(Loc, Estimate), <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, 
              <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>) <span class="op">+</span>
@@ -985,7 +1001,7 @@ nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-228-1.png" width="216" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-25-1.png" width="216" /></p>
 <p>Compared to the last couple plots, Figure 5.6.c is pretty simple.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">residuals</span>(b5.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1000,13 +1016,12 @@ nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_text_repel</span>(<span class="dt">data =</span> . <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Loc <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>, <span class="st">&quot;AR&quot;</span>, <span class="st">&quot;MS&quot;</span>, <span class="st">&quot;AL&quot;</span>, <span class="st">&quot;GA&quot;</span>, <span class="st">&quot;SC&quot;</span>, <span class="st">&quot;ID&quot;</span>)),
                   <span class="kw">aes</span>(<span class="dt">label =</span> Loc),
                   <span class="dt">seed =</span> <span class="fl">5.6</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">45</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Waffles per capita&quot;</span>, <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">45</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(<span class="dv">0</span>, <span class="dv">40</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Waffles per capita&quot;</span>,
-       <span class="dt">y =</span> <span class="st">&quot;Divorce error&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce error&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-229-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-26-1.png" width="288" /></p>
 <p>More McElreath inspiration: “No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation” (p. 134). To keep our deflation train going, it’s worthwhile to repeat the message in McElreath’s <strong>Rethinking: Stats, huh, yeah what is it good for?</strong> box.</p>
 <blockquote>
 <p>Often people want statistical modeling to do things that statistical modeling cannot do. For example, we’d like to know whether an effect is real or rather spurious. Unfortunately, modeling merely quantifies uncertainty in the precise way that the model understands the problem. Usually answers to large world questions about truth and causation depend upon information not included in the model. For example, any observed correlation between an outcome and predictor could be eliminated or reversed once another predictor is added to the model. But if we cannot think of another predictor, we might never notice this. Therefore all statistical models are vulnerable to and demand critique, regardless of the precision of their estimates and apparent accuracy of their predictions. (p. 134)</p>
@@ -1014,29 +1029,31 @@ nd &lt;-<span class="st"> </span>
 </div>
 <div id="overthinking-simulating-spurious-association." class="section level4">
 <h4><span class="header-section-number">5.1.3.4</span> Overthinking: Simulating spurious association.</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>                             <span class="co"># number of cases</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">100</span>                             <span class="co"># number of cases</span>
 
-<span class="kw">set.seed</span>(<span class="dv">135</span>)                        <span class="co"># setting the seed makes the results reproducible</span>
+<span class="kw">set.seed</span>(<span class="dv">5</span>)                          <span class="co"># setting the seed makes the results reproducible</span>
 d &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x_real =</span> <span class="kw">rnorm</span>(N),          <span class="co"># x_real as Gaussian with mean 0 and SD 1 (i.e., the defaults)</span>
-         <span class="dt">x_spur =</span> <span class="kw">rnorm</span>(N, x_real),  <span class="co"># x_spur as Gaussian with mean = x_real</span>
-         <span class="dt">y =</span>      <span class="kw">rnorm</span>(N, x_real))  <span class="co"># y as Gaussian with mean = x_real</span></code></pre></div>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x_real =</span> <span class="kw">rnorm</span>(n),          <span class="co"># x_real as Gaussian with mean 0 and SD 1 (i.e., the defaults)</span>
+         <span class="dt">x_spur =</span> <span class="kw">rnorm</span>(n, x_real),  <span class="co"># x_spur as Gaussian with mean = x_real</span>
+         <span class="dt">y =</span>      <span class="kw">rnorm</span>(n, x_real))  <span class="co"># y as Gaussian with mean = x_real</span></code></pre></div>
 <p>Here are the quick <code>pairs()</code> plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(d, <span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-231-1.png" width="432" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-28-1.png" width="432" /></p>
 <p>We may as well fit a model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
     y <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>x_real <span class="op">+</span><span class="st"> </span>x_spur,
     <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
               <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
               <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-    <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+    <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+    <span class="dt">seed =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
-<span class="st">  </span><span class="kw">fixef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">fixef</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept    -0.05      0.10 -0.24  0.14
-## x_real        1.17      0.14  0.90  1.44
-## x_spur       -0.05      0.09 -0.23  0.11</code></pre>
+## Intercept     0.00      0.10 -0.19  0.19
+## x_real        0.98      0.15  0.69  1.27
+## x_spur        0.06      0.09 -0.12  0.24</code></pre>
 </div>
 </div>
 </div>
@@ -1054,7 +1071,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(kcal.per.g, mass, neocortex.perc) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">pairs</span>(<span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-234-1.png" width="432" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-31-1.png" width="432" /></p>
 <p>By just looking at that mess, do you think you could describe the associations of <code>mass</code> and <code>neocortex.perc</code> with the criterion, <code>kcal.per.g</code>? I couldn’t. It’s a good thing we have math.</p>
 <p>McElreath has us start of with a simple univaraible <code>milk</code> model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">5</span> &lt;-<span class="st"> </span>
@@ -1063,12 +1080,13 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <p>The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that “Rows containing NAs were excluded from the model.” This isn’t necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to Chapter 14 where we’ll learn how to do better.</p>
-<p>Here’s how to explicitly drop the cases with missing values on the predictor.</p>
+<p>To compliment how McElreath removed cases with missing values on our variables of interest with Base R <code>complete.cases()</code>, here we’ll do so with <code>tidyr::drop_na()</code> and a little help with <code>ends_with()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dcc &lt;-<span class="st"> </span>
 <span class="st">  </span>d <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="kw">complete.cases</span>(.))              </code></pre></div>
+<span class="st">  </span><span class="kw">drop_na</span>(<span class="kw">ends_with</span>(<span class="st">&quot;_s&quot;</span>))              </code></pre></div>
 <p>But anyway, let’s inspect the parameter summary.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">5</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
@@ -1080,12 +1098,12 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 ## 
 ## Population-Level Effects: 
 ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept         0.348     0.538   -0.708    1.435       5444 1.000
-## neocortex.perc    0.005     0.008   -0.011    0.020       5476 1.000
+## Intercept         0.357     0.560   -0.770    1.483       5182 1.002
+## neocortex.perc    0.004     0.008   -0.012    0.021       5196 1.002
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.192     0.039    0.133    0.282       3669 1.002
+## sigma    0.192     0.039    0.132    0.283       3532 1.000
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1093,7 +1111,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <p>Did you notice now we set <code>digits = 3</code> within <code>print()</code> much the way McElreath set <code>digits=3</code> within <code>precis()</code>?</p>
 <p>To get the brms answer to what McElreath did with <code>coef()</code>, we’ll use the <code>fixef()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(b5.<span class="dv">5</span>)[<span class="dv">2</span>] <span class="op">*</span><span class="st"> </span>(<span class="dv">76</span> <span class="op">-</span><span class="st"> </span><span class="dv">55</span>)</code></pre></div>
-<pre><code>## [1] 0.09660848</code></pre>
+<pre><code>## [1] 0.09351993</code></pre>
 <p>Yes, indeed, “that’s less than 0.1 kilocalories” (p. 137).</p>
 <p>Just for kicks, we’ll superimpose 50% intervals atop 95% intervals for the next few plots. Here’s Figure 5.7, top left.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">neocortex.perc =</span> <span class="dv">54</span><span class="op">:</span><span class="dv">80</span>)
@@ -1107,18 +1125,18 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> neocortex.perc, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, 
-             <span class="kw">aes</span>(<span class="dt">x =</span> neocortex.perc, <span class="dt">y =</span> kcal.per.g),
+             <span class="kw">aes</span>(<span class="dt">y =</span> kcal.per.g),
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>neocortex.perc), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>kcal.per.g)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-238-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-35-1.png" width="288" /></p>
 <p>Do note the <code>probs</code> argument in the <code>fitted()</code> code, above. Let’s make the <code>log_mass</code> variable.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dcc &lt;-
 <span class="st">  </span>dcc <span class="op">%&gt;%</span>
@@ -1131,7 +1149,8 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
       <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.9</span>))</code></pre></div>
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.9</span>),
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">6</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1142,12 +1161,12 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept    0.706     0.057    0.594    0.820       5265 1.001
-## log_mass    -0.032     0.024   -0.079    0.016       4634 1.000
+## Intercept    0.705     0.060    0.586    0.821       5103 1.000
+## log_mass    -0.032     0.024   -0.080    0.017       4577 1.000
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.184     0.039    0.126    0.278       3630 1.000
+## sigma    0.183     0.037    0.128    0.270       3747 1.001
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1164,18 +1183,18 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> log_mass, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, 
-             <span class="kw">aes</span>(<span class="dt">x =</span> log_mass, <span class="dt">y =</span> kcal.per.g),
+             <span class="kw">aes</span>(<span class="dt">y =</span> kcal.per.g),
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>log_mass), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>kcal.per.g)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-241-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-38-1.png" width="288" /></p>
 <p>Finally, we’re ready to fit with both predictors included in the “joint model.” Here’s the statistical formula</p>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -1195,7 +1214,8 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
       <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">2000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.999</span>))</code></pre></div>
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.999</span>),
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">7</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1206,13 +1226,13 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 ## 
 ## Population-Level Effects: 
 ##                Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## Intercept        -1.082     0.579   -2.206    0.078       3304 1.000
-## neocortex.perc    0.028     0.009    0.010    0.045       3222 1.000
-## log_mass         -0.096     0.028   -0.150   -0.041       3309 1.000
+## Intercept        -1.081     0.575   -2.206    0.078       3660 1.000
+## neocortex.perc    0.028     0.009    0.010    0.045       3561 1.000
+## log_mass         -0.096     0.028   -0.150   -0.040       3424 1.001
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample  Rhat
-## sigma    0.140     0.030    0.095    0.211       3366 1.000
+## sigma    0.139     0.030    0.095    0.212       3137 1.002
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1231,17 +1251,18 @@ b5.<span class="dv">7</span> <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> neocortex.perc, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, <span class="kw">aes</span>(<span class="dt">x =</span> neocortex.perc, <span class="dt">y =</span> kcal.per.g),
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, 
+             <span class="kw">aes</span>(<span class="dt">y =</span> kcal.per.g),
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>neocortex.perc), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>kcal.per.g)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-243-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-40-1.png" width="288" /></p>
 <p>And make Figure 5.7, bottom right.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">log_mass       =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="fl">2.5</span>, <span class="dt">to =</span> <span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">30</span>),
@@ -1256,40 +1277,42 @@ b5.<span class="dv">7</span> <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> log_mass, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, <span class="kw">aes</span>(<span class="dt">x =</span> log_mass, <span class="dt">y =</span> kcal.per.g),
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q25, <span class="dt">ymax =</span> Q75),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dcc, 
+             <span class="kw">aes</span>(<span class="dt">y =</span> kcal.per.g),
              <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>log_mass), 
                   <span class="dt">ylim =</span> <span class="kw">range</span>(dcc<span class="op">$</span>kcal.per.g)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-244-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-41-1.png" width="288" /></p>
 <blockquote>
 <p>What [this regression model did was] ask if species that have high neocortex percent <em>for their body mass</em> have higher milk energy. Likewise, the model [asked] if species with high body mass <em>for their neocortex percent</em> have higher milk energy. Bigger species, like apes, have milk with less energy. But species with more neocortex tend to have richer milk. The fact that these two variables, body size and neocortex, are correlated across species makes it hard to see these relationships, unless we statistically account for both. (pp. 140–141, <em>emphasis</em> in the original)</p>
 </blockquote>
 <div id="overthinking-simulating-a-masking-relationship." class="section level4">
 <h4><span class="header-section-number">5.2.0.1</span> Overthinking: Simulating a masking relationship.</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N   &lt;-<span class="st"> </span><span class="dv">100</span>     <span class="co"># number of cases</span>
-rho &lt;-<span class="st"> </span>.<span class="dv">7</span>      <span class="co"># correlation between x_pos and x_neg</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n   &lt;-<span class="st"> </span><span class="dv">100</span>   <span class="co"># number of cases</span>
+rho &lt;-<span class="st"> </span>.<span class="dv">7</span>    <span class="co"># correlation between x_pos and x_neg</span>
 
-<span class="kw">set.seed</span>(<span class="dv">141</span>)  <span class="co"># setting the seed makes the results reproducible</span>
+<span class="kw">set.seed</span>(<span class="dv">5</span>)  <span class="co"># setting the seed makes the results reproducible</span>
 d &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x_pos =</span> <span class="kw">rnorm</span>(N),                              <span class="co"># x_pos as a standard Gaussian</span>
-         <span class="dt">x_neg =</span> <span class="kw">rnorm</span>(N, rho<span class="op">*</span>x_pos, <span class="kw">sqrt</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>rho<span class="op">^</span><span class="dv">2</span>)),  <span class="co"># x_neg correlated with x_pos</span>
-         <span class="dt">y     =</span> <span class="kw">rnorm</span>(N, x_pos <span class="op">-</span><span class="st"> </span>x_neg))               <span class="co"># y equally associated with x_pos and x_neg</span></code></pre></div>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x_pos =</span> <span class="kw">rnorm</span>(n),                                <span class="co"># x_pos as a standard Gaussian</span>
+         <span class="dt">x_neg =</span> <span class="kw">rnorm</span>(n, rho <span class="op">*</span><span class="st"> </span>x_pos, <span class="kw">sqrt</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>rho<span class="op">^</span><span class="dv">2</span>)),  <span class="co"># x_neg correlated with x_pos</span>
+         <span class="dt">y     =</span> <span class="kw">rnorm</span>(n, x_pos <span class="op">-</span><span class="st"> </span>x_neg))                 <span class="co"># y equally associated with x_pos and x_neg</span></code></pre></div>
 <p>Here are the quick <code>pairs()</code> plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(d, <span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-246-1.png" width="432" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-43-1.png" width="432" /></p>
 <p>Here we fit the models with a little help from the <code>update()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.O.both &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
       y <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>x_pos <span class="op">+</span><span class="st"> </span>x_neg,
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
-                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)))
+                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
+      <span class="dt">seed =</span> <span class="dv">5</span>)
 
 b5.O.pos &lt;-
 <span class="st">  </span><span class="kw">update</span>(b5.O.both, 
@@ -1301,50 +1324,50 @@ b5.O.neg &lt;-
 <p>Compare the coefficients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(b5.O.pos)  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.01      0.13 -0.25  0.27
-## x_pos         0.32      0.14  0.04  0.59</code></pre>
+## Intercept    -0.01      0.12 -0.24  0.23
+## x_pos         0.26      0.13  0.01  0.51</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(b5.O.neg)  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.07      0.12 -0.17  0.32
-## x_neg        -0.51      0.14 -0.79 -0.23</code></pre>
+## Intercept     0.01      0.12 -0.23  0.24
+## x_neg        -0.29      0.11 -0.50 -0.06</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(b5.O.both) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##           Estimate Est.Error  Q2.5 Q97.5
-## Intercept     0.08      0.10 -0.13  0.28
-## x_pos         1.05      0.13  0.78  1.30
-## x_neg        -1.18      0.14 -1.45 -0.91</code></pre>
+## Intercept     0.00      0.10 -0.20  0.19
+## x_pos         0.97      0.15  0.67  1.24
+## x_neg        -0.90      0.13 -1.15 -0.64</code></pre>
 </div>
 </div>
-<div id="when-adding-variables-hurts" class="section level2">
-<h2><span class="header-section-number">5.3</span> When adding variables hurts</h2>
+<div id="multicollinearity" class="section level2">
+<h2><span class="header-section-number">5.3</span> Multicollinearity</h2>
 <blockquote>
-<p>Multicollinearity means very strong correlation between two or more predictor variables. The consequence of it is that the posterior distribution will say that a very large range of parameter values are plausible, from tiny associations to massive ones, even if all of the variables are in reality strongly associated with the outcome variable. (pp. 141–142)</p>
+<p>Multicollinearity means very strong correlation between two or more predictor variables. The consequence of it is that the posterior distribution will say that a very large range of parameter values are plausible, from tiny associations to massive ones, even if all of the variables are in reality strongly associated with the outcome. This frustrating phenomenon arises from the details of how statistical control works. So once you understand multicollinearity, you will better understand [multivariable] models in general. (pp. 141–142)</p>
 </blockquote>
 <div id="multicollinear-legs." class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Multicollinear legs.</h3>
 <p>Let’s simulate some leg data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
-<span class="kw">set.seed</span>(<span class="dv">531</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">100</span>
+<span class="kw">set.seed</span>(<span class="dv">5</span>)
 
 d &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">height    =</span> <span class="kw">rnorm</span>(N, <span class="dt">mean =</span> <span class="dv">10</span>, <span class="dt">sd =</span> <span class="dv">2</span>),
-         <span class="dt">leg_prop  =</span> <span class="kw">runif</span>(N, <span class="dt">min =</span> <span class="fl">0.4</span>, <span class="dt">max =</span> <span class="fl">0.5</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">leg_left  =</span> leg_prop<span class="op">*</span>height <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">0.02</span>),
-         <span class="dt">leg_right =</span> leg_prop<span class="op">*</span>height <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">0.02</span>))</code></pre></div>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">height    =</span> <span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">10</span>, <span class="dt">sd =</span> <span class="dv">2</span>),
+         <span class="dt">leg_prop  =</span> <span class="kw">runif</span>(n, <span class="dt">min =</span> <span class="fl">0.4</span>, <span class="dt">max =</span> <span class="fl">0.5</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">leg_left  =</span> leg_prop <span class="op">*</span><span class="st"> </span>height <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">0.02</span>),
+         <span class="dt">leg_right =</span> leg_prop <span class="op">*</span><span class="st"> </span>height <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">0.02</span>))</code></pre></div>
 <p><code>leg_left</code> and <code>leg_right</code> are <strong>highly</strong> correlated.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">select</span>(leg_left<span class="op">:</span>leg_right) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">cor</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">4</span>)</code></pre></div>
 <pre><code>##           leg_left leg_right
-## leg_left    1.0000    0.9995
-## leg_right   0.9995    1.0000</code></pre>
-<p>Have you ever even seen a <span class="math inline">\(\rho = .9995\)</span> correlation, before? Here it is in a plot.</p>
+## leg_left    1.0000    0.9996
+## leg_right   0.9996    1.0000</code></pre>
+<p>Have you ever even seen a <span class="math inline">\(\rho = .9996\)</span> correlation, before? Here it is in a plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> leg_left, <span class="dt">y =</span> leg_right)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-250-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="288" /></p>
 <p>Here’s our attempt to predict <code>height</code> with both legs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">8</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1352,7 +1375,8 @@ d &lt;-<span class="st"> </span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">10</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <p>Let’s inspect the damage.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">8</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
@@ -1364,13 +1388,13 @@ d &lt;-<span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.91      0.30     0.31     1.51       5353 1.00
-## leg_left      1.08      2.14    -3.12     5.27       2270 1.00
-## leg_right     0.92      2.15    -3.26     5.16       2271 1.00
+## Intercept     1.79      0.29     1.21     2.35       5680 1.00
+## leg_left      0.72      2.16    -3.45     5.04       1808 1.00
+## leg_right     1.12      2.16    -3.19     5.29       1810 1.00
 ## 
 ## Family Specific Parameters: 
 ##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.61      0.04     0.53     0.71       2798 1.00
+## sigma     0.61      0.04     0.53     0.70       3593 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1384,18 +1408,18 @@ d &lt;-<span class="st"> </span>
          <span class="dt">prob =</span> .<span class="dv">5</span>, 
          <span class="dt">prob_outer =</span> .<span class="dv">95</span>,
          <span class="dt">point_est =</span> <span class="st">&quot;median&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;The coefficient plot for the two-leg model&quot;</span>,
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;The coefficient plot for the two-leg model&quot;</span>,
        <span class="dt">subtitle =</span> <span class="st">&quot;Holy smokes; look at the widths of those betas!&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">text         =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>),
         <span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-252-1.png" width="624" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-49-1.png" width="624" /></p>
 <p>Now you can use the <code>brms::stanplot()</code> function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with <code>color_scheme_set()</code>.</p>
-<p>This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 5.8.a.</p>
+<p>This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 6.2.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(b5.<span class="dv">8</span>, <span class="dt">pars =</span> <span class="kw">parnames</span>(b5.<span class="dv">8</span>)[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>])</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-253-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-50-1.png" width="288" /></p>
 <p>If you’d like a nicer and more focused attempt, you might have to revert to the <code>posterior_samples()</code> function and a little ggplot2 code.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b5.<span class="dv">8</span>)
   
@@ -1404,40 +1428,42 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-254-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-51-1.png" width="288" /></p>
 <p>While we’re at it, you can make a similar plot with the <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html"><code>mcmc_scatter()</code> function</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mcmc_scatter</span>(<span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;b_leg_left&quot;</span>, <span class="st">&quot;b_leg_right&quot;</span>),
-               <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>, 
+<span class="st">  </span><span class="kw">mcmc_scatter</span>(<span class="dt">pars  =</span> <span class="kw">c</span>(<span class="st">&quot;b_leg_left&quot;</span>, <span class="st">&quot;b_leg_right&quot;</span>),
+               <span class="dt">size  =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>, 
                <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-255-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-52-1.png" width="288" /></p>
 <p>But wow, those coefficients look about as highly correlated as the predictors, just with the reversed sign.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(b_leg_left<span class="op">:</span>b_leg_right) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">cor</span>()</code></pre></div>
 <pre><code>##             b_leg_left b_leg_right
-## b_leg_left   1.0000000  -0.9994878
-## b_leg_right -0.9994878   1.0000000</code></pre>
-<p>On pages 143–144, McElreath clarified that “from the computer’s perspective, this likelihood is really:”</p>
+## b_leg_left   1.0000000  -0.9995795
+## b_leg_right -0.9995795   1.0000000</code></pre>
+<p>On page 165, McElreath clarified that “from the computer’s perspective, this model is simply:”</p>
 <p><span class="math display">\[
 \begin{eqnarray}
 y_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
 \mu_i &amp; = &amp; \alpha + (\beta_1 + \beta_2) x_i
 \end{eqnarray}
 \]</span></p>
-<p>Accordingly, here’s the posterior of the sum of the two regression coefficients, Figure 5.8.b. We’ll use <code>tidybayes::geom_halfeyeh()</code> to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
+<p>Accordingly, here’s the posterior of the sum of the two regression coefficients, Figure 6.2.b. We’ll use <code>tidybayes::geom_halfeyeh()</code> to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
+
+post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_leg_left <span class="op">+</span><span class="st"> </span>b_leg_right, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, 
+<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, 
                 <span class="dt">point_interval =</span> median_qi, <span class="dt">.width =</span> .<span class="dv">95</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Sum the multicollinear coefficients&quot;</span>,
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Sum the multicollinear coefficients&quot;</span>,
        <span class="dt">subtitle =</span> <span class="st">&quot;Marked by the median and 95% PIs&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-257-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-54-1.png" width="288" /></p>
 <p>Now we fit the model after ditching one of the leg lengths.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">9</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1445,7 +1471,8 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">10</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">9</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1455,22 +1482,27 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.92      0.30     0.33     1.50       6000 1.00
-## leg_left      2.00      0.07     1.87     2.14       6000 1.00
+##           Estimate Est.Error l-95% CI u-95% CI
+## Intercept     1.79      0.28     1.23     2.34
+## leg_left      1.84      0.06     1.72     1.96
+##           Eff.Sample Rhat
+## Intercept       7237 1.00
+## leg_left        7355 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.61      0.04     0.53     0.70       5468 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma     0.60      0.04     0.53     0.69
+##       Eff.Sample Rhat
+## sigma       7203 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>That posterior <span class="math inline">\(SD\)</span> looks much better. Compare this density to the one in Figure 5.8.b.</p>
+<p>That posterior <span class="math inline">\(SD\)</span> looks much better. Compare this density to the one in Figure 6.1.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(b5.<span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_leg_left, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, 
+<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, 
                 <span class="dt">point_interval =</span> median_qi, <span class="dt">.width =</span> .<span class="dv">95</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Just one coefficient needed&quot;</span>,
@@ -1478,7 +1510,7 @@ y_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
        <span class="dt">x        =</span> <span class="st">&quot;only b_leg_left, this time&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-259-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-56-1.png" width="288" /></p>
 <blockquote>
 <p><em>When two predictor variables are very strongly correlated, including both in a model may lead to confusion.</em> The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, <em>emphasis</em> in the original)</p>
 </blockquote>
@@ -1493,33 +1525,35 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(milk)
 <span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> <span class="ot">TRUE</span>)
 <span class="kw">library</span>(brms)</code></pre></div>
-<p>We’ll follow the text and fit the two univariable models, first. Note our use of <code>update()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># kcal.per.g regressed on perc.fat</span>
+<p>We’ll follow the text and fit the two univariable models, first. Note our use of the <code>update()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># `kcal.per.g` regressed on `perc.fat`</span>
 b5.<span class="dv">10</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
       kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>perc.fat,
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(.<span class="dv">6</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)
 
-<span class="co"># kcal.per.g regressed on perc.lactose</span>
+<span class="co"># `kcal.per.g` regressed on `perc.lactose`</span>
 b5.<span class="dv">11</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">update</span>(b5.<span class="dv">10</span>,
          <span class="dt">newdata =</span> d,
          <span class="dt">formula =</span> kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>perc.lactose)</code></pre></div>
+<p>Compare the coefficients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b5.<span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##             Estimate Est.Error   Q2.5  Q97.5
-## b_Intercept    0.301     0.039  0.222  0.379
+## b_Intercept    0.301     0.040  0.223  0.379
 ## b_perc.fat     0.010     0.001  0.008  0.012
-## sigma          0.080     0.012  0.061  0.106
-## lp__          24.009     1.275 20.807 25.490</code></pre>
+## sigma          0.080     0.011  0.061  0.106
+## lp__          24.017     1.275 20.740 25.490</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b5.<span class="dv">11</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##                Estimate Est.Error   Q2.5  Q97.5
-## b_Intercept       1.166     0.046  1.074  1.255
+## b_Intercept       1.167     0.047  1.078  1.261
 ## b_perc.lactose   -0.011     0.001 -0.012 -0.009
 ## sigma             0.067     0.010  0.051  0.090
-## lp__             28.788     1.276 25.532 30.279</code></pre>
+## lp__             28.776     1.273 25.582 30.273</code></pre>
 <p>If you’d like to get just the 95% intervals similar to the way McElreath reported them in the prose on page 146, you might use the handy <code>posterior_interval()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_interval</span>(b5.<span class="dv">10</span>)[<span class="dv">2</span>, ] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##  2.5% 97.5% 
@@ -1527,25 +1561,25 @@ b5.<span class="dv">11</span> &lt;-<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_interval</span>(b5.<span class="dv">11</span>)[<span class="dv">2</span>, ] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##   2.5%  97.5% 
 ## -0.012 -0.009</code></pre>
-<p>Now “watch what happens when we place both predictor varaibles in the same regression model” (p. 146)</p>
+<p>Now “watch what happens when we place both predictor varaibles in the same regression model” (p. 146).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">12</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">update</span>(b5.<span class="dv">11</span>,
          <span class="dt">newdata =</span> d,
          <span class="dt">formula =</span> kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>perc.fat <span class="op">+</span><span class="st"> </span>perc.lactose)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b5.<span class="dv">12</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##                Estimate Est.Error   Q2.5  Q97.5
-## b_Intercept       1.014     0.223  0.590  1.466
-## b_perc.fat        0.002     0.003 -0.004  0.007
-## b_perc.lactose   -0.009     0.003 -0.014 -0.004
+## b_Intercept       1.008     0.227  0.558  1.455
+## b_perc.fat        0.002     0.003 -0.003  0.007
+## b_perc.lactose   -0.009     0.003 -0.014 -0.003
 ## sigma             0.068     0.010  0.051  0.091
-## lp__             27.662     1.494 23.898 29.547</code></pre>
+## lp__             27.570     1.535 23.649 29.514</code></pre>
 <p>You can make custom pairs plots with <a href="https://cran.r-project.org/web/packages/GGally/index.html">GGalley</a>, which will also compute the point estimates for the bivariate correlations. Here’s a default plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages(&quot;GGally&quot;, dependencies = T)</span>
 <span class="kw">library</span>(GGally)
 
 <span class="kw">ggpairs</span>(<span class="dt">data =</span> d, <span class="dt">columns =</span> <span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">6</span>)) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-265-1.png" width="288" /></p>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-62-1.png" width="288" /></p>
 <p>But you can customize <a href="http://ggobi.github.io/ggally/">these</a>, too. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_diag &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...){
   <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span>
@@ -1559,17 +1593,18 @@ my_lower &lt;-<span class="st"> </span><span class="cf">function</span>(data, ma
 <span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> .<span class="dv">8</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)
   }
 
-<span class="co"># Then plug those custom functions into `ggpairs()`</span>
+<span class="co"># then plug those custom functions into `ggpairs()`</span>
 <span class="kw">ggpairs</span>(<span class="dt">data  =</span> d, <span class="dt">columns =</span> <span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">6</span>),
         <span class="dt">diag  =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_diag),
         <span class="dt">lower =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_lower)) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;white&quot;</span>),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>),
         <span class="dt">axis.text        =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-266-1.png" width="288" /></p>
-<p>McElreath wrote “these two variables form essentially a single axis of variation” (p. 148). You can really see that on the lower two scatter plots. You’ll note the <code>ggpairs()</code> plot also showed the Pearson’s correlation coefficients.</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-63-1.png" width="288" /></p>
+<p>Our two predictor “variables are negatively correlated, and so strongly so that they are nearly redundant. Either helps in predicting <code>kcal.per.g</code>, but neither helps much <em>once you already know the other</em>” (p. 148, <em>emphasis</em> in the original). You can really see that on the lower two scatter plots. You’ll note the <code>ggpairs()</code> plot also showed the Pearson’s correlation coefficients, se we don’t need to use the <code>cor()</code> function like McElreath did in the text.</p>
+<p>In the next section, we’ll run the simulation necessary for our version of Figure 5.10.</p>
 <div id="overthinking-simulating-collinearity." class="section level4">
 <h4><span class="header-section-number">5.3.2.1</span> Overthinking: Simulating collinearity.</h4>
 <p>First we’ll get the data and define the functions. You’ll note I’ve defined my <code>sim_coll()</code> a little differently from <code>sim.coll()</code> in the text. I’ve omitted <code>rep.sim.coll()</code> as an independent function altogether, but computed similar summary information with the <code>summarise()</code> code at the bottom of the block.</p>
@@ -1594,8 +1629,7 @@ n_rho  &lt;-<span class="st"> </span><span class="dv">30</span>
 d &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">seed =</span> <span class="dv">1</span><span class="op">:</span>n_seed) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">expand</span>(seed, <span class="dt">rho =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> .<span class="dv">99</span>, <span class="dt">length.out =</span> n_rho)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">parameter_sd =</span> purrr<span class="op">::</span><span class="kw">map2</span>(seed, rho, sim_coll)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">parameter_sd =</span> purrr<span class="op">::</span><span class="kw">map2_dbl</span>(seed, rho, sim_coll)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(rho) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># we&#39;ll `summarise()` our output by the mean and 95% intervals</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(parameter_sd),
@@ -1604,15 +1638,15 @@ d &lt;-
 <p>We’ve added 95% interval bands to our version of Figure 5.10.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rho, <span class="dt">y =</span> mean)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> ll, <span class="dt">ymax =</span> ul),
-              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> ll, <span class="dt">ymax =</span> ul),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(rho),
        <span class="dt">y =</span> <span class="st">&quot;parameter SD&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">0072</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-268-1.png" width="312" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-65-1.png" width="312" /></p>
 <p>Did you notice we used the base R <code>lm()</code> function to fit the models? As McElreath rightly pointed out, <code>lm()</code> presumes flat priors. Proper Bayesian modeling could improve on that. But then we’d have to wait for a whole lot of HMC chains to run and until our personal computers or the algorithms we use to fit our Bayesian models become orders of magnitude faster, we just don’t have time for that.</p>
 </div>
 </div>
@@ -1626,26 +1660,26 @@ d &lt;-
 <li>measure (a) the heights and (b) the presence of fungus</li>
 </ul>
 <p>Based on the design, let’s simulate our data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">100</span>
 
-<span class="kw">set.seed</span>(<span class="dv">17</span>)
+<span class="kw">set.seed</span>(<span class="dv">5</span>)
 d &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">h0        =</span> <span class="kw">rnorm</span>(N, <span class="dt">mean =</span> <span class="dv">10</span>, <span class="dt">sd =</span> <span class="dv">2</span>), 
-         <span class="dt">treatment =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>),
-         <span class="dt">fungus    =</span> <span class="kw">rbinom</span>(N, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> .<span class="dv">5</span> <span class="op">-</span><span class="st"> </span>treatment <span class="op">*</span><span class="st"> </span><span class="fl">0.4</span>),
-         <span class="dt">h1        =</span> h0 <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">mean =</span> <span class="dv">5</span> <span class="op">-</span><span class="st"> </span><span class="dv">3</span> <span class="op">*</span><span class="st"> </span>fungus, <span class="dt">sd =</span> <span class="dv">1</span>))</code></pre></div>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">h0        =</span> <span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">10</span>, <span class="dt">sd =</span> <span class="dv">2</span>), 
+         <span class="dt">treatment =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> n <span class="op">/</span><span class="st"> </span><span class="dv">2</span>),
+         <span class="dt">fungus    =</span> <span class="kw">rbinom</span>(n, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> .<span class="dv">5</span> <span class="op">-</span><span class="st"> </span>treatment <span class="op">*</span><span class="st"> </span><span class="fl">0.4</span>),
+         <span class="dt">h1        =</span> h0 <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">5</span> <span class="op">-</span><span class="st"> </span><span class="dv">3</span> <span class="op">*</span><span class="st"> </span>fungus, <span class="dt">sd =</span> <span class="dv">1</span>))</code></pre></div>
 <p>We’ll use <code>head()</code> to peek at the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">head</span>()</code></pre></div>
 <pre><code>## # A tibble: 6 x 4
 ##      h0 treatment fungus    h1
 ##   &lt;dbl&gt;     &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;
-## 1  7.97         0      1  12.9
-## 2  9.84         0      1  11.9
-## 3  9.53         0      0  15.8
-## 4  8.37         0      1  11.1
-## 5 11.5          0      1  13.1
-## 6  9.67         0      0  15.7</code></pre>
+## 1  8.32         0      0 14.3 
+## 2 12.8          0      0 18.5 
+## 3  7.49         0      1  8.97
+## 4 10.1          0      1 12.9 
+## 5 13.4          0      1 14.8 
+## 6  8.79         0      1 12.0</code></pre>
 <p>These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting <code>warmup = 1000</code> and <code>adapt_delta = 0.99</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">13</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1654,7 +1688,8 @@ d &lt;-<span class="st"> </span>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
       <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</code></pre></div>
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>),
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">13</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1664,15 +1699,22 @@ d &lt;-<span class="st"> </span>
 ##          total post-warmup samples = 4000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     5.25      0.54     4.24     6.31       3162 1.00
-## h0            0.96      0.05     0.86     1.06       2910 1.00
-## treatment     0.22      0.23    -0.23     0.67       2515 1.00
-## fungus       -3.01      0.27    -3.55    -2.50       1945 1.00
+##           Estimate Est.Error l-95% CI u-95% CI
+## Intercept     5.58      0.56     4.49     6.69
+## h0            0.94      0.05     0.83     1.05
+## treatment     0.05      0.22    -0.41     0.48
+## fungus       -2.76      0.26    -3.26    -2.26
+##           Eff.Sample Rhat
+## Intercept       2954 1.00
+## h0              3313 1.00
+## treatment        917 1.00
+## fungus          1950 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.08      0.08     0.93     1.25        900 1.01
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma     1.01      0.08     0.87     1.16
+##       Eff.Sample Rhat
+## sigma       3046 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1690,14 +1732,20 @@ d &lt;-<span class="st"> </span>
 ##          total post-warmup samples = 4000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     4.43      0.82     2.81     6.02       1928 1.00
-## h0            0.90      0.08     0.75     1.06       1919 1.00
-## treatment     1.26      0.32     0.60     1.86        909 1.00
+##           Estimate Est.Error l-95% CI u-95% CI
+## Intercept     5.49      0.83     3.87     7.13
+## h0            0.82      0.08     0.67     0.98
+## treatment     1.01      0.31     0.39     1.60
+##           Eff.Sample Rhat
+## Intercept       1882 1.00
+## h0              1956 1.00
+## treatment       1748 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.67      0.12     1.44     1.93       3179 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma     1.53      0.12     1.32     1.76
+##       Eff.Sample Rhat
+## sigma       1153 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1725,10 +1773,10 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 544
 ## Variables: 4
-## $ height &lt;dbl&gt; 151.7650, 139.7000, 136.5250, 156.8450, 145.4150, 163.8300, 149.2250, 168.9100, ...
-## $ weight &lt;dbl&gt; 47.82561, 36.48581, 31.86484, 53.04191, 41.27687, 62.99259, 38.24348, 55.47997, ...
-## $ age    &lt;dbl&gt; 63.0, 63.0, 65.0, 41.0, 51.0, 35.0, 32.0, 27.0, 19.0, 54.0, 47.0, 66.0, 73.0, 20...
-## $ male   &lt;int&gt; 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0,...</code></pre>
+## $ height &lt;dbl&gt; 151.765, 139.700, 136.525, 156.845,…
+## $ weight &lt;dbl&gt; 47.82561, 36.48581, 31.86484, 53.04…
+## $ age    &lt;dbl&gt; 63.0, 63.0, 65.0, 41.0, 51.0, 35.0,…
+## $ male   &lt;int&gt; 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,…</code></pre>
 <p>Let’s fit the first <code>height</code> model with the <code>male</code> dummy.</p>
 <p>Note. The uniform prior McElreath used in the text in conjunction with the <code>brms::brm()</code> function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing <code>warmup</code>, and increasing <code>adapt_delta</code>, switching out the uniform prior did the trick. Anticipating Chapter 8, I recommend you use a weakly-regularizing half Cauchy for <span class="math inline">\(\sigma\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">15</span> &lt;-<span class="st"> </span>
@@ -1737,7 +1785,9 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">178</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
+<p>Check the summary.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">15</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1747,13 +1797,18 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept   134.82      1.58   131.73   137.98       5326 1.00
-## male          7.33      2.28     2.91    11.84       6000 1.00
+##           Estimate Est.Error l-95% CI u-95% CI
+## Intercept   134.84      1.61   131.63   137.99
+## male          7.23      2.31     2.66    11.84
+##           Eff.Sample Rhat
+## Intercept       6321 1.00
+## male            6303 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    27.38      0.85    25.77    29.12       5562 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma    27.38      0.84    25.80    29.06
+##       Eff.Sample Rhat
+## sigma       6445 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1764,15 +1819,17 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
 post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">male_height =</span> b_Intercept <span class="op">+</span><span class="st"> </span>b_male) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mean_qi</span>(<span class="dt">.width =</span> .<span class="dv">89</span>)</code></pre></div>
-<pre><code>##   male_height   .lower   .upper .width .point .interval
-## 1    142.1501 139.5012 144.8688   0.89   mean        qi</code></pre>
+<pre><code>##   male_height   .lower  .upper .width .point
+## 1    142.0679 139.3071 144.855   0.89   mean
+##   .interval
+## 1        qi</code></pre>
 <p>You can also do this with <code>fitted()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">male =</span> <span class="dv">1</span>)
 
 <span class="kw">fitted</span>(b5.<span class="dv">15</span>,
        <span class="dt">newdata =</span> nd)</code></pre></div>
 <pre><code>##      Estimate Est.Error     Q2.5    Q97.5
-## [1,] 142.1501  1.683553 138.8598 145.5328</code></pre>
+## [1,] 142.0679  1.723907 138.7037 145.4691</code></pre>
 <p>And you could even plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fitted</span>(b5.<span class="dv">15</span>,
        <span class="dt">newdata =</span> nd,
@@ -1787,7 +1844,7 @@ post <span class="op">%&gt;%</span>
        <span class="dt">x =</span> <span class="kw">expression</span>(alpha <span class="op">+</span><span class="st"> </span>beta[<span class="st">&quot;male&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-279-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-76-1.png" width="288" /></p>
 <div id="overthinking-re-parameterizing-the-model." class="section level4">
 <h4><span class="header-section-number">5.4.1.1</span> Overthinking: Re-parameterizing the model.</h4>
 <p>The reparameterized model follows the form</p>
@@ -1807,7 +1864,8 @@ post <span class="op">%&gt;%</span>
       height <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>male <span class="op">+</span><span class="st"> </span>female,
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">178</span>, <span class="dv">100</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.15b)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1817,13 +1875,18 @@ post <span class="op">%&gt;%</span>
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##        Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## male     142.34      1.72   138.88   145.71       6000 1.00
-## female   134.64      1.63   131.42   137.83       5523 1.00
+##        Estimate Est.Error l-95% CI u-95% CI
+## male     142.35      1.70   139.04   145.66
+## female   134.63      1.61   131.48   137.70
+##        Eff.Sample Rhat
+## male         5863 1.00
+## female       5442 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma    27.40      0.83    25.82    29.11       6000 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma    27.38      0.84    25.79    29.12
+##       Eff.Sample Rhat
+## sigma       5000 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1840,7 +1903,7 @@ post <span class="op">%&gt;%</span>
        <span class="dt">x =</span> <span class="kw">expression</span>(alpha[<span class="st">&quot;male&quot;</span>] <span class="op">-</span><span class="st"> </span>alpha[<span class="st">&quot;female&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-282-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-79-1.png" width="288" /></p>
 </div>
 </div>
 <div id="many-categories." class="section level3">
@@ -1864,7 +1927,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 ## 2 New World Monkey
 ## 3 Old World Monkey
 ## 4              Ape</code></pre>
-<p>As <code>clade</code> has 4 categories, let’s convert these to 4 dummy variables.</p>
+<p>As <code>clade</code> has 4 categories, let’s use <code>ifelse()</code> to convert these to 4 dummy variables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>
 <span class="st">  </span>d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">clade_nwm =</span> <span class="kw">ifelse</span>(clade <span class="op">==</span><span class="st"> &quot;New World Monkey&quot;</span>, <span class="dv">1</span>, <span class="dv">0</span>),
@@ -1879,7 +1942,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
       <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.8</span>))</code></pre></div>
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.<span class="dv">16</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1889,15 +1952,22 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     0.55      0.04     0.46     0.63       5004 1.00
-## clade_nwm     0.17      0.06     0.05     0.29       5170 1.00
-## clade_owm     0.24      0.07     0.11     0.38       5466 1.00
-## clade_s      -0.04      0.07    -0.18     0.10       5639 1.00
+##           Estimate Est.Error l-95% CI u-95% CI
+## Intercept     0.55      0.04     0.46     0.63
+## clade_nwm     0.17      0.06     0.05     0.29
+## clade_owm     0.24      0.07     0.11     0.38
+## clade_s      -0.04      0.07    -0.18     0.11
+##           Eff.Sample Rhat
+## Intercept       4771 1.00
+## clade_nwm       4874 1.00
+## clade_owm       5031 1.00
+## clade_s         5308 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.13      0.02     0.10     0.17       6000 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma     0.13      0.02     0.10     0.17
+##       Eff.Sample Rhat
+## sigma       5397 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1908,13 +1978,20 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">posterior_samples</span>()
 
 <span class="kw">head</span>(post)</code></pre></div>
-<pre><code>##   b_Intercept b_clade_nwm b_clade_owm   b_clade_s     sigma     lp__
-## 1   0.5717516  0.12407657   0.1861115  0.05084326 0.1260440 8.534763
-## 2   0.6085899  0.05062493   0.1826776 -0.23742201 0.1453868 6.312997
-## 3   0.6097739  0.05830101   0.1905792 -0.21664781 0.1441479 7.143810
-## 4   0.4802237  0.26795837   0.3555692  0.07913364 0.1168783 8.398402
-## 5   0.5683417  0.13334897   0.2495454 -0.06637570 0.1432624 9.889714
-## 6   0.5730083  0.10396287   0.2007451 -0.06423019 0.1051636 9.979689</code></pre>
+<pre><code>##   b_Intercept b_clade_nwm b_clade_owm    b_clade_s
+## 1   0.5575386   0.1932337   0.2276990  0.043159795
+## 2   0.4800805   0.2532488   0.2068195  0.010154008
+## 3   0.5449358   0.1740914   0.3652368  0.006283387
+## 4   0.4359255   0.2517067   0.3219673  0.128277164
+## 5   0.5666455   0.2048127   0.2708950 -0.025282543
+## 6   0.5470347   0.2507482   0.1803077 -0.098373317
+##       sigma     lp__
+## 1 0.1275090 9.271587
+## 2 0.1325052 7.787578
+## 3 0.1182335 7.644787
+## 4 0.1410273 6.847354
+## 5 0.1228911 9.358463
+## 6 0.1195493 7.604434</code></pre>
 <p>You might compute averages for each category and summarizing the results with the transpose of base R’s <code>apply()</code> function, rounding to two digits of precision.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post<span class="op">$</span>mu_ape &lt;-<span class="st"> </span>post<span class="op">$</span>b_Intercept
 post<span class="op">$</span>mu_nwm &lt;-<span class="st"> </span>post<span class="op">$</span>b_Intercept <span class="op">+</span><span class="st"> </span>post<span class="op">$</span>b_clade_nwm
@@ -1924,9 +2001,9 @@ post<span class="op">$</span>mu_s   &lt;-<span class="st"> </span>post<span clas
 <span class="kw">round</span>(<span class="kw">t</span>(<span class="kw">apply</span>(post[ ,<span class="dv">7</span><span class="op">:</span><span class="dv">10</span>], <span class="dv">2</span>, quantile, <span class="kw">c</span>(.<span class="dv">5</span>, .<span class="dv">025</span>, .<span class="dv">975</span>))), <span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##         50% 2.5% 97.5%
 ## mu_ape 0.55 0.46  0.63
-## mu_nwm 0.72 0.63  0.80
-## mu_owm 0.79 0.69  0.89
-## mu_s   0.51 0.39  0.62</code></pre>
+## mu_nwm 0.71 0.63  0.80
+## mu_owm 0.79 0.68  0.89
+## mu_s   0.51 0.39  0.63</code></pre>
 <p>Here’s a more tidyverse sort of way to get the same thing, but this time with means and HPDIs via the <code>tidybayes::mean_hdi()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">mu_ape =</span> b_Intercept,
@@ -1941,9 +2018,9 @@ post<span class="op">$</span>mu_s   &lt;-<span class="st"> </span>post<span clas
 ##   key    value .lower .upper .width .point .interval
 ##   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
 ## 1 mu_ape  0.55   0.46   0.63   0.95 mean   hdi      
-## 2 mu_nwm  0.71   0.63   0.8    0.95 mean   hdi      
+## 2 mu_nwm  0.71   0.62   0.8    0.95 mean   hdi      
 ## 3 mu_owm  0.79   0.68   0.89   0.95 mean   hdi      
-## 4 mu_s    0.51   0.39   0.62   0.95 mean   hdi</code></pre>
+## 4 mu_s    0.51   0.4    0.63   0.95 mean   hdi</code></pre>
 <p>You could also summarize with <code>fitted()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">clade_nwm =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),
              <span class="dt">clade_owm =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),
@@ -1966,18 +2043,20 @@ post<span class="op">$</span>mu_s   &lt;-<span class="st"> </span>post<span clas
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-291-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-88-1.png" width="576" /></p>
 <p>And there are multiple ways to compute summary statistics for the difference between <code>NWM</code> and <code>OWM</code>, too.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># base R</span>
 <span class="kw">quantile</span>(post<span class="op">$</span>mu_nwm <span class="op">-</span><span class="st"> </span>post<span class="op">$</span>mu_owm, <span class="dt">probs =</span> <span class="kw">c</span>(.<span class="dv">5</span>, .<span class="dv">025</span>, .<span class="dv">975</span>))</code></pre></div>
 <pre><code>##         50%        2.5%       97.5% 
-## -0.07164873 -0.20835597  0.06272147</code></pre>
+## -0.07362279 -0.21514058  0.06410530</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># tidyverse + tidybayes</span>
 post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">dif =</span> mu_nwm <span class="op">-</span><span class="st"> </span>mu_owm) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">median_qi</span>(dif)</code></pre></div>
-<pre><code>##           dif    .lower     .upper .width .point .interval
-## 1 -0.07164873 -0.208356 0.06272147   0.95 median        qi</code></pre>
+<span class="st">  </span><span class="kw">median_qi</span>()</code></pre></div>
+<pre><code>##           dif     .lower    .upper .width .point
+## 1 -0.07362279 -0.2151406 0.0641053   0.95 median
+##   .interval
+## 1        qi</code></pre>
 </div>
 <div id="adding-regular-predictor-variables." class="section level3">
 <h3><span class="header-section-number">5.4.3</span> Adding regular predictor variables.</h3>
@@ -1993,7 +2072,8 @@ post <span class="op">%&gt;%</span>
       kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>clade,
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(.<span class="dv">6</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b5.16_alt)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -2003,15 +2083,22 @@ post <span class="op">%&gt;%</span>
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##                     Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## cladeApe                0.54      0.04     0.46     0.63       6000 1.00
-## cladeNewWorldMonkey     0.71      0.04     0.63     0.80       6000 1.00
-## cladeOldWorldMonkey     0.79      0.05     0.68     0.89       6000 1.00
-## cladeStrepsirrhine      0.51      0.06     0.39     0.62       6000 1.00
+##                     Estimate Est.Error l-95% CI
+## cladeApe                0.55      0.04     0.46
+## cladeNewWorldMonkey     0.71      0.04     0.63
+## cladeOldWorldMonkey     0.79      0.05     0.68
+## cladeStrepsirrhine      0.51      0.06     0.39
+##                     u-95% CI Eff.Sample Rhat
+## cladeApe                0.64       7023 1.00
+## cladeNewWorldMonkey     0.80       7420 1.00
+## cladeOldWorldMonkey     0.89       6222 1.00
+## cladeStrepsirrhine      0.63       7233 1.00
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.13      0.02     0.10     0.18       6000 1.00
+##       Estimate Est.Error l-95% CI u-95% CI
+## sigma     0.13      0.02     0.10     0.17
+##       Eff.Sample Rhat
+## sigma       4777 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -2043,52 +2130,135 @@ post <span class="op">%&gt;%</span>
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## [1] grid      parallel  stats     graphics  grDevices
+## [6] utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] GGally_1.4.0       tidybayes_1.0.1    bayesplot_1.6.0    fiftystater_1.0.1  ggrepel_0.8.0     
-##  [6] forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6        purrr_0.2.5        readr_1.1.1       
-## [11] tidyr_0.8.1        tibble_1.4.2       tidyverse_1.2.1    brms_2.5.0         Rcpp_0.12.18      
-## [16] rstan_2.17.3       StanHeaders_2.17.2 ggplot2_3.0.0     
+##  [1] rethinking_1.80        viridis_0.5.1         
+##  [3] viridisLite_0.3.0      ggbeeswarm_0.6.0      
+##  [5] dutchmasters_0.1.0     ghibli_0.2.0          
+##  [7] hrbrthemes_0.6.0       broom_0.5.1           
+##  [9] rcartocolor_1.0.0      gridExtra_2.3         
+## [11] loo_2.1.0              ggthemes_4.0.1        
+## [13] wesanderson_0.3.6.9000 GGally_1.4.0          
+## [15] bindrcpp_0.2.2         tidybayes_1.0.4       
+## [17] bayesplot_1.6.0        fiftystater_1.0.1     
+## [19] ggrepel_0.8.0          forcats_0.3.0         
+## [21] stringr_1.3.1          dplyr_0.8.0.1         
+## [23] purrr_0.2.5            readr_1.1.1           
+## [25] tidyr_0.8.1            tibble_2.1.1          
+## [27] tidyverse_1.2.1        brms_2.8.0            
+## [29] Rcpp_1.0.0             rstan_2.18.2          
+## [31] StanHeaders_2.18.0-1   ggplot2_3.1.0         
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
-##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
-##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
-##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
-##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
-##  [19] labeling_0.3              mnormt_1.5-5              bridgesampling_0.4-0     
-##  [22] rprojroot_1.3-2           coda_0.19-1               xfun_0.3                 
-##  [25] R6_2.2.2                  markdown_0.8              HDInterval_0.2.0         
-##  [28] reshape_0.8.7             assertthat_0.2.0          promises_1.0.1           
-##  [31] scales_0.5.0              beeswarm_0.2.3            gtable_0.2.0             
-##  [34] rlang_0.2.1               extrafontdb_1.0           lazyeval_0.2.1           
-##  [37] broom_0.4.5               inline_0.3.15             yaml_2.1.19              
-##  [40] reshape2_1.4.3            abind_1.4-5               modelr_0.1.2             
-##  [43] threejs_0.3.1             crosstalk_1.0.0           backports_1.1.2          
-##  [46] httpuv_1.4.4.2            rsconnect_0.8.8           extrafont_0.17           
-##  [49] tools_3.5.1               bookdown_0.7              psych_1.8.4              
-##  [52] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
-##  [55] base64enc_0.1-3           progress_1.2.0            prettyunits_1.0.2        
-##  [58] zoo_1.8-2                 LaplacesDemon_16.1.1      haven_1.1.2              
-##  [61] magrittr_1.5              colourpicker_1.0          mvtnorm_1.0-8            
-##  [64] matrixStats_0.54.0        hms_0.4.2                 shinyjs_1.0              
-##  [67] mime_0.5                  evaluate_0.10.1           arrayhelpers_1.0-20160527
-##  [70] xtable_1.8-2              shinystan_2.5.0           readxl_1.1.0             
-##  [73] gridExtra_2.3             rstantools_1.5.0          compiler_3.5.1           
-##  [76] maps_3.3.0                crayon_1.3.4              htmltools_0.3.6          
-##  [79] later_0.7.3               lubridate_1.7.4           MASS_7.3-50              
-##  [82] Matrix_1.2-14             cli_1.0.0                 bindr_0.1.1              
-##  [85] igraph_1.2.1              pkgconfig_2.0.1           foreign_0.8-70           
-##  [88] xml2_1.2.0                svUnit_0.7-12             dygraphs_1.1.1.5         
-##  [91] vipor_0.4.5               rvest_0.3.2               digest_0.6.15            
-##  [94] rmarkdown_1.10            cellranger_1.1.0          shiny_1.1.0              
-##  [97] gtools_3.8.1              nlme_3.1-137              jsonlite_1.5             
-## [100] bindrcpp_0.2.2            mapproj_1.2.6             viridisLite_0.3.0        
-## [103] pillar_1.2.3              lattice_0.20-35           loo_2.0.0                
-## [106] httr_1.3.1                glue_1.2.0                xts_0.10-2               
-## [109] shinythemes_1.1.1         pander_0.6.2              stringi_1.2.3</code></pre>
+##   [1] pacman_0.4.6             
+##   [2] utf8_1.1.4               
+##   [3] ggstance_0.3             
+##   [4] tidyselect_0.2.5         
+##   [5] htmlwidgets_1.2          
+##   [6] munsell_0.5.0            
+##   [7] codetools_0.2-15         
+##   [8] DT_0.4                   
+##   [9] miniUI_0.1.1.1           
+##  [10] withr_2.1.2              
+##  [11] Brobdingnag_1.2-5        
+##  [12] colorspace_1.3-2         
+##  [13] highr_0.7                
+##  [14] knitr_1.20               
+##  [15] rstudioapi_0.7           
+##  [16] stats4_3.5.1             
+##  [17] Rttf2pt1_1.3.7           
+##  [18] labeling_0.3             
+##  [19] bridgesampling_0.4-0     
+##  [20] rprojroot_1.3-2          
+##  [21] coda_0.19-2              
+##  [22] generics_0.0.2           
+##  [23] xfun_0.3                 
+##  [24] R6_2.3.0                 
+##  [25] markdown_0.8             
+##  [26] HDInterval_0.2.0         
+##  [27] reshape_0.8.7            
+##  [28] assertthat_0.2.0         
+##  [29] promises_1.0.1           
+##  [30] scales_1.0.0             
+##  [31] beeswarm_0.2.3           
+##  [32] gtable_0.2.0             
+##  [33] processx_3.2.1           
+##  [34] rlang_0.3.1              
+##  [35] extrafontdb_1.0          
+##  [36] lazyeval_0.2.1           
+##  [37] inline_0.3.15            
+##  [38] yaml_2.1.19              
+##  [39] reshape2_1.4.3           
+##  [40] abind_1.4-5              
+##  [41] modelr_0.1.2             
+##  [42] threejs_0.3.1            
+##  [43] crosstalk_1.0.0          
+##  [44] backports_1.1.2          
+##  [45] httpuv_1.4.4.2           
+##  [46] rsconnect_0.8.8          
+##  [47] extrafont_0.17           
+##  [48] tools_3.5.1              
+##  [49] bookdown_0.9             
+##  [50] RColorBrewer_1.1-2       
+##  [51] ggridges_0.5.0           
+##  [52] plyr_1.8.4               
+##  [53] base64enc_0.1-3          
+##  [54] ps_1.2.1                 
+##  [55] prettyunits_1.0.2        
+##  [56] zoo_1.8-2                
+##  [57] LaplacesDemon_16.1.1     
+##  [58] haven_1.1.2              
+##  [59] magrittr_1.5             
+##  [60] colourpicker_1.0         
+##  [61] mvtnorm_1.0-8            
+##  [62] matrixStats_0.54.0       
+##  [63] hms_0.4.2                
+##  [64] shinyjs_1.0              
+##  [65] mime_0.5                 
+##  [66] evaluate_0.10.1          
+##  [67] arrayhelpers_1.0-20160527
+##  [68] xtable_1.8-2             
+##  [69] shinystan_2.5.0          
+##  [70] readxl_1.1.0             
+##  [71] rstantools_1.5.0         
+##  [72] compiler_3.5.1           
+##  [73] maps_3.3.0               
+##  [74] crayon_1.3.4             
+##  [75] htmltools_0.3.6          
+##  [76] later_0.7.3              
+##  [77] lubridate_1.7.4          
+##  [78] MASS_7.3-50              
+##  [79] Matrix_1.2-14            
+##  [80] cli_1.0.1                
+##  [81] bindr_0.1.1              
+##  [82] igraph_1.2.1             
+##  [83] pkgconfig_2.0.2          
+##  [84] xml2_1.2.0               
+##  [85] svUnit_0.7-12            
+##  [86] dygraphs_1.1.1.5         
+##  [87] vipor_0.4.5              
+##  [88] rvest_0.3.2              
+##  [89] callr_3.1.0              
+##  [90] digest_0.6.18            
+##  [91] rmarkdown_1.10           
+##  [92] cellranger_1.1.0         
+##  [93] gdtools_0.1.7            
+##  [94] shiny_1.1.0              
+##  [95] gtools_3.8.1             
+##  [96] nlme_3.1-137             
+##  [97] jsonlite_1.5             
+##  [98] mapproj_1.2.6            
+##  [99] fansi_0.4.0              
+## [100] pillar_1.3.1             
+## [101] lattice_0.20-35          
+## [102] httr_1.3.1               
+## [103] pkgbuild_1.0.2           
+## [104] glue_1.3.0               
+## [105] xts_0.10-2               
+## [106] shinythemes_1.1.1        
+## [107] stringi_1.2.3</code></pre>
 
 </div>
 </div>
@@ -2118,7 +2288,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -2128,6 +2298,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
@@ -2145,7 +2319,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
