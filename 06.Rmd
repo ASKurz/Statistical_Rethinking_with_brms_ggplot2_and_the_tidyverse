@@ -1135,7 +1135,7 @@ library(brms)
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-```{r b6.11__b6.14, cache = T, message = F, warning = F, results = 'hide'}
+```{r b6.11__b6.14, message = F, warning = F, results = 'hide'}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
@@ -1191,11 +1191,9 @@ b6.14 <-
 
 #### Comparing WAIC values.
 
-In brms, you can get a model's WAIC value with either `WAIC()` or `waic()`.
+In brms, you can get a model's WAIC value with the `waic()` function.
 
 ```{r}
-WAIC(b6.14)
-
 waic(b6.14)
 ```
 
@@ -1223,7 +1221,7 @@ b6.11$waic
 
 *Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output. But second, it set’s you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
 
-```{r w_b6.12_through_b6.14, cache = T}
+```{r w_b6.12_through_b6.14}
 # compute and save the WAIC information for the next three models
 b6.12 <- add_criterion(b6.12, "waic")
 b6.13 <- add_criterion(b6.13, "waic")
