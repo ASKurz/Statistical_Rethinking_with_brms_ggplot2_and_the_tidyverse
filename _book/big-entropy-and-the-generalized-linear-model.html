@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <title>9 Big Entropy and the Generalized Linear Model | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:title" content="9 Big Entropy and the Generalized Linear Model | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:title" content="9 Big Entropy and the Generalized Linear Model | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta name="twitter:site" content="@SolomonKurz" />
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2018-09-26">
+<meta name="date" content="2019-04-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="counting-and-classification.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -100,6 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
@@ -183,7 +185,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
-<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
@@ -333,6 +335,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -365,6 +374,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
 <li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
 </ul></li>
+<li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -410,7 +420,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">9.1</span> Maximum entropy</h2>
 <blockquote>
 <p>In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution <span class="math inline">\(p\)</span> with probabilities <span class="math inline">\(p_i\)</span> for each possible event <span class="math inline">\(i\)</span> turns out to be just the average log-probability:</p>
-<p><span class="math display">\[H(p) = - \sum_i p_i \text{ log } p_i\]</span> This function is known as <em>information entropy</em>. (p. 268, <em>emphasis</em> in the original)</p>
+<p><span class="math display">\[H(p) = - \sum_i p_i \text{ log } p_i\]</span></p>
+<p>This function is known as <em>information entropy</em>. (p. 268, <em>emphasis</em> in the original)</p>
 </blockquote>
 <p>Let’s execute the code for the pebbles-in-buckets example.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
@@ -424,7 +435,7 @@ d &lt;-
 
 <span class="co"># this is our analogue to McElreath&#39;s `lapply()` code</span>
 d <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate_all</span>(<span class="kw">funs</span>(. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate_all</span>(<span class="op">~</span><span class="st"> </span>. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># the next few lines constitute our analogue to his `sapply()` code</span>
 <span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -437,11 +448,13 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 ## 3 c     0.950
 ## 4 d     1.47 
 ## 5 e     1.61</code></pre>
-<p>We’re almost ready to plot. Which brings us to color. For the plots in this chapter, we’ll be taking our color palettes from the <a href="https://github.com/ewenme/ghibli">ghibli package</a>, which provides palettes based on scenes from anime films by the Studio Ghibli.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ghibli)</code></pre></div>
+<p>For more on the formula syntax we used within <code>mutate_all()</code>, you might check out <a href="https://dplyr.tidyverse.org/reference/mutate_all.html">this</a> or <a href="https://purrr.tidyverse.org/reference/map.html">this</a>.</p>
+<p>Anyway, we’re almost ready to plot. Which brings us to color. For the plots in this chapter, we’ll be taking our color palettes from the <a href="https://github.com/ewenme/ghibli">ghibli package</a>, which provides palettes based on scenes from anime films by the Studio Ghibli.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;ghibli&quot;, dependencies = T)</span>
+<span class="kw">library</span>(ghibli)</code></pre></div>
 <p>The main function is <code>ghibli_palette()</code> which you can use to both preview the palettes before using them and also index in order to use specific colors. For example, we’ll play with “MarnieMedium1”, first.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-471-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
 <pre><code>## [1] &quot;#7BA46C&quot; &quot;#602D31&quot; &quot;#008D91&quot; &quot;#0A789F&quot; &quot;#C6A28A&quot; &quot;#61B8D3&quot; &quot;#EACF9E&quot;</code></pre>
 <p>Now we’re ready to plot five of the six panels of Figure 9.1.</p>
@@ -464,11 +477,11 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">6</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">1</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>letter, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-472-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-21-1.png" width="576" /></p>
 <p>We might plot the final panel like so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># the next four lines are the same from above</span>
-<span class="st">  </span><span class="kw">mutate_all</span>(<span class="kw">funs</span>(. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate_all</span>(<span class="op">~</span><span class="st"> </span>. <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(.)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">h =</span> <span class="op">-</span><span class="kw">sum</span>(<span class="kw">ifelse</span>(value <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">0</span>, value <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(value)))) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -488,7 +501,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
        <span class="dt">y =</span> <span class="st">&quot;entropy&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium1&quot;</span>)[<span class="dv">6</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-473-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-22-1.png" width="288" /></p>
 <p>“The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution” (p. 271). Among the pebbles, the maximum entropy distribution was <code>e</code> (i.e., the uniform).</p>
 <div id="gaussian." class="section level3">
 <h3><span class="header-section-number">9.1.1</span> Gaussian.</h3>
@@ -498,7 +511,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <p><span class="math display">\[\sigma^2 = \frac{\alpha^2 \Gamma (3/\beta)}{\Gamma (1/\beta)}\]</span></p>
 <p>So if you do the algebra, you’ll see that you can compute <span class="math inline">\(\alpha\)</span> for a given <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\beta\)</span> like so:</p>
 <p><span class="math display">\[\alpha = \sqrt{ \frac{\sigma^2 \Gamma (1/\beta)}{\Gamma (3/\beta)} }\]</span></p>
-<p>I go the formula from <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia.com</a>. Don’t judge. We can wrap that formula in a custom function, <code>alpha_per_beta()</code>, use it to solve for the desired <span class="math inline">\(\beta\)</span> values, and plot. But one more thing: McElreath didn’t tell us exactly which <span class="math inline">\(\beta\)</span> values the left panel of Figure 9.2 was based on. So the plot below is my best guess.</p>
+<p>I got the formula from <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia.com</a>. Don’t judge. We can wrap that formula in a custom function, <code>alpha_per_beta()</code>, use it to solve for the desired <span class="math inline">\(\beta\)</span> values, and plot. But one more thing: McElreath didn’t tell us exactly which <span class="math inline">\(\beta\)</span> values the left panel of Figure 9.2 was based on. So the plot below is my best guess.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha_per_beta &lt;-<span class="st"> </span><span class="cf">function</span>(variance, beta){
   <span class="kw">sqrt</span>((variance <span class="op">*</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>beta)) <span class="op">/</span><span class="st"> </span><span class="kw">gamma</span>(<span class="dv">3</span> <span class="op">/</span><span class="st"> </span>beta))
 }
@@ -526,7 +539,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-474-1.png" width="336" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-23-1.png" width="336" /></p>
 <p>Here’s Figure 9.2’s right panel.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">mu       =</span> <span class="dv">0</span>,
        <span class="dt">variance =</span> <span class="dv">1</span>,
@@ -545,9 +558,9 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">6</span>]) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="fl">1.34</span>, <span class="fl">1.42</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MarnieMedium2&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-475-1.png" width="336" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-24-1.png" width="336" /></p>
 <p>If you look closely, you’ll see our version doesn’t quite match up with McElreath’s. Over x-axis values of 2 to 4, they match up pretty well. But as you go from 2 to 1, you’ll see our line drops off more steeply than his did. [And no, <code>coord_cartesian()</code> isn’t the problem.] If you can figure out why our numbers diverged, <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">please share the answer</a>.</p>
 <p>But getting back on track:</p>
 <blockquote>
@@ -556,13 +569,13 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 </div>
 <div id="binomial." class="section level3">
 <h3><span class="header-section-number">9.1.2</span> Binomial.</h3>
-<p>The binomial likelihood entials</p>
+<p>The binomial likelihood entails</p>
 <blockquote>
 <p>counting the numbers of ways that a given observation could arise, according to assumptions… If only two things can happen (blue or white marble, for example), and there’s a constant chance <span class="math inline">\(p\)</span> of each across <span class="math inline">\(n\)</span> trials, then the probability of observing <span class="math inline">\(y\)</span> events of type 1 and <span class="math inline">\(n - y\)</span> events of type 2 is:</p>
 <p><span class="math display">\[\text{Pr} (y | n, p) = \frac{n!}{y! (n - y)!} p^y (1 - p)^{n - y}\]</span></p>
 <p>It may help to note that the fraction with the factorials is just saying how many different ordered sequences of <span class="math inline">\(n\)</span> outcomes have a count of <span class="math inline">\(y\)</span>. (p. 275)</p>
 </blockquote>
-<p>For me, that last sentence made more sense when I walked it out in a example. To do so, lets wrap that fraction of factorials into a function.</p>
+<p>For me, that last sentence made more sense when I walked it out in an example. To do so, lets wrap that fraction of factorials into a function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">count_ways &lt;-<span class="st"> </span><span class="cf">function</span>(n, y){
   <span class="co"># n = the total number of trials (i.e., the number of rows in your vector)</span>
   <span class="co"># y = the total number of 1s (i.e., successes) in your vector</span>
@@ -618,7 +631,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">2</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;PonyoMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>distribution)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-479-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-28-1.png" width="384" /></p>
 <p>If we go step by step, we might count the expected value for each <code>distribution</code> like follows.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">gather</span>(sequence, probability, <span class="op">-</span>distribution) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -687,7 +700,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 n_rep &lt;-<span class="st"> </span><span class="fl">1e5</span>
 
 d &lt;-
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">seed =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">seed =</span> <span class="dv">1</span><span class="op">:</span>n_rep) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sim =</span> <span class="kw">map2</span>(seed, <span class="fl">1.4</span>, sim_p)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">unnest</span>()
 
@@ -746,15 +759,15 @@ d &lt;-
                <span class="dt">adjust =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="co"># note the data statements for the next two geoms</span>
 <span class="st">  </span><span class="kw">geom_linerange</span>(<span class="dt">data =</span> subset_d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(seed) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>),
-             <span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> height),
-             <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
+                 <span class="kw">aes</span>(<span class="dt">ymin =</span> <span class="dv">0</span>, <span class="dt">ymax =</span> height),
+                 <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> subset_d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(seed) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>),
-             <span class="kw">aes</span>(<span class="dt">y =</span> height <span class="op">+</span><span class="st"> </span>.<span class="dv">5</span>, <span class="dt">label =</span> distribution)) <span class="op">+</span>
+            <span class="kw">aes</span>(<span class="dt">y =</span> height <span class="op">+</span><span class="st"> </span>.<span class="dv">5</span>, <span class="dt">label =</span> distribution)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;Entropy&quot;</span>,
                      <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> .<span class="dv">7</span>, <span class="dt">to =</span> <span class="fl">1.2</span>, <span class="dt">by =</span> .<span class="dv">1</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-489-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-38-1.png" width="384" /></p>
 <p>Did you notice how our <code>adjust = 1/4</code> with <code>geom_density()</code> served a similar function to the <code>adj=0.1</code> in McElreath’s <code>dens()</code> code. Anyways, here’s the right panel.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ranked_d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(rank <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">87373</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">1500</span>, n_rep <span class="op">-</span><span class="st"> </span><span class="dv">10</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -771,7 +784,7 @@ d &lt;-
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">7</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;LaputaMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>distribution)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-490-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="384" /></p>
 <p>Because we were simulating, our values won’t match up identically with those in the text. But we’re pretty close, eh?</p>
 <p>Since we saved our <code>sim_p()</code> output in a nested tibble, which we then <code>unnested()</code>, there’s no need to separate the entropy values from the distributional values the way McElreath did in R code 9.11. If we wanted to determine our highest entropy value–and the corresponding <code>seed</code> and <code>p</code> values, while we’re at it–, we might use <code>max(h)</code> within <code>slice()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ranked_d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -800,8 +813,8 @@ d &lt;-
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">probability =</span> .<span class="dv">35</span> <span class="op">+</span><span class="st"> </span>x <span class="op">*</span><span class="st"> </span>.<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> probability)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_rect</span>(<span class="kw">aes</span>(<span class="dt">xmin =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">xmax =</span> <span class="dv">3</span>,
-                <span class="dt">ymin =</span> <span class="dv">0</span>,  <span class="dt">ymax =</span> <span class="dv">1</span>),
+<span class="st">  </span><span class="kw">geom_rect</span>(<span class="dt">xmin =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">xmax =</span> <span class="dv">3</span>,
+            <span class="dt">ymin =</span> <span class="dv">0</span>,  <span class="dt">ymax =</span> <span class="dv">1</span>,
             <span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">5</span>]) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">7</span>]) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">linetype =</span> probability <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">color =</span> probability <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>),
@@ -817,7 +830,7 @@ d &lt;-
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;MononokeMedium&quot;</span>)[<span class="dv">1</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-493-1.png" width="312" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-42-1.png" width="312" /></p>
 <blockquote>
 <p>For a count outcome <span class="math inline">\(y\)</span> for which each observation arises from <span class="math inline">\(n\)</span> trials and with constant expected value <span class="math inline">\(np\)</span>, the binomial distribution has maximum entropy. So it’s the least informative distribution that satisfies our prior knowledge of the outcomes <span class="math inline">\(y\)</span>. (p. 281)</p>
 </blockquote>
@@ -846,11 +859,11 @@ f(p_i) &amp; = &amp; \alpha + \beta x_i
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>label, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-494-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-43-1.png" width="576" /></p>
 <p>The Gaussian:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
 
@@ -863,11 +876,11 @@ f(p_i) &amp; = &amp; \alpha + \beta x_i
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">4</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-495-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-44-1.png" width="288" /></p>
 <p>Here is the Poisson.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
 
@@ -880,11 +893,11 @@ f(p_i) &amp; = &amp; \alpha + \beta x_i
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-496-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-45-1.png" width="288" /></p>
 <p>Finally, the Binomial:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">length_out &lt;-<span class="st"> </span><span class="dv">100</span>
 
@@ -897,11 +910,11 @@ f(p_i) &amp; = &amp; \alpha + \beta x_i
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">5</span>]),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;SpiritedMedium&quot;</span>)[<span class="dv">7</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-497-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-46-1.png" width="288" /></p>
 <div id="rethinking-a-likelihood-is-a-prior." class="section level4">
 <h4><span class="header-section-number">9.2.1.1</span> Rethinking: A likelihood is a prior.</h4>
 <blockquote>
@@ -915,7 +928,7 @@ f(p_i) &amp; = &amp; \alpha + \beta x_i
 <blockquote>
 <p>To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)</p>
 </blockquote>
-<p>These models generally follow the form:</p>
+<p>These models generally follow the form</p>
 <p><span class="math display">\[
 \begin{eqnarray}
 y_i &amp; \sim &amp; \text{Some distribution} (\theta_i, \phi) \\
@@ -979,7 +992,7 @@ p2 &lt;-
 <span class="kw">library</span>(gridExtra)
 
 <span class="kw">grid.arrange</span>(p1, p2, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-498-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="576" /></p>
 <blockquote>
 <p>The key lesson for now is just that no regression coefficient, such as <span class="math inline">\(\beta\)</span>, from a GLM ever produces a constant change on the outcome scale. Recall that we defined interaction (Chapter 7) as a situation in which the effect of a predictor depends upon the value of another predictor. Well now every predictor essentially interacts with itself, because the impact of a change in a predictor depends upon the value of the predictor before the change…</p>
 <p>The second very common link function is the log link. This link function maps a parameter that is defined over only positive real values onto a linear model. For example, suppose we want to model the standard deviation of <span class="math inline">\(\sigma\)</span> of a Gaussian distribution so it is a function of a predictor variable <span class="math inline">\(x\)</span>. The parameter <span class="math inline">\(\sigma\)</span> must be positive, because a standard deviation cannot be negative no can it be zero. The model might look like:</p>
@@ -992,7 +1005,7 @@ y_i &amp; \sim &amp; \text{Normal} (\mu, \sigma_i) \\
 <p>In this model, the mean <span class="math inline">\(\mu\)</span> is constant, but the standard deviation scales with the value <span class="math inline">\(x_i\)</span>. (p. 268)</p>
 </blockquote>
 <p>This kind of model is trivial in the brms framework, which you can learn more about in Bürkner’s vignette <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. Before moving on with the text, let’s detour and see how we might fit such a model. First, let’s simulate some continuous data <code>y</code> for which the <span class="math inline">\(SD\)</span> is effected by a dummy variable <code>x</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">100</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">9</span>)
 (
   d &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">rep</span>(<span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">each =</span> <span class="dv">100</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1001,17 +1014,17 @@ y_i &amp; \sim &amp; \text{Normal} (\mu, \sigma_i) \\
 <pre><code>## # A tibble: 200 x 2
 ##        x     y
 ##    &lt;int&gt; &lt;dbl&gt;
-##  1     0  95.0
-##  2     0 101. 
-##  3     0  99.2
-##  4     0 109. 
-##  5     0 101. 
-##  6     0 103. 
-##  7     0  94.2
-##  8     0 107. 
-##  9     0  91.7
+##  1     0  92.3
+##  2     0  91.8
+##  3     0  98.6
+##  4     0  97.2
+##  5     0 104. 
+##  6     0  88.1
+##  7     0 112. 
+##  8     0  99.8
+##  9     0  97.5
 ## 10     0  96.4
-## # ... with 190 more rows</code></pre>
+## # … with 190 more rows</code></pre>
 <p>We can view what data like these look like with aid from <code>tidybayes::geom_halfeyeh()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -1027,17 +1040,18 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">axis.ticks.y     =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-500-1.png" width="336" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-49-1.png" width="336" /></p>
 <p>Even though the means of <code>y</code> are the same for both levels of the <code>x</code> dummy, the variance for <code>x == 1</code> is substantially larger than that for <code>x == 0</code>. Let’s open brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(brms)</code></pre></div>
 <p>For such a model, we have two formulas: one for <span class="math inline">\(\mu\)</span> and one for <span class="math inline">\(\sigma\)</span>. We wrap both within the <code>bf()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b9.<span class="dv">1</span> &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, 
+<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d,
       <span class="dt">family =</span> gaussian,
       <span class="kw">bf</span>(y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, sigma <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>x),
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">100</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>),   <span class="dt">class =</span> Intercept, <span class="dt">dpar =</span> sigma),
-                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>),   <span class="dt">class =</span> b,         <span class="dt">dpar =</span> sigma)))</code></pre></div>
+                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>),   <span class="dt">class =</span> b,         <span class="dt">dpar =</span> sigma)),
+      <span class="dt">seed =</span> <span class="dv">9</span>)</code></pre></div>
 <p>Do note our use of the <code>dpar</code> arguments in the <code>prior</code> statements. Here’s the summary.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b9.<span class="dv">1</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
@@ -1050,9 +1064,9 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 ## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept         100.12      0.84    98.49   101.79       3908 1.00
-## sigma_Intercept     2.33      0.07     2.19     2.48       4000 1.00
-## sigma_x             0.44      0.10     0.25     0.64       3511 1.00
+## Intercept          99.04      0.86    97.37   100.77       4170 1.00
+## sigma_Intercept     2.26      0.07     2.13     2.40       3784 1.00
+## sigma_x             0.73      0.10     0.53     0.92       4257 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1062,12 +1076,12 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 
 <span class="kw">head</span>(post)</code></pre></div>
 <pre><code>##   b_Intercept b_sigma_Intercept b_sigma_x      lp__
-## 1   100.96575          2.343610 0.3280349 -803.0574
-## 2    99.11466          2.427497 0.3172929 -803.3017
-## 3    99.16897          2.427403 0.3362887 -803.1968
-## 4    99.60756          2.304547 0.4648463 -801.7567
-## 5   100.67528          2.317253 0.4149594 -801.9135
-## 6    99.55635          2.224778 0.7179760 -805.5759</code></pre>
+## 1    99.75865          2.281731 0.6406836 -818.1893
+## 2    99.83593          2.244206 0.7046929 -817.9380
+## 3    98.40659          2.282739 0.7512565 -817.9899
+## 4    98.59265          2.222575 0.6913024 -818.1270
+## 5    98.05085          2.244358 0.7482665 -818.1277
+## 6    99.71570          2.306853 0.6402182 -818.0676</code></pre>
 <p>With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of <code>y</code> based on the <code>x</code> dummy and then examine them in a plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="st">`</span><span class="dt">x == 0</span><span class="st">`</span> =<span class="st"> </span><span class="kw">exp</span>(b_sigma_Intercept <span class="op">+</span><span class="st"> </span>b_sigma_x <span class="op">*</span><span class="st"> </span><span class="dv">0</span>),
@@ -1079,13 +1093,14 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
                 <span class="dt">point_interval =</span> median_qi, <span class="dt">.width =</span> .<span class="dv">95</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">4</span>],
                                    <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">6</span>])) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>,
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(sigma[x]), <span class="dt">y =</span> <span class="ot">NULL</span>,
        <span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Model-implied &quot;</span>, <span class="kw">italic</span>(SD), <span class="st">&quot;s by group x&quot;</span>))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="fl">1.5</span>, <span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y     =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">ghibli_palette</span>(<span class="st">&quot;KikiMedium&quot;</span>)[<span class="dv">7</span>]))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-504-1.png" width="336" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-53-1.png" width="336" /></p>
 <p>And if we looked back at the data, those <span class="math inline">\(SD\)</span> estimates are just what we’d expect.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(x) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1093,9 +1108,9 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <pre><code>## # A tibble: 2 x 2
 ##       x    sd
 ##   &lt;int&gt; &lt;dbl&gt;
-## 1     0  10.2
-## 2     1  15.9</code></pre>
-<p>For more on models like this, check out Christakis’ <a href="https://www.edge.org/response-detail/25437"><em>2014: What scientific idea is ready for retirement?</em></a> or <a href="http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright"><em>The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright</em></a>.</p>
+## 1     0   9.6
+## 2     1  19.8</code></pre>
+<p>For more on models like this, check out Christakis’ <a href="https://www.edge.org/response-detail/25437"><em>2014: What scientific idea is ready for retirement?</em></a> or <a href="http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright"><em>The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright</em></a>. Kruschke also covered modeling <span class="math inline">\(\sigma\)</span> a bit in his <a href="http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/"><em>Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan</em></a>. Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, <a href="https://psyarxiv.com/4kfjp/"><em>Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity</em></a>.</p>
 <p>But getting back to the text,</p>
 <blockquote>
 <p>what the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving <span class="math inline">\(\text{log} (\sigma_i) = \alpha + \beta x_i\)</span> for <span class="math inline">\(\sigma_i\)</span> yields the inverse link:</p>
@@ -1142,7 +1157,7 @@ p2 &lt;-
 
 <span class="co"># finally, we&#39;re ready to mash the plots together and behold their nerdy glory</span>
 <span class="kw">grid.arrange</span>(p1, p2, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-506-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-55-1.png" width="576" /></p>
 </div>
 </div>
 <div id="reference-8" class="section level2 unnumbered">
@@ -1164,52 +1179,75 @@ p2 &lt;-
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
-##  [1] brms_2.5.0      Rcpp_0.12.18    tidybayes_1.0.1 gridExtra_2.3   ghibli_0.1.1    forcats_0.3.0  
-##  [7] stringr_1.3.1   dplyr_0.7.6     purrr_0.2.5     readr_1.1.1     tidyr_0.8.1     tibble_1.4.2   
-## [13] ggplot2_3.0.0   tidyverse_1.2.1
+##  [1] viridis_0.5.1          viridisLite_0.3.0      ggbeeswarm_0.6.0      
+##  [4] dutchmasters_0.1.0     hrbrthemes_0.6.0       broom_0.5.1           
+##  [7] rcartocolor_1.0.0      rethinking_1.80        loo_2.1.0             
+## [10] ggthemes_4.0.1         wesanderson_0.3.6.9000 GGally_1.4.0          
+## [13] bayesplot_1.6.0        fiftystater_1.0.1      bindrcpp_0.2.2        
+## [16] ggrepel_0.8.0          rstan_2.18.2           StanHeaders_2.18.0-1  
+## [19] gridExtra_2.3          brms_2.8.0             Rcpp_1.0.0            
+## [22] tidybayes_1.0.4        ghibli_0.2.0           forcats_0.3.0         
+## [25] stringr_1.3.1          dplyr_0.8.0.1          purrr_0.2.5           
+## [28] readr_1.1.1            tidyr_0.8.1            tibble_2.1.1          
+## [31] ggplot2_3.1.0          tidyverse_1.2.1       
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
-##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
-##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
-##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
-##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
-##  [19] bayesplot_1.6.0           labeling_0.3              rstan_2.17.3             
-##  [22] mnormt_1.5-5              bridgesampling_0.4-0      rprojroot_1.3-2          
-##  [25] coda_0.19-1               xfun_0.3                  R6_2.2.2                 
-##  [28] markdown_0.8              HDInterval_0.2.0          reshape_0.8.7            
-##  [31] assertthat_0.2.0          promises_1.0.1            scales_0.5.0             
-##  [34] beeswarm_0.2.3            gtable_0.2.0              rethinking_1.59          
-##  [37] rlang_0.2.1               extrafontdb_1.0           lazyeval_0.2.1           
-##  [40] broom_0.4.5               inline_0.3.15             yaml_2.1.19              
-##  [43] reshape2_1.4.3            abind_1.4-5               modelr_0.1.2             
-##  [46] threejs_0.3.1             crosstalk_1.0.0           backports_1.1.2          
-##  [49] httpuv_1.4.4.2            rsconnect_0.8.8           extrafont_0.17           
-##  [52] tools_3.5.1               bookdown_0.7              psych_1.8.4              
-##  [55] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
-##  [58] base64enc_0.1-3           progress_1.2.0            prettyunits_1.0.2        
-##  [61] zoo_1.8-2                 LaplacesDemon_16.1.1      haven_1.1.2              
-##  [64] magrittr_1.5              colourpicker_1.0          mvtnorm_1.0-8            
-##  [67] matrixStats_0.54.0        hms_0.4.2                 shinyjs_1.0              
-##  [70] mime_0.5                  evaluate_0.10.1           arrayhelpers_1.0-20160527
-##  [73] xtable_1.8-2              shinystan_2.5.0           readxl_1.1.0             
-##  [76] rstantools_1.5.0          compiler_3.5.1            maps_3.3.0               
-##  [79] crayon_1.3.4              StanHeaders_2.17.2        htmltools_0.3.6          
-##  [82] later_0.7.3               lubridate_1.7.4           MASS_7.3-50              
-##  [85] Matrix_1.2-14             cli_1.0.0                 bindr_0.1.1              
-##  [88] igraph_1.2.1              pkgconfig_2.0.1           foreign_0.8-70           
-##  [91] xml2_1.2.0                svUnit_0.7-12             dygraphs_1.1.1.5         
-##  [94] vipor_0.4.5               rvest_0.3.2               digest_0.6.15            
-##  [97] rmarkdown_1.10            cellranger_1.1.0          shiny_1.1.0              
-## [100] gtools_3.8.1              nlme_3.1-137              jsonlite_1.5             
-## [103] bindrcpp_0.2.2            mapproj_1.2.6             viridisLite_0.3.0        
-## [106] pillar_1.2.3              lattice_0.20-35           loo_2.0.0                
-## [109] httr_1.3.1                glue_1.2.0                xts_0.10-2               
-## [112] shinythemes_1.1.1         pander_0.6.2              stringi_1.2.3</code></pre>
+##   [1] readxl_1.1.0              backports_1.1.2          
+##   [3] plyr_1.8.4                igraph_1.2.1             
+##   [5] lazyeval_0.2.1            svUnit_0.7-12            
+##   [7] crosstalk_1.0.0           rstantools_1.5.0         
+##   [9] inline_0.3.15             digest_0.6.18            
+##  [11] htmltools_0.3.6           rsconnect_0.8.8          
+##  [13] fansi_0.4.0               magrittr_1.5             
+##  [15] modelr_0.1.2              extrafont_0.17           
+##  [17] matrixStats_0.54.0        xts_0.10-2               
+##  [19] extrafontdb_1.0           prettyunits_1.0.2        
+##  [21] colorspace_1.3-2          rvest_0.3.2              
+##  [23] haven_1.1.2               xfun_0.3                 
+##  [25] callr_3.1.0               crayon_1.3.4             
+##  [27] jsonlite_1.5              bindr_0.1.1              
+##  [29] zoo_1.8-2                 glue_1.3.0               
+##  [31] gtable_0.2.0              pkgbuild_1.0.2           
+##  [33] Rttf2pt1_1.3.7            abind_1.4-5              
+##  [35] scales_1.0.0              mvtnorm_1.0-8            
+##  [37] miniUI_0.1.1.1            xtable_1.8-2             
+##  [39] ggstance_0.3              stats4_3.5.1             
+##  [41] DT_0.4                    htmlwidgets_1.2          
+##  [43] httr_1.3.1                threejs_0.3.1            
+##  [45] arrayhelpers_1.0-20160527 RColorBrewer_1.1-2       
+##  [47] pkgconfig_2.0.2           reshape_0.8.7            
+##  [49] utf8_1.1.4                tidyselect_0.2.5         
+##  [51] labeling_0.3              rlang_0.3.1              
+##  [53] reshape2_1.4.3            later_0.7.3              
+##  [55] munsell_0.5.0             cellranger_1.1.0         
+##  [57] tools_3.5.1               cli_1.0.1                
+##  [59] pacman_0.4.6              generics_0.0.2           
+##  [61] ggridges_0.5.0            evaluate_0.10.1          
+##  [63] yaml_2.1.19               processx_3.2.1           
+##  [65] knitr_1.20                nlme_3.1-137             
+##  [67] mime_0.5                  xml2_1.2.0               
+##  [69] compiler_3.5.1            shinythemes_1.1.1        
+##  [71] rstudioapi_0.7            beeswarm_0.2.3           
+##  [73] stringi_1.2.3             ps_1.2.1                 
+##  [75] blogdown_0.8              Brobdingnag_1.2-5        
+##  [77] gdtools_0.1.7             lattice_0.20-35          
+##  [79] Matrix_1.2-14             markdown_0.8             
+##  [81] shinyjs_1.0               pillar_1.3.1             
+##  [83] bridgesampling_0.4-0      httpuv_1.4.4.2           
+##  [85] R6_2.3.0                  bookdown_0.9             
+##  [87] promises_1.0.1            vipor_0.4.5              
+##  [89] codetools_0.2-15          colourpicker_1.0         
+##  [91] MASS_7.3-50               gtools_3.8.1             
+##  [93] assertthat_0.2.0          rprojroot_1.3-2          
+##  [95] withr_2.1.2               shinystan_2.5.0          
+##  [97] hms_0.4.2                 grid_3.5.1               
+##  [99] coda_0.19-2               rmarkdown_1.10           
+## [101] shiny_1.1.0               lubridate_1.7.4          
+## [103] base64enc_0.1-3           dygraphs_1.1.1.5</code></pre>
 
 </div>
 </div>
@@ -1239,7 +1277,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -1249,6 +1287,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
@@ -1266,7 +1308,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
