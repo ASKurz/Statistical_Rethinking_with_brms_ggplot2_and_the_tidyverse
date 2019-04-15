@@ -391,8 +391,8 @@ We don't have a `coeftab()` function in brms like for rethinking. But as we did 
 library(broom)
 
 tibble(model  = str_c("b11.", 1:3)) %>% 
-  mutate(fit  = map(model, get)) %>% 
-  mutate(tidy = map(fit, tidy)) %>% 
+  mutate(fit  = purrr::map(model, get)) %>% 
+  mutate(tidy = purrr::map(fit, tidy)) %>% 
   unnest(tidy) %>% 
   select(model, term, estimate) %>% 
   filter(term != "lp__") %>% 
