@@ -34,14 +34,16 @@ d <-
 
 # this is our analogue to McElreath's `lapply()` code
 d %>% 
-  mutate_all(funs(. / sum(.))) %>% 
+  mutate_all(~ . / sum(.)) %>% 
   # the next few lines constitute our analogue to his `sapply()` code
   gather() %>% 
   group_by(key) %>% 
   summarise(h = -sum(ifelse(value == 0, 0, value * log(value))))
 ```
 
-We're almost ready to plot. Which brings us to color. For the plots in this chapter, we'll be taking our color palettes from the [ghibli package](https://github.com/ewenme/ghibli), which provides palettes based on scenes from anime films by the Studio Ghibli.
+For more on the formula syntax we used within `mutate_all()`, you might check out [this](https://dplyr.tidyverse.org/reference/mutate_all.html) or [this](https://purrr.tidyverse.org/reference/map.html).
+
+Anyway, we're almost ready to plot. Which brings us to color. For the plots in this chapter, we'll be taking our color palettes from the [ghibli package](https://github.com/ewenme/ghibli), which provides palettes based on scenes from anime films by the Studio Ghibli.
 
 ```{r, message = F, warning = F}
 # install.packages("ghibli", dependencies = T)
@@ -85,7 +87,7 @@ We might plot the final panel like so.
 ```{r, fig.width = 3, fig.height = 2.75}
 d %>% 
   # the next four lines are the same from above
-  mutate_all(funs(. / sum(.))) %>% 
+  mutate_all(~ . / sum(.)) %>% 
   gather() %>% 
   group_by(key) %>% 
   summarise(h = -sum(ifelse(value == 0, 0, value * log(value)))) %>% 
@@ -649,7 +651,7 @@ grid.arrange(p1, p2, ncol = 2)
 This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
 
 ```{r}
-set.seed(8)
+set.seed(9)
 (
   d <-
   tibble(x = rep(0:1, each = 100)) %>% 
@@ -684,7 +686,7 @@ library(brms)
 
 For such a model, we have two formulas: one for $\mu$ and one for $\sigma$. We wrap both within the `bf()` function. 
 
-```{r b9.1_, cache = T, warning = F, message = F, results = 'hide'}
+```{r b9.1, cache = T, warning = F, message = F, results = 'hide'}
 b9.1 <- 
   brm(data = d,
       family = gaussian,
@@ -739,7 +741,7 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/).
+For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
 
 But getting back to the text,
 
