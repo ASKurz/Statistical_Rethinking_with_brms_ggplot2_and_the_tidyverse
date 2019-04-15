@@ -6,6 +6,10 @@ output:
   github_document
 ---
 
+```{r set-options_07, echo = FALSE, cache = FALSE}
+options(width = 100)
+```
+
 # Interactions
 
 > Every model so far in [McElreath’s text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?... To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. (p. 210)
@@ -86,7 +90,7 @@ f_b7.2 <-
   as_tibble() %>%
   bind_cols(nd)
 
-# Here we'll put both in a single data object, with `f_b7.1` stacked atop `f_b7.2`
+# here we'll put both in a single data object, with `f_b7.1` stacked atop `f_b7.2`
 f <-
   full_join(f_b7.1, f_b7.2) %>%
   mutate(cont_africa = rep(c("Africa", "not Africa"), each = 30))
@@ -238,7 +242,7 @@ l <- loo_compare(b7.3, b7.4, b7.5,
 print(l, simplify = F)
 ```
 
-And recall, if we want those LOO difference scores in the traditional metric like McElreath displayed in the text, we can do a quick conversion.
+And recall, if we want those LOO difference scores in the traditional metric like McElreath displayed in the text, we can do a quick conversion with algebra and `cbind()`.
 
 ```{r}
 cbind(loo_diff = l[, 1] * -2,
@@ -674,7 +678,7 @@ k <- fixef(b7.9)
 k[1] + k[2] * 0 + k[3] * 0 + k[4] * 0 * 0
 ```
 
-Here are the coefficients from the centered model.
+Here are the coefficient summaries for the centered model.
 
 ```{r}
 print(b7.9)
