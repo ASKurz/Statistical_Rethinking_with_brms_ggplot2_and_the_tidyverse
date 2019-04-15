@@ -18,7 +18,7 @@ options(width = 110)
 
 In this chapter, we focus on the two most common types of count models: the binomial and the Poisson.
 
-Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my project [*Robust Linear Regression with Student’s T Distribution*](https://github.com/ASKurz/Student-s-t_regression).
+Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my blog [*Robust Linear Regression with Student’s $t$-Distribution*](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/).
 
 ## Binomial regression
 
@@ -56,7 +56,7 @@ $$
 \end{eqnarray}
 $$
 
-In the `brm()` `formula` syntax, the `|` bar indicates we have extra supplementary information about our criterion, `pulled_left`. In this case, that information is that each value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
+In the `brm()` `formula` syntax, including a `|` bar on the left side of a formula indicates we have extra supplementary information about our criterion. In this case, that information is that each `pulled_left` value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
 
 ```{r b10.1_, cache = T, warning = F, message = F, results = "hide"}
 b10.1 <-
@@ -85,7 +85,7 @@ fixef(b10.1) %>%
   inv_logit_scaled()
 ```
 
-The next two chimp models add predictors in the usual way.
+With the next two chimp models, we add predictors in the usual way.
 
 ```{r b10.2_and_b10.3, cache = T, warning = F, message = F, results = "hide"}
 b10.2 <-
@@ -274,7 +274,7 @@ $$
 \end{eqnarray}
 $$
 
-Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice that we used the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model are of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
+Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice we're using the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model will be of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
 
 ```{r b10.4_, cache = T, message = F, warning = F}
 b10.4 <-
@@ -339,8 +339,8 @@ f <-
   filter(actor %in% c(3, 5:7)) %>% 
   distinct(Estimate, Q2.5, Q97.5, condition, prosoc_left, actor) %>% 
   select(actor, everything()) %>% 
-  mutate(actor = str_c("actor ", actor)) %>% 
-  mutate(x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
+  mutate(actor  = str_c("actor ", actor),
+         x_axis = str_c(prosoc_left, condition, sep = "/")) %>%
   mutate(x_axis = factor(x_axis, levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
   rename(pulled_left = Estimate)
 
@@ -441,7 +441,7 @@ The two are close within rounding error.
 
 ### Aggregated binomial: Graduate school admissions.
 
-Load the infamous `UCBadmit` data:
+Load the infamous `UCBadmit` data.
 
 ```{r, message = F, warning = F}
 # detach(package:brms)
@@ -551,7 +551,7 @@ You may have noticed that this same table pops out when you just do something li
 plot(l_b10.6)
 ```
 
-So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ values, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "very bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
+So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ values, ordered by observation number. Our plot indicates cases 1, 2, 3, 11, and 12 had "very bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
 
 ```{r}
 pareto_k_ids(l_b10.6, threshold = 1)
@@ -604,7 +604,7 @@ But this has all been a tangent from the central thrust of this section.
 
 **Back from our information criteria digression.**
 
-Let's get back on track. Here's a look at `b10.6`, the unavailable model:
+Let's get back on track with the text. Here's a look at `b10.6`, the unavailable model:
 
 ```{r}
 print(b10.6)
@@ -714,7 +714,8 @@ Here are the LOO weights.
 
 ```{r}
 model_weights(b10.6, b10.7, b10.8, b10.9,
-              weights = "loo")
+              weights = "loo") %>% 
+  round(digits = 3)
 ```
 
 The parameters summaries for our multivariable model, `b10.9`, look like this:
@@ -772,7 +773,7 @@ pairs(b10.9,
 
 McElreath wrote:
 
-> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see Chapter 6). So what you define as a "point" affects WAIC’s value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation.
+> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see Chapter 6). So what you define as a "point" affects WAIC’s value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation. (p. 309)
 
 To my knowledge, `brms::waic()` and `brms::loo()` do not do this, which might well be why some of our values didn't match up with those in the text. If you have additional insight on this, please [share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
@@ -783,7 +784,6 @@ We're not here to learn frequentist code, so we're going to skip most of this se
 ```{r}
 # outcome and predictor almost perfectly associated
 y <- c(rep(0, 10), rep(1, 10))
-
 x <- c(rep(-1, 9), rep(1, 11))
 ```
 
@@ -959,7 +959,7 @@ post %>%
 I’m not happy with how clunky this solution is, but one way to get those marginal dot and line plots for the axes is to make intermediary tibbles. Anyway, here’s a version of Figure 10.8.b.
 
 ```{r, fig.width = 3, fig.height = 2.9}
-# Intermediary tibbles for our the dot and line portoin of the plot
+# intermediary tibbles for our the dot and line portoin of the plot
 point_tibble <-
   tibble(x = c(median(post$b_contact_high), min(post$b_contact_high)),
          
@@ -1006,7 +1006,7 @@ b10.14 <-
          seed = 10)
 ```
 
-I know we got all excited with the LOO, above. Let's just be lazy and go WAIC, here. [Though beware, the LOO opens up a similar can of worms, here.]
+I know we got all excited with the LOO, above. Let's just be lazy and go WAIC. [Though beware, the LOO opens up a similar can of worms, here.]
 
 ```{r w_b10.10_through_w_b10.14, cache = T}
 b10.10 <- add_criterion(b10.10, criterion = "waic")
