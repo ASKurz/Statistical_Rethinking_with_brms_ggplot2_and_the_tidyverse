@@ -444,11 +444,11 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 48
 ## Variables: 5
-## $ density  &lt;int&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,…
-## $ pred     &lt;fct&gt; no, no, no, no, no, no, no, no, pred, pred, pred, pred,…
-## $ size     &lt;fct&gt; big, big, big, big, small, small, small, small, big, bi…
-## $ surv     &lt;int&gt; 9, 10, 7, 10, 9, 9, 10, 9, 4, 9, 7, 6, 7, 5, 9, 9, 24, …
-## $ propsurv &lt;dbl&gt; 0.90, 1.00, 0.70, 1.00, 0.90, 0.90, 1.00, 0.90, 0.40, 0…</code></pre>
+## $ density  &lt;int&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 25, 25, 25, …
+## $ pred     &lt;fct&gt; no, no, no, no, no, no, no, no, pred, pred, pred, pred, pred, pred, pred, pred, …
+## $ size     &lt;fct&gt; big, big, big, big, small, small, small, small, big, big, big, big, small, small…
+## $ surv     &lt;int&gt; 9, 10, 7, 10, 9, 9, 10, 9, 4, 9, 7, 6, 7, 5, 9, 9, 24, 23, 22, 25, 23, 23, 23, 2…
+## $ propsurv &lt;dbl&gt; 0.9000000, 1.0000000, 0.7000000, 1.0000000, 0.9000000, 0.9000000, 1.0000000, 0.9…</code></pre>
 <p>Making the <code>tank</code> cluster variable is easy.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>
 <span class="st">  </span>d <span class="op">%&gt;%</span>
@@ -494,12 +494,9 @@ b12.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">add
 w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b12.<span class="dv">1</span>, b12.<span class="dv">2</span>, <span class="dt">criterion =</span> <span class="st">&quot;waic&quot;</span>)
 
 <span class="kw">print</span>(w, <span class="dt">simplify =</span> F)</code></pre></div>
-<pre><code>##       elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic  
-## b12.2    0.0       0.0  -100.0       3.6         20.9    0.8     200.0
-## b12.1   -1.1       2.3  -101.0       4.7         22.9    0.7     202.1
-##       se_waic
-## b12.2    7.2 
-## b12.1    9.4</code></pre>
+<pre><code>##       elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic   se_waic
+## b12.2    0.0       0.0  -100.0       3.6         20.9    0.8     200.0    7.2 
+## b12.1   -1.1       2.3  -101.0       4.7         22.9    0.7     202.1    9.4</code></pre>
 <p>The <code>se_diff</code> is large relative to the <code>elpd_diff</code>. If we convert the <span class="math inline">\(\text{elpd}\)</span> difference to the WAIC metric, the message stays the same.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cbind</span>(<span class="dt">waic_diff =</span> w[, <span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="op">-</span><span class="dv">2</span>,
       <span class="dt">se        =</span> w[, <span class="dv">2</span>] <span class="op">*</span><span class="st">  </span><span class="dv">2</span>)</code></pre></div>
@@ -520,19 +517,19 @@ post_mdn &lt;-<span class="st"> </span>
 
 post_mdn</code></pre></div>
 <pre><code>## # A tibble: 48 x 11
-##    Estimate Est.Error   Q2.5 Q97.5 density pred  size   surv propsurv  tank
-##       &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;
-##  1    2.08      0.850  0.589 4.09       10 no    big       9      0.9     1
-##  2    2.95      1.05   1.19  5.44       10 no    big      10      1       2
-##  3    0.970     0.652 -0.255 2.39       10 no    big       7      0.7     3
-##  4    2.95      1.06   1.19  5.52       10 no    big      10      1       4
-##  5    2.07      0.856  0.567 4.02       10 no    small     9      0.9     5
-##  6    2.06      0.832  0.602 4.00       10 no    small     9      0.9     6
-##  7    2.96      1.09   1.17  5.51       10 no    small    10      1       7
-##  8    2.05      0.842  0.598 3.96       10 no    small     9      0.9     8
-##  9   -0.183     0.606 -1.41  0.992      10 pred  big       4      0.4     9
-## 10    2.06      0.839  0.596 4.05       10 pred  big       9      0.9    10
-## # … with 38 more rows, and 1 more variable: post_mdn &lt;dbl&gt;</code></pre>
+##    Estimate Est.Error   Q2.5 Q97.5 density pred  size   surv propsurv  tank post_mdn
+##       &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
+##  1    2.08      0.850  0.589 4.09       10 no    big       9      0.9     1    0.889
+##  2    2.95      1.05   1.19  5.44       10 no    big      10      1       2    0.950
+##  3    0.970     0.652 -0.255 2.39       10 no    big       7      0.7     3    0.725
+##  4    2.95      1.06   1.19  5.52       10 no    big      10      1       4    0.950
+##  5    2.07      0.856  0.567 4.02       10 no    small     9      0.9     5    0.888
+##  6    2.06      0.832  0.602 4.00       10 no    small     9      0.9     6    0.887
+##  7    2.96      1.09   1.17  5.51       10 no    small    10      1       7    0.951
+##  8    2.05      0.842  0.598 3.96       10 no    small     9      0.9     8    0.886
+##  9   -0.183     0.606 -1.41  0.992      10 pred  big       4      0.4     9    0.454
+## 10    2.06      0.839  0.596 4.05       10 pred  big       9      0.9    10    0.887
+## # … with 38 more rows</code></pre>
 <p>For kicks and giggles, let’s use a <a href="https://github.com/alex23lemm/theme_fivethirtyeight">FiveThirtyEight-like theme</a> for our plots. An easy way to do so is with help from the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;ggthemes&quot;, dependencies = T) </span>
 
@@ -607,17 +604,17 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 ##   Links: mu = logit 
 ## Formula: surv | trials(density) ~ 1 + (1 | tank) 
 ##    Data: d (Number of observations: 48) 
-## Samples: 4 chains, each with iter = 4000; warmup = 2000; thin = 1;
-##          total post-warmup samples = 8000
+## Samples: 4 chains, each with iter = 4000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 12000
 ## 
 ## Group-Level Effects: 
 ## ~tank (Number of levels: 48) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     1.62      0.21     1.25     2.08       1985 1.00
+## sd(Intercept)     1.61      0.22     1.24     2.08       2962 1.00
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     1.29      0.25     0.81     1.78       1276 1.00
+## Intercept     1.30      0.25     0.82     1.78       2304 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -789,90 +786,70 @@ n_ponds &lt;-<span class="st"> </span><span class="dv">60</span>
 ## 60     1.42      0.41  0.65  2.29</code></pre>
 <p>Note how we just peeked at the top and bottom two rows with the <code>c(1:2, 59:60)</code> part of the code, there. Somewhat discouragingly, <code>coef()</code> doesn’t return the ‘Eff.Sample’ or ‘Rhat’ columns as in McElreath’s output. We can still extract that information, though. For <span class="math inline">\(\hat{R}\)</span>, the solution is simple; use the <code>brms::rhat()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rhat</span>(b12.<span class="dv">3</span>)</code></pre></div>
-<pre><code>##          b_Intercept   sd_pond__Intercept  r_pond[1,Intercept] 
-##            1.0002418            0.9999371            0.9999115 
-##  r_pond[2,Intercept]  r_pond[3,Intercept]  r_pond[4,Intercept] 
-##            1.0002275            0.9998903            0.9999139 
-##  r_pond[5,Intercept]  r_pond[6,Intercept]  r_pond[7,Intercept] 
-##            0.9999526            0.9998954            1.0002992 
-##  r_pond[8,Intercept]  r_pond[9,Intercept] r_pond[10,Intercept] 
-##            1.0000516            0.9999460            0.9999920 
-## r_pond[11,Intercept] r_pond[12,Intercept] r_pond[13,Intercept] 
-##            0.9999889            0.9999319            0.9999591 
-## r_pond[14,Intercept] r_pond[15,Intercept] r_pond[16,Intercept] 
-##            0.9999101            1.0001250            0.9999149 
-## r_pond[17,Intercept] r_pond[18,Intercept] r_pond[19,Intercept] 
-##            0.9999016            0.9999239            0.9998892 
-## r_pond[20,Intercept] r_pond[21,Intercept] r_pond[22,Intercept] 
-##            0.9998931            0.9998939            0.9998921 
-## r_pond[23,Intercept] r_pond[24,Intercept] r_pond[25,Intercept] 
-##            0.9998933            0.9998986            0.9999875 
-## r_pond[26,Intercept] r_pond[27,Intercept] r_pond[28,Intercept] 
-##            0.9999691            0.9999052            0.9998893 
-## r_pond[29,Intercept] r_pond[30,Intercept] r_pond[31,Intercept] 
-##            0.9999064            1.0000005            1.0000856 
-## r_pond[32,Intercept] r_pond[33,Intercept] r_pond[34,Intercept] 
-##            0.9998893            0.9998950            0.9999871 
-## r_pond[35,Intercept] r_pond[36,Intercept] r_pond[37,Intercept] 
-##            0.9999385            1.0000467            0.9998907 
-## r_pond[38,Intercept] r_pond[39,Intercept] r_pond[40,Intercept] 
-##            0.9999261            0.9999002            0.9999136 
-## r_pond[41,Intercept] r_pond[42,Intercept] r_pond[43,Intercept] 
-##            0.9999024            0.9998960            0.9999817 
-## r_pond[44,Intercept] r_pond[45,Intercept] r_pond[46,Intercept] 
-##            1.0000738            1.0000156            1.0000022 
-## r_pond[47,Intercept] r_pond[48,Intercept] r_pond[49,Intercept] 
-##            0.9999479            0.9999159            0.9999162 
-## r_pond[50,Intercept] r_pond[51,Intercept] r_pond[52,Intercept] 
-##            0.9998972            0.9998896            0.9999483 
-## r_pond[53,Intercept] r_pond[54,Intercept] r_pond[55,Intercept] 
-##            0.9999232            0.9999950            0.9999233 
-## r_pond[56,Intercept] r_pond[57,Intercept] r_pond[58,Intercept] 
-##            0.9998901            0.9999382            0.9999012 
+<pre><code>##          b_Intercept   sd_pond__Intercept  r_pond[1,Intercept]  r_pond[2,Intercept] 
+##            1.0002418            0.9999371            0.9999115            1.0002275 
+##  r_pond[3,Intercept]  r_pond[4,Intercept]  r_pond[5,Intercept]  r_pond[6,Intercept] 
+##            0.9998903            0.9999139            0.9999526            0.9998954 
+##  r_pond[7,Intercept]  r_pond[8,Intercept]  r_pond[9,Intercept] r_pond[10,Intercept] 
+##            1.0002992            1.0000516            0.9999460            0.9999920 
+## r_pond[11,Intercept] r_pond[12,Intercept] r_pond[13,Intercept] r_pond[14,Intercept] 
+##            0.9999889            0.9999319            0.9999591            0.9999101 
+## r_pond[15,Intercept] r_pond[16,Intercept] r_pond[17,Intercept] r_pond[18,Intercept] 
+##            1.0001250            0.9999149            0.9999016            0.9999239 
+## r_pond[19,Intercept] r_pond[20,Intercept] r_pond[21,Intercept] r_pond[22,Intercept] 
+##            0.9998892            0.9998931            0.9998939            0.9998921 
+## r_pond[23,Intercept] r_pond[24,Intercept] r_pond[25,Intercept] r_pond[26,Intercept] 
+##            0.9998933            0.9998986            0.9999875            0.9999691 
+## r_pond[27,Intercept] r_pond[28,Intercept] r_pond[29,Intercept] r_pond[30,Intercept] 
+##            0.9999052            0.9998893            0.9999064            1.0000005 
+## r_pond[31,Intercept] r_pond[32,Intercept] r_pond[33,Intercept] r_pond[34,Intercept] 
+##            1.0000856            0.9998893            0.9998950            0.9999871 
+## r_pond[35,Intercept] r_pond[36,Intercept] r_pond[37,Intercept] r_pond[38,Intercept] 
+##            0.9999385            1.0000467            0.9998907            0.9999261 
+## r_pond[39,Intercept] r_pond[40,Intercept] r_pond[41,Intercept] r_pond[42,Intercept] 
+##            0.9999002            0.9999136            0.9999024            0.9998960 
+## r_pond[43,Intercept] r_pond[44,Intercept] r_pond[45,Intercept] r_pond[46,Intercept] 
+##            0.9999817            1.0000738            1.0000156            1.0000022 
+## r_pond[47,Intercept] r_pond[48,Intercept] r_pond[49,Intercept] r_pond[50,Intercept] 
+##            0.9999479            0.9999159            0.9999162            0.9998972 
+## r_pond[51,Intercept] r_pond[52,Intercept] r_pond[53,Intercept] r_pond[54,Intercept] 
+##            0.9998896            0.9999483            0.9999232            0.9999950 
+## r_pond[55,Intercept] r_pond[56,Intercept] r_pond[57,Intercept] r_pond[58,Intercept] 
+##            0.9999233            0.9998901            0.9999382            0.9999012 
 ## r_pond[59,Intercept] r_pond[60,Intercept]                 lp__ 
 ##            0.9999175            0.9998905            0.9999222</code></pre>
 <p>Extracting the ‘Eff.Sample’ values is a little more complicated. There is no <code>effsamples()</code> function. However, we do have <code>neff_ratio()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">neff_ratio</span>(b12.<span class="dv">3</span>)</code></pre></div>
-<pre><code>##          b_Intercept   sd_pond__Intercept  r_pond[1,Intercept] 
-##            0.3328983            0.3276092            1.3086470 
-##  r_pond[2,Intercept]  r_pond[3,Intercept]  r_pond[4,Intercept] 
-##            1.4222957            1.7287578            1.7931600 
-##  r_pond[5,Intercept]  r_pond[6,Intercept]  r_pond[7,Intercept] 
-##            1.5172159            1.7087264            1.4415308 
-##  r_pond[8,Intercept]  r_pond[9,Intercept] r_pond[10,Intercept] 
-##            1.6367495            1.5541417            1.5271929 
-## r_pond[11,Intercept] r_pond[12,Intercept] r_pond[13,Intercept] 
-##            1.5474498            1.8682911            1.7837498 
-## r_pond[14,Intercept] r_pond[15,Intercept] r_pond[16,Intercept] 
-##            1.8735102            1.6606211            1.4500515 
-## r_pond[17,Intercept] r_pond[18,Intercept] r_pond[19,Intercept] 
-##            1.3307980            1.4573910            1.4950252 
-## r_pond[20,Intercept] r_pond[21,Intercept] r_pond[22,Intercept] 
-##            1.4288447            1.4943737            1.3833042 
-## r_pond[23,Intercept] r_pond[24,Intercept] r_pond[25,Intercept] 
-##            1.3976878            1.3691378            1.3661559 
-## r_pond[26,Intercept] r_pond[27,Intercept] r_pond[28,Intercept] 
-##            1.6933039            1.3845310            1.7058099 
-## r_pond[29,Intercept] r_pond[30,Intercept] r_pond[31,Intercept] 
-##            1.7976571            1.6092142            1.2267648 
-## r_pond[32,Intercept] r_pond[33,Intercept] r_pond[34,Intercept] 
-##            1.2972673            1.0352256            0.9503992 
-## r_pond[35,Intercept] r_pond[36,Intercept] r_pond[37,Intercept] 
-##            0.9909477            0.9580389            1.1905664 
-## r_pond[38,Intercept] r_pond[39,Intercept] r_pond[40,Intercept] 
-##            1.0429481            1.3957889            1.1026741 
-## r_pond[41,Intercept] r_pond[42,Intercept] r_pond[43,Intercept] 
-##            1.1539322            0.9819976            1.0965749 
-## r_pond[44,Intercept] r_pond[45,Intercept] r_pond[46,Intercept] 
-##            1.1089698            0.9528173            1.1863659 
-## r_pond[47,Intercept] r_pond[48,Intercept] r_pond[49,Intercept] 
-##            0.9622555            1.0673472            1.3589549 
-## r_pond[50,Intercept] r_pond[51,Intercept] r_pond[52,Intercept] 
-##            0.8415543            0.9910013            0.9237361 
-## r_pond[53,Intercept] r_pond[54,Intercept] r_pond[55,Intercept] 
-##            1.2107973            1.1505275            0.8304270 
-## r_pond[56,Intercept] r_pond[57,Intercept] r_pond[58,Intercept] 
-##            1.0743924            1.1347820            0.8837469 
+<pre><code>##          b_Intercept   sd_pond__Intercept  r_pond[1,Intercept]  r_pond[2,Intercept] 
+##            0.3328983            0.3276092            1.3086470            1.4222957 
+##  r_pond[3,Intercept]  r_pond[4,Intercept]  r_pond[5,Intercept]  r_pond[6,Intercept] 
+##            1.7287578            1.7931600            1.5172159            1.7087264 
+##  r_pond[7,Intercept]  r_pond[8,Intercept]  r_pond[9,Intercept] r_pond[10,Intercept] 
+##            1.4415308            1.6367495            1.5541417            1.5271929 
+## r_pond[11,Intercept] r_pond[12,Intercept] r_pond[13,Intercept] r_pond[14,Intercept] 
+##            1.5474498            1.8682911            1.7837498            1.8735102 
+## r_pond[15,Intercept] r_pond[16,Intercept] r_pond[17,Intercept] r_pond[18,Intercept] 
+##            1.6606211            1.4500515            1.3307980            1.4573910 
+## r_pond[19,Intercept] r_pond[20,Intercept] r_pond[21,Intercept] r_pond[22,Intercept] 
+##            1.4950252            1.4288447            1.4943737            1.3833042 
+## r_pond[23,Intercept] r_pond[24,Intercept] r_pond[25,Intercept] r_pond[26,Intercept] 
+##            1.3976878            1.3691378            1.3661559            1.6933039 
+## r_pond[27,Intercept] r_pond[28,Intercept] r_pond[29,Intercept] r_pond[30,Intercept] 
+##            1.3845310            1.7058099            1.7976571            1.6092142 
+## r_pond[31,Intercept] r_pond[32,Intercept] r_pond[33,Intercept] r_pond[34,Intercept] 
+##            1.2267648            1.2972673            1.0352256            0.9503992 
+## r_pond[35,Intercept] r_pond[36,Intercept] r_pond[37,Intercept] r_pond[38,Intercept] 
+##            0.9909477            0.9580389            1.1905664            1.0429481 
+## r_pond[39,Intercept] r_pond[40,Intercept] r_pond[41,Intercept] r_pond[42,Intercept] 
+##            1.3957889            1.1026741            1.1539322            0.9819976 
+## r_pond[43,Intercept] r_pond[44,Intercept] r_pond[45,Intercept] r_pond[46,Intercept] 
+##            1.0965749            1.1089698            0.9528173            1.1863659 
+## r_pond[47,Intercept] r_pond[48,Intercept] r_pond[49,Intercept] r_pond[50,Intercept] 
+##            0.9622555            1.0673472            1.3589549            0.8415543 
+## r_pond[51,Intercept] r_pond[52,Intercept] r_pond[53,Intercept] r_pond[54,Intercept] 
+##            0.9910013            0.9237361            1.2107973            1.1505275 
+## r_pond[55,Intercept] r_pond[56,Intercept] r_pond[57,Intercept] r_pond[58,Intercept] 
+##            0.8304270            1.0743924            1.1347820            0.8837469 
 ## r_pond[59,Intercept] r_pond[60,Intercept]                 lp__ 
 ##            0.8612560            0.9822023            0.1988217</code></pre>
 <p>The <code>brms::neff_ratio()</code> function returns ratios of the effective samples over the total number of post-warmup iterations. So if we know the <code>neff_ratio()</code> values and the number of post-warmup iterations, the ‘Eff.Sample’ values are just a little algebra away. A quick solution is to look at the ‘total post-warmup samples’ line at the top of our <code>print()</code> output. Another way is to extract that information from our <code>brm()</code> fit object. I’m not aware of a way to do that directly, but we can extract the <code>iter</code> value (i.e., <code>b12.2$fit@sim$iter</code>), the <code>warmup</code> value (i.e., <code>b12.2$fit@sim$warmup</code>), and the number of <code>chains</code> (i.e., <code>b12.2$fit@sim$chains</code>). With those values in hand, simple algebra will return the ‘total post-warmup samples’ value. E.g.,</p>
@@ -897,11 +874,11 @@ n_ponds &lt;-<span class="st"> </span><span class="dv">60</span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 60
 ## Variables: 5
-## $ pond     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, …
-## $ ni       &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10…
-## $ true_a   &lt;dbl&gt; -0.82085139, 3.76575421, -0.03511672, 0.01999213, -1.59…
-## $ si       &lt;int&gt; 0, 5, 4, 3, 0, 5, 5, 3, 5, 5, 3, 3, 3, 4, 4, 6, 10, 9, …
-## $ p_nopool &lt;dbl&gt; 0.0, 1.0, 0.8, 0.6, 0.0, 1.0, 1.0, 0.6, 1.0, 1.0, 0.6, …</code></pre>
+## $ pond     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 2…
+## $ ni       &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 10,…
+## $ true_a   &lt;dbl&gt; -0.82085139, 3.76575421, -0.03511672, 0.01999213, -1.59646315, 0.99155593, 0.926…
+## $ si       &lt;int&gt; 0, 5, 4, 3, 0, 5, 5, 3, 5, 5, 3, 3, 3, 4, 4, 6, 10, 9, 9, 9, 9, 10, 10, 6, 3, 8,…
+## $ p_nopool &lt;dbl&gt; 0.00, 1.00, 0.80, 0.60, 0.00, 1.00, 1.00, 0.60, 1.00, 1.00, 0.60, 0.60, 0.60, 0.…</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we could have included this step in the block of code below, if we wanted to</span>
 p_partpool &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">coef</span>(b12.<span class="dv">3</span>)<span class="op">$</span>pond[, , ] <span class="op">%&gt;%</span><span class="st"> </span>
@@ -919,15 +896,15 @@ dsim <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 60
 ## Variables: 9
-## $ pond           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
-## $ ni             &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, …
-## $ true_a         &lt;dbl&gt; -0.82085139, 3.76575421, -0.03511672, 0.01999213,…
-## $ si             &lt;int&gt; 0, 5, 4, 3, 0, 5, 5, 3, 5, 5, 3, 3, 3, 4, 4, 6, 1…
-## $ p_nopool       &lt;dbl&gt; 0.0, 1.0, 0.8, 0.6, 0.0, 1.0, 1.0, 0.6, 1.0, 1.0,…
-## $ p_partpool     &lt;dbl&gt; 0.2548519, 0.9089353, 0.8096274, 0.6809599, 0.254…
-## $ p_true         &lt;dbl&gt; 0.3055830, 0.9773737, 0.4912217, 0.5049979, 0.168…
-## $ nopool_error   &lt;dbl&gt; 0.305582963, 0.022626343, 0.308778278, 0.09500213…
-## $ partpool_error &lt;dbl&gt; 0.050731032, 0.068438323, 0.318405689, 0.17596206…</code></pre>
+## $ pond           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,…
+## $ ni             &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 1…
+## $ true_a         &lt;dbl&gt; -0.82085139, 3.76575421, -0.03511672, 0.01999213, -1.59646315, 0.99155593,…
+## $ si             &lt;int&gt; 0, 5, 4, 3, 0, 5, 5, 3, 5, 5, 3, 3, 3, 4, 4, 6, 10, 9, 9, 9, 9, 10, 10, 6,…
+## $ p_nopool       &lt;dbl&gt; 0.00, 1.00, 0.80, 0.60, 0.00, 1.00, 1.00, 0.60, 1.00, 1.00, 0.60, 0.60, 0.…
+## $ p_partpool     &lt;dbl&gt; 0.2548519, 0.9089353, 0.8096274, 0.6809599, 0.2541776, 0.9097880, 0.909561…
+## $ p_true         &lt;dbl&gt; 0.3055830, 0.9773737, 0.4912217, 0.5049979, 0.1684765, 0.7293951, 0.716461…
+## $ nopool_error   &lt;dbl&gt; 0.305582963, 0.022626343, 0.308778278, 0.095002134, 0.168476520, 0.2706048…
+## $ partpool_error &lt;dbl&gt; 0.050731032, 0.068438323, 0.318405689, 0.175962060, 0.085701039, 0.1803928…</code></pre>
 <p>Here is our code for Figure 12.3. The extra data processing for <code>dfline</code> is how we get the values necessary for the horizontal summary lines.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dfline &lt;-<span class="st"> </span>
 <span class="st">  </span>dsim <span class="op">%&gt;%</span>
@@ -972,7 +949,7 @@ dsim <span class="op">%&gt;%</span><span class="st"> </span>
 ## 1 nopool_error        0.078        0.05 
 ## 2 partpool_error      0.067        0.051</code></pre>
 <p>I originally learned about the multilevel in order to work with <a href="http://gseacademic.harvard.edu/alda/">longitudinal data</a>. In that context, I found the basic principles of a multilevel structure quite intuitive. The concept of partial pooling, however, took me some time to wrap my head around. If you’re struggling with this, be patient and keep chipping away.</p>
-<p>When McElreath <a href="https://www.youtube.com/watch?v=82TaniPgzQc&amp;t=2048s&amp;frags=pl%2Cwn">lectured on this topic in 2015</a>, he traced partial pooling to statistician <a href="http://bulletin.imstat.org/2017/05/obituary-charles-m-stein-1920-2016/">Charles M. Stein</a>. In 1977, Efron and Morris wrote the now classic paper, <a href="http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf"><em>Stein’s Paradox in Statistics</em></a>, which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works–or if you just like baseball–, check out my project on that example, <a href="https://github.com/ASKurz/James-Stein-and-Bayesian-partial-pooling"><em>James-Stein and Bayesian partial pooling</em></a>.</p>
+<p>When McElreath <a href="https://www.youtube.com/watch?v=82TaniPgzQc&amp;t=2048s&amp;frags=pl%2Cwn">lectured on this topic in 2015</a>, he traced partial pooling to statistician <a href="http://bulletin.imstat.org/2017/05/obituary-charles-m-stein-1920-2016/">Charles M. Stein</a>. In 1977, Efron and Morris wrote the now classic paper, <a href="http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf"><em>Stein’s Paradox in Statistics</em></a>, which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works–or if you just like baseball–, check out my blog post, <a href="https://solomonkurz.netlify.com/post/stein-s-paradox-and-what-partial-pooling-can-do-for-you/"><em>Stein’s Paradox and What Partial Pooling Can Do For You</em></a>.</p>
 <div id="overthinking-repeating-the-pond-simulation." class="section level4">
 <h4><span class="header-section-number">12.2.5.1</span> Overthinking: Repeating the pond simulation.</h4>
 <p>Within the brms workflow, we can reuse a compiled model with <code>update()</code>. But first, we’ll simulate new data.</p>
@@ -991,11 +968,11 @@ new_dsim &lt;-<span class="st"> </span>
 <span class="kw">glimpse</span>(new_dsim)</code></pre></div>
 <pre><code>## Observations: 60
 ## Variables: 5
-## $ pond     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, …
-## $ ni       &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10…
-## $ true_a   &lt;dbl&gt; 2.4990087, 1.3432554, 3.2045137, 3.6047030, 1.6005354, …
-## $ si       &lt;int&gt; 4, 4, 5, 4, 4, 4, 2, 4, 3, 5, 4, 5, 2, 2, 5, 10, 7, 10,…
-## $ p_nopool &lt;dbl&gt; 0.8, 0.8, 1.0, 0.8, 0.8, 0.8, 0.4, 0.8, 0.6, 1.0, 0.8, …</code></pre>
+## $ pond     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 2…
+## $ ni       &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 10,…
+## $ true_a   &lt;dbl&gt; 2.4990087, 1.3432554, 3.2045137, 3.6047030, 1.6005354, 2.1797409, 0.5759270, -0.…
+## $ si       &lt;int&gt; 4, 4, 5, 4, 4, 4, 2, 4, 3, 5, 4, 5, 2, 2, 5, 10, 7, 10, 10, 8, 10, 9, 5, 10, 10,…
+## $ p_nopool &lt;dbl&gt; 0.80, 0.80, 1.00, 0.80, 0.80, 0.80, 0.40, 0.80, 0.60, 1.00, 0.80, 1.00, 0.40, 0.…</code></pre>
 <p>Fit the new model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b12.3_new &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">update</span>(b12.<span class="dv">3</span>,
@@ -1012,11 +989,11 @@ new_dsim &lt;-<span class="st"> </span>
 ## Group-Level Effects: 
 ## ~pond (Number of levels: 60) 
 ##               Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sd(Intercept)     1.16      0.16     0.89     1.50       3291 1.00
+## sd(Intercept)     1.26      0.18     0.95     1.66       3633 1.00
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept     1.14      0.18     0.80     1.49       4660 1.00
+## Intercept     1.53      0.20     1.16     1.92       3279 1.00
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
@@ -1350,12 +1327,9 @@ b12.<span class="dv">5</span> &lt;-<span class="st"> </span><span class="kw">add
 
 <span class="kw">loo_compare</span>(b12.<span class="dv">4</span>, b12.<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">print</span>(<span class="dt">simplify =</span> F)</code></pre></div>
-<pre><code>##       elpd_diff se_diff elpd_loo se_elpd_loo p_loo  se_p_loo looic 
-## b12.4    0.0       0.0  -265.7      9.8         8.1    0.4    531.4
-## b12.5   -0.6       0.9  -266.3      9.9        10.4    0.5    532.6
-##       se_looic
-## b12.4   19.5  
-## b12.5   19.7</code></pre>
+<pre><code>##       elpd_diff se_diff elpd_loo se_elpd_loo p_loo  se_p_loo looic  se_looic
+## b12.4    0.0       0.0  -265.7      9.8         8.1    0.4    531.4   19.5  
+## b12.5   -0.6       0.9  -266.3      9.9        10.4    0.5    532.6   19.7</code></pre>
 <p>The two models yield nearly-equivalent information criteria values. Yet recall what McElreath wrote: “There is nothing to gain here by selecting either model. The comparison of the two models tells a richer story” (p. 367).</p>
 </div>
 </div>
@@ -1430,18 +1404,18 @@ nd &lt;-
 <span class="kw">glimpse</span>(post)</code></pre></div>
 <pre><code>## Observations: 16,000
 ## Variables: 12
-## $ b_Intercept               &lt;dbl&gt; -0.49845428, 0.36263851, 1.91766750, 1…
-## $ b_prosoc_left             &lt;dbl&gt; 0.9032174, 1.3799669, 0.8727582, 0.801…
-## $ `b_prosoc_left:condition` &lt;dbl&gt; -0.56182114, -0.46722870, -0.70816999,…
-## $ sd_actor__Intercept       &lt;dbl&gt; 2.571271, 1.476708, 2.084258, 2.729417…
-## $ `r_actor[1,Intercept]`    &lt;dbl&gt; -0.468006872, -1.364675261, -2.4033949…
-## $ `r_actor[2,Intercept]`    &lt;dbl&gt; 5.533991, 2.910396, 5.437039, 4.342981…
-## $ `r_actor[3,Intercept]`    &lt;dbl&gt; -0.45618115, -1.59925747, -2.81698107,…
-## $ `r_actor[4,Intercept]`    &lt;dbl&gt; -0.65347198, -1.77826745, -2.54650655,…
-## $ `r_actor[5,Intercept]`    &lt;dbl&gt; -0.3303643, -1.3395610, -2.4678893, -2…
-## $ `r_actor[6,Intercept]`    &lt;dbl&gt; 0.56380900, -0.67941570, -1.10245504, …
-## $ `r_actor[7,Intercept]`    &lt;dbl&gt; 2.0842292, 1.6935043, -0.5287177, 0.49…
-## $ lp__                      &lt;dbl&gt; -280.4227, -284.5651, -286.6607, -281.…</code></pre>
+## $ b_Intercept               &lt;dbl&gt; -0.49845428, 0.36263851, 1.91766750, 1.82740632, 2.24556133, 0.…
+## $ b_prosoc_left             &lt;dbl&gt; 0.9032174, 1.3799669, 0.8727582, 0.8015609, 0.6627169, 1.156136…
+## $ `b_prosoc_left:condition` &lt;dbl&gt; -0.56182114, -0.46722870, -0.70816999, -0.33963142, -0.49257705…
+## $ sd_actor__Intercept       &lt;dbl&gt; 2.571271, 1.476708, 2.084258, 2.729417, 2.724787, 2.071737, 1.9…
+## $ `r_actor[1,Intercept]`    &lt;dbl&gt; -0.468006872, -1.364675261, -2.403394919, -2.574390330, -2.7928…
+## $ `r_actor[2,Intercept]`    &lt;dbl&gt; 5.533991, 2.910396, 5.437039, 4.342981, 3.537432, 2.313620, 3.7…
+## $ `r_actor[3,Intercept]`    &lt;dbl&gt; -0.45618115, -1.59925747, -2.81698107, -2.51778170, -3.15780434…
+## $ `r_actor[4,Intercept]`    &lt;dbl&gt; -0.65347198, -1.77826745, -2.54650655, -2.79884389, -2.96142601…
+## $ `r_actor[5,Intercept]`    &lt;dbl&gt; -0.3303643, -1.3395610, -2.4678893, -2.5197585, -2.6281694, -1.…
+## $ `r_actor[6,Intercept]`    &lt;dbl&gt; 0.56380900, -0.67941570, -1.10245504, -1.98517600, -1.52414804,…
+## $ `r_actor[7,Intercept]`    &lt;dbl&gt; 2.0842292, 1.6935043, -0.5287177, 0.4990477, -0.4595667, 1.0253…
+## $ lp__                      &lt;dbl&gt; -280.4227, -284.5651, -286.6607, -281.1776, -281.1189, -281.660…</code></pre>
 <p>McElreath didn’t show what his R code 12.29 <code>dens( post$a_actor[,5] )</code> would look like. But here’s our analogue.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">actor_5 =</span> <span class="st">`</span><span class="dt">r_actor[5,Intercept]</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1820,16 +1794,16 @@ p <span class="op">%&gt;%</span><span class="st">  </span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 80
 ## Variables: 10
-## $ Estimate   &lt;dbl&gt; 19.78322, 31.16189, 36.55989, 40.31711, 43.44322, 45.…
-## $ Est.Error  &lt;dbl&gt; 9.864749, 14.103522, 16.554112, 18.521093, 20.545470,…
-## $ Q1.5       &lt;dbl&gt; 5.000, 10.000, 13.000, 14.000, 15.000, 16.000, 17.000…
-## $ Q5.5       &lt;dbl&gt; 8, 15, 17, 20, 21, 22, 23, 25, 25, 26, 27, 27, 27, 28…
-## $ Q16.5      &lt;dbl&gt; 12, 20, 24, 26, 28, 30, 31, 33, 34, 34, 35, 36, 37, 3…
-## $ Q83.5      &lt;dbl&gt; 27, 41, 48, 53, 57, 60, 63, 66, 68, 70, 72, 74, 76, 7…
-## $ Q94.5      &lt;dbl&gt; 35.000, 53.000, 62.000, 68.000, 74.000, 78.000, 81.00…
-## $ Q98.5      &lt;dbl&gt; 47.000, 69.000, 82.000, 91.000, 98.015, 106.000, 109.…
-## $ population &lt;dbl&gt; 1000, 6000, 11000, 16000, 21000, 26000, 31000, 36000,…
-## $ culture    &lt;chr&gt; &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, &quot;…</code></pre>
+## $ Estimate   &lt;dbl&gt; 19.78322, 31.16189, 36.55989, 40.31711, 43.44322, 45.94956, 48.21122, 50.34489…
+## $ Est.Error  &lt;dbl&gt; 9.864749, 14.103522, 16.554112, 18.521093, 20.545470, 22.052733, 23.445121, 25…
+## $ Q1.5       &lt;dbl&gt; 5.000, 10.000, 13.000, 14.000, 15.000, 16.000, 17.000, 17.985, 18.000, 18.000,…
+## $ Q5.5       &lt;dbl&gt; 8, 15, 17, 20, 21, 22, 23, 25, 25, 26, 27, 27, 27, 28, 29, 29, 29, 30, 30, 31,…
+## $ Q16.5      &lt;dbl&gt; 12, 20, 24, 26, 28, 30, 31, 33, 34, 34, 35, 36, 37, 38, 38, 39, 40, 40, 41, 41…
+## $ Q83.5      &lt;dbl&gt; 27, 41, 48, 53, 57, 60, 63, 66, 68, 70, 72, 74, 76, 78, 79, 81, 82, 83, 85, 87…
+## $ Q94.5      &lt;dbl&gt; 35.000, 53.000, 62.000, 68.000, 74.000, 78.000, 81.000, 85.000, 89.000, 91.055…
+## $ Q98.5      &lt;dbl&gt; 47.000, 69.000, 82.000, 91.000, 98.015, 106.000, 109.000, 115.000, 120.015, 12…
+## $ population &lt;dbl&gt; 1000, 6000, 11000, 16000, 21000, 26000, 31000, 36000, 41000, 46000, 51000, 560…
+## $ culture    &lt;chr&gt; &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, &quot;my_island&quot;, …</code></pre>
 <p>For a detailed discussion on this way of using <code>brms::predict()</code>, see <a href="http://thestudyofthehousehold.com/2018/02/13/2018-02-13-easily-made-fitted-and-predicted-values-made-easy/">Andrew MacDonald’s great blogpost on this very figure</a>. Here’s what we’ve been working for:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">log</span>(population), <span class="dt">y =</span> Estimate)) <span class="op">+</span>
@@ -1884,10 +1858,10 @@ p <span class="op">%&gt;%</span><span class="st">  </span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 504
 ## Variables: 4
-## $ pulled_left &lt;int&gt; 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0…
-## $ prosoc_left &lt;int&gt; 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0…
-## $ actor       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-## $ condition   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</code></pre>
+## $ pulled_left &lt;int&gt; 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1,…
+## $ prosoc_left &lt;int&gt; 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0,…
+## $ actor       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ condition   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</code></pre>
 <p>So there’s no need to reload anything. Everything we need is already at hand. Let’s fit the intercepts-only model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b12.<span class="dv">7</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> b12.<span class="dv">4</span><span class="op">$</span>data, <span class="dt">family =</span> binomial,
@@ -1926,11 +1900,11 @@ p <span class="op">%&gt;%</span><span class="st">  </span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 504
 ## Variables: 5
-## $ pulled_left &lt;int&gt; 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0…
-## $ prosoc_left &lt;int&gt; 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0…
-## $ actor       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-## $ block       &lt;int&gt; 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3…
-## $ condition   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</code></pre>
+## $ pulled_left &lt;int&gt; 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1,…
+## $ prosoc_left &lt;int&gt; 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0,…
+## $ actor       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ block       &lt;int&gt; 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5,…
+## $ condition   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</code></pre>
 <p>It’s the same data we used from the <code>b12.4</code> model, but with the addition of the <code>block</code> index. With those data in hand, we can fit the intercepts-only version of our cross-classified model. This model formula follows the form</p>
 <p><span class="math display">\[
 \begin{eqnarray}
@@ -2040,7 +2014,7 @@ p <span class="op">%&gt;%</span><span class="st">  </span>
 ##  $ chimp 5&#39;s average probability of pulling left: num  0.493 0.313 0.386 0.436 0.383 ...
 ##  $ chimp 6&#39;s average probability of pulling left: num  0.619 0.606 0.735 0.605 0.642 ...
 ##  $ chimp 7&#39;s average probability of pulling left: num  0.922 0.829 0.833 0.927 0.933 ...</code></pre>
-<p>One of the things I really like about this method is the <code>b_Intercept + r_actor[i,Intercept]</code> part of the code makes it very clear, to me, how the <code>porterior_samples()</code> columns correspond to the statistical model, <span class="math inline">\(\text{logit} (p_i) &amp; = &amp; \alpha + \alpha_{\text{actor}_i}\)</span>. This method easily extends to our next task, getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, averaging over the levels of <code>block</code>. In fact, other than switching out <code>b12.7</code> for <code>b12.8</code>, the method is identical.</p>
+<p>One of the things I really like about this method is the <code>b_Intercept + r_actor[i,Intercept]</code> part of the code makes it very clear, to me, how the <code>porterior_samples()</code> columns correspond to the statistical model, <span class="math inline">\(\text{logit} (p_i) = \alpha + \alpha_{\text{actor}_i}\)</span>. This method easily extends to our next task, getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, averaging over the levels of <code>block</code>. In fact, other than switching out <code>b12.7</code> for <code>b12.8</code>, the method is identical.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p2 &lt;-
 <span class="st">  </span><span class="kw">posterior_samples</span>(b12.<span class="dv">8</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="st">`</span><span class="dt">chimp 1&#39;s average probability of pulling left</span><span class="st">`</span> =<span class="st"> </span>b_Intercept <span class="op">+</span><span class="st"> `</span><span class="dt">r_actor[1,Intercept]</span><span class="st">`</span>,
@@ -2191,7 +2165,7 @@ p <span class="op">%&gt;%</span><span class="st">  </span>
 ## 4 -0.01699796 0.1824383 -0.4142501 0.3615457
 ## 5 -0.01535930 0.1826817 -0.4145747 0.3584713
 ## 6  0.10443814 0.2005518 -0.2168373 0.5870416</code></pre>
-<p>The format of the <code>ranef()</code> output is identical to that from <code>coef()</code>. However, the summaries are in the deviance metric. They’re all centered around zero, which corresponds to the part of the statistical model that specifies how <span class="math inline">\(\alpha_{\text{block}} &amp; \sim &amp; \text{Normal} (0, \sigma_{\text{block}})\)</span>. So then, if we want to continue using our <code>coef()</code> method, we’ll need to augment it with <code>ranef()</code> to accomplish our last task.</p>
+<p>The format of the <code>ranef()</code> output is identical to that from <code>coef()</code>. However, the summaries are in the deviance metric. They’re all centered around zero, which corresponds to the part of the statistical model that specifies how <span class="math inline">\(\alpha_{\text{block}} \sim \text{Normal} (0, \sigma_{\text{block}})\)</span>. So then, if we want to continue using our <code>coef()</code> method, we’ll need to augment it with <code>ranef()</code> to accomplish our last task.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">c3 &lt;-
 <span class="st">  </span><span class="kw">coef</span>(b12.<span class="dv">8</span>, <span class="dt">summary =</span> F)<span class="op">$</span>actor[, , ] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
@@ -2470,71 +2444,54 @@ b12.<span class="dv">7</span> <span class="op">%&gt;%</span>
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] tidybayes_1.0.4      gridExtra_2.3        bayesplot_1.6.0     
-##  [4] ggthemes_4.0.1       forcats_0.3.0        stringr_1.3.1       
-##  [7] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1         
-## [10] tidyr_0.8.1          tibble_2.1.1         tidyverse_1.2.1     
-## [13] brms_2.8.0           Rcpp_1.0.0           rstan_2.18.2        
-## [16] StanHeaders_2.18.0-1 ggplot2_3.1.0       
+##  [1] rethinking_1.80        viridis_0.5.1          viridisLite_0.3.0      ggbeeswarm_0.6.0      
+##  [5] dutchmasters_0.1.0     ghibli_0.2.0           hrbrthemes_0.6.0       broom_0.5.1           
+##  [9] rcartocolor_1.0.0      gridExtra_2.3          loo_2.1.0              ggthemes_4.0.1        
+## [13] wesanderson_0.3.6.9000 GGally_1.4.0           tidybayes_1.0.4        bayesplot_1.6.0       
+## [17] fiftystater_1.0.1      bindrcpp_0.2.2         ggrepel_0.8.0          forcats_0.3.0         
+## [21] stringr_1.3.1          dplyr_0.8.0.1          purrr_0.2.5            readr_1.1.1           
+## [25] tidyr_0.8.1            tibble_2.1.1           tidyverse_1.2.1        brms_2.8.0            
+## [29] Rcpp_1.0.0             rstan_2.18.2           StanHeaders_2.18.0-1   ggplot2_3.1.0         
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] readxl_1.1.0              backports_1.1.2          
-##   [3] plyr_1.8.4                igraph_1.2.1             
-##   [5] lazyeval_0.2.1            svUnit_0.7-12            
-##   [7] crosstalk_1.0.0           rstantools_1.5.0         
-##   [9] inline_0.3.15             digest_0.6.18            
-##  [11] htmltools_0.3.6           rsconnect_0.8.8          
-##  [13] fansi_0.4.0               magrittr_1.5             
-##  [15] modelr_0.1.2              extrafont_0.17           
-##  [17] matrixStats_0.54.0        xts_0.10-2               
-##  [19] extrafontdb_1.0           prettyunits_1.0.2        
-##  [21] colorspace_1.3-2          rvest_0.3.2              
-##  [23] haven_1.1.2               xfun_0.3                 
-##  [25] callr_3.1.0               crayon_1.3.4             
-##  [27] jsonlite_1.5              bindr_0.1.1              
-##  [29] zoo_1.8-2                 glue_1.3.0               
-##  [31] gtable_0.2.0              pkgbuild_1.0.2           
-##  [33] Rttf2pt1_1.3.7            abind_1.4-5              
-##  [35] scales_1.0.0              mvtnorm_1.0-8            
-##  [37] miniUI_0.1.1.1            xtable_1.8-2             
-##  [39] ggstance_0.3              stats4_3.5.1             
-##  [41] DT_0.4                    htmlwidgets_1.2          
-##  [43] httr_1.3.1                threejs_0.3.1            
-##  [45] arrayhelpers_1.0-20160527 RColorBrewer_1.1-2       
-##  [47] pkgconfig_2.0.2           reshape_0.8.7            
-##  [49] loo_2.1.0                 utf8_1.1.4               
-##  [51] tidyselect_0.2.5          labeling_0.3             
-##  [53] rlang_0.3.1               reshape2_1.4.3           
-##  [55] later_0.7.3               munsell_0.5.0            
-##  [57] cellranger_1.1.0          tools_3.5.1              
-##  [59] cli_1.0.1                 pacman_0.4.6             
-##  [61] generics_0.0.2            broom_0.5.1              
-##  [63] ggridges_0.5.0            evaluate_0.10.1          
-##  [65] yaml_2.1.19               processx_3.2.1           
-##  [67] knitr_1.20                nlme_3.1-137             
-##  [69] mime_0.5                  xml2_1.2.0               
-##  [71] compiler_3.5.1            shinythemes_1.1.1        
-##  [73] rstudioapi_0.7            beeswarm_0.2.3           
-##  [75] stringi_1.2.3             highr_0.7                
-##  [77] ps_1.2.1                  Brobdingnag_1.2-5        
-##  [79] gdtools_0.1.7             lattice_0.20-35          
-##  [81] Matrix_1.2-14             markdown_0.8             
-##  [83] shinyjs_1.0               pillar_1.3.1             
-##  [85] bridgesampling_0.4-0      httpuv_1.4.4.2           
-##  [87] R6_2.3.0                  bookdown_0.9             
-##  [89] promises_1.0.1            vipor_0.4.5              
-##  [91] codetools_0.2-15          colourpicker_1.0         
-##  [93] MASS_7.3-50               gtools_3.8.1             
-##  [95] assertthat_0.2.0          rprojroot_1.3-2          
-##  [97] withr_2.1.2               shinystan_2.5.0          
-##  [99] hms_0.4.2                 grid_3.5.1               
-## [101] coda_0.19-2               rmarkdown_1.10           
-## [103] shiny_1.1.0               lubridate_1.7.4          
-## [105] base64enc_0.1-3           dygraphs_1.1.1.5</code></pre>
+##   [1] readxl_1.1.0              backports_1.1.2           plyr_1.8.4               
+##   [4] igraph_1.2.1              lazyeval_0.2.1            svUnit_0.7-12            
+##   [7] crosstalk_1.0.0           rstantools_1.5.0          inline_0.3.15            
+##  [10] digest_0.6.18             htmltools_0.3.6           rsconnect_0.8.8          
+##  [13] fansi_0.4.0               magrittr_1.5              modelr_0.1.2             
+##  [16] extrafont_0.17            matrixStats_0.54.0        xts_0.10-2               
+##  [19] extrafontdb_1.0           prettyunits_1.0.2         colorspace_1.3-2         
+##  [22] rvest_0.3.2               haven_1.1.2               xfun_0.3                 
+##  [25] callr_3.1.0               crayon_1.3.4              jsonlite_1.5             
+##  [28] bindr_0.1.1               zoo_1.8-2                 glue_1.3.0               
+##  [31] gtable_0.2.0              pkgbuild_1.0.2            Rttf2pt1_1.3.7           
+##  [34] abind_1.4-5               scales_1.0.0              mvtnorm_1.0-8            
+##  [37] miniUI_0.1.1.1            xtable_1.8-2              ggstance_0.3             
+##  [40] stats4_3.5.1              DT_0.4                    htmlwidgets_1.2          
+##  [43] httr_1.3.1                threejs_0.3.1             arrayhelpers_1.0-20160527
+##  [46] RColorBrewer_1.1-2        pkgconfig_2.0.2           reshape_0.8.7            
+##  [49] utf8_1.1.4                tidyselect_0.2.5          labeling_0.3             
+##  [52] rlang_0.3.1               reshape2_1.4.3            later_0.7.3              
+##  [55] munsell_0.5.0             cellranger_1.1.0          tools_3.5.1              
+##  [58] cli_1.0.1                 generics_0.0.2            pacman_0.4.6             
+##  [61] ggridges_0.5.0            evaluate_0.10.1           yaml_2.1.19              
+##  [64] processx_3.2.1            knitr_1.20                nlme_3.1-137             
+##  [67] mime_0.5                  xml2_1.2.0                compiler_3.5.1           
+##  [70] shinythemes_1.1.1         rstudioapi_0.7            beeswarm_0.2.3           
+##  [73] stringi_1.2.3             highr_0.7                 ps_1.2.1                 
+##  [76] Brobdingnag_1.2-5         gdtools_0.1.7             lattice_0.20-35          
+##  [79] Matrix_1.2-14             markdown_0.8              shinyjs_1.0              
+##  [82] pillar_1.3.1              bridgesampling_0.4-0      httpuv_1.4.4.2           
+##  [85] R6_2.3.0                  bookdown_0.9              promises_1.0.1           
+##  [88] vipor_0.4.5               codetools_0.2-15          colourpicker_1.0         
+##  [91] MASS_7.3-50               gtools_3.8.1              assertthat_0.2.0         
+##  [94] rprojroot_1.3-2           withr_2.1.2               shinystan_2.5.0          
+##  [97] hms_0.4.2                 grid_3.5.1                coda_0.19-2              
+## [100] rmarkdown_1.10            shiny_1.1.0               lubridate_1.7.4          
+## [103] base64enc_0.1-3           dygraphs_1.1.1.5</code></pre>
 
 </div>
 </div>
