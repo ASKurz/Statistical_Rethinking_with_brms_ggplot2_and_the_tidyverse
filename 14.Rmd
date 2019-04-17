@@ -541,7 +541,7 @@ tidy(b14.2_mi) %>%
 
 Due to space concerns, I'm not going to show the results, here. You can do that on your own. Both methods yielded the posteriors for `Xme_memar_obs[1]`, but only the `b14.2_mi` model based on the `mi()` syntax yielded posteriors for the criterion, the `Yl[i]` summaries.
 
-Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
+Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function in order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
 
 Here is the code for Figure 14.3.a.
 
@@ -965,7 +965,7 @@ $$d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_{pooled}}$$
 
 McElreath didn't really focus on effect sizes in his text. If you need a refresher, you might check out Kelley and Preacher's [*On effect size*](https://www.researchgate.net/profile/Ken_Kelley/publication/270757972_On_Effect_Size/links/0046351b0cd48217ce000000/On-Effect-Size.pdf). But in words, *Cohen's d* is a standardized mean difference between two groups.
 
-So if you look back up at the results of `glimpse(spank)`, you'll notice the column `d`, which is indeed a vector of *Cohen's d* effect sizes. The last two columns, `ll` and `ul` are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
+So if you look back up at the results of `glimpse(spank)` you'll notice the column `d`, which is indeed a vector of *Cohen's d* effect sizes. The last two columns, `ll` and `ul`, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
 
 $$SE = \frac{\text{upper limit } – \text{lower limit}}{3.92}$$
 
@@ -1013,7 +1013,7 @@ But enough technical talk. Let’s look at the model results.
 print(b14.5)
 ```
 
-Thus, in our simple Bayesian meta-analysis, we have a population *Cohen's d* of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)` suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these* Cohen's d*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
+Thus, in our simple Bayesian meta-analysis, we have a population *Cohen's d* of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these* Cohen's d*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
 
 ```{r}
 spank %>% 
