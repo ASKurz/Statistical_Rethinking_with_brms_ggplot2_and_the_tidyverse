@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
+  <title>13 Adventures in Covariance | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:title" content="13 Adventures in Covariance | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Statistical Rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:title" content="13 Adventures in Covariance | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta name="twitter:site" content="@SolomonKurz" />
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2018-09-26">
+<meta name="date" content="2019-04-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="missing-data-and-other-opportunities.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -100,6 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
@@ -183,7 +185,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
-<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#when-adding-variables-hurts"><i class="fa fa-check"></i><b>5.3</b> When adding variables hurts</a><ul>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
@@ -333,6 +335,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -365,6 +374,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
 <li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
 </ul></li>
+<li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#reference-13"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -421,9 +431,8 @@ sigma_a &lt;-<span class="st">  </span><span class="dv">1</span>    <span class=
 sigma_b &lt;-<span class="st">  </span><span class="fl">0.5</span>  <span class="co"># std dev in slopes</span>
 rho     &lt;-<span class="st"> </span><span class="op">-</span>.<span class="dv">7</span>   <span class="co"># correlation between intercepts and slopes</span>
 
-<span class="co"># The next three lines of code simply combine the terms, above</span>
-mu &lt;-<span class="st"> </span><span class="kw">c</span>(a, b)
-
+<span class="co"># the next three lines of code simply combine the terms, above</span>
+mu     &lt;-<span class="st"> </span><span class="kw">c</span>(a, b)
 cov_ab &lt;-<span class="st"> </span>sigma_a <span class="op">*</span><span class="st"> </span>sigma_b <span class="op">*</span><span class="st"> </span>rho
 sigma  &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(sigma_a<span class="op">^</span><span class="dv">2</span>, cov_ab, 
                    cov_ab, sigma_b<span class="op">^</span><span class="dv">2</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
@@ -446,26 +455,20 @@ sigma &lt;-<span class="st"> </span><span class="kw">diag</span>(sigmas) <span c
 <span class="co"># how many cafes would you like?</span>
 n_cafes &lt;-<span class="st"> </span><span class="dv">20</span>
 
-<span class="kw">set.seed</span>(<span class="dv">5</span>)  <span class="co"># used to replicate example</span>
+<span class="kw">set.seed</span>(<span class="dv">13</span>)  <span class="co"># used to replicate example</span>
 vary_effects &lt;-<span class="st"> </span>
-<span class="st">  </span>MASS<span class="op">::</span><span class="kw">mvrnorm</span>(n_cafes, mu, sigma)
-
-vary_effects &lt;-
-<span class="st">  </span>vary_effects <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">rename</span>(<span class="dt">a_cafe =</span> V1,
-         <span class="dt">b_cafe =</span> V2)
+<span class="st">  </span>MASS<span class="op">::</span><span class="kw">mvrnorm</span>(n_cafes, mu, sigma) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">set_names</span>(<span class="st">&quot;a_cafe&quot;</span>, <span class="st">&quot;b_cafe&quot;</span>)
 
 <span class="kw">head</span>(vary_effects)</code></pre></div>
-<pre><code>## # A tibble: 6 x 2
-##   a_cafe b_cafe
-##    &lt;dbl&gt;  &lt;dbl&gt;
-## 1   4.22 -1.61 
-## 2   2.01 -0.752
-## 3   4.57 -1.95 
-## 4   3.34 -1.19 
-## 5   1.70 -0.586
-## 6   4.13 -1.14</code></pre>
+<pre><code>##     a_cafe     b_cafe
+## 1 2.917639 -0.8649154
+## 2 3.552770 -1.6814372
+## 3 1.694390 -0.4168858
+## 4 3.442417 -0.6011724
+## 5 2.289988 -0.7461953
+## 6 3.069283 -0.8839639</code></pre>
 <p>Let’s make sure we’re keeping this all straight. <code>a_cafe</code> = our café-specific intercepts; <code>b_cafe</code> = our café-specific slopes. These aren’t the actual data, yet. But at this stage, it might make sense to ask <em>What’s the distribution of <code>a_cafe</code> and <code>b_cafe</code>?</em> Our variant of Figure 13.2 contains the answer.</p>
 <p>For our plots in this chapter, we’ll use a custom theme. The color palette will come from the “pearl_earring” palette of the <a href="https://github.com/EdwinTh/dutchmasters">dutchmasters package</a>. You can learn more about the original painting, Vermeer’s <em>Girl with a Pearl Earring</em>, <a href="https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring">here</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># devtools::install_github(&quot;EdwinTh/dutchmasters&quot;)</span>
@@ -498,8 +501,8 @@ dutchmasters<span class="op">$</span>pearl_earring</code></pre></div>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_rug</span>(<span class="dt">color =</span> <span class="st">&quot;#8B9DAF&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">7</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-728-1.png" width="312" /></p>
-<p>Again, these are not “data.” This is a distribution of <em>parameters</em>.</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="312" /></p>
+<p>Again, these are not “data.” Figure 13.2 shows a distribution of <em>parameters</em>.</p>
 </div>
 <div id="simulate-observations." class="section level3">
 <h3><span class="header-section-number">13.1.2</span> Simulate observations.</h3>
@@ -507,7 +510,7 @@ dutchmasters<span class="op">$</span>pearl_earring</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n_visits &lt;-<span class="st"> </span><span class="dv">10</span>
 sigma    &lt;-<span class="st">  </span><span class="fl">0.5</span>  <span class="co"># std dev within cafes</span>
 
-<span class="kw">set.seed</span>(<span class="dv">5</span>)  <span class="co"># used to replicate example</span>
+<span class="kw">set.seed</span>(<span class="dv">13</span>)  <span class="co"># used to replicate example</span>
 d &lt;-
 <span class="st">  </span>vary_effects <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cafe      =</span> <span class="dv">1</span><span class="op">:</span>n_cafes) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -521,12 +524,12 @@ d &lt;-
 <pre><code>## # A tibble: 6 x 7
 ##    cafe a_cafe b_cafe visit afternoon    mu  wait
 ##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;     &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1   4.22  -1.61     1         0  4.22  3.80
-## 2     1   4.22  -1.61     2         1  2.61  3.31
-## 3     1   4.22  -1.61     3         0  4.22  3.60
-## 4     1   4.22  -1.61     4         1  2.61  2.65
-## 5     1   4.22  -1.61     5         0  4.22  5.08
-## 6     1   4.22  -1.61     6         1  2.61  2.31</code></pre>
+## 1     1   2.92 -0.865     1         0  2.92  3.19
+## 2     1   2.92 -0.865     2         1  2.05  1.91
+## 3     1   2.92 -0.865     3         0  2.92  3.81
+## 4     1   2.92 -0.865     4         1  2.05  2.15
+## 5     1   2.92 -0.865     5         0  2.92  3.49
+## 6     1   2.92 -0.865     6         1  2.05  2.26</code></pre>
 <p>Now we’ve finally simulated our data, we are ready to make our version of Figure 13.1, from way back on page 388.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">afternoon =</span> <span class="kw">ifelse</span>(afternoon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;M&quot;</span>, <span class="st">&quot;A&quot;</span>),
@@ -538,15 +541,15 @@ d &lt;-
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> afternoon), <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color =</span> <span class="st">&quot;#8B9DAF&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;#80A0C7&quot;</span>, <span class="st">&quot;#EEDA9D&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,
                      <span class="dt">labels =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;A&quot;</span>), <span class="dt">times =</span> <span class="dv">5</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">8</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="st">&quot;wait time in minutes&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">4</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;wait time in minutes&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>cafe, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-731-1.png" width="336" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-22-1.png" width="336" /></p>
 </div>
 <div id="the-varying-slopes-model." class="section level3">
 <h3><span class="header-section-number">13.1.3</span> The varying slopes model.</h3>
@@ -572,17 +575,17 @@ d &lt;-
 
 n_sim &lt;-<span class="st"> </span><span class="fl">1e5</span>
 
-<span class="kw">set.seed</span>(<span class="dv">133</span>)
+<span class="kw">set.seed</span>(<span class="dv">13</span>)
 r_<span class="dv">1</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">rlkjcorr</span>(n_sim, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">eta =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>()
 
-<span class="kw">set.seed</span>(<span class="dv">133</span>)
+<span class="kw">set.seed</span>(<span class="dv">13</span>)
 r_<span class="dv">2</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">rlkjcorr</span>(n_sim, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">eta =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>()
 
-<span class="kw">set.seed</span>(<span class="dv">133</span>)
+<span class="kw">set.seed</span>(<span class="dv">13</span>)
 r_<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">rlkjcorr</span>(n_sim, <span class="dt">K =</span> <span class="dv">2</span>, <span class="dt">eta =</span> <span class="dv">4</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>()</code></pre></div>
@@ -601,7 +604,7 @@ r_<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-733-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-24-1.png" width="288" /></p>
 <p>Okay, let’s get ready to model and switch out rethinking for brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(brms)</code></pre></div>
@@ -614,7 +617,8 @@ r_<span class="dv">4</span> &lt;-<span class="st"> </span>
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sd),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sigma),
                 <span class="kw">prior</span>(<span class="kw">lkj</span>(<span class="dv">2</span>), <span class="dt">class =</span> cor)),
-      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">2000</span>, <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">2000</span>, <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>)</code></pre></div>
 <p>With Figure 13.4, we assess how the posterior for the correlation of the random effects compares to its prior.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b13.<span class="dv">1</span>)
 
@@ -624,15 +628,15 @@ post <span class="op">%&gt;%</span>
                <span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;#EEDA9D&quot;</span>, <span class="dt">alpha =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;#A65141&quot;</span>, <span class="dt">alpha =</span> <span class="dv">9</span><span class="op">/</span><span class="dv">10</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;posterior&quot;</span>, 
-           <span class="dt">x =</span> <span class="op">-</span><span class="fl">0.2</span>, <span class="dt">y =</span> <span class="fl">2.2</span>, 
+           <span class="dt">x =</span> <span class="op">-</span><span class="fl">0.35</span>, <span class="dt">y =</span> <span class="fl">2.2</span>, 
            <span class="dt">color =</span> <span class="st">&quot;#A65141&quot;</span>, <span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;prior&quot;</span>, 
-           <span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">y =</span> <span class="fl">0.85</span>, 
+           <span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">y =</span> <span class="fl">0.9</span>, 
            <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-735-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-26-1.png" width="288" /></p>
 <p>McElreath then depicted multidimensional shrinkage by plotting the posterior mean of the varying effects compared to their raw, unpooled estimated. With brms, we can get the <code>cafe</code>-specific intercepts and <code>afternoon</code> slopes with <code>coef()</code>, which returns a three-dimensional list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># coef(b13.1) %&gt;% glimpse()</span>
 
@@ -641,53 +645,53 @@ post <span class="op">%&gt;%</span>
 ## , , Intercept
 ## 
 ##    Estimate Est.Error     Q2.5    Q97.5
-## 1  4.076657 0.2074001 3.673043 4.485835
-## 2  1.930431 0.2083095 1.524455 2.336841
-## 3  4.817168 0.2112695 4.400361 5.229888
-## 4  3.475913 0.2072789 3.076951 3.879560
-## 5  1.775441 0.2182903 1.346382 2.204663
-## 6  4.384955 0.2062509 3.980472 4.784476
-## 7  3.246504 0.2001336 2.847035 3.646729
-## 8  4.008772 0.2107133 3.595458 4.428586
-## 9  4.236734 0.2052556 3.836461 4.636787
-## 10 3.711203 0.2078821 3.303882 4.109533
-## 11 2.168381 0.2143573 1.743727 2.582371
-## 12 4.035374 0.2089868 3.628665 4.438421
-## 13 4.086637 0.2133844 3.670318 4.497274
-## 14 3.591279 0.2054213 3.196173 3.999429
-## 15 4.260217 0.2050365 3.857916 4.659703
-## 16 3.482390 0.2064012 3.075759 3.880146
-## 17 4.040741 0.2113138 3.615844 4.457417
-## 18 5.840836 0.2091523 5.438021 6.239810
-## 19 3.774387 0.2069485 3.362714 4.179448
-## 20 3.856362 0.2105514 3.450898 4.264787
+## 1  3.257478 0.2035942 2.852822 3.656762
+## 2  3.165662 0.2087660 2.763492 3.579353
+## 3  1.615157 0.2060121 1.222783 2.016879
+## 4  3.335387 0.1964793 2.949353 3.717637
+## 5  2.296397 0.2063222 1.887291 2.698056
+## 6  3.148887 0.2017595 2.740449 3.536169
+## 7  2.648014 0.2090663 2.241426 3.053719
+## 8  3.642193 0.1988416 3.245539 4.027335
+## 9  4.117556 0.2028759 3.724034 4.515102
+## 10 2.322228 0.2080664 1.910779 2.728812
+## 11 4.444412 0.2075830 4.037092 4.841307
+## 12 2.833985 0.2002205 2.439787 3.228190
+## 13 4.653762 0.2050913 4.249860 5.054741
+## 14 5.535245 0.2214844 5.115992 5.971740
+## 15 3.561178 0.1994760 3.170220 3.949092
+## 16 3.485721 0.1980807 3.093399 3.871864
+## 17 2.341366 0.1987429 1.943998 2.730567
+## 18 3.959822 0.2078971 3.560317 4.367699
+## 19 3.500621 0.1999719 3.104086 3.895698
+## 20 3.168557 0.2026318 2.764338 3.566792
 ## 
 ## , , afternoon
 ## 
-##      Estimate Est.Error      Q2.5       Q97.5
-## 1  -1.4028304 0.2650106 -1.925897 -0.89745586
-## 2  -0.9499469 0.2730138 -1.486945 -0.42107261
-## 3  -1.8877371 0.2747891 -2.421923 -1.35021637
-## 4  -1.1999865 0.2609638 -1.706151 -0.68144455
-## 5  -0.5798662 0.2762329 -1.128942 -0.04157682
-## 6  -1.4941387 0.2634284 -2.017196 -0.97103914
-## 7  -1.0510192 0.2543420 -1.547794 -0.53539776
-## 8  -1.7245287 0.2750980 -2.278482 -1.20547927
-## 9  -1.5635515 0.2603850 -2.078395 -1.05338222
-## 10 -1.0259160 0.2656137 -1.523594 -0.48770944
-## 11 -0.4837134 0.2840094 -1.024349  0.07764580
-## 12 -1.2707149 0.2654349 -1.791585 -0.74327996
-## 13 -1.8111164 0.2771616 -2.367564 -1.27067278
-## 14 -1.6278600 0.2713188 -2.158032 -1.12148827
-## 15 -1.6767712 0.2668051 -2.207544 -1.16339863
-## 16 -0.9631167 0.2558213 -1.456668 -0.45254115
-## 17 -0.6856954 0.2855379 -1.232211 -0.11076829
-## 18 -1.5524621 0.2716130 -2.084856 -1.01864804
-## 19 -0.9174169 0.2692748 -1.438692 -0.39226069
-## 20 -0.9492934 0.2706767 -1.465136 -0.41188546</code></pre>
+##      Estimate Est.Error       Q2.5        Q97.5
+## 1  -0.9075166 0.2096445 -1.3618266 -0.511335490
+## 2  -1.0466650 0.2429569 -1.5658734 -0.631545880
+## 3  -0.4292542 0.2328915 -0.8855643  0.024001165
+## 4  -0.7421363 0.2071748 -1.1324862 -0.311491345
+## 5  -0.5481318 0.2163228 -0.9617509 -0.120817780
+## 6  -0.7952144 0.2086028 -1.2129496 -0.368283468
+## 7  -0.4905239 0.2285836 -0.8967930 -0.007445871
+## 8  -0.8224418 0.2090859 -1.2171772 -0.390551849
+## 9  -1.0802684 0.2129073 -1.5259491 -0.678236588
+## 10 -0.4258400 0.2287290 -0.8410538  0.062666711
+## 11 -1.0932314 0.2210538 -1.5331957 -0.660440952
+## 12 -0.7616165 0.2098765 -1.1865653 -0.360890306
+## 13 -1.2126147 0.2234728 -1.6645061 -0.787262410
+## 14 -1.5344024 0.2712118 -2.0737942 -1.023297217
+## 15 -0.9242634 0.2080521 -1.3465731 -0.521195971
+## 16 -0.7348618 0.2107951 -1.1228306 -0.296388693
+## 17 -0.5667775 0.2138634 -0.9935640 -0.132124851
+## 18 -1.0093023 0.2111856 -1.4437750 -0.605782458
+## 19 -0.7444063 0.2116041 -1.1260144 -0.291720917
+## 20 -0.7314524 0.2081339 -1.1390389 -0.296033163</code></pre>
 <p>Here’s the code to extract the relevant elements from the <code>coef()</code> list, convert them to a tibble, and add the <code>cafe</code> index.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">partially_pooled_params &lt;-
-<span class="st">  </span><span class="co"># With this line we select each of the 20 cafe&#39;s posterior mean (i.e., Estimate)</span>
+<span class="st">  </span><span class="co"># with this line we select each of the 20 cafe&#39;s posterior mean (i.e., Estimate)</span>
 <span class="st">  </span><span class="co"># for both `Intercept` and `afternoon`</span>
 <span class="st">  </span><span class="kw">coef</span>(b13.<span class="dv">1</span>)<span class="op">$</span>cafe[ , <span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st">               </span><span class="co"># convert the two vectors to a tibble</span>
@@ -698,14 +702,14 @@ post <span class="op">%&gt;%</span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compute unpooled estimates directly from data</span>
 un_pooled_params &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="co"># With these two lines, we compute the mean value for each cafe&#39;s wait time </span>
-<span class="st">  </span><span class="co"># in the morning and then the afternoon.</span>
+<span class="st">  </span><span class="co"># with these two lines, we compute the mean value for each cafe&#39;s wait time </span>
+<span class="st">  </span><span class="co"># in the morning and then the afternoon</span>
 <span class="st">  </span><span class="kw">group_by</span>(afternoon, cafe) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(wait)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># Ungrouping allows us to alter afternoon, one of the grouping variables</span>
+<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># ungrouping allows us to alter afternoon, one of the grouping variables</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">afternoon =</span> <span class="kw">ifelse</span>(afternoon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;Slope&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">spread</span>(<span class="dt">key =</span> afternoon, <span class="dt">value =</span> mean) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># use `spread()` just as in the previous block</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Slope =</span> Slope <span class="op">-</span><span class="st"> </span>Intercept)          <span class="co"># Finally, here&#39;s our slope!</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Slope =</span> Slope <span class="op">-</span><span class="st"> </span>Intercept)          <span class="co"># finally, here&#39;s our slope!</span>
 
 <span class="co"># Here we combine the partially-pooled and unpooled means into a single data object, </span>
 <span class="co"># which will make plotting easier.</span>
@@ -715,22 +719,22 @@ params &lt;-
 <span class="st">  </span><span class="co"># index whether the estimates are pooled</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pooled =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;partially&quot;</span>, <span class="st">&quot;not&quot;</span>), <span class="dt">each =</span> <span class="kw">nrow</span>(.)<span class="op">/</span><span class="dv">2</span>)) 
 
-<span class="co"># Here&#39;s a glimpse at what we&#39;ve been working for</span>
+<span class="co"># here&#39;s a glimpse at what we&#39;ve been working for</span>
 params <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">slice</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">36</span><span class="op">:</span><span class="dv">40</span>))</code></pre></div>
 <pre><code>## # A tibble: 10 x 4
 ##     cafe Intercept  Slope pooled   
 ##    &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;    
-##  1     1      4.08 -1.40  partially
-##  2     2      1.93 -0.950 partially
-##  3     3      4.82 -1.89  partially
-##  4     4      3.48 -1.20  partially
-##  5     5      1.78 -0.580 partially
-##  6    16      3.42 -0.836 not      
-##  7    17      3.91 -0.348 not      
-##  8    18      5.89 -1.50  not      
-##  9    19      3.70 -0.733 not      
-## 10    20      3.79 -0.774 not</code></pre>
+##  1     1      3.26 -0.908 partially
+##  2     2      3.17 -1.05  partially
+##  3     3      1.62 -0.429 partially
+##  4     4      3.34 -0.742 partially
+##  5     5      2.30 -0.548 partially
+##  6    16      3.38 -0.465 not      
+##  7    17      2.29 -0.531 not      
+##  8    18      4.01 -1.07  not      
+##  9    19      3.39 -0.484 not      
+## 10    20      3.12 -0.617 not</code></pre>
 <p>Finally, here’s our code for Figure 13.5.a, showing shrinkage in two dimensions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> params, <span class="kw">aes</span>(<span class="dt">x =</span> Intercept, <span class="dt">y =</span> Slope)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">stat_ellipse</span>(<span class="dt">geom =</span> <span class="st">&quot;polygon&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;norm&quot;</span>, <span class="dt">level =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>, <span class="dt">size =</span> <span class="dv">0</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">20</span>, <span class="dt">fill =</span> <span class="st">&quot;#E7CDC2&quot;</span>) <span class="op">+</span>
@@ -750,7 +754,7 @@ params <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(params<span class="op">$</span>Intercept),
                   <span class="dt">ylim =</span> <span class="kw">range</span>(params<span class="op">$</span>Slope)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-739-1.png" width="480" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="480" /></p>
 <p>Learn more about <code>stat_ellipse()</code>, <a href="https://ggplot2.tidyverse.org/reference/stat_ellipse.html">here</a>. Let’s prep for Figure 13.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># retrieve the partially-pooled estimates with `coef()`</span>
 partially_pooled_estimates &lt;-
@@ -761,10 +765,10 @@ partially_pooled_estimates &lt;-
          <span class="dt">cafe      =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># Add the `cafe` index</span>
 <span class="st">  </span><span class="kw">select</span>(cafe, <span class="kw">everything</span>()) 
 
-<span class="co"># Compute unpooled estimates directly from data</span>
+<span class="co"># compute unpooled estimates directly from data</span>
 un_pooled_estimates &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="co"># As above, with these two lines, we compute each cafe&#39;s mean wait value by time of day.</span>
+<span class="st">  </span><span class="co"># as above, with these two lines, we compute each cafe&#39;s mean wait value by time of day</span>
 <span class="st">  </span><span class="kw">group_by</span>(afternoon, cafe) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(wait)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># ungrouping allows us to alter the grouping variable, afternoon</span>
@@ -776,7 +780,7 @@ estimates &lt;-
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pooled =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;partially&quot;</span>, <span class="st">&quot;not&quot;</span>), <span class="dt">each =</span> <span class="kw">n</span>() <span class="op">/</span><span class="st"> </span><span class="dv">2</span>))</code></pre></div>
 <p>The code for Figure 13.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> estimates, <span class="kw">aes</span>(<span class="dt">x =</span> morning, <span class="dt">y =</span> afternoon)) <span class="op">+</span>
-<span class="st">  </span><span class="co"># Nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the </span>
+<span class="st">  </span><span class="co"># nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the </span>
 <span class="st">  </span><span class="co"># ten-layered semitransparent ellipses we did with ten lines of `stat_ellipse()` </span>
 <span class="st">  </span><span class="co"># functions in the previous plot</span>
 <span class="st">  </span><span class="kw">mapply</span>(<span class="cf">function</span>(level) {
@@ -795,7 +799,7 @@ estimates &lt;-
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;morning wait (mins)&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;afternoon wait (mins)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-741-1.png" width="451.2" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-32-1.png" width="451.2" /></p>
 </div>
 </div>
 <div id="example-admission-decisions-and-gender" class="section level2">
@@ -834,35 +838,36 @@ d &lt;-<span class="st"> </span>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sd)),
       <span class="dt">iter =</span> <span class="dv">4500</span>, <span class="dt">warmup =</span> <span class="dv">500</span>, <span class="dt">chains =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">3</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>,
       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</code></pre></div>
 <p>Since we don’t have a <code>depth=2</code> argument in <code>brms::summary()</code>, we’ll have to get creative. One way to look at the parameters is with <code>b13.2$fit</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">2</span><span class="op">$</span>fit</code></pre></div>
-<pre><code>## Inference for Stan model: 986d730d4cab1fb3046dbb2c44ac3aae.
+<pre><code>## Inference for Stan model: bc63eecab9ca7a1bd98aff8a3c74d8d2.
 ## 3 chains, each with iter=4500; warmup=500; thin=1; 
 ## post-warmup draws per chain=4000, total post-warmup draws=12000.
 ## 
 ##                          mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## b_Intercept             -0.57    0.01 0.65  -1.85  -0.94  -0.56  -0.19   0.76  1882    1
-## b_male                  -0.10    0.00 0.08  -0.25  -0.15  -0.10  -0.04   0.06  5114    1
-## sd_dept_id__Intercept    1.49    0.01 0.58   0.80   1.10   1.37   1.73   3.00  2251    1
-## r_dept_id[1,Intercept]   1.24    0.01 0.65  -0.09   0.86   1.23   1.62   2.54  1887    1
-## r_dept_id[2,Intercept]   1.20    0.01 0.65  -0.13   0.82   1.19   1.58   2.49  1896    1
-## r_dept_id[3,Intercept]  -0.02    0.01 0.65  -1.32  -0.39  -0.02   0.36   1.28  1887    1
-## r_dept_id[4,Intercept]  -0.05    0.01 0.65  -1.37  -0.42  -0.06   0.32   1.23  1881    1
-## r_dept_id[5,Intercept]  -0.49    0.01 0.65  -1.82  -0.87  -0.50  -0.11   0.78  1900    1
-## r_dept_id[6,Intercept]  -2.04    0.01 0.66  -3.38  -2.42  -2.04  -1.65  -0.75  1945    1
-## lp__                   -61.77    0.05 2.49 -67.54 -63.22 -61.44 -59.97 -57.89  2375    1
+## b_Intercept             -0.58    0.01 0.65  -1.87  -0.94  -0.58  -0.21   0.76  1894    1
+## b_male                  -0.10    0.00 0.08  -0.26  -0.15  -0.10  -0.04   0.07  4728    1
+## sd_dept_id__Intercept    1.48    0.01 0.58   0.77   1.10   1.35   1.70   2.91  1814    1
+## r_dept_id[1,Intercept]   1.25    0.01 0.65  -0.07   0.88   1.26   1.62   2.55  1913    1
+## r_dept_id[2,Intercept]   1.21    0.01 0.65  -0.10   0.83   1.21   1.58   2.53  1914    1
+## r_dept_id[3,Intercept]   0.00    0.01 0.65  -1.34  -0.37  -0.01   0.36   1.27  1899    1
+## r_dept_id[4,Intercept]  -0.04    0.01 0.65  -1.36  -0.40  -0.04   0.33   1.25  1903    1
+## r_dept_id[5,Intercept]  -0.48    0.01 0.65  -1.83  -0.85  -0.48  -0.11   0.81  1909    1
+## r_dept_id[6,Intercept]  -2.03    0.01 0.66  -3.38  -2.40  -2.03  -1.64  -0.72  1959    1
+## lp__                   -61.84    0.05 2.51 -67.60 -63.34 -61.50 -60.02 -57.92  2635    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Mon Sep 24 19:28:16 2018.
+## Samples were drawn using NUTS(diag_e) at Wed Apr 17 15:50:10 2019.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
-<p>However, notice that the group-specific parameters don’t match up with those in the text. Though our <code>r_dept_id[1,Intercept]</code> had a posterior mean of 1.27, the number for <code>a_dept[1]</code> in the text is 0.67. This is because the brms package presented the random effects in the <strong>non-centered</strong> metric. The rethinking package, in contrast, presented the random effects in the <strong>centered</strong> metric. On page 399, McElreath wrote:</p>
+<p>However, notice that the group-specific parameters don’t match up with those in the text. Though our <code>r_dept_id[1,Intercept]</code> had a posterior mean of 1.25, the number for <code>a_dept[1]</code> in the text is 0.67. This is because the brms package presented the random effects in the <strong>non-centered</strong> metric. The rethinking package, in contrast, presented the random effects in the <strong>centered</strong> metric. On page 399, McElreath wrote:</p>
 <blockquote>
 <p>Remember, the values above are the <span class="math inline">\(\alpha_{DEPT}\)</span> estimates, and so they are deviations from the global mean <span class="math inline">\(\alpha\)</span>, which in this case has posterior mean -0.58. So department A, “[1]” in the table, has the highest average admission rate. Department F, “[6]” in the table, has the lowest.</p>
 </blockquote>
 <p>Here’s another fun fact:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Numbers taken from the mean column on page 399 in the text</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># numbers taken from the mean column on page 399 in the text</span>
 <span class="kw">c</span>(<span class="fl">0.67</span>, <span class="fl">0.63</span>, <span class="op">-</span><span class="fl">0.59</span>, <span class="op">-</span><span class="fl">0.62</span>, <span class="op">-</span><span class="fl">1.06</span>, <span class="op">-</span><span class="fl">2.61</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mean</span>()</code></pre></div>
 <pre><code>## [1] -0.5966667</code></pre>
 <p>The average of the rethinking-based <strong>centered</strong> random effects is within rounding error of the global mean, -0.58. If you want the random effects in the <strong>centered</strong> metric from brms, you can use the <code>coef()</code> function:</p>
@@ -871,29 +876,29 @@ d &lt;-<span class="st"> </span>
 ## , , Intercept
 ## 
 ##     Estimate  Est.Error       Q2.5      Q97.5
-## 1  0.6748743 0.09869596  0.4799627  0.8678702
-## 2  0.6306516 0.11550916  0.4044213  0.8592874
-## 3 -0.5832062 0.07462316 -0.7304812 -0.4367849
-## 4 -0.6157081 0.08498400 -0.7829412 -0.4495225
-## 5 -1.0597297 0.09859278 -1.2584943 -0.8702506
-## 6 -2.6065066 0.15474597 -2.9195257 -2.3113986
+## 1  0.6761368 0.09775346  0.4875966  0.8692484
+## 2  0.6313927 0.11483278  0.4126650  0.8608403
+## 3 -0.5820628 0.07404136 -0.7291298 -0.4391695
+## 4 -0.6149658 0.08624727 -0.7851875 -0.4490055
+## 5 -1.0597847 0.09848451 -1.2579206 -0.8649718
+## 6 -2.6064264 0.15776514 -2.9211817 -2.3091631
 ## 
 ## , , male
 ## 
 ##      Estimate  Est.Error       Q2.5      Q97.5
-## 1 -0.09530202 0.07988608 -0.2528348 0.06242025
-## 2 -0.09530202 0.07988608 -0.2528348 0.06242025
-## 3 -0.09530202 0.07988608 -0.2528348 0.06242025
-## 4 -0.09530202 0.07988608 -0.2528348 0.06242025
-## 5 -0.09530202 0.07988608 -0.2528348 0.06242025
-## 6 -0.09530202 0.07988608 -0.2528348 0.06242025</code></pre>
+## 1 -0.09643949 0.08121842 -0.2619235 0.06542184
+## 2 -0.09643949 0.08121842 -0.2619235 0.06542184
+## 3 -0.09643949 0.08121842 -0.2619235 0.06542184
+## 4 -0.09643949 0.08121842 -0.2619235 0.06542184
+## 5 -0.09643949 0.08121842 -0.2619235 0.06542184
+## 6 -0.09643949 0.08121842 -0.2619235 0.06542184</code></pre>
 <p>And just to confirm, the average of the posterior means of the <code>Intercept</code> random effects with <code>brms::coef()</code> is also the global mean within rounding error:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(<span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[ , <span class="st">&quot;Estimate&quot;</span>, <span class="st">&quot;Intercept&quot;</span>])</code></pre></div>
-<pre><code>## [1] -0.5932708</code></pre>
+<pre><code>## [1] -0.5926184</code></pre>
 <p>Note how <code>coef()</code> returned a three-dimensional list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str</span>()</code></pre></div>
 <pre><code>## List of 1
-##  $ dept_id: num [1:6, 1:4, 1:2] 0.675 0.631 -0.583 -0.616 -1.06 ...
+##  $ dept_id: num [1:6, 1:4, 1:2] 0.676 0.631 -0.582 -0.615 -1.06 ...
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 3
 ##   .. ..$ : chr [1:6] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
 ##   .. ..$ : chr [1:4] &quot;Estimate&quot; &quot;Est.Error&quot; &quot;Q2.5&quot; &quot;Q97.5&quot;
@@ -901,38 +906,31 @@ d &lt;-<span class="st"> </span>
 <p>If you just want the parameter summaries for the random intercepts, you have to use three-dimensional indexing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[ , , <span class="st">&quot;Intercept&quot;</span>]  <span class="co"># this also works: coef(b13.2)$dept_id[ , , 1]</span></code></pre></div>
 <pre><code>##     Estimate  Est.Error       Q2.5      Q97.5
-## 1  0.6748743 0.09869596  0.4799627  0.8678702
-## 2  0.6306516 0.11550916  0.4044213  0.8592874
-## 3 -0.5832062 0.07462316 -0.7304812 -0.4367849
-## 4 -0.6157081 0.08498400 -0.7829412 -0.4495225
-## 5 -1.0597297 0.09859278 -1.2584943 -0.8702506
-## 6 -2.6065066 0.15474597 -2.9195257 -2.3113986</code></pre>
+## 1  0.6761368 0.09775346  0.4875966  0.8692484
+## 2  0.6313927 0.11483278  0.4126650  0.8608403
+## 3 -0.5820628 0.07404136 -0.7291298 -0.4391695
+## 4 -0.6149658 0.08624727 -0.7851875 -0.4490055
+## 5 -1.0597847 0.09848451 -1.2579206 -0.8649718
+## 6 -2.6064264 0.15776514 -2.9211817 -2.3091631</code></pre>
 <p>So to get our brms summaries in a similar format to those in the text, we’ll have to combine <code>coef()</code> with <code>fixef()</code> and <code>VarCorr()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[, , <span class="st">&quot;Intercept&quot;</span>] <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(<span class="kw">fixef</span>(b13.<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(<span class="kw">VarCorr</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id<span class="op">$</span>sd <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>())</code></pre></div>
-<pre><code>## # A tibble: 9 x 4
-##   Estimate Est.Error   Q2.5   Q97.5
-##      &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1   0.675     0.0987  0.480  0.868 
-## 2   0.631     0.116   0.404  0.859 
-## 3  -0.583     0.0746 -0.730 -0.437 
-## 4  -0.616     0.0850 -0.783 -0.450 
-## 5  -1.06      0.0986 -1.26  -0.870 
-## 6  -2.61      0.155  -2.92  -2.31  
-## 7  -0.567     0.649  -1.85   0.756 
-## 8  -0.0953    0.0799 -0.253  0.0624
-## 9   1.49      0.579   0.795  3.00</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rbind</span>(<span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[, , <span class="st">&quot;Intercept&quot;</span>],
+      <span class="kw">fixef</span>(b13.<span class="dv">2</span>),
+      <span class="kw">VarCorr</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id<span class="op">$</span>sd)</code></pre></div>
+<pre><code>##              Estimate  Est.Error       Q2.5       Q97.5
+## 1          0.67613683 0.09775346  0.4875966  0.86924836
+## 2          0.63139265 0.11483278  0.4126650  0.86084032
+## 3         -0.58206284 0.07404136 -0.7291298 -0.43916951
+## 4         -0.61496585 0.08624727 -0.7851875 -0.44900551
+## 5         -1.05978468 0.09848451 -1.2579206 -0.86497180
+## 6         -2.60642640 0.15776514 -2.9211817 -2.30916314
+## Intercept -0.57878250 0.64522749 -1.8721229  0.75534246
+## male      -0.09643949 0.08121842 -0.2619235  0.06542184
+## Intercept  1.47518830 0.57524043  0.7737629  2.90850757</code></pre>
 <p>And a little more data wrangling will make the summaries easier to read:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[, , <span class="st">&quot;Intercept&quot;</span>] <span class="op">%&gt;%</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rbind</span>(<span class="kw">coef</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id[, , <span class="st">&quot;Intercept&quot;</span>],
+      <span class="kw">fixef</span>(b13.<span class="dv">2</span>),
+      <span class="kw">VarCorr</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id<span class="op">$</span>sd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(<span class="kw">fixef</span>(b13.<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(<span class="kw">VarCorr</span>(b13.<span class="dv">2</span>)<span class="op">$</span>dept_id<span class="op">$</span>sd <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">parameter =</span> <span class="kw">c</span>(<span class="kw">paste</span>(<span class="st">&quot;Intercept [&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="st">&quot;]&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>), 
                        <span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;male&quot;</span>, <span class="st">&quot;sigma&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(parameter, <span class="kw">everything</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -940,15 +938,15 @@ d &lt;-<span class="st"> </span>
 <pre><code>## # A tibble: 9 x 5
 ##   parameter     Estimate Est.Error  Q2.5 Q97.5
 ##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Intercept [1]    0.67      0.1    0.48  0.87
-## 2 Intercept [2]    0.63      0.12   0.4   0.86
+## 1 Intercept [1]    0.68      0.1    0.49  0.87
+## 2 Intercept [2]    0.63      0.11   0.41  0.86
 ## 3 Intercept [3]   -0.580     0.07  -0.73 -0.44
-## 4 Intercept [4]   -0.62      0.08  -0.78 -0.45
-## 5 Intercept [5]   -1.06      0.1   -1.26 -0.87
-## 6 Intercept [6]   -2.61      0.15  -2.92 -2.31
-## 7 Intercept       -0.570     0.65  -1.85  0.76
-## 8 male            -0.1       0.08  -0.25  0.06
-## 9 sigma            1.49      0.580  0.8   3</code></pre>
+## 4 Intercept [4]   -0.61      0.09  -0.79 -0.45
+## 5 Intercept [5]   -1.06      0.1   -1.26 -0.86
+## 6 Intercept [6]   -2.61      0.16  -2.92 -2.31
+## 7 Intercept       -0.580     0.65  -1.87  0.76
+## 8 male            -0.1       0.08  -0.26  0.07
+## 9 sigma            1.48      0.580  0.77  2.91</code></pre>
 <p>I’m not aware of a slick and easy way to get the <code>n_eff</code> and <code>Rhat</code> summaries into the mix. But if you’re fine with working with the brms-default <strong>non-centered</strong> parameterization, <code>b13.2$fit</code> gets you those just fine.</p>
 <p>One last thing. The <a href="https://cran.r-project.org/web/packages/broom/index.html">broom package</a> offers a very handy way to get those brms random effects. Just throw the model <code>brm()</code> fit into the <code>tidy()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(broom)
@@ -956,16 +954,16 @@ d &lt;-<span class="st"> </span>
 <span class="kw">tidy</span>(b13.<span class="dv">2</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)  <span class="co"># This line just rounds the output</span></code></pre></div>
 <pre><code>##                      term estimate std.error  lower  upper
-## 1             b_Intercept    -0.57      0.65  -1.59   0.46
+## 1             b_Intercept    -0.58      0.65  -1.58   0.47
 ## 2                  b_male    -0.10      0.08  -0.23   0.04
-## 3   sd_dept_id__Intercept     1.49      0.58   0.86   2.57
-## 4  r_dept_id[1,Intercept]     1.24      0.65   0.22   2.27
-## 5  r_dept_id[2,Intercept]     1.20      0.65   0.17   2.23
-## 6  r_dept_id[3,Intercept]    -0.02      0.65  -1.04   1.02
-## 7  r_dept_id[4,Intercept]    -0.05      0.65  -1.09   0.97
-## 8  r_dept_id[5,Intercept]    -0.49      0.65  -1.53   0.54
-## 9  r_dept_id[6,Intercept]    -2.04      0.66  -3.09  -1.02
-## 10                   lp__   -61.77      2.49 -66.32 -58.36</code></pre>
+## 3   sd_dept_id__Intercept     1.48      0.58   0.84   2.49
+## 4  r_dept_id[1,Intercept]     1.25      0.65   0.20   2.26
+## 5  r_dept_id[2,Intercept]     1.21      0.65   0.17   2.22
+## 6  r_dept_id[3,Intercept]     0.00      0.65  -1.06   1.01
+## 7  r_dept_id[4,Intercept]    -0.04      0.65  -1.08   0.97
+## 8  r_dept_id[5,Intercept]    -0.48      0.65  -1.53   0.53
+## 9  r_dept_id[6,Intercept]    -2.03      0.66  -3.09  -1.00
+## 10                   lp__   -61.84      2.51 -66.41 -58.34</code></pre>
 <p>But note how, just as with <code>b13.2$fit</code>, this approach summarizes the posterior with the <strong>non-centered</strong> parameterization. Which is a fine parameterization. It’s just a little different from what you’ll get when using <code>precis( m13.2 , depth=2 )</code>, as in the text.</p>
 </div>
 <div id="varying-effects-of-being-male." class="section level3">
@@ -992,6 +990,7 @@ d &lt;-<span class="st"> </span>
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sd),
                 <span class="kw">prior</span>(<span class="kw">lkj</span>(<span class="dv">2</span>), <span class="dt">class =</span> cor)),
       <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>,
       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>,
                      <span class="dt">max_treedepth =</span> <span class="dv">12</span>))</code></pre></div>
 <p>McElreath encouraged us to make sure the chains look good. Instead of relying on convenience functions, let’s do it by hand.</p>
@@ -1005,23 +1004,24 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> iter, <span class="dt">y =</span> value, <span class="dt">group =</span> chain, <span class="dt">color =</span> chain)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">15</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;#80A0C7&quot;</span>, <span class="st">&quot;#B1934A&quot;</span>, <span class="st">&quot;#A65141&quot;</span>, <span class="st">&quot;#EEDA9D&quot;</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1001</span>, <span class="dv">5000</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1001</span>, <span class="dv">5000</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">825</span>, .<span class="dv">06</span>),
         <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-753-1.png" width="768" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-44-1.png" width="768" /></p>
 <p>Our chains look great. While we’re at it, let’s examine the <span class="math inline">\(\hat{R}\)</span> vales in a handmade plot, too.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rhat</span>(b13.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">rownames_to_column</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(rowname <span class="op">!=</span><span class="st"> &quot;lp__&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">set_names</span>(<span class="st">&quot;parameter&quot;</span>, <span class="st">&quot;rhat&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(parameter <span class="op">!=</span><span class="st"> &quot;lp__&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">.</span><span class="st">`</span>, <span class="dt">y =</span> <span class="kw">reorder</span>(rowname, <span class="st">`</span><span class="dt">.</span><span class="st">`</span>))) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">xend =</span> <span class="dv">1</span>, <span class="dt">yend =</span> rowname),
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rhat, <span class="dt">y =</span> <span class="kw">reorder</span>(parameter, rhat))) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">xend =</span> <span class="dv">1</span>, <span class="dt">yend =</span> parameter),
                <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> <span class="st">`</span><span class="dt">.</span><span class="st">`</span> <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>), 
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> rhat <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>), 
              <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;#80A0C7&quot;</span>, <span class="st">&quot;#A65141&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
@@ -1029,38 +1029,35 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-754-1.png" width="768" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-45-1.png" width="768" /></p>
 <p>Them are some respectable <span class="math inline">\(\hat{R}\)</span> values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set <code>coord_cartesian(xlim = c(0.99, 1.01))</code>). Here are the random effects in the <strong>centered</strong> metric:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">3</span>)</code></pre></div>
 <pre><code>## $dept_id
 ## , , Intercept
 ## 
 ##     Estimate  Est.Error       Q2.5      Q97.5
-## 1  1.3060287 0.25584336  0.8242594  1.8202385
-## 2  0.7420184 0.32818266  0.1035647  1.3976491
-## 3 -0.6470283 0.08457924 -0.8135330 -0.4827617
-## 4 -0.6172350 0.10497566 -0.8239028 -0.4132265
-## 5 -1.1315001 0.11332819 -1.3580756 -0.9143988
-## 6 -2.6007380 0.20242186 -3.0135856 -2.2216006
+## 1  1.3000810 0.25800931  0.7956920  1.8180656
+## 2  0.7427406 0.32186659  0.1135683  1.4015197
+## 3 -0.6471537 0.08493136 -0.8165215 -0.4817777
+## 4 -0.6181862 0.10557801 -0.8258275 -0.4116560
+## 5 -1.1308586 0.11440283 -1.3611516 -0.9106359
+## 6 -2.6039294 0.20068854 -3.0073852 -2.2276502
 ## 
 ## , , male
 ## 
 ##      Estimate Est.Error       Q2.5      Q97.5
-## 1 -0.79382902 0.2692380 -1.3324602 -0.2744163
-## 2 -0.21194501 0.3305760 -0.8767613  0.4424014
-## 3  0.08194407 0.1391819 -0.1814187  0.3592572
-## 4 -0.09240970 0.1394929 -0.3666799  0.1801527
-## 5  0.12153994 0.1866106 -0.2342076  0.4933623
-## 6 -0.12447792 0.2722629 -0.6711310  0.3969950</code></pre>
+## 1 -0.78709583 0.2713916 -1.3260723 -0.2557420
+## 2 -0.21265964 0.3240316 -0.8706022  0.4209622
+## 3  0.08244543 0.1384462 -0.1838069  0.3577488
+## 4 -0.09210853 0.1398596 -0.3661776  0.1831918
+## 5  0.12038134 0.1862482 -0.2329588  0.4945237
+## 6 -0.12006852 0.2689671 -0.6600662  0.4053155</code></pre>
 <p>We may as well keep our doing-things-by-hand kick going. Instead relying on <code>bayesplog::mcmc_intervals()</code> or <code>tidybayes::pointintervalh()</code> to make our coefficient plot, we’ll combine <code>geom_pointrange()</code> and <code>coord_flip()</code>. But we will need to wrangle a bit to get those brms-based <strong>centered</strong> random effects into a usefully-formatted tidy tibble.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># As far as I can tell, because `coef()` yields a list, you have to take out the two </span>
-<span class="co"># random effects one at a time, convert them to tibbles, and reassemble them with `bind_rows()`</span>
-<span class="kw">coef</span>(b13.<span class="dv">3</span>)<span class="op">$</span>dept_id[, , <span class="dv">1</span>] <span class="op">%&gt;%</span><span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># as far as I can tell, because `coef()` yields a list, you have to take out the two </span>
+<span class="co"># random effects one at a time and then bind them together to get them ready for a tibble</span>
+<span class="kw">rbind</span>(<span class="kw">coef</span>(b13.<span class="dv">3</span>)<span class="op">$</span>dept_id[, , <span class="dv">1</span>],
+      <span class="kw">coef</span>(b13.<span class="dv">3</span>)<span class="op">$</span>dept_id[, , <span class="dv">2</span>]) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(
-    <span class="kw">coef</span>(b13.<span class="dv">3</span>)<span class="op">$</span>dept_id[, , <span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">      </span><span class="kw">as_tibble</span>()
-    ) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">param   =</span> <span class="kw">c</span>(<span class="kw">paste</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>), <span class="kw">paste</span>(<span class="st">&quot;male&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>)),
          <span class="dt">reorder =</span> <span class="kw">c</span>(<span class="dv">6</span><span class="op">:</span><span class="dv">1</span>, <span class="dv">12</span><span class="op">:</span><span class="dv">7</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 
@@ -1076,7 +1073,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-756-1.png" width="624" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="624" /></p>
 <p>Just like in the text, our <code>male</code> slopes are much less dispersed than our intercepts.</p>
 </div>
 <div id="shrinkage." class="section level3">
@@ -1097,19 +1094,18 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;The dot is at the median; the</span><span class="ch">\n</span><span class="st">horizontal bar is the 95% CI.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-757-1.png" width="288" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-48-1.png" width="288" /></p>
 <p>Much like for Figure 13.5.b, above, it’ll take a little data processing before we’re ready to reproduce Figure 13.6.b.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Here we put the partially-pooled estimate summaries in a tibble</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># here we put the partially-pooled estimate summaries in a tibble</span>
 partially_pooled_params &lt;-
 <span class="st">  </span><span class="kw">coef</span>(b13.<span class="dv">3</span>)<span class="op">$</span>dept_id[ , <span class="dv">1</span>, ] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">rename</span>(<span class="dt">intercept =</span> Intercept,
-         <span class="dt">slope     =</span> male) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">set_names</span>(<span class="st">&quot;intercept&quot;</span>, <span class="st">&quot;slope&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dept =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">n</span>()) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">select</span>(dept, <span class="kw">everything</span>())
 
-<span class="co"># In order to calculate the unpooled estimates from the data, we&#39;ll need a function that </span>
-<span class="co"># can convert probabilities into the logit metric. If you do the algebra, this is just</span>
+<span class="co"># in order to calculate the unpooled estimates from the data, we&#39;ll need a function that </span>
+<span class="co"># can convert probabilities into the logit metric. if you do the algebra, this is just</span>
 <span class="co"># a transformation of the `inv_logit_scaled()` function.</span>
 prob_to_logit &lt;-<span class="st"> </span><span class="cf">function</span>(x){
   <span class="op">-</span><span class="kw">log</span>((<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>x) <span class="op">-</span><span class="dv">1</span>)
@@ -1124,26 +1120,26 @@ un_pooled_params &lt;-
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">male =</span> <span class="kw">ifelse</span>(male <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;intercept&quot;</span>, <span class="st">&quot;slope&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">spread</span>(<span class="dt">key  =</span> male, <span class="dt">value =</span> prob_admit) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">rename</span>(<span class="dt">dept =</span> dept_id) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intercept =</span> <span class="kw">prob_to_logit</span>(intercept),  <span class="co"># Here we put our `prob_to_logit()` function to work</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intercept =</span> <span class="kw">prob_to_logit</span>(intercept),  <span class="co"># here we put our `prob_to_logit()` function to work</span>
          <span class="dt">slope     =</span> <span class="kw">prob_to_logit</span>(slope)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">slope     =</span> slope <span class="op">-</span><span class="st"> </span>intercept)
 
-<span class="co"># Here we combine the partially-pooled and unpooled means into a single data object.</span>
+<span class="co"># here we combine the partially-pooled and unpooled means into a single data object</span>
 params &lt;-
 <span class="st">  </span><span class="kw">bind_rows</span>(partially_pooled_params, un_pooled_params) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pooled      =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;partially&quot;</span>, <span class="st">&quot;not&quot;</span>), <span class="dt">each =</span> <span class="kw">n</span>() <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dept_letter =</span> <span class="kw">rep</span>(LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">6</span>], <span class="dt">times =</span> <span class="dv">2</span>))  <span class="co"># This will help with plotting</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dept_letter =</span> <span class="kw">rep</span>(LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">6</span>], <span class="dt">times =</span> <span class="dv">2</span>))  <span class="co"># this will help with plotting</span>
 
 params</code></pre></div>
 <pre><code>## # A tibble: 12 x 5
 ##     dept intercept   slope pooled    dept_letter
 ##    &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;      
-##  1     1     1.31  -0.794  partially A          
-##  2     2     0.742 -0.212  partially B          
-##  3     3    -0.647  0.0819 partially C          
-##  4     4    -0.617 -0.0924 partially D          
-##  5     5    -1.13   0.122  partially E          
-##  6     6    -2.60  -0.124  partially F          
+##  1     1     1.30  -0.787  partially A          
+##  2     2     0.743 -0.213  partially B          
+##  3     3    -0.647  0.0824 partially C          
+##  4     4    -0.618 -0.0921 partially D          
+##  5     5    -1.13   0.120  partially E          
+##  6     6    -2.60  -0.120  partially F          
 ##  7     1     1.54  -1.05   not       A          
 ##  8     2     0.754 -0.220  not       B          
 ##  9     3    -0.660  0.125  not       C          
@@ -1172,7 +1168,7 @@ params</code></pre></div>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;intercept (&quot;</span>, alpha[dept_id], <span class="st">&quot;)&quot;</span>)),
        <span class="dt">y =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;slope (&quot;</span>, beta[dept_id], <span class="st">&quot;)&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-759-1.png" width="480" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-50-1.png" width="480" /></p>
 </div>
 <div id="model-comparison.-1" class="section level3">
 <h3><span class="header-section-number">13.2.4</span> Model comparison.</h3>
@@ -1183,17 +1179,25 @@ params</code></pre></div>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sd)),
       <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>,
       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>,
                      <span class="dt">max_treedepth =</span> <span class="dv">12</span>))</code></pre></div>
 <p>Compare the three models by the WAIC.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b13.<span class="dv">2</span>, b13.<span class="dv">3</span>, b13.<span class="dv">4</span>)</code></pre></div>
-<pre><code>##                 WAIC    SE
-## b13.2         108.43 16.46
-## b13.3          90.88  4.61
-## b13.4         105.30 18.00
-## b13.2 - b13.3  17.55 13.45
-## b13.2 - b13.4   3.12  3.62
-## b13.3 - b13.4 -14.42 15.20</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.<span class="dv">2</span>, <span class="st">&quot;waic&quot;</span>)
+b13.<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.<span class="dv">3</span>, <span class="st">&quot;waic&quot;</span>)
+b13.<span class="dv">4</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.<span class="dv">4</span>, <span class="st">&quot;waic&quot;</span>)
+
+<span class="kw">loo_compare</span>(b13.<span class="dv">2</span>, b13.<span class="dv">3</span>, b13.<span class="dv">4</span>, <span class="dt">criterion =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">print</span>(<span class="dt">simplify =</span> F)</code></pre></div>
+<pre><code>##       elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic  se_waic
+## b13.3   0.0       0.0   -45.6       2.4          6.9    1.5      91.2   4.9  
+## b13.4  -7.0       7.3   -52.6       9.0          6.5    2.3     105.1  18.0  
+## b13.2  -8.5       6.4   -54.1       8.1          9.2    2.9     108.2  16.3</code></pre>
+<p>In terms of the WAIC estimates and <span class="math inline">\(\text{elpd}\)</span> differences, the models are similar. The story changes when we look at the WAIC weights.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b13.<span class="dv">2</span>, b13.<span class="dv">3</span>, b13.<span class="dv">4</span>, <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<pre><code>## b13.2 b13.3 b13.4 
+## 0.000 0.999 0.001</code></pre>
 <blockquote>
 <p>The varying slopes model, [<code>b13.3</code>], dominates [the other two]. This is despite the fact that the <em>average</em> slope in [<code>b13.3</code>] is nearly zero. The average isn’t what matters, however. It is the individual slopes, one for each department, that matter. If we wish to generalize to new departments, the variation in slopes suggest that it’ll be worth paying attention to gender, even if the average slope is nearly zero in the population. (pp. 402–403, <em>emphasis</em> in the original)</p>
 </blockquote>
@@ -1226,6 +1230,9 @@ d &lt;-
 \mathbf R_\text{actor} \begin{pmatrix} \sigma_{\alpha_\text{actor}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{actor}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} \\
 \mathbf S_\text{block_id} &amp; = &amp; \begin{pmatrix} \sigma_{\alpha_\text{block_id}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{block_id}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} 
 \mathbf R_\text{block_id} \begin{pmatrix} \sigma_{\alpha_\text{block_id}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{block_id}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} \\
+\alpha  &amp; \sim &amp; \text{Normal} (0, 1) \\
+\beta_1 &amp; \sim &amp; \text{Normal} (0, 1) \\
+\beta_2 &amp; \sim &amp; \text{Normal} (0, 1) \\
 (\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
 (\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
 \mathbf R_\text{actor} &amp; \sim &amp; \text{LKJcorr} (4) \\
@@ -1235,14 +1242,15 @@ d &lt;-
 <p>Let’s fit this beast.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">6</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> binomial,
-      pulled_left <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">+</span>
+      pulled_left <span class="op">|</span><span class="st"> </span><span class="kw">trials</span>(<span class="dv">1</span>) <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">+</span>
 <span class="st">        </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">|</span><span class="st"> </span>actor) <span class="op">+</span>
 <span class="st">        </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">|</span><span class="st"> </span>block_id),
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sd),
                 <span class="kw">prior</span>(<span class="kw">lkj</span>(<span class="dv">4</span>), <span class="dt">class =</span> cor)),
-      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">3</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">3</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>)</code></pre></div>
 <p>Even though it’s not apparent in the syntax, our model <code>b13.6</code> was already fit using the <a href="https://github.com/paul-buerkner/brms/issues/211">non-centered parameterization. Behind the scenes, Bürkner has brms do this automatically</a>. It’s been that way all along.</p>
 <p>If you recall from last chapter, we can compute the number of effective samples for our parameters like so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ratios_cp &lt;-<span class="st"> </span><span class="kw">neff_ratio</span>(b13.<span class="dv">6</span>)
@@ -1257,12 +1265,12 @@ neff &lt;-
 <pre><code>## # A tibble: 6 x 2
 ##   neff_ratio  neff
 ##        &lt;dbl&gt; &lt;dbl&gt;
-## 1      0.174 2088.
-## 2      0.518 6214.
-## 3      0.627 7519.
-## 4      0.320 3836.
-## 5      0.465 5577.
-## 6      0.550 6595.</code></pre>
+## 1      0.271 3252.
+## 2      0.505 6058.
+## 3      0.622 7459.
+## 4      0.317 3809.
+## 5      0.516 6193.
+## 6      0.513 6154.</code></pre>
 <p>Now we’re ready for our variant of Figure 13.7. The handy <a href="https://cran.r-project.org/web/packages/ggbeeswarm/index.html">ggbeeswarm package</a> and its <code>geom_quasirandom()</code> function will give a better sense of the distribution.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggbeeswarm)
 
@@ -1278,54 +1286,55 @@ neff <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;effective samples&quot;</span>,
        <span class="dt">subtitle =</span> <span class="st">&quot;The non-centered</span><span class="ch">\n</span><span class="st">parameterization is the</span><span class="ch">\n</span><span class="st">brms default. No fancy</span><span class="ch">\n</span><span class="st">coding required.&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-763-1.png" width="288" /></p>
-<p>As in the last chapter, we’ll use the <code>bayesplot::mcmc_neff()</code> function to examine the ratio of n.eff and the fill number of post-warm-up iterations, <em>N</em>. Ideally, that ratio is closer to 1 than not.</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-56-1.png" width="288" /></p>
+<p>As in the last chapter, we’ll use the <code>bayesplot::mcmc_neff()</code> function to examine the ratio of n.eff and the fill number of post-warm-up iterations, <span class="math inline">\(N\)</span>. Ideally, that ratio is closer to 1 than not.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bayesplot)
 
 <span class="kw">color_scheme_set</span>(<span class="kw">c</span>(<span class="st">&quot;#DCA258&quot;</span>, <span class="st">&quot;#EEDA9D&quot;</span>, <span class="st">&quot;#394165&quot;</span>, <span class="st">&quot;#8B9DAF&quot;</span>, <span class="st">&quot;#A65141&quot;</span>, <span class="st">&quot;#A65141&quot;</span>))
 
 <span class="kw">mcmc_neff</span>(ratios_cp, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-764-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <p>Here are our standard deviation parameters.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.<span class="dv">6</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;sd_&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##                                 term estimate std.error lower upper
-## 1                sd_actor__Intercept     2.37      0.91  1.31  4.08
-## 2              sd_actor__prosoc_left     0.45      0.37  0.04  1.12
-## 3    sd_actor__prosoc_left:condition     0.52      0.48  0.04  1.42
-## 4             sd_block_id__Intercept     0.22      0.20  0.02  0.59
-## 5           sd_block_id__prosoc_left     0.57      0.40  0.07  1.31
-## 6 sd_block_id__prosoc_left:condition     0.51      0.44  0.04  1.29</code></pre>
+## 1                sd_actor__Intercept     2.31      0.89  1.28  3.91
+## 2              sd_actor__prosoc_left     0.46      0.37  0.04  1.13
+## 3    sd_actor__prosoc_left:condition     0.52      0.47  0.04  1.40
+## 4             sd_block_id__Intercept     0.23      0.20  0.02  0.60
+## 5           sd_block_id__prosoc_left     0.57      0.40  0.06  1.33
+## 6 sd_block_id__prosoc_left:condition     0.53      0.44  0.04  1.34</code></pre>
 <p>McElreath discussed <code>rethinking::link()</code> in the middle of page 407. He showed how his <code>link(m13.6NC)</code> code returned a list of four matrices, of which the <code>p</code> matrix was of primary interest. The <code>brms::fitted()</code> function doesn’t work quite the same way, here.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fitted</span>(b13.<span class="dv">6</span>,
        <span class="dt">summary =</span> F,
        <span class="dt">nsamples =</span> <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">str</span>()</code></pre></div>
-<pre><code>## Using the maximum response value as the number of trials.</code></pre>
-<pre><code>## Warning: Using &#39;binomial&#39; families without specifying &#39;trials&#39; on the left-hand side of the model
-## formula is deprecated.</code></pre>
-<pre><code>##  num [1:1000, 1:504] 0.365 0.303 0.321 0.248 0.27 ...</code></pre>
+<pre><code>##  num [1:1000, 1:504] 0.47 0.323 0.306 0.459 0.396 ...</code></pre>
 <p>First off, recall that <code>fitted()</code> returns summary values, by default. If we want individual values, set <code>summary = FALSE</code>. It’s also the <code>fitted()</code> default to use all posterior iterations, which is 12,000 in this case. To match the text, we need to set <code>nsamples = 1000</code>. But those are just details. The main point is that <code>fitted()</code> only returns one matrix, which is the analogue to the <code>p</code> matrix in the text.</p>
 <p>Moving forward, before we can follow along with McElreath’s R code 13.27, we need to refit the simpler model from way back in Chapter 12.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b12.<span class="dv">5</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> binomial,
-      pulled_left <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">+</span><span class="st"> </span>
+      pulled_left <span class="op">|</span><span class="st"> </span><span class="kw">trials</span>(<span class="dv">1</span>) <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>prosoc_left <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>prosoc_left <span class="op">+</span><span class="st"> </span>
 <span class="st">        </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>actor) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>block_id),
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sd)),
-      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">3</span>)</code></pre></div>
-<p>Now we can compare them with <code>waic()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b13.<span class="dv">6</span>, b12.<span class="dv">5</span>)</code></pre></div>
-<pre><code>##                 WAIC    SE
-## b13.6         534.77 19.89
-## b12.5         532.76 19.69
-## b13.6 - b12.5   2.00  4.10</code></pre>
+      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">3</span>, <span class="dt">cores =</span> <span class="dv">3</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>)</code></pre></div>
+<p>Now we can compare them by the WAIC.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">6</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.<span class="dv">6</span>, <span class="st">&quot;waic&quot;</span>)
+b12.<span class="dv">5</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b12.<span class="dv">5</span>, <span class="st">&quot;waic&quot;</span>)
+
+<span class="kw">loo_compare</span>(b13.<span class="dv">6</span>, b12.<span class="dv">5</span>, <span class="dt">criterion =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">print</span>(<span class="dt">simplify =</span> F)</code></pre></div>
+<pre><code>##       elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic   se_waic
+## b12.5    0.0       0.0  -266.4       9.8         10.5    0.5     532.8   19.7 
+## b13.6   -1.0       2.0  -267.4       9.9         18.4    0.9     534.9   19.9</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b13.<span class="dv">6</span>, b12.<span class="dv">5</span>, <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>)</code></pre></div>
 <pre><code>##     b13.6     b12.5 
-## 0.2685155 0.7314845</code></pre>
+## 0.2635335 0.7364665</code></pre>
 <blockquote>
 <p>In this example, no matter which varying effect structure you use, you’ll find that actors vary a lot in their baseline preference for the left-hand lever. Everything else is much less important. But using the most complex model, [<code>b13.6</code>], tells the correct story. Because the varying slopes are adaptively regularized, the model hasn’t overfit much, relative to the simpler model that contains only the important intercept variation. (p. 408)</p>
 </blockquote>
@@ -1374,13 +1383,12 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
 <span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label =</span> <span class="kw">round</span>(distance, <span class="dt">digits =</span> <span class="dv">1</span>)),
             <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;#100F14&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_fill_gradient</span>(<span class="dt">low =</span> <span class="st">&quot;#FCF9F0&quot;</span>, <span class="dt">high =</span> <span class="st">&quot;#A65141&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="dt">position =</span> <span class="st">&quot;top&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_discrete</span>(<span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="ot">NULL</span>, <span class="dt">position =</span> <span class="st">&quot;top&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_y_discrete</span>(<span class="ot">NULL</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-768-1.png" width="528" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-63-1.png" width="528" /></p>
 <p>Figure 13.8 shows the “shape of the function relating distance to the covariance <span class="math inline">\(\mathbf{K}_{ij}\)</span>.”</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(
   <span class="dt">x       =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">4</span>, <span class="dt">by =</span> .<span class="dv">01</span>),
@@ -1397,7 +1405,8 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
                      <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">5</span>, <span class="dv">1</span>),
                      <span class="dt">labels =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="st">&quot;.5&quot;</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-769-1.png" width="312" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-64-1.png" width="312" /></p>
+<p>Load the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(Kline2) <span class="co"># load the ordinary data, now with coordinates</span>
 
 d &lt;-<span class="st"> </span>
@@ -1409,7 +1418,7 @@ d &lt;-<span class="st"> </span>
 d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 10
 ## Variables: 10
-## $ culture     &lt;fct&gt; Malekula, Tikopia, Santa Cruz, Yap, Lau Fiji, Trobriand, Chuuk, Manus, Tong...
+## $ culture     &lt;fct&gt; Malekula, Tikopia, Santa Cruz, Yap, Lau Fiji, Trobriand, Chuuk, Manus, Tonga,…
 ## $ population  &lt;int&gt; 1100, 1500, 3600, 4791, 7400, 8000, 9200, 13000, 17500, 275000
 ## $ contact     &lt;fct&gt; low, low, low, high, high, high, high, low, high, low
 ## $ total_tools &lt;int&gt; 13, 22, 24, 43, 33, 19, 40, 28, 55, 71
@@ -1417,7 +1426,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">glimps
 ## $ lat         &lt;dbl&gt; -16.3, -12.3, -10.7, 9.5, -17.7, -8.7, 7.4, -2.1, -21.2, 19.9
 ## $ lon         &lt;dbl&gt; 167.5, 168.8, 166.0, 138.1, 178.1, 150.9, 151.6, 146.9, -175.2, -155.6
 ## $ lon2        &lt;dbl&gt; -12.5, -11.2, -14.0, -41.9, -1.9, -29.1, -28.4, -33.1, 4.8, 24.4
-## $ logpop      &lt;dbl&gt; 7.003065, 7.313220, 8.188689, 8.474494, 8.909235, 8.987197, 9.126959, 9.472...
+## $ logpop      &lt;dbl&gt; 7.003065, 7.313220, 8.188689, 8.474494, 8.909235, 8.987197, 9.126959, 9.47270…
 ## $ society     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</code></pre>
 <p>Switch out rethinking for brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
@@ -1431,62 +1440,64 @@ d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">glimps
                 <span class="kw">prior</span>(<span class="kw">inv_gamma</span>(<span class="fl">2.874624</span>, <span class="fl">0.393695</span>), <span class="dt">class =</span> lscale),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sdgp)),
       <span class="dt">iter =</span> <span class="fl">1e4</span>, <span class="dt">warmup =</span> <span class="dv">2000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>,
       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.999</span>,
                      <span class="dt">max_treedepth =</span> <span class="dv">12</span>))</code></pre></div>
 <p>Here’s the model summary.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b13.<span class="dv">7</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##                   Estimate Est.Error   Q2.5  Q97.5
-## b_Intercept           1.45      1.11  -0.72   3.78
-## b_logpop              0.23      0.10   0.02   0.44
-## sdgp_gplatlon2        0.52      0.36   0.16   1.46
-## lscale_gplatlon2      0.23      0.13   0.07   0.58
-## zgp_gplatlon2[1]     -0.60      0.79  -2.16   0.92
-## zgp_gplatlon2[2]      0.44      0.85  -1.26   2.08
-## zgp_gplatlon2[3]     -0.63      0.70  -1.98   0.88
-## zgp_gplatlon2[4]      0.88      0.71  -0.48   2.32
-## zgp_gplatlon2[5]      0.25      0.77  -1.25   1.78
-## zgp_gplatlon2[6]     -1.00      0.79  -2.56   0.59
-## zgp_gplatlon2[7]      0.13      0.72  -1.39   1.52
+## b_Intercept           1.43      1.11  -0.80   3.71
+## b_logpop              0.24      0.11   0.02   0.45
+## sdgp_gplatlon2        0.53      0.36   0.16   1.43
+## lscale_gplatlon2      0.23      0.13   0.07   0.56
+## zgp_gplatlon2[1]     -0.58      0.79  -2.14   0.96
+## zgp_gplatlon2[2]      0.44      0.84  -1.26   2.07
+## zgp_gplatlon2[3]     -0.63      0.70  -1.98   0.89
+## zgp_gplatlon2[4]      0.88      0.70  -0.46   2.29
+## zgp_gplatlon2[5]      0.25      0.76  -1.25   1.75
+## zgp_gplatlon2[6]     -0.99      0.80  -2.54   0.62
+## zgp_gplatlon2[7]      0.13      0.73  -1.40   1.55
 ## zgp_gplatlon2[8]     -0.18      0.88  -1.91   1.61
-## zgp_gplatlon2[9]      0.40      0.92  -1.51   2.11
-## zgp_gplatlon2[10]    -0.32      0.83  -1.95   1.33
-## lp__                -51.61      3.16 -58.80 -46.46</code></pre>
+## zgp_gplatlon2[9]      0.41      0.93  -1.51   2.16
+## zgp_gplatlon2[10]    -0.32      0.83  -1.95   1.30
+## lp__                -51.53      3.18 -58.66 -46.33</code></pre>
 <p>Our Gaussian process parameters are different than McElreath’s. From the brms reference manual, here’s the brms parameterization:</p>
-<p><span class="math display">\[k(x_{i},x_{j}) = sdgp^2 \text{exp} (-||x_{i} - x_{j}||/2lscale^2)\]</span></p>
+<p><span class="math display">\[k(x_{i},x_{j}) = sdgp^2 \text{exp} \big (-||x_i - x_j||^2 / (2 lscale^2) \big )\]</span></p>
 <p>What McElreath called <span class="math inline">\(\eta\)</span>, Bürkner called <span class="math inline">\(sdgp\)</span>. While McElreath estimated <span class="math inline">\(\eta^2\)</span>, brms simply estimated <span class="math inline">\(sdgp\)</span>. So we’ll have to square our <code>sdgp_gplatlon2</code> before it’s on the same scale as <code>etasq</code> in the text. Here it is.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(b13.<span class="dv">7</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">sdgp_squared =</span> sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mean_hdi</span>(sdgp_squared, <span class="dt">.width =</span> .<span class="dv">89</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.double, round, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##   sdgp_squared .lower .upper .width .point .interval
-## 1        0.399  0.002  0.773   0.89   mean       hdi</code></pre>
+## 1        0.402      0   0.77   0.89   mean       hdi</code></pre>
 <p>Now we’re in the ballpark. In our model <code>brm()</code> code, above, we just went with the flow and kept the <code>cauchy(0, 1)</code> prior on <code>sdgp</code>.</p>
-<p>Now look at the denominator of the inner part of Bürkner equation, <span class="math inline">\(2lscale^2\)</span>. This appears to be the brms equivalent to McElreath’s <span class="math inline">\(\rho^2\)</span>. Or at least it’s what we’ve got. Anyway, also note that McElreath estimated <span class="math inline">\(\rho^2\)</span> directly as <code>rhosq</code>. If I’m doing the algebra correctly–and that may well be a big if–, we might expect:</p>
-<p><span class="math display">\[\rho^2 = 1/(2 \times (lscale^2))\]</span></p>
+<p>Now look at the denominator of the inner part of Bürkner equation, <span class="math inline">\(2 lscale^2\)</span>. This appears to be the brms equivalent to McElreath’s <span class="math inline">\(\rho^2\)</span>. Or at least it’s what we’ve got. Anyway, also note that McElreath estimated <span class="math inline">\(\rho^2\)</span> directly as <code>rhosq</code>. If I’m doing the algebra correctly–and that may well be a big if–, we might expect:</p>
+<p><span class="math display">\[\rho^2 = 1/(2 \cdot lscale^2)\]</span></p>
 <p>But that doesn’t appear to be the case. <em>Sigh</em>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(b13.<span class="dv">7</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">transmute</span>(<span class="dt">rho_squared =</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>(lscale_gplatlon2<span class="op">^</span><span class="dv">2</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">transmute</span>(<span class="dt">rho_squared =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>lscale_gplatlon2<span class="op">^</span><span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mean_hdi</span>(rho_squared, <span class="dt">.width =</span> .<span class="dv">89</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.double, round, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##   rho_squared .lower .upper .width .point .interval
-## 1      21.995  0.513 47.817   0.89   mean       hdi</code></pre>
+## 1      21.354  0.481 46.174   0.89   mean       hdi</code></pre>
 <p>Oh man, that isn’t even close to the 2.67 McElreath reported in the text. The plot deepens. If you look back, you’ll see we used a very different prior for <span class="math inline">\(lscale\)</span>. Here is it: <code>inv_gamma(2.874624, 0.393695)</code>. Use <code>get_prior()</code> to discover where that came from.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">get_prior</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> poisson,
-      total_tools <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">gp</span>(lat, lon2) <span class="op">+</span><span class="st"> </span>logpop)</code></pre></div>
-<pre><code>##                           prior     class         coef group resp dpar nlpar bound
-## 1                                       b                                         
-## 2                                       b       logpop                            
-## 3           student_t(3, 3, 10) Intercept                                         
-## 4                normal(0, 0.5)    lscale                                         
-## 5 inv_gamma(2.874624, 0.393695)    lscale gp(lat,lon2)                            
-## 6           student_t(3, 0, 10)      sdgp                                         
-## 7                                    sdgp gp(lat,lon2)</code></pre>
-<p>That is, we used the brms default prior for <span class="math inline">\(lscale\)</span>. In a <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8">GitHub exchange</a>, Bürkner pointed out that brms uses special priors for <span class="math inline">\(lscale\)</span> parameters based on Michael Betancourt [of the Stan team]’s <a href="https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html">vignette on the topic</a>. Though it isn’t included in this document, I also ran the model with the <code>cauchy(0, 1)</code> prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn’t based on that prior.</p>
-<p>Now that we’ve started, we may as well keep going down the comparison train. Let’s reproduce McElreath’s model with rethinking.</p>
+          total_tools <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">gp</span>(lat, lon2) <span class="op">+</span><span class="st"> </span>logpop)</code></pre></div>
+<pre><code>##                           prior     class      coef group resp dpar nlpar bound
+## 1                                       b                                      
+## 2                                       b    logpop                            
+## 3           student_t(3, 3, 10) Intercept                                      
+## 4                normal(0, 0.5)    lscale                                      
+## 5 inv_gamma(2.874624, 0.393695)    lscale gplatlon2                            
+## 6           student_t(3, 0, 10)      sdgp                                      
+## 7                                    sdgp gplatlon2</code></pre>
+<p>That is, we used the brms default prior for <span class="math inline">\(lscale\)</span>. In a <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8">GitHub exchange</a>, Bürkner pointed out that brms uses special priors for <span class="math inline">\(lscale\)</span> parameters based on <a href="https://twitter.com/betanalpha">Michael Betancourt</a> [of the Stan team]’s <a href="https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html">vignette on the topic</a>. Though it isn’t included in this document, I also ran the model with the <code>cauchy(0, 1)</code> prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn’t based on that prior.</p>
+<p>Now that we’ve hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath’s model with rethinking.</p>
 <p>Switch out brms for rethinking.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>brms, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(rethinking)</code></pre></div>
+<p>Now fit the <code>rethinking::map2stan()</code> model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw">map2stan</span>(
     <span class="kw">alist</span>(
         total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda),
@@ -1512,11 +1523,10 @@ post_m13.<span class="dv">7</span> &lt;-<span class="st"> </span>rethinking<span
 
 <span class="co"># brms-based posterior</span>
 post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b13.<span class="dv">7</span>)</code></pre></div>
-<p>Here’s the model intercept posterior, by package:</p>
+<p>Here’s the model intercept posterior, by package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;a&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span>[, <span class="st">&quot;b_Intercept&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">rename</span>(<span class="dt">a =</span> value)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span><span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">              </span><span class="kw">transmute</span>(<span class="dt">a =</span> b_Intercept)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">package =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;rethinking&quot;</span>, <span class="st">&quot;brms&quot;</span>), <span class="dt">each =</span> <span class="kw">nrow</span>(post_m13.<span class="dv">7</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> a, <span class="dt">fill =</span> package)) <span class="op">+</span>
@@ -1526,12 +1536,12 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Not identical, but pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;intercept&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-778-1.png" width="576" /></p>
-<p>The slope:</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-73-1.png" width="576" /></p>
+<p>Now check the slopes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;bp&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span>[, <span class="st">&quot;b_logpop&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">rename</span>(<span class="dt">bp =</span> value)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">              </span><span class="kw">transmute</span>(<span class="dt">bp =</span> b_logpop)
+              ) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">package =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;rethinking&quot;</span>, <span class="st">&quot;brms&quot;</span>), <span class="dt">each =</span> <span class="kw">nrow</span>(post_m13.<span class="dv">7</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> bp, <span class="dt">fill =</span> package)) <span class="op">+</span>
@@ -1541,13 +1551,11 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Again, pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;slope&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-779-1.png" width="576" /></p>
-<p>This one, <span class="math inline">\(\eta^2\)</span>, required a little transformation:</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-74-1.png" width="576" /></p>
+<p>This one, <span class="math inline">\(\eta^2\)</span>, required a little transformation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;etasq&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span>[, <span class="st">&quot;sdgp_gplatlon2&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
-<span class="st">              </span><span class="kw">mutate</span>(<span class="dt">value =</span> value<span class="op">^</span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">rename</span>(<span class="dt">etasq =</span> value)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">              </span><span class="kw">transmute</span>(<span class="dt">etasq =</span> sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">package =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;rethinking&quot;</span>, <span class="st">&quot;brms&quot;</span>), <span class="dt">each =</span> <span class="kw">nrow</span>(post_m13.<span class="dv">7</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> etasq, <span class="dt">fill =</span> package)) <span class="op">+</span>
@@ -1558,14 +1566,12 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
        <span class="dt">x     =</span> <span class="kw">expression</span>(eta<span class="op">^</span><span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-780-1.png" width="576" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-75-1.png" width="576" /></p>
 <p><span class="math inline">\(\rho^2\)</span> required more extensive transformation of the brms posterior:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;rhosq&quot;</span>] <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span>[, <span class="st">&quot;lscale_gplatlon2&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">              </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
-<span class="st">              </span><span class="kw">transmute</span>(<span class="dt">value =</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>(value<span class="op">^</span><span class="dv">2</span>))) <span class="op">%&gt;%</span>
-<span class="st">              </span><span class="co"># transmute(value = value^2) %&gt;% </span>
-<span class="st">              </span><span class="kw">rename</span>(<span class="dt">rhosq =</span> value)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span><span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">              </span><span class="kw">transmute</span>(<span class="dt">rhosq =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>(lscale_gplatlon2<span class="op">^</span><span class="dv">2</span>)))
+            ) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">package =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;rethinking&quot;</span>, <span class="st">&quot;brms&quot;</span>), <span class="dt">each =</span> <span class="kw">nrow</span>(post_m13.<span class="dv">7</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rhosq, <span class="dt">fill =</span> package)) <span class="op">+</span>
@@ -1578,29 +1584,34 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>package, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-781-1.png" width="768" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-76-1.png" width="768" /></p>
 <p>I’m in clinical psychology. Folks in my field don’t tend to use Gaussian processes, so getting to the bottom of this is low on my to-do list. Perhaps one of y’all are more experienced with Gaussian processes and see a flaw somewhere in my code. Please <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">hit me up</a> if you do.</p>
 <p>Anyways, here’s our brms + ggplot2 version of Figure 13.9.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">50.2</span>)), <span class="kw">aes</span>(<span class="dt">x =</span> x)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">mapply</span>(<span class="cf">function</span>(etasq, rhosq) {
-    <span class="kw">stat_function</span>(<span class="dt">fun =</span> <span class="cf">function</span>(x, etasq, rhosq) etasq<span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span>rhosq<span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>), 
-                  <span class="dt">args =</span> <span class="kw">list</span>(<span class="dt">etasq =</span> etasq, <span class="dt">rhosq =</span> rhosq), 
-                  <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>,
-                  <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>,
-                  <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>)
-  }, 
-  <span class="dt">etasq =</span> post_b13.<span class="dv">7</span>[<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, <span class="st">&quot;sdgp_gplatlon2&quot;</span>]<span class="op">^</span><span class="dv">2</span>,
-  <span class="dt">rhosq =</span> post_b13.<span class="dv">7</span>[<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, <span class="st">&quot;lscale_gplatlon2&quot;</span>]<span class="op">^</span><span class="dv">2</span><span class="op">*</span>.<span class="dv">5</span>
-  ) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_function</span>(<span class="dt">fun =</span> <span class="cf">function</span>(x) <span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span>[<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, <span class="st">&quot;lscale_gplatlon2&quot;</span>] )<span class="op">^</span><span class="dv">2</span><span class="op">*</span>.<span class="dv">5</span><span class="op">*</span>x<span class="op">^</span><span class="dv">2</span>),
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for `sample_n()`</span>
+<span class="kw">set.seed</span>(<span class="dv">13</span>)
+
+<span class="co"># wrangle</span>
+post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">transmute</span>(<span class="dt">iter  =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">n</span>(),
+            <span class="dt">etasq =</span> sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>,
+            <span class="dt">rhosq =</span> lscale_gplatlon2<span class="op">^</span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">sample_n</span>(<span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">expand</span>(<span class="kw">nesting</span>(iter, etasq, rhosq),
+         <span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">55</span>, <span class="dt">by =</span> <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">covariance =</span> etasq <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>rhosq <span class="op">*</span><span class="st"> </span>x<span class="op">^</span><span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="co"># plot</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> covariance)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group =</span> iter),
+            <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">stat_function</span>(<span class="dt">fun =</span> <span class="cf">function</span>(x) <span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>lscale_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>x<span class="op">^</span><span class="dv">2</span>),
                 <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>, <span class="dt">size =</span> <span class="fl">1.1</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">50</span>, <span class="dt">by =</span> <span class="dv">10</span>),
-                     <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;distance (thousand km)&quot;</span>, 
-       <span class="dt">y =</span> <span class="st">&quot;covariance&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;distance (thousand km)&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),
+                     <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">50</span>, <span class="dt">by =</span> <span class="dv">10</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">50</span>,
+                  <span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-782-1.png" width="407.04" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-77-1.png" width="407.04" /></p>
 <p>Do note the scale on which we placed our x axis. Our brms parameterization resulted in a gentler decline in spatial covariance.</p>
 <p>Let’s finish this up and “push the parameters back through the function for <span class="math inline">\(\mathbf{K}\)</span>, the covariance matrix” (p. 415).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compute posterior median covariance among societies</span>
@@ -1613,35 +1624,36 @@ k &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">
 
 k <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>)</code></pre></div>
 <pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-##  [1,] 0.19 0.18 0.18 0.08 0.17 0.16 0.12 0.13 0.16  0.05
-##  [2,] 0.18 0.19 0.18 0.09 0.17 0.16 0.13 0.14 0.16  0.06
-##  [3,] 0.18 0.18 0.19 0.10 0.17 0.16 0.14 0.15 0.15  0.06
-##  [4,] 0.08 0.09 0.10 0.19 0.06 0.14 0.17 0.17 0.04  0.02
-##  [5,] 0.17 0.17 0.17 0.06 0.19 0.12 0.10 0.10 0.18  0.07
-##  [6,] 0.16 0.16 0.16 0.14 0.12 0.19 0.16 0.18 0.10  0.03
-##  [7,] 0.12 0.13 0.14 0.17 0.10 0.16 0.19 0.17 0.07  0.05
-##  [8,] 0.13 0.14 0.15 0.17 0.10 0.18 0.17 0.19 0.08  0.03
-##  [9,] 0.16 0.16 0.15 0.04 0.18 0.10 0.07 0.08 0.19  0.07
-## [10,] 0.05 0.06 0.06 0.02 0.07 0.03 0.05 0.03 0.07  0.19</code></pre>
+##  [1,] 0.20 0.19 0.19 0.09 0.18 0.16 0.12 0.14 0.16  0.05
+##  [2,] 0.19 0.20 0.19 0.09 0.18 0.16 0.13 0.14 0.16  0.06
+##  [3,] 0.19 0.19 0.20 0.10 0.17 0.17 0.14 0.15 0.15  0.06
+##  [4,] 0.09 0.09 0.10 0.20 0.06 0.15 0.17 0.17 0.04  0.02
+##  [5,] 0.18 0.18 0.17 0.06 0.20 0.12 0.10 0.10 0.18  0.07
+##  [6,] 0.16 0.16 0.17 0.15 0.12 0.20 0.16 0.18 0.10  0.03
+##  [7,] 0.12 0.13 0.14 0.17 0.10 0.16 0.20 0.18 0.07  0.05
+##  [8,] 0.14 0.14 0.15 0.17 0.10 0.18 0.18 0.20 0.08  0.03
+##  [9,] 0.16 0.16 0.15 0.04 0.18 0.10 0.07 0.08 0.20  0.07
+## [10,] 0.05 0.06 0.06 0.02 0.07 0.03 0.05 0.03 0.07  0.20</code></pre>
 <p>And we’ll continue to follow suit and change these to a correlation matrix.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># convert to correlation matrix</span>
 rho &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cov2cor</span>(k), <span class="dv">2</span>)
+
 <span class="co"># add row/col names for convenience</span>
 <span class="kw">colnames</span>(rho) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Ml&quot;</span>,<span class="st">&quot;Ti&quot;</span>,<span class="st">&quot;SC&quot;</span>,<span class="st">&quot;Ya&quot;</span>,<span class="st">&quot;Fi&quot;</span>,<span class="st">&quot;Tr&quot;</span>,<span class="st">&quot;Ch&quot;</span>,<span class="st">&quot;Mn&quot;</span>,<span class="st">&quot;To&quot;</span>,<span class="st">&quot;Ha&quot;</span>)
 <span class="kw">rownames</span>(rho) &lt;-<span class="st"> </span><span class="kw">colnames</span>(rho)
 
 rho <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>)</code></pre></div>
 <pre><code>##      Ml   Ti   SC   Ya   Fi   Tr   Ch   Mn   To   Ha
-## Ml 1.00 0.94 0.93 0.44 0.89 0.80 0.63 0.69 0.82 0.26
-## Ti 0.94 1.00 0.94 0.47 0.89 0.81 0.68 0.71 0.81 0.30
-## SC 0.93 0.94 1.00 0.52 0.86 0.84 0.72 0.76 0.77 0.29
-## Ya 0.44 0.47 0.52 1.00 0.29 0.74 0.86 0.85 0.20 0.12
-## Fi 0.89 0.89 0.86 0.29 1.00 0.62 0.49 0.51 0.93 0.36
-## Tr 0.80 0.81 0.84 0.74 0.62 1.00 0.83 0.92 0.51 0.16
-## Ch 0.63 0.68 0.72 0.86 0.49 0.83 1.00 0.89 0.37 0.24
-## Mn 0.69 0.71 0.76 0.85 0.51 0.92 0.89 1.00 0.40 0.15
-## To 0.82 0.81 0.77 0.20 0.93 0.51 0.37 0.40 1.00 0.34
-## Ha 0.26 0.30 0.29 0.12 0.36 0.16 0.24 0.15 0.34 1.00</code></pre>
+## Ml 1.00 0.94 0.93 0.43 0.89 0.80 0.62 0.69 0.82 0.25
+## Ti 0.94 1.00 0.95 0.46 0.89 0.80 0.67 0.71 0.81 0.30
+## SC 0.93 0.95 1.00 0.51 0.86 0.84 0.72 0.75 0.77 0.28
+## Ya 0.43 0.46 0.51 1.00 0.28 0.74 0.86 0.85 0.20 0.11
+## Fi 0.89 0.89 0.86 0.28 1.00 0.62 0.48 0.50 0.93 0.35
+## Tr 0.80 0.80 0.84 0.74 0.62 1.00 0.83 0.92 0.51 0.15
+## Ch 0.62 0.67 0.72 0.86 0.48 0.83 1.00 0.89 0.37 0.24
+## Mn 0.69 0.71 0.75 0.85 0.50 0.92 0.89 1.00 0.39 0.15
+## To 0.82 0.81 0.77 0.20 0.93 0.51 0.37 0.39 1.00 0.33
+## Ha 0.25 0.30 0.28 0.11 0.35 0.15 0.24 0.15 0.33 1.00</code></pre>
 <p>The correlations in our <code>rho</code> matrix look a little higher than those in the text. Before we get see them in a plot, let’s consider <code>psize</code>. If you really want to scale the points in Figure 13.10.a like McElreath did, you can make the <code>psize</code> variable in a tidyverse sort of way as follows. However, if you compare the <code>psize</code> method and the default ggplot2 method using just <code>logpop</code>, you’ll see the difference is negligible. In that light, I’m going to be lazy and just use <code>logpop</code> in my plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">transmute</span>(<span class="dt">psize =</span> logpop <span class="op">/</span><span class="st"> </span><span class="kw">max</span>(logpop)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1660,21 +1672,21 @@ rho <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">roun
 <p>As far as I can figure, you still have to get <code>rho</code> into a tidy data frame before feeding it into ggplot2. Here’s my attempt at doing so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tidy_rho &lt;-
 <span class="st">  </span>rho <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">rownames_to_column</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_cols</span>(d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(culture, logpop, total_tools, lon2, lat)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">gather</span>(colname, correlation, <span class="op">-</span>rowname, <span class="op">-</span>culture, <span class="op">-</span>logpop, <span class="op">-</span>total_tools, <span class="op">-</span>lon2, <span class="op">-</span>lat) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">group =</span> <span class="kw">paste</span>(<span class="kw">pmin</span>(rowname, colname), <span class="kw">pmax</span>(rowname, colname))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">group =</span> <span class="kw">str_c</span>(<span class="kw">pmin</span>(rowname, colname), <span class="kw">pmax</span>(rowname, colname))) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">select</span>(rowname, colname, group, culture, <span class="kw">everything</span>())
 
 <span class="kw">head</span>(tidy_rho)</code></pre></div>
 <pre><code>##   rowname colname group    culture   logpop total_tools  lon2   lat correlation
-## 1      Ml      Ml Ml Ml   Malekula 7.003065          13 -12.5 -16.3        1.00
-## 2      Ti      Ml Ml Ti    Tikopia 7.313220          22 -11.2 -12.3        0.94
-## 3      SC      Ml Ml SC Santa Cruz 8.188689          24 -14.0 -10.7        0.93
-## 4      Ya      Ml Ml Ya        Yap 8.474494          43 -41.9   9.5        0.44
-## 5      Fi      Ml Fi Ml   Lau Fiji 8.909235          33  -1.9 -17.7        0.89
-## 6      Tr      Ml Ml Tr  Trobriand 8.987197          19 -29.1  -8.7        0.80</code></pre>
+## 1      Ml      Ml  MlMl   Malekula 7.003065          13 -12.5 -16.3        1.00
+## 2      Ti      Ml  MlTi    Tikopia 7.313220          22 -11.2 -12.3        0.94
+## 3      SC      Ml  MlSC Santa Cruz 8.188689          24 -14.0 -10.7        0.93
+## 4      Ya      Ml  MlYa        Yap 8.474494          43 -41.9   9.5        0.43
+## 5      Fi      Ml  FiMl   Lau Fiji 8.909235          33  -1.9 -17.7        0.89
+## 6      Tr      Ml  MlTr  Trobriand 8.987197          19 -29.1  -8.7        0.80</code></pre>
 <p>Okay, here’s our version of Figure 13.10.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tidy_rho <span class="op">%&gt;%</span><span class="st">       </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lon2, <span class="dt">y =</span> lat)) <span class="op">+</span>
@@ -1690,16 +1702,16 @@ rho <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">roun
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>lat)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-787-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-82-1.png" width="384" /></p>
 <p>Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here’s our version of Figure 13.10.b.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data for fitted()</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data for `fitted()`</span>
 nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">logpop =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">6</span>, <span class="dt">to =</span> <span class="dv">14</span>, <span class="dt">length.out =</span> <span class="dv">30</span>),
          <span class="dt">lat    =</span> <span class="kw">median</span>(d<span class="op">$</span>lat),
          <span class="dt">lon2   =</span> <span class="kw">median</span>(d<span class="op">$</span>lon2))
 
-<span class="co"># fitted()</span>
-ftd &lt;-
+<span class="co"># `fitted()`</span>
+f &lt;-
 <span class="st">  </span><span class="kw">fitted</span>(b13.<span class="dv">7</span>, <span class="dt">newdata =</span> nd) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_cols</span>(nd)
@@ -1707,11 +1719,10 @@ ftd &lt;-
 <span class="co"># plot</span>
 tidy_rho <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> logpop)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> ftd,
-              <span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
-              <span class="dt">fill =</span> <span class="st">&quot;#394165&quot;</span>, <span class="dt">alpha =</span> .<span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> ftd,
-            <span class="kw">aes</span>(<span class="dt">y =</span> Estimate), <span class="dt">color =</span> <span class="st">&quot;#100F14&quot;</span>, <span class="dt">linetype =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="fl">1.1</span>) <span class="op">+</span><span class="st"> </span><span class="co">#  80A0C7 100F14</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> f,
+              <span class="kw">aes</span>(<span class="dt">y =</span> Estimate, <span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
+              <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
+              <span class="dt">fill =</span> <span class="st">&quot;#394165&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;#100F14&quot;</span>, <span class="dt">alpha =</span> .<span class="dv">5</span>, <span class="dt">size =</span> <span class="fl">1.1</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> total_tools, <span class="dt">group =</span> group, <span class="dt">alpha =</span> correlation<span class="op">^</span><span class="dv">2</span>),
             <span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> d, 
@@ -1726,7 +1737,7 @@ tidy_rho <span class="op">%&gt;%</span><span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>total_tools)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-788-1.png" width="384" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-83-1.png" width="384" /></p>
 <p>Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner’s thoughts on this model in brms, check out the <a href="https://github.com/paul-buerkner/brms/issues/300">thread on this issue</a>.</p>
 </div>
 </div>
@@ -1773,22 +1784,23 @@ funding</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.bonus_<span class="dv">0</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> funding, <span class="dt">family =</span> binomial,
       awards <span class="op">|</span><span class="st"> </span><span class="kw">trials</span>(applications) <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>male,
-      <span class="co"># Note our continued use of weakly-regularizing priors</span>
+      <span class="co"># note our continued use of weakly-regularizing priors</span>
       <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">class =</span> Intercept),
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">class =</span> b)),
-      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+      <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
+      <span class="dt">seed =</span> <span class="dv">13</span>)</code></pre></div>
 <p>If you inspect them, the chains look great. Here are the posterior summaries:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.bonus_<span class="dv">0</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(term <span class="op">!=</span><span class="st"> &quot;lp__&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##          term estimate std.error lower upper
-## 1 b_Intercept    -1.75      0.08 -1.88 -1.61
+## 1 b_Intercept    -1.75      0.08 -1.88 -1.62
 ## 2      b_male     0.21      0.10  0.04  0.38</code></pre>
 <p>Yep, the 95% intervals for <code>male</code> dummy exclude zero. If you wanted a one-sided Bayesian <span class="math inline">\(p\)</span>-value, you might do something like:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(b13.bonus_<span class="dv">0</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">One_sided_Bayesian_p_value =</span> <span class="kw">filter</span>(., b_male <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">nrow</span>()<span class="op">/</span><span class="kw">nrow</span>(.))</code></pre></div>
-<pre><code>##   One_sided_Bayesian_p_value
-## 1                  0.0209375</code></pre>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">one_sided_Bayesian_p_value =</span> <span class="kw">mean</span>(b_male <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span>))</code></pre></div>
+<pre><code>##   one_sided_Bayesian_p_value
+## 1                  0.0181875</code></pre>
 <p>Pretty small. But recall how Simpson’s paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different <code>award</code> rates for funding AND different ratios of male and female applications.</p>
 <p>Just like in section 13.2, let’s fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the <code>male</code> dummy slopes to vary by discipline.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.bonus_<span class="dv">1</span> &lt;-<span class="st"> </span>
@@ -1798,7 +1810,8 @@ funding</code></pre></div>
                 <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dt">class =</span> b),
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sd)),
       <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>))
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>),
+      <span class="dt">seed =</span> <span class="dv">13</span>)
 
 b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> funding, <span class="dt">family =</span> binomial,
@@ -1808,50 +1821,52 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span>
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sd),
                 <span class="kw">prior</span>(<span class="kw">lkj</span>(<span class="dv">4</span>), <span class="dt">class =</span> cor)),
       <span class="dt">iter =</span> <span class="dv">5000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
-      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>))</code></pre></div>
+      <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> .<span class="dv">99</span>),
+      <span class="dt">seed =</span> <span class="dv">13</span>)</code></pre></div>
 <p>We’ll compare the models with information criteria.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b13.bonus_<span class="dv">0</span>, b13.bonus_<span class="dv">1</span>, b13.bonus_<span class="dv">2</span>)</code></pre></div>
-<pre><code>##                             WAIC   SE
-## b13.bonus_0               129.69 8.90
-## b13.bonus_1               125.74 7.35
-## b13.bonus_2               116.61 5.60
-## b13.bonus_0 - b13.bonus_1   3.95 6.29
-## b13.bonus_0 - b13.bonus_2  13.09 5.60
-## b13.bonus_1 - b13.bonus_2   9.14 2.76</code></pre>
-<p>The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here’s what the random intercepts look like in a coefficient plot.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.bonus_<span class="dv">2</span>)<span class="op">$</span>discipline[, , <span class="dv">2</span>] <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">discipline =</span> <span class="kw">c</span>(<span class="st">&quot;Chemical sciences&quot;</span>, <span class="st">&quot;Physical sciences&quot;</span>,
-                        <span class="st">&quot;Physics&quot;</span>, <span class="st">&quot;Humanities&quot;</span>, <span class="st">&quot;Technical sciences&quot;</span>,
-                        <span class="st">&quot;Interdisciplinary&quot;</span>, <span class="st">&quot;Earth/life sciences&quot;</span>,
-                        <span class="st">&quot;Social sciences&quot;</span>, <span class="st">&quot;Medical sciences&quot;</span>)) <span class="op">%&gt;%</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.bonus_<span class="dv">0</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.bonus_<span class="dv">0</span>, <span class="st">&quot;waic&quot;</span>)
+b13.bonus_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.bonus_<span class="dv">1</span>, <span class="st">&quot;waic&quot;</span>)
+b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b13.bonus_<span class="dv">2</span>, <span class="st">&quot;waic&quot;</span>)
+
+<span class="kw">loo_compare</span>(b13.bonus_<span class="dv">0</span>, b13.bonus_<span class="dv">1</span>, b13.bonus_<span class="dv">2</span>,
+            <span class="dt">criterion =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">print</span>(<span class="dt">simplify =</span> F)</code></pre></div>
+<pre><code>##             elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic  se_waic
+## b13.bonus_2   0.0       0.0   -58.3       2.8          8.8    1.0     116.6   5.6  
+## b13.bonus_1  -4.6       1.4   -62.9       3.7         10.1    1.5     125.9   7.3  
+## b13.bonus_0  -6.5       2.7   -64.8       4.4          4.6    1.3     129.5   8.8</code></pre>
+<p>The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here we’ll practice our <code>tidybayes::spread_draws()</code> skills from the end of the last chapter to see what the random intercepts look like in a coefficient plot.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.bonus_<span class="dv">2</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">spread_draws</span>(b_male, r_discipline[discipline,term]) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;male&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">effect     =</span> b_male <span class="op">+</span><span class="st"> </span>r_discipline,
+         <span class="dt">discipline =</span> <span class="kw">str_replace</span>(discipline, <span class="st">&quot;[.]&quot;</span>, <span class="st">&quot; &quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">reorder</span>(discipline, Estimate), <span class="dt">y =</span> Estimate,
-             <span class="dt">ymin =</span> Q2.<span class="dv">5</span>,
-             <span class="dt">ymax =</span> Q97.<span class="dv">5</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;#E8DCCF&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="kw">fixef</span>(b13.bonus_<span class="dv">2</span>)[<span class="dv">2</span>], <span class="dt">linetype =</span> <span class="dv">3</span>, <span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_pointrange</span>(<span class="dt">shape =</span> <span class="dv">20</span>, <span class="dt">size =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">color =</span> <span class="st">&quot;#8B9DAF&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> effect, <span class="dt">y =</span> <span class="kw">reorder</span>(discipline, effect))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;#E8DCCF&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">.width =</span> .<span class="dv">95</span>, <span class="dt">size =</span> .<span class="dv">9</span>, <span class="dt">relative_scale =</span> .<span class="dv">9</span>,
+                <span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;#394165&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Random slopes for the male dummy&quot;</span>,
-       <span class="dt">subtitle =</span> <span class="st">&quot;The vertical dotted line is the posterior mean of the fixed effect for the</span><span class="ch">\n</span><span class="st">male dummy. The dots and horizontal lines are the posterior means and</span><span class="ch">\n</span><span class="st">percentile-based 95% intervals, respectively. The values are on the log scale.&quot;</span>,
+       <span class="dt">subtitle =</span> <span class="st">&quot;The dots and horizontal lines are the posterior means and percentile-based</span><span class="ch">\n</span><span class="st">95% intervals, respectively. The values are on the log scale.&quot;</span>,
        <span class="dt">x        =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_flip</span>(<span class="dt">ylim =</span> <span class="op">-</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span>)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-793-1.png" width="864" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-88-1.png" width="864" /></p>
 <p>Note how the 95% intervals for all the random <code>male</code> slopes contain zero within their bounds. Here are the fixed effects:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.bonus_<span class="dv">2</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;b_&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##          term estimate std.error lower upper
-## 1 b_Intercept    -1.63      0.14 -1.85 -1.38
-## 2      b_male     0.15      0.17 -0.13  0.42</code></pre>
+## 1 b_Intercept    -1.62      0.14 -1.84 -1.38
+## 2      b_male     0.15      0.17 -0.14  0.42</code></pre>
 <p>And if you wanted a one-sided Bayesian <span class="math inline">\(p\)</span>-value for the <code>male</code> dummy for the full model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_samples</span>(b13.bonus_<span class="dv">2</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">One_sided_Bayesian_p_value =</span> <span class="kw">filter</span>(., b_male <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">nrow</span>()<span class="op">/</span><span class="kw">nrow</span>(.))</code></pre></div>
-<pre><code>##   One_sided_Bayesian_p_value
-## 1                    0.17975</code></pre>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">one_sided_Bayesian_p_value =</span> <span class="kw">mean</span>(b_male <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span>))</code></pre></div>
+<pre><code>##   one_sided_Bayesian_p_value
+## 1                  0.1708125</code></pre>
 <p>So, the estimate of the gender bias is small and consistent with the null hypothesis. Which is good! We want gender equality for things like funding success.</p>
 </div>
 <div id="reference-12" class="section level2 unnumbered">
@@ -1873,52 +1888,52 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span>
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] brms_2.5.0         bayesplot_1.6.0    ggbeeswarm_0.6.0   ggrepel_0.8.0      tidybayes_1.0.1   
-##  [6] broom_0.4.5        Rcpp_0.12.18       rstan_2.17.3       StanHeaders_2.17.2 dutchmasters_0.1.0
-## [11] forcats_0.3.0      stringr_1.3.1      dplyr_0.7.6        purrr_0.2.5        readr_1.1.1       
-## [16] tidyr_0.8.1        tibble_1.4.2       ggplot2_3.0.0      tidyverse_1.2.1   
+##  [1] brms_2.8.0           bayesplot_1.6.0      ggbeeswarm_0.6.0     ggrepel_0.8.0       
+##  [5] broom_0.5.1          tidybayes_1.0.4      Rcpp_1.0.0           dutchmasters_0.1.0  
+##  [9] forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1        purrr_0.2.5         
+## [13] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1         tidyverse_1.2.1     
+## [17] rstan_2.18.2         StanHeaders_2.18.0-1 ggplot2_3.1.0       
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.4          htmlwidgets_1.2           munsell_0.5.0            
-##   [7] codetools_0.2-15          nleqslv_3.3.2             DT_0.4                   
-##  [10] miniUI_0.1.1.1            withr_2.1.2               Brobdingnag_1.2-5        
-##  [13] colorspace_1.3-2          highr_0.7                 knitr_1.20               
-##  [16] rstudioapi_0.7            stats4_3.5.1              Rttf2pt1_1.3.7           
-##  [19] labeling_0.3              mnormt_1.5-5              bridgesampling_0.4-0     
-##  [22] rprojroot_1.3-2           coda_0.19-1               xfun_0.3                 
-##  [25] R6_2.2.2                  markdown_0.8              HDInterval_0.2.0         
-##  [28] reshape_0.8.7             assertthat_0.2.0          promises_1.0.1           
-##  [31] scales_0.5.0              beeswarm_0.2.3            gtable_0.2.0             
-##  [34] rlang_0.2.1               extrafontdb_1.0           lazyeval_0.2.1           
-##  [37] inline_0.3.15             yaml_2.1.19               reshape2_1.4.3           
-##  [40] abind_1.4-5               modelr_0.1.2              threejs_0.3.1            
-##  [43] crosstalk_1.0.0           backports_1.1.2           httpuv_1.4.4.2           
-##  [46] rsconnect_0.8.8           extrafont_0.17            tools_3.5.1              
-##  [49] bookdown_0.7              psych_1.8.4               RColorBrewer_1.1-2       
-##  [52] ggridges_0.5.0            plyr_1.8.4                base64enc_0.1-3          
-##  [55] progress_1.2.0            prettyunits_1.0.2         zoo_1.8-2                
-##  [58] LaplacesDemon_16.1.1      haven_1.1.2               magrittr_1.5             
+##   [4] tidyselect_0.2.5          htmlwidgets_1.2           grid_3.5.1               
+##   [7] munsell_0.5.0             codetools_0.2-15          nleqslv_3.3.2            
+##  [10] DT_0.4                    miniUI_0.1.1.1            withr_2.1.2              
+##  [13] Brobdingnag_1.2-5         colorspace_1.3-2          highr_0.7                
+##  [16] knitr_1.20                rstudioapi_0.7            stats4_3.5.1             
+##  [19] Rttf2pt1_1.3.7            labeling_0.3              bridgesampling_0.4-0     
+##  [22] rprojroot_1.3-2           coda_0.19-2               generics_0.0.2           
+##  [25] xfun_0.3                  R6_2.3.0                  markdown_0.8             
+##  [28] HDInterval_0.2.0          reshape_0.8.7             assertthat_0.2.0         
+##  [31] promises_1.0.1            scales_1.0.0              beeswarm_0.2.3           
+##  [34] gtable_0.2.0              processx_3.2.1            rlang_0.3.1              
+##  [37] extrafontdb_1.0           lazyeval_0.2.1            inline_0.3.15            
+##  [40] yaml_2.1.19               reshape2_1.4.3            abind_1.4-5              
+##  [43] modelr_0.1.2              threejs_0.3.1             crosstalk_1.0.0          
+##  [46] backports_1.1.2           httpuv_1.4.4.2            rsconnect_0.8.8          
+##  [49] extrafont_0.17            tools_3.5.1               bookdown_0.9             
+##  [52] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
+##  [55] base64enc_0.1-3           ps_1.2.1                  prettyunits_1.0.2        
+##  [58] zoo_1.8-2                 haven_1.1.2               magrittr_1.5             
 ##  [61] colourpicker_1.0          mvtnorm_1.0-8             matrixStats_0.54.0       
 ##  [64] hms_0.4.2                 shinyjs_1.0               mime_0.5                 
 ##  [67] evaluate_0.10.1           arrayhelpers_1.0-20160527 xtable_1.8-2             
 ##  [70] shinystan_2.5.0           readxl_1.1.0              gridExtra_2.3            
-##  [73] rstantools_1.5.0          compiler_3.5.1            maps_3.3.0               
-##  [76] crayon_1.3.4              htmltools_0.3.6           later_0.7.3              
-##  [79] lubridate_1.7.4           MASS_7.3-50               Matrix_1.2-14            
-##  [82] cli_1.0.0                 bindr_0.1.1               igraph_1.2.1             
-##  [85] pkgconfig_2.0.1           foreign_0.8-70            xml2_1.2.0               
-##  [88] svUnit_0.7-12             dygraphs_1.1.1.5          vipor_0.4.5              
-##  [91] rvest_0.3.2               digest_0.6.15             rmarkdown_1.10           
-##  [94] cellranger_1.1.0          shiny_1.1.0               gtools_3.8.1             
-##  [97] nlme_3.1-137              jsonlite_1.5              bindrcpp_0.2.2           
-## [100] mapproj_1.2.6             viridisLite_0.3.0         pillar_1.2.3             
-## [103] lattice_0.20-35           loo_2.0.0                 httr_1.3.1               
-## [106] glue_1.2.0                xts_0.10-2                shinythemes_1.1.1        
-## [109] pander_0.6.2              stringi_1.2.3</code></pre>
+##  [73] rstantools_1.5.0          compiler_3.5.1            crayon_1.3.4             
+##  [76] htmltools_0.3.6           later_0.7.3               lubridate_1.7.4          
+##  [79] MASS_7.3-50               Matrix_1.2-14             cli_1.0.1                
+##  [82] bindr_0.1.1               igraph_1.2.1              pkgconfig_2.0.2          
+##  [85] xml2_1.2.0                svUnit_0.7-12             dygraphs_1.1.1.5         
+##  [88] vipor_0.4.5               rvest_0.3.2               callr_3.1.0              
+##  [91] digest_0.6.18             rmarkdown_1.10            cellranger_1.1.0         
+##  [94] gdtools_0.1.7             shiny_1.1.0               gtools_3.8.1             
+##  [97] nlme_3.1-137              jsonlite_1.5              fansi_0.4.0              
+## [100] pillar_1.3.1              lattice_0.20-35           loo_2.1.0                
+## [103] httr_1.3.1                pkgbuild_1.0.2            glue_1.3.0               
+## [106] xts_0.10-2                shinythemes_1.1.1         stringi_1.2.3</code></pre>
 
 </div>
 </div>
@@ -1948,7 +1963,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -1958,6 +1973,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },
@@ -1975,7 +1994,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
