@@ -6,6 +6,10 @@ output:
   github_document
 ---
 
+```{r set-options_12, echo = FALSE, cache = FALSE}
+options(width = 100)
+```
+
 # Multilevel Models
 
 > Multilevel models... remember features of each cluster in the data as they learn about all of the clusters. Depending upon the variation among clusters, which is learned from the data as well, the model pools information across clusters. This pooling tends to improve estimates about each cluster. This improved estimation leads to several, more pragmatic sounding, benefits of the multilevel approach. (p. 356)
@@ -461,7 +465,7 @@ dsim %>%
 
 I originally learned about the multilevel in order to work with [longitudinal data](http://gseacademic.harvard.edu/alda/). In that context, I found the basic principles of a multilevel structure quite intuitive. The concept of partial pooling, however, took me some time to wrap my head around. If you’re struggling with this, be patient and keep chipping away. 
 
-When McElreath [lectured on this topic in 2015](https://www.youtube.com/watch?v=82TaniPgzQc&t=2048s&frags=pl%2Cwn), he traced partial pooling to statistician [Charles M. Stein](http://bulletin.imstat.org/2017/05/obituary-charles-m-stein-1920-2016/). In 1977, Efron and Morris wrote the now classic paper, [*Stein’s Paradox in Statistics*](http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf), which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works--or if you just like baseball--, check out my project on that example, [*James-Stein and Bayesian partial pooling*](https://github.com/ASKurz/James-Stein-and-Bayesian-partial-pooling).
+When McElreath [lectured on this topic in 2015](https://www.youtube.com/watch?v=82TaniPgzQc&t=2048s&frags=pl%2Cwn), he traced partial pooling to statistician [Charles M. Stein](http://bulletin.imstat.org/2017/05/obituary-charles-m-stein-1920-2016/). In 1977, Efron and Morris wrote the now classic paper, [*Stein’s Paradox in Statistics*](http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf), which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works--or if you just like baseball--, check out my blog post, [*Stein’s Paradox and What Partial Pooling Can Do For You*](https://solomonkurz.netlify.com/post/stein-s-paradox-and-what-partial-pooling-can-do-for-you/).
 
 #### Overthinking: Repeating the pond simulation. 
 
@@ -1394,7 +1398,7 @@ p1 <-
 str(p1)
 ```
 
-One of the things I really like about this method is the `b_Intercept + r_actor[i,Intercept]` part of the code makes it very clear, to me, how the `porterior_samples()` columns correspond to the statistical model, $\text{logit} (p_i) & = & \alpha + \alpha_{\text{actor}_i}$. This method easily extends to our next task, getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`. In fact, other than switching out `b12.7` for `b12.8`, the method is identical.
+One of the things I really like about this method is the `b_Intercept + r_actor[i,Intercept]` part of the code makes it very clear, to me, how the `porterior_samples()` columns correspond to the statistical model, $\text{logit} (p_i) = \alpha + \alpha_{\text{actor}_i}$. This method easily extends to our next task, getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`. In fact, other than switching out `b12.7` for `b12.8`, the method is identical.
 
 ```{r}
 p2 <-
@@ -1483,7 +1487,7 @@ Now we have a list of two elements, one for `actor` and one for `block`. What mi
 ranef(b12.8)
 ```
 
-The format of the `ranef()` output is identical to that from `coef()`. However, the summaries are in the deviance metric. They’re all centered around zero, which corresponds to the part of the statistical model that specifies how $\alpha_{\text{block}} & \sim & \text{Normal} (0, \sigma_{\text{block}})$. So then, if we want to continue using our `coef()` method, we’ll need to augment it with `ranef()` to accomplish our last task.
+The format of the `ranef()` output is identical to that from `coef()`. However, the summaries are in the deviance metric. They’re all centered around zero, which corresponds to the part of the statistical model that specifies how $\alpha_{\text{block}} \sim \text{Normal} (0, \sigma_{\text{block}})$. So then, if we want to continue using our `coef()` method, we’ll need to augment it with `ranef()` to accomplish our last task.
 
 ```{r}
 c3 <-
