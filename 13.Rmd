@@ -1020,7 +1020,7 @@ posterior_summary(b13.7) %>%
 
 Our Gaussian process parameters are different than McElreath's. From the brms reference manual, here's the brms parameterization:
 
-$$k(x_{i},x_{j}) = sdgp^2 \text{exp} (-||x_{i} - x_{j}||/2lscale^2)$$
+$$k(x_{i},x_{j}) = sdgp^2 \text{exp} \big (-||x_i - x_j||^2 / (2 lscale^2) \big )$$
 
 What McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplatlon2` before it's on the same scale as `etasq` in the text. Here it is.
 
@@ -1033,15 +1033,15 @@ posterior_samples(b13.7) %>%
 
 Now we're in the ballpark. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`.
 
-Now look at the denominator of the inner part of Bürkner equation, $2lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
+Now look at the denominator of the inner part of Bürkner equation, $2 lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
 
-$$\rho^2 = 1/(2 \times (lscale^2))$$
+$$\rho^2 = 1/(2 \cdot lscale^2)$$
 
 But that doesn't appear to be the case. *Sigh*. 
 
 ```{r}
 posterior_samples(b13.7) %>% 
-  transmute(rho_squared = 1 / (2 * (lscale_gplatlon2^2))) %>% 
+  transmute(rho_squared = 1 / (2 * lscale_gplatlon2^2)) %>% 
   mean_hdi(rho_squared, .width = .89) %>% 
   mutate_if(is.double, round, digits = 3)
 ```
