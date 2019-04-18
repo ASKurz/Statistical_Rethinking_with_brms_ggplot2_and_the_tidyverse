@@ -20,7 +20,7 @@ In this final chapter, there are no models for us to fit and no figures for use 
 
 OMG
 
-I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [R Studio](https://www.rstudio.com) environment. But within R Studio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything. Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
+I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [R Studio](https://www.rstudio.com) environment. But within R Studio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything, including my scientific projects, this [bookdown](https://bookdown.org) project, and even my academic [webpage](https://solomonkurz.netlify.com) and [blog](https://solomonkurz.netlify.com/post/). Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
 
 Do yourself a favor, adopt R Notebooks into your workflow. Do it today. If you prefer to learn with videos, here's a nice intro by [Kristine Yu](https://www.youtube.com/watch?v=TJmNvfhLCoI&t=195s) and another one by [JJ Allaire](https://www.youtube.com/watch?v=GG4pgtfDpWY&t=324s). Try it out for like one afternoon and you’ll be hooked.
 
@@ -56,7 +56,7 @@ Five minutes isn't terribly long to wait, but still. I'd prefer to never have to
 save(fit1, file = "fit1.rda")
 ```
 
-Hopefully y'all are savvy Bayesian R users and find this insultingly remedial. But if it's new to you like it was me, you can learn more about rda files [here](https://www.r-bloggers.com/load-save-and-rda-files/).
+Hopefully y'all are savvy Bayesian R users and find this insultingly remedial. But if it's new to you like it was me, you can learn more about `.rda` files [here](https://www.r-bloggers.com/load-save-and-rda-files/).
 
 Now `fit1` is saved outside of R, I can safely remove it and then reload it.
 
@@ -77,7 +77,7 @@ fit1$data %>%
   head()
 ```
 
-As an alternative, Bürkner recently added a `file` argument in `brms:brm()` that will help you do this, too. The origins of the argument live [here](https://github.com/paul-buerkner/brms/issues/472). By default, `file` is set to `NULL`. To make use of it, specify a character string. `file` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
+As an alternative, Bürkner recently added a `file` argument in `brms:brm()` that will help you do this, too. The origins of the argument live [here](https://github.com/paul-buerkner/brms/issues/472). By default, `file` is set to `NULL`. To make use of the argument, specify a character string. `file` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
 
 ```{r fit2, cache = T, message = F, results = "hide"}
 fit2 <- 
@@ -114,7 +114,7 @@ The `file` method has another handy feature. Let's remove `fit2` one more time t
 rm(fit2)
 ```
 
-If you’ve fit a `brm()` model once and saved the results with `file`, executing the same `brm()` code will nor re-fit the model. Rather, it will just load and return the model from the `.rds` file. 
+If you’ve fit a `brm()` model once and saved the results with `file`, executing the same `brm()` code will not re-fit the model. Rather, it will just load and return the model from the `.rds` file. 
 
 ```{r, message = F, results = "hide"}
 fit2 <- 
@@ -169,7 +169,7 @@ Relatedly, and perhaps even a precursor, you should [always plot your data](http
 
 ## Use the `0 + intercept` syntax
 
-We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered your predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.8.0), we read:
+We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.8.0), we read:
 
 > Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 153) 
 
