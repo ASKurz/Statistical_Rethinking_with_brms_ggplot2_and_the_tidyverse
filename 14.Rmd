@@ -84,7 +84,7 @@ And that `1 0` corresponds to the pancake with one burnt (i.e., 1) and one unbur
 Going forward, let's amend McElreath's `sim_pancake()` function a bit. First, we'll add a `seed` argument, with will allow us to make the output reproducible. We'll be inserting `seed` into `set.seed()` in the two places preceding the `sample()` function. The second major change is that we're going to convert the output of the `sim_pancake()` function to a tibble and adding a `side` column, which will contain the values `c("up", "down")`. Just for pedagogical purposes, we’ll also add `pancake_n` and `pancake_chr` columns to help index which `pancake` the draws came from.
 
 ```{r}
-# simulate a pancake and return randomly ordered sides
+# simulate a `pancake` and return randomly ordered `sides`
 sim_pancake <- function(seed) {
   set.seed(seed)
   pancake <- sample(x = 1:3, size = 1)
@@ -102,8 +102,8 @@ sim_pancake <- function(seed) {
 
 Let’s take this baby for a whirl.
 
-```{r}
-# How many simulations would you like?
+```{r, warning = F}
+# how many simulations would you like?
 n_sim <- 1e4
 
 (
@@ -157,9 +157,9 @@ theme_black <-
   function(base_size=12, base_family="") {
     theme_grey(base_size=base_size, base_family=base_family) %+replace%
         theme(
-            # Specify axis options
+            # specify axis options
             axis.line=element_blank(),
-            # All text colors used to be "grey55"
+            # all text colors used to be "grey55"
             axis.text.x=element_text(size=base_size*0.8, color="grey85",
                 lineheight=0.9, vjust=1),
             axis.text.y=element_text(size=base_size*0.8, color="grey85",
@@ -171,7 +171,7 @@ theme_black <-
                 margin=ggplot2::margin(.5, 0, 0, 0, "lines"), vjust=0.5),
             axis.ticks.length=grid::unit(0.3, "lines"),
 
-            # Specify legend options
+            # specify legend options
             legend.background=element_rect(color=NA, fill="black"),
             legend.key=element_rect(color="grey55", fill="black"),
             legend.key.size=grid::unit(1.2, "lines"),
@@ -186,18 +186,18 @@ theme_black <-
             legend.title.align=NULL,
             legend.direction="vertical",
             legend.box=NULL,
-            # Specify panel options
+            # specify panel options
             panel.background=element_rect(fill="black", color = NA),
             panel.border=element_rect(fill=NA, color="grey55"),
             panel.grid.major=element_blank(),
             panel.grid.minor=element_blank(),
             panel.spacing=grid::unit(0.25,"lines"),
-            # Specify facetting options
+            # specify facetting options
             strip.background=element_rect(fill = "black", color="grey10"), # fill="grey30"
             strip.text.x=element_text(size=base_size*0.8, color="grey85"),
             strip.text.y=element_text(size=base_size*0.8, color="grey85",
                 angle=-90),
-            # Specify plot options
+            # specify plot options
             plot.background=element_rect(color="black", fill="black"),
             plot.title=element_text(size=base_size*1.2, color="grey85", hjust = 0), # added hjust = 0
             plot.subtitle=element_text(size=base_size*.9, color="grey85", hjust = 0), # added line
@@ -306,18 +306,18 @@ The second way uses the `mi()` syntax, following the form `<response> | mi(<se_r
 We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
 ```{r b14.1_se_and_b14.1_mi, cache = T, message = F, warning = F}
-# Put the data into a list
+# put the data into a `list()`
 dlist <- list(
     div_obs = d$Divorce,
     div_sd  = d$Divorce.SE,
     R       = d$Marriage,
     A       = d$MedianAgeMarriage)
 
-# Here we specify the initial (i.e., starting) values
+# here we specify the initial (i.e., starting) values
 inits      <- list(Yl = dlist$div_obs)
 inits_list <- list(inits, inits)
 
-# Fit the models
+# fit the models
 b14.1_se <- 
   brm(data = dlist, family = gaussian,
       div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A,
@@ -456,12 +456,12 @@ color_r <- viridis_pal(option = "C")(7)[4]
 # plot
 f_no_error %>% 
   ggplot(aes(x = A, y = Estimate)) +
-  # f_no_error
+  # `f_no_error`
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = color_y, color = color_y, 
               alpha = 1/4, size = 1/2, linetype = 2) +
-  # f_error
+  # `f_error`
   geom_smooth(data = f_error,
               aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
@@ -817,13 +817,13 @@ $$
 As far as the brms code goes, adding `logmass` as a predictor to the `neocortex` submodel is pretty simple.
 
 ```{r b14.4, cache = T, message = F, warning = F}
-# The model
+# define the model
 b_model <- 
   bf(kcal ~ 1 + mi(neocortex) + logmass) + 
   bf(neocortex | mi() ~ 1 + logmass) + # here's the big difference
   set_rescor(FALSE)
 
-# Fit the model
+# fit the model
 b14.4 <- 
   brm(data = data_list, 
       family = gaussian,
