@@ -62,7 +62,7 @@ Before we get to plotting, in this chapter we'll use theme settings and a color 
 library(ggthemes)
 ```
 
-We'll take our basic theme settings from the `theme_hc()` function. We'll use the "Green fields" color palette, which we can inspect with the `canva_pal()` function and a little help from `scales::show_col()`.
+We'll take our basic theme settings from the `theme_hc()` function. We'll use the `Green fields` color palette, which we can inspect with the `canva_pal()` function and a little help from `scales::show_col()`.
 
 ```{r, fig.height = 2.5}
 scales::show_col(canva_pal("Green fields")(4))
@@ -154,8 +154,8 @@ d_plot <-
   mutate(cum_pr_k = cumsum(pr_k)) 
 
 ggplot(data = d_plot,
-       aes(x = response, y = cum_pr_k, 
-             color = cum_pr_k, fill = cum_pr_k)) +
+       aes(x = response, y = cum_pr_k,
+           color = cum_pr_k, fill = cum_pr_k)) +
   geom_line(color = canva_pal("Green fields")(4)[1]) +
   geom_point(shape = 21, colour = "grey92", 
              size = 2.5, stroke = 1) +
@@ -314,7 +314,7 @@ explicit_example %>%
   summarise(average_outcome_value = sum(their_product))
 ```
 
-**Side note**
+**Aside**
 
 This made me wonder how this would compare if we were lazy and ignored the categorical nature of the `response`. Here we refit the model with the typical Gaussian likelihood.
 
@@ -331,15 +331,15 @@ brm(data = d, family = gaussian,
 
 Happily, this yielded a mean estimate of 4.2, much like our `average_outcome_value`, above.
 
-**End side note**
+**End aside**
 
 Now we'll try it by subtracting .5 from each.
  
 ```{r}
-# The probabilities of a given response
+# the probabilities of a given response
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1] - .5))
 
-# The average rating
+# the average rating
 sum(pk * (1:7))
 ```
 
@@ -1147,7 +1147,7 @@ Before we can do our variant of Figure 11.5.b, we'll need to define a few more c
 ```{r, results = 'hide', warning = F, message = F}
 expose_functions(b11.5, vectorize = TRUE)
 
-# Required to use `predict()`
+# required to use `predict()`
 log_lik_beta_binomial2 <- 
   function(i, draws) {
     mu  <- draws$dpars$mu[, i]
@@ -1165,7 +1165,7 @@ predict_beta_binomial2 <-
     beta_binomial2_rng(mu, phi, N)
   }
 
-# Required to use `fitted()`
+# required to use `fitted()`
 fitted_beta_binomial2 <- 
   function(draws) {
     mu     <- draws$dpars$mu
@@ -1178,17 +1178,17 @@ fitted_beta_binomial2 <-
 With those intermediary steps out of the way, we're ready to make Figure 11.5.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
-# The prediction intervals
+# the prediction intervals
 predict(b11.5) %>%
   as_tibble() %>% 
   transmute(ll = Q2.5,
             ul = Q97.5) %>%
-  # The fitted intervals
+  # the fitted intervals
   bind_cols(
     fitted(b11.5) %>%
   as_tibble()
   ) %>% 
-  # The original data used to fit the model
+  # Tte original data used to fit the model
   bind_cols(b11.5$data) %>% 
   mutate(case = 1:12) %>% 
   
