@@ -1201,7 +1201,7 @@ In brms, you can get a model's WAIC value with the `waic()` function.
 waic(b6.14)
 ```
 
-Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
+Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
@@ -1401,7 +1401,7 @@ Just a little more work and we'll have a table analogous to the one McElreath pr
 
 ```{r}
 my_coef_tab %>%
-  # learn more about dplyr::complete() here: https://rdrr.io/cran/tidyr/man/expand.html
+  # learn more about `dplyr::complete()` here: https://rdrr.io/cran/tidyr/man/expand.html
   complete(term = distinct(., term), model) %>%
   select(model, term, estimate) %>%
   mutate(estimate = round(estimate, digits = 2)) %>%
@@ -1550,24 +1550,24 @@ r2_b6.13 %>%
 If you want to use these in ggplot2, you’ll need to put them in tibbles or data frames. Here we do so for two of our model fits.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-# model b6.13
+# model `b6.13`
 r2_b6.13 <- 
   bayes_R2(b6.13, summary = F) %>%
   as_tibble() %>%
   rename(r2_13 = R2)
 
-# model b6.14
+# model `b6.14`
 r2_b6.14 <- 
   bayes_R2(b6.14, summary = F) %>%
   as_tibble() %>%
   rename(r2_14 = R2)
 
-# Let's put them in the same data object
+# let's put them in the same data object
 r2_combined <-
   bind_cols(r2_b6.13, r2_b6.14) %>%
   mutate(dif = r2_14 - r2_13)
 
-# Plot their densities
+# plot their densities
 r2_combined %>%
   ggplot() +
   geom_density(aes(x = r2_13),
