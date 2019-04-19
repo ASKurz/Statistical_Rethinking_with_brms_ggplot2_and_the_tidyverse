@@ -228,7 +228,7 @@ We've already defined `p_grid` and `prior` within `d`, above. Here we'll reuse t
 n_success <- 3
 n_trials  <- 3
 
-# update d
+# update `d`
 d <-
   d %>% 
   mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
@@ -869,7 +869,7 @@ As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the 
 
 Much like the way we used the `samples()` function to simulate probability values, above, we can do so with `fitted()` within the brms framework. But we will have to specify `scale = "linear"` in order to return results in the probability metric. By default, `brms::fitted()` will return summary information. Since we want actual simulation draws, we'll specify `summary = F`.
 
-```{r}
+```{r, warning = F}
 f <-
   fitted(b3.1, summary = F,
          scale = "linear") %>% 
