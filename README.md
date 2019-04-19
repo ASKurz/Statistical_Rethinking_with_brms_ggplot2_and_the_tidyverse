@@ -4,7 +4,7 @@ I love McElreath’s [*Statistical Rethinking* text](http://xcelab.net/rm/statis
 
 So, this project is an attempt to reexpress the code in McElreath’s textbook. His models are re-fit in brms, plots are reproduced or reimagined with ggplot2, and the general data wrangling code now predominantly follows the tidyverse style.
 
-The first release of the [bookdown version of this project](https://bookdown.org/connect/#/apps/1850/access) is up. I think of it as a 0.9.0-type version. A few helpful readers have pointed out some typos and made some nice code recommendations. Now I’ve have the benefit of a little time, I’ve found some typos and come up with improvements to the code on my own, too. I expect the more-polished 1.0.0 version should be out before the end of the year. In the meantime, constructive criticisms are welcome.
+The initial 0.9.0 version of this project was released in bookdown format on September 26, 2018. I released the 1.0.0 update on April 19, 2019. There is still room for improvement and constructive criticisms toward that aim are welcome.
 
 This repository contains the code and text behind the [*Statistical Rethinking* with brms, ggplot2, and the tidyverse](https://bookdown.org/connect/#/apps/1850/access)
 project.
