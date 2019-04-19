@@ -143,6 +143,7 @@ tibble(mu       = 0,
   # behold the formula for the generalized normal distribution in code
   mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   
+  # plot
   ggplot(aes(x = value, y = density,
              group = beta)) +
   geom_line(aes(color = beta == 2,
