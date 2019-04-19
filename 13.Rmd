@@ -185,7 +185,7 @@ $$\begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}$$
 
 And according to our prior, $\mathbf R$ is distributed as $\text{LKJcorr} (2)$. We'll use `rethinking::rlkjcorr()` to get a better sense of what that even is.
 
-```{r, message = FALSE}
+```{r, message = F, warning = F}
 library(rethinking)
 
 n_sim <- 1e5
@@ -304,7 +304,7 @@ un_pooled_params <-
   spread(key = afternoon, value = mean) %>%  # use `spread()` just as in the previous block
   mutate(Slope = Slope - Intercept)          # finally, here's our slope!
 
-# Here we combine the partially-pooled and unpooled means into a single data object, 
+# here we combine the partially-pooled and unpooled means into a single data object, 
 # which will make plotting easier.
 params <-
   # `bind_rows()` will stack the second tibble below the first
@@ -514,7 +514,7 @@ One last thing. The [broom package](https://cran.r-project.org/web/packages/broo
 library(broom)
 
 tidy(b13.2) %>%
-  mutate_if(is.numeric, round, digits = 2)  # This line just rounds the output
+  mutate_if(is.numeric, round, digits = 2)  # this line just rounds the output
 ```
 
 But note how, just as with `b13.2$fit`, this approach summarizes the posterior with the **non-centered** parameterization. Which is a fine parameterization. It's just a little different from what you'll get when using `precis( m13.2 , depth=2 )`, as in the text.
