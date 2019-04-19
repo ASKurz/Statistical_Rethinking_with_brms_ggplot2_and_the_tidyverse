@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-14">
+<meta name="date" content="2019-04-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -451,7 +451,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)</code></pre></div>
 <pre><code>## [1] &quot;#fbe6c5&quot; &quot;#f5ba98&quot; &quot;#ee8a82&quot; &quot;#dc7176&quot; &quot;#c8586c&quot; &quot;#9c3f5d&quot; &quot;#70284a&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">display_carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-3-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-3-1.png" />
+
+</div>
 <p>We’ll be using a diluted version of the third color for the panel background (i.e., <code>theme(panel.background = element_rect(fill = alpha(carto_pal(7, &quot;BurgYl&quot;)[3], 1/4)))</code>) and the darker purples for other plot elements. Here’s the plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggrepel)
 
@@ -466,7 +469,10 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-4-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-4-1.png" />
+
+</div>
 <p>Let’s fit the first six models in bulk. First we’ll make a custom function, <code>fit_lm()</code>, into which we’ll feed the desired names and formulas of our models. We’ll make a tibble initially composed of those names (i.e., <code>model</code>) and formulas (i.e., <code>formula</code>). Via <code>purrr::map2()</code> within <code>mutate()</code>, we’ll then fit the models and save the model objects within the tibble. The <a href="https://cran.r-project.org/web/packages/broom/index.html">broom package</a> provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We’ll employ <code>broom::tidy()</code> and <code>broom::glance()</code> to extract information from the model fits.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(broom)
 
@@ -513,7 +519,10 @@ fits <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">text         =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-6-1.png" />
+
+</div>
 <p>If we wanted to look at the model coefficients, we could <code>unnest(tidy)</code> and wrangle a bit.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fits <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">unnest</span>(tidy) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -603,7 +612,10 @@ p6 &lt;-
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gridExtra)
 
 <span class="kw">grid.arrange</span>(p1, p2, p3, p4, p5, p6, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-10-1.png" />
+
+</div>
 </div>
 <div id="too-few-parameters-hurts-too." class="section level3">
 <h3><span class="header-section-number">6.1.2</span> Too few parameters hurts, too.</h3>
@@ -640,7 +652,10 @@ p6 &lt;-
               <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>,              
               <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="ot">NULL</span>, <span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="kw">italic</span>(R)<span class="op">^</span><span class="dv">2</span>, <span class="st">&quot; = 0&quot;</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-13-1.png" width="288" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-13-1.png" />
+
+</div>
 <div id="overthinking-dropping-rows." class="section level4">
 <h4><span class="header-section-number">6.1.2.1</span> Overthinking: Dropping rows.</h4>
 <p>You can <code>filter()</code> by <code>row_number()</code> to drop rows in a <a href="https://dplyr.tidyverse.org/reference/slice.html">tidyverse kind of way</a>. For example, we can drop the second row of <code>d</code> like this.</p>
@@ -700,7 +715,10 @@ make_lines &lt;-<span class="st"> </span><span class="cf">function</span>(row){
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> lines, 
             <span class="kw">aes</span>(<span class="dt">x =</span> mass, <span class="dt">y =</span> brain, <span class="dt">group =</span> row),
             <span class="dt">color =</span> <span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">6</span>], <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-17-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-17-1.png" />
+
+</div>
 <p>To make the right panel for Figure 6.5, we’ll need to increase the number of <code>mass</code> points in our <code>nd</code> data and redefine the <code>make_lines()</code> function to fit the sixth-order-polynomial model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># because these lines will be very curvy, we&#39;ll need new data over many points of `mass`</span>
 nd &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">mass =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">30</span>, <span class="dt">to =</span> <span class="dv">65</span>, <span class="dt">length.out =</span> <span class="dv">200</span>))
@@ -730,7 +748,10 @@ p <span class="op">+</span>
             <span class="kw">aes</span>(<span class="dt">group =</span> row),
             <span class="dt">color =</span> <span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">6</span>], <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="op">-</span><span class="dv">300</span><span class="op">:</span><span class="dv">2000</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-18-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-18-1.png" />
+
+</div>
 </div>
 </div>
 </div>
@@ -760,7 +781,10 @@ weatherperson <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-19-1.png" />
+
+</div>
 <p>Here’s how the newcomer fared:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newcomer &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">day        =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,
@@ -780,7 +804,10 @@ newcomer <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-20-1.png" />
+
+</div>
 <p>If we do the math entailed in the tibbles, we’ll see why the newcomer could boast “I’m the best person for the job” (p. 175).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">weatherperson <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_rows</span>(newcomer) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -914,7 +941,10 @@ newcomer <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-29-1.png" width="288" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-29-1.png" />
+
+</div>
 <div id="rethinking-divergence-depends-upon-direction." class="section level4">
 <h4><span class="header-section-number">6.2.3.1</span> Rethinking: Divergence depends upon direction.</h4>
 <p>Here we see <span class="math inline">\(H(p, q) \neq H(q, p)\)</span>. That is, direction matters.</p>
@@ -1032,7 +1062,10 @@ ll <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-37-1.png" width="360" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-37-1.png" />
+
+</div>
 <p>But notice our deviance distribution was centered right around the sole value McElreath reported in the text.</p>
 </div>
 </div>
@@ -1127,7 +1160,10 @@ dev_tibble <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">1</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n, <span class="dt">scale =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-41-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-41-1.png" />
+
+</div>
 <p>Even with a substantially smaller <span class="math inline">\(N\)</span>, our simulation results matched up well with those in the text.</p>
 </div>
 </div>
@@ -1155,7 +1191,10 @@ dev_tibble <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-42-1.png" width="288" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-42-1.png" />
+
+</div>
 <p>In our version of the plot, darker purple = more regularizing.</p>
 <p>But to prepare for Figure 6.9, let’s simulate. This time we’ll wrap the basic simulation code we used before into a function we’ll call <code>make_sim()</code>. Our <code>make_sim()</code> function has two parameters, <code>N</code> and <code>b_sigma</code>, both of which come from McElreath’s simulation code. So you’ll note that instead of hard coding the values for <code>N</code> and <code>b_sigma</code> within the simulation, we’re leaving them adjustable (i.e., <code>sim.train.test(N = n, k = k, b_sigma = b_sigma)</code>). Also notice that instead of saving the simulation results as objects, like before, we’re just converting them to tibbles with the <code>as_tibble()</code> function at the bottom. Our goal is to use <code>make_sim()</code> within a <code>purrr::map2()</code> statement. The result will be a nested tibble into which we’ve saved the results of 6 simulations based off of two sample sizes (i.e., <code>n = c(20, 100)</code>) and three values of <span class="math inline">\(\sigma\)</span> for our Gaussian <span class="math inline">\(\beta\)</span> prior (i.e., <code>b_sigma = c(1, .5, .2)</code>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
@@ -1208,7 +1247,10 @@ s <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">1</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n, <span class="dt">scale =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-45-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-45-1.png" />
+
+</div>
 <p>Our results don’t perfectly align with those in the text. I suspect his is because we used <code>1e3</code> iterations, rather than the <code>1e4</code> of the text. If you’d like to wait all night long for the simulation to yield more stable results, be my guest.</p>
 <blockquote>
 <p>Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn’t always easy. (p. 187)</p>
@@ -1271,7 +1313,10 @@ s <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">1</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n, <span class="dt">scale =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="576" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-47-1.png" />
+
+</div>
 <p>Again, our numbers aren’t the exact same as McElreath’s because a) this is a simulation and b) our number of simulations was an order of magnitude smaller than his. But the overall pattern is the same. More to the point, the distances between the in- and out-of-sample points</p>
 <blockquote>
 <p>are nearly the same, for each model, at both <span class="math inline">\(N = 20\)</span> (left) and <span class="math inline">\(N = 100\)</span> (right). Each distance is nearly twice the number of parameters, as labeled on the horizontal axis. The dashed lines show exactly the [dark purple] points plus twice the number of parameters, tracing closely along the average out-of-sample deviance for each model.</p>
@@ -1454,7 +1499,10 @@ s &lt;-
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>ic, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="312" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-57-1.png" />
+
+</div>
 <p>And again, our results don’t perfectly match those in the text because a) we’re simulating and b) we used fewer iterations than McElreath did. But the overall pattern remains.</p>
 </div>
 </div>
@@ -1541,11 +1589,11 @@ b6.<span class="dv">14</span> &lt;-<span class="st"> </span>
 ## Computed from 4000 by 17 log-likelihood matrix
 ## 
 ##           Estimate  SE
-## elpd_waic      8.2 2.6
-## p_waic         3.3 0.9
-## waic         -16.4 5.2</code></pre>
+## elpd_waic      8.3 2.6
+## p_waic         3.2 0.9
+## waic         -16.5 5.2</code></pre>
 <pre><code>## Warning: 2 (11.8%) p_waic estimates greater than 0.4. We recommend trying loo instead.</code></pre>
-<p>Note the warning messages. Statisticians have made notable advances in Bayesian information criteria since McElreath published <em>Statistical Rethinking</em>. I won’t go into detail here, but the “We recommend trying loo instead” part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO). In brms this is available with the <code>loo()</code> function, which you can learn more about in <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html">this vignette</a> from the makers of the <a href="https://cran.r-project.org/web/packages/loo/index.html">loo package</a>. For now, back to the WAIC.</p>
+<p>Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published <em>Statistical Rethinking</em>. I won’t go into detail here, but the “We recommend trying loo instead” part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO). In brms this is available with the <code>loo()</code> function, which you can learn more about in <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html">this vignette</a> from the makers of the <a href="https://cran.r-project.org/web/packages/loo/index.html">loo package</a>. For now, back to the WAIC.</p>
 <p>There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your <code>brm()</code> fit object into the <code>waic()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b6.<span class="dv">11</span>)</code></pre></div>
 <pre><code>## 
@@ -1589,21 +1637,21 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
       <span class="dt">se        =</span> w[, <span class="dv">2</span>] <span class="op">*</span><span class="st"> </span><span class="dv">2</span>)</code></pre></div>
 <pre><code>##       waic_diff       se
 ## b6.14  0.000000 0.000000
-## b6.11  7.528218 5.026986
-## b6.13  7.617990 3.569936
-## b6.12  9.339240 5.082137</code></pre>
+## b6.11  7.657211 5.013383
+## b6.13  7.676240 3.599457
+## b6.12  9.468233 5.061744</code></pre>
 <p>One more thing. On page 198, and on many other pages to follow in the text, McElreath used the <code>rethinking::compare()</code> function to return a rich table of information about the WAIC information for several models. If we’re tricky, we can do something similar with <code>loo_compare</code>. To learn how, let’s peer further into the structure of our <code>w</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(w)</code></pre></div>
-<pre><code>##  &#39;compare.loo&#39; num [1:4, 1:8] 0 -3.76 -3.81 -4.67 0 ...
+<pre><code>##  &#39;compare.loo&#39; num [1:4, 1:8] 0 -3.83 -3.84 -4.73 0 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 2
 ##   ..$ : chr [1:4] &quot;b6.14&quot; &quot;b6.11&quot; &quot;b6.13&quot; &quot;b6.12&quot;
 ##   ..$ : chr [1:8] &quot;elpd_diff&quot; &quot;se_diff&quot; &quot;elpd_waic&quot; &quot;se_elpd_waic&quot; ...</code></pre>
 <p>When we used <code>print(w)</code>, a few code blocks earlier, it only returned two columns. It appears we actually have eight. We can see the full output with the <code>simplify = F</code> argument.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(w, <span class="dt">simplify =</span> F)</code></pre></div>
 <pre><code>##       elpd_diff se_diff elpd_waic se_elpd_waic p_waic se_p_waic waic  se_waic
-## b6.14   0.0       0.0     8.2       2.6          3.3    0.9     -16.4   5.2  
+## b6.14   0.0       0.0     8.3       2.6          3.2    0.9     -16.5   5.2  
 ## b6.11  -3.8       2.5     4.4       1.9          1.3    0.3      -8.9   3.8  
-## b6.13  -3.8       1.8     4.4       2.1          2.1    0.5      -8.8   4.2  
+## b6.13  -3.8       1.8     4.4       2.1          2.0    0.4      -8.9   4.2  
 ## b6.12  -4.7       2.5     3.5       1.6          2.0    0.3      -7.1   3.2</code></pre>
 <p>The results are quite analogous to those from <code>rethinking::compare()</code>. Again, the difference estimates are in the metric of the <span class="math inline">\(\text{elpd}\)</span>. But the interpretation is the same and we can convert them to the traditional information criteria metric with simple multiplication. As we’ll see later, this basic workflow applies to the LOO, too.</p>
 <p>If you want to get those WAIC weights, you can use the <code>brms::model_weights()</code> function like so:</p>
@@ -1611,7 +1659,7 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
               <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>## b6.11 b6.12 b6.13 b6.14 
-##  0.02  0.01  0.02  0.95</code></pre>
+##  0.02  0.01  0.02  0.96</code></pre>
 <p>That last <code>round()</code> line was just to limit the decimal-place precision. If you really wanted to go through the trouble, you could make yourself a little table like this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_weights</span>(b6.<span class="dv">11</span>, b6.<span class="dv">12</span>, b6.<span class="dv">13</span>, b6.<span class="dv">14</span>, 
               <span class="dt">weights =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span>
@@ -1632,7 +1680,7 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
 <tbody>
 <tr class="odd">
 <td align="left">b6.14</td>
-<td align="right">0.95</td>
+<td align="right">0.96</td>
 </tr>
 <tr class="even">
 <td align="left">b6.11</td>
@@ -1665,7 +1713,10 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text             =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">axis.ticks.y     =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/w_plot-1.png" width="432" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/w_plot-1.png" />
+
+</div>
 <p>We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">loo</span>(b6.<span class="dv">11</span>)</code></pre></div>
 <pre><code>## 
@@ -1690,17 +1741,17 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
 <p>The Pareto <span class="math inline">\(k\)</span> values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the <a href="https://cran.r-project.org/web/packages/loo/index.html">loo package</a> to compute its WAIC and LOO values. In addition to the vignette, above, <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html">this vignette</a> demonstrates the LOO with these very same examples from McElreath’s text. And if you’d like to dive a little deeper, check out <a href="https://www.youtube.com/watch?v=8_Su5Qo49Dg&amp;t">Aki Vehtari’s GPSS2017 workshop</a> or his talk from November 2018, <a href="https://www.youtube.com/watch?v=Re-2yVd0Mqk"><em>Model assessment, selection and averaging</em></a>.</p>
 <p>Let’s get back on track with the text. To put all this model comparison in perspective,</p>
 <blockquote>
-<p>in this analysis, the best model has more than 90% of the model weight. That’s pretty good. But with only 12 cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don’t get too excited. If we take the standard error of the difference from the [<code>loo_compare()</code>] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [<code>b6.14</code> and <code>b6.11</code>]) on [9.34] with a standard deviation of [5.08]. (p. 200)</p>
+<p>in this analysis, the best model has more than 90% of the model weight. That’s pretty good. But with only 12 cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don’t get too excited. If we take the standard error of the difference from the [<code>loo_compare()</code>] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [<code>b6.14</code> and <code>b6.11</code>]) on [9.47] with a standard deviation of [5.06]. (p. 200)</p>
 </blockquote>
 <p>Here are those two values in the <span class="math inline">\(\text{elpd}\)</span> metric.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w[<span class="dv">4</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
 <pre><code>## elpd_diff   se_diff 
-## -4.669620  2.541069</code></pre>
+## -4.734116  2.530872</code></pre>
 <p>And here we convert them to the WAIC metric.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(w[<span class="dv">4</span>, <span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</code></pre></div>
-<pre><code>## [1] 9.34</code></pre>
+<pre><code>## [1] 9.47</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(w[<span class="dv">4</span>, <span class="dv">2</span>] <span class="op">*</span><span class="st"> </span><span class="dv">2</span>, <span class="dv">2</span>)</code></pre></div>
-<pre><code>## [1] 5.08</code></pre>
+<pre><code>## [1] 5.06</code></pre>
 <p>If it’s easier to see, here’s the same information in a tibble.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">value             =</span> <span class="kw">c</span>(<span class="st">&quot;difference&quot;</span>, <span class="st">&quot;se&quot;</span>),
        <span class="dt">elpd              =</span> w[<span class="dv">4</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
@@ -1709,8 +1760,8 @@ w &lt;-<span class="st"> </span><span class="kw">loo_compare</span>(b6.<span cla
 <pre><code>## # A tibble: 2 x 4
 ##   value       elpd conversion_factor  waic
 ##   &lt;chr&gt;      &lt;dbl&gt;             &lt;dbl&gt; &lt;dbl&gt;
-## 1 difference -4.67                -2  9.34
-## 2 se          2.54                 2  5.08</code></pre>
+## 1 difference -4.73                -2  9.47
+## 2 se          2.53                 2  5.06</code></pre>
 <p>Before we forget, McElreath gave some perspective difference between the models with the highest and lowest WAIC values (p. 200).</p>
 <p>But to the point, we can extract the two numerals and plug them into <code>rnorm()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># how many draws would you like?</span>
@@ -1729,7 +1780,7 @@ diff <span class="op">%&gt;%</span><span class="st"> </span>
 <pre><code>## # A tibble: 1 x 1
 ##   the_probability_a_difference_is_negative
 ##                                      &lt;dbl&gt;
-## 1                                   0.0331</code></pre>
+## 1                                   0.0309</code></pre>
 <p>In case you’re curious, this is a graphic version of what we just did.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">diff =</span> <span class="op">-</span><span class="dv">20</span><span class="op">:</span><span class="dv">30</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> diff, <span class="dt">ymin =</span> <span class="dv">0</span>)) <span class="op">+</span>
@@ -1744,18 +1795,21 @@ diff <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text             =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/plot_WAIC_diff-1.png" width="288" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/plot_WAIC_diff-1.png" />
+
+</div>
 </div>
 <div id="comparing-estimates." class="section level4">
 <h4><span class="header-section-number">6.5.1.2</span> Comparing estimates.</h4>
 <p>The brms package doesn’t have anything like rethinking’s <code>coeftab()</code> function. However, one can get that information with a little ingenuity. Here we’ll employ the <code>broom::tidy()</code> function, which will save the summary statistics for our model parameters. For example, this is what it will produce for the full model, <code>b6.14</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b6.<span class="dv">14</span>)</code></pre></div>
-<pre><code>##          term     estimate  std.error        lower        upper
-## 1 b_Intercept  -1.10778838 0.59753389  -2.07797336  -0.11671016
-## 2 b_neocortex   2.82815806 0.92990864   1.27706360   4.31866798
-## 3   b_logmass  -0.09724996 0.02888818  -0.14293482  -0.04860256
-## 4       sigma   0.13995088 0.03072319   0.09899014   0.19629633
-## 5        lp__ -19.26708438 1.64611968 -22.48058767 -17.30314877</code></pre>
+<pre><code>##          term     estimate  std.error       lower        upper
+## 1 b_Intercept  -1.09554566 0.59579842  -2.0834891  -0.13210946
+## 2 b_neocortex   2.80996247 0.92458417   1.2962875   4.33896238
+## 3   b_logmass  -0.09679801 0.02814521  -0.1412482  -0.05140763
+## 4       sigma   0.13984670 0.02999699   0.0996455   0.19499069
+## 5        lp__ -19.24006410 1.60889794 -22.3871835 -17.33233588</code></pre>
 <p>Note, <code>tidy()</code> also grabs the log posterior (i.e., <code>lp__</code>), which we’ll exclude for our purposes. With a little <code>purrr::map()</code> code, you can save the <code>brm()</code> fits and their <code>tidy()</code> summaries into a nested tibble, and then <code>unnest()</code> the tibble for <code>coeftab()</code>-like use.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_coef_tab &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">model =</span> <span class="kw">c</span>(<span class="st">&quot;b6.11&quot;</span>, <span class="st">&quot;b6.12&quot;</span>, <span class="st">&quot;b6.13&quot;</span>, <span class="st">&quot;b6.14&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1773,10 +1827,10 @@ diff <span class="op">%&gt;%</span><span class="st"> </span>
 ## 3 b6.12 b_Intercept    0.348    0.567  -0.579 1.27 
 ## 4 b6.12 b_neocortex    0.460    0.834  -0.883 1.82 
 ## 5 b6.12 sigma          0.194    0.0403  0.142 0.268
-## 6 b6.13 b_Intercept    0.705    0.0583  0.609 0.802</code></pre>
+## 6 b6.13 b_Intercept    0.704    0.0575  0.612 0.796</code></pre>
 <p>Just a little more work and we’ll have a table analogous to the one McElreath produced with his <code>coef_tab()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_coef_tab <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="co"># learn more about dplyr::complete() here: https://rdrr.io/cran/tidyr/man/expand.html</span>
+<span class="st">  </span><span class="co"># learn more about `dplyr::complete()` here: https://rdrr.io/cran/tidyr/man/expand.html</span>
 <span class="st">  </span><span class="kw">complete</span>(<span class="dt">term =</span> <span class="kw">distinct</span>(., term), model) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">select</span>(model, term, estimate) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">estimate =</span> <span class="kw">round</span>(estimate, <span class="dt">digits =</span> <span class="dv">2</span>)) <span class="op">%&gt;%</span>
@@ -1784,9 +1838,9 @@ diff <span class="op">%&gt;%</span><span class="st"> </span>
 <pre><code>## # A tibble: 4 x 5
 ##   term        b6.11 b6.12  b6.13 b6.14
 ##   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1 b_Intercept  0.66  0.35   0.7  -1.11
+## 1 b_Intercept  0.66  0.35   0.7  -1.1 
 ## 2 b_logmass   NA    NA     -0.03 -0.1 
-## 3 b_neocortex NA     0.46  NA     2.83
+## 3 b_neocortex NA     0.46  NA     2.81
 ## 4 sigma        0.19  0.19   0.18  0.14</code></pre>
 <p>I’m also not aware of an efficient way in brms to reproduce Figure 6.12 for which McElreath nested his <code>coeftab()</code> argument in a <code>plot()</code> argument. However, one can build something similar by hand with a little data wrangling.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data wrangling</span>
@@ -1825,7 +1879,10 @@ wrangled_my_coef_tab &lt;-
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-68-1.png" width="384" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-68-1.png" />
+
+</div>
 <p>However, if you’re willing to deviate just a bit from the format of McElreath’s <code>coeftab()</code> plot, here’s a more elegant way to work with our <code>my_coef_tab</code> tibble.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_coef_tab <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
@@ -1843,7 +1900,10 @@ wrangled_my_coef_tab &lt;-
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)),
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>term, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-69-1.png" width="384" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-69-1.png" />
+
+</div>
 </div>
 <div id="rethinking-barplots-suck." class="section level4">
 <h4><span class="header-section-number">6.5.1.3</span> Rethinking: Barplots suck.</h4>
@@ -1889,7 +1949,10 @@ f &lt;-
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text             =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-70-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-70-1.png" />
+
+</div>
 </div>
 </div>
 <div id="summary-bonus-r2-talk" class="section level2">
@@ -1897,7 +1960,7 @@ f &lt;-
 <p>At the beginning of the chapter (pp. 167–168), McElreath briefly introduced <span class="math inline">\(R^2\)</span> as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It’s also limited in that it doesn’t generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where <span class="math inline">\(R^2\)</span> suits your purposes, the brms <code>bayes_R2()</code> function might be of use. Simply feeding a model brm fit object into <code>bayes_R2()</code> will return the posterior mean, <span class="math inline">\(SD\)</span>, and 95% intervals. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bayes_R2</span>(b6.<span class="dv">14</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##    Estimate Est.Error  Q2.5 Q97.5
-## R2    0.502     0.133 0.163 0.669</code></pre>
+## R2    0.501      0.13 0.186 0.666</code></pre>
 <p>With just a little data processing, you can get a tibble table of each of models’ <span class="math inline">\(R^2\)</span> ‘Estimate’.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rbind</span>(<span class="kw">bayes_R2</span>(b6.<span class="dv">11</span>), 
       <span class="kw">bayes_R2</span>(b6.<span class="dv">12</span>), 
@@ -1912,36 +1975,36 @@ f &lt;-
 ##   &lt;chr&gt;                   &lt;dbl&gt;
 ## 1 b6.11                    0   
 ## 2 b6.12                    0.08
-## 3 b6.13                    0.15
+## 3 b6.13                    0.14
 ## 4 b6.14                    0.5</code></pre>
 <p>If you want the full distribution of the <span class="math inline">\(R^2\)</span>, you’ll need to add a <code>summary = F</code> argument. Note how this returns a numeric vector.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r2_b6.<span class="dv">13</span> &lt;-<span class="st"> </span><span class="kw">bayes_R2</span>(b6.<span class="dv">13</span>, <span class="dt">summary =</span> F)
 
 r2_b6.<span class="dv">13</span> <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
-<pre><code>##  num [1:4000, 1] 0.215 0.227 0.31 0.319 0.377 ...
+<pre><code>##  num [1:4000, 1] 0.2245 0.0146 0.0808 0.288 0.1127 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 2
 ##   ..$ : NULL
 ##   ..$ : chr &quot;R2&quot;</code></pre>
 <p>If you want to use these in ggplot2, you’ll need to put them in tibbles or data frames. Here we do so for two of our model fits.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># model b6.13</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># model `b6.13`</span>
 r2_b6.<span class="dv">13</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">bayes_R2</span>(b6.<span class="dv">13</span>, <span class="dt">summary =</span> F) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">rename</span>(<span class="dt">r2_13 =</span> R2)
 
-<span class="co"># model b6.14</span>
+<span class="co"># model `b6.14`</span>
 r2_b6.<span class="dv">14</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">bayes_R2</span>(b6.<span class="dv">14</span>, <span class="dt">summary =</span> F) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">rename</span>(<span class="dt">r2_14 =</span> R2)
 
-<span class="co"># Let&#39;s put them in the same data object</span>
+<span class="co"># let&#39;s put them in the same data object</span>
 r2_combined &lt;-
 <span class="st">  </span><span class="kw">bind_cols</span>(r2_b6.<span class="dv">13</span>, r2_b6.<span class="dv">14</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dif =</span> r2_<span class="dv">14</span> <span class="op">-</span><span class="st"> </span>r2_<span class="dv">13</span>)
 
-<span class="co"># Plot their densities</span>
+<span class="co"># plot their densities</span>
 r2_combined <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_density</span>(<span class="kw">aes</span>(<span class="dt">x =</span> r2_<span class="dv">13</span>),
@@ -1956,7 +2019,10 @@ r2_combined <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-74-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-74-1.png" />
+
+</div>
 <p>If you do your work in a field where folks use <span class="math inline">\(R^2\)</span> change, you might do that with a simple difference score, which we computed above with <code>mutate(dif = R2.14 - R2.13)</code>. Here’s the <span class="math inline">\(\Delta R^2\)</span> (i.e., <code>dif</code>) plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r2_combined <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> dif, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span>
@@ -1969,7 +2035,10 @@ r2_combined <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Courier&quot;</span>),
         <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="kw">alpha</span>(<span class="kw">carto_pal</span>(<span class="dv">7</span>, <span class="st">&quot;BurgYl&quot;</span>)[<span class="dv">3</span>], <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-75-1.png" width="336" /></p>
+<div class="figure">
+<img src="06_files/figure-markdown_github/unnamed-chunk-75-1.png" />
+
+</div>
 <p>The brms package did not get these <span class="math inline">\(R^2\)</span> values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian <span class="math inline">\(R^2\)</span> sausage is made, check out the paper by <a href="https://github.com/jgabry/bayes_R2/blob/master/bayes_R2.pdf">Gelman, Goodrich, Gabry, and Ali</a>.</p>
 </div>
 <div id="reference-5" class="section level2 unnumbered">
@@ -1984,7 +2053,7 @@ r2_combined <span class="op">%&gt;%</span>
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -1994,51 +2063,45 @@ r2_combined <span class="op">%&gt;%</span>
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] rethinking_1.80        viridis_0.5.1          viridisLite_0.3.0      ggbeeswarm_0.6.0      
-##  [5] dutchmasters_0.1.0     ghibli_0.2.0           hrbrthemes_0.6.0       loo_2.1.0             
-##  [9] ggthemes_4.0.1         wesanderson_0.3.6.9000 GGally_1.4.0           tidybayes_1.0.4       
-## [13] bayesplot_1.6.0        fiftystater_1.0.1      bindrcpp_0.2.2         rstan_2.18.2          
-## [17] StanHeaders_2.18.0-1   brms_2.8.0             Rcpp_1.0.0             gridExtra_2.3         
-## [21] broom_0.5.1            ggrepel_0.8.0          rcartocolor_1.0.0      forcats_0.3.0         
-## [25] stringr_1.3.1          dplyr_0.8.0.1          purrr_0.2.5            readr_1.1.1           
-## [29] tidyr_0.8.1            tibble_2.1.1           ggplot2_3.1.0          tidyverse_1.2.1       
+##  [1] rstan_2.18.2         StanHeaders_2.18.0-1 tidybayes_1.0.4      brms_2.8.0          
+##  [5] Rcpp_1.0.0           gridExtra_2.3        broom_0.5.1          ggrepel_0.8.0       
+##  [9] rcartocolor_1.0.0    forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1       
+## [13] purrr_0.2.5          readr_1.1.1          tidyr_0.8.1          tibble_2.1.1        
+## [17] ggplot2_3.1.0        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
-##   [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
-##   [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
-##  [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-8            
-##  [13] lubridate_1.7.4           xml2_1.2.0                codetools_0.2-15         
-##  [16] bridgesampling_0.4-0      extrafont_0.17            knitr_1.20               
-##  [19] shinythemes_1.1.1         jsonlite_1.5              Rttf2pt1_1.3.7           
-##  [22] shiny_1.1.0               compiler_3.5.1            httr_1.3.1               
-##  [25] backports_1.1.2           assertthat_0.2.0          Matrix_1.2-14            
-##  [28] lazyeval_0.2.1            cli_1.0.1                 later_0.7.3              
-##  [31] htmltools_0.3.6           prettyunits_1.0.2         tools_3.5.1              
-##  [34] igraph_1.2.1              coda_0.19-2               gtable_0.2.0             
-##  [37] glue_1.3.0                reshape2_1.4.3            cellranger_1.1.0         
-##  [40] nlme_3.1-137              extrafontdb_1.0           crosstalk_1.0.0          
-##  [43] xfun_0.3                  ps_1.2.1                  rvest_0.3.2              
-##  [46] mime_0.5                  miniUI_0.1.1.1            gtools_3.8.1             
-##  [49] MASS_7.3-50               zoo_1.8-2                 scales_1.0.0             
-##  [52] colourpicker_1.0          hms_0.4.2                 promises_1.0.1           
-##  [55] Brobdingnag_1.2-5         inline_0.3.15             RColorBrewer_1.1-2       
-##  [58] shinystan_2.5.0           yaml_2.1.19               gdtools_0.1.7            
-##  [61] reshape_0.8.7             stringi_1.2.3             highr_0.7                
-##  [64] dygraphs_1.1.1.5          pkgbuild_1.0.2            rlang_0.3.1              
-##  [67] pkgconfig_2.0.2           matrixStats_0.54.0        evaluate_0.10.1          
-##  [70] lattice_0.20-35           bindr_0.1.1               rstantools_1.5.0         
-##  [73] htmlwidgets_1.2           labeling_0.3              tidyselect_0.2.5         
-##  [76] processx_3.2.1            plyr_1.8.4                magrittr_1.5             
-##  [79] bookdown_0.9              R6_2.3.0                  generics_0.0.2           
-##  [82] pillar_1.3.1              haven_1.1.2               withr_2.1.2              
-##  [85] xts_0.10-2                abind_1.4-5               modelr_0.1.2             
-##  [88] crayon_1.3.4              arrayhelpers_1.0-20160527 utf8_1.1.4               
-##  [91] rmarkdown_1.10            grid_3.5.1                readxl_1.1.0             
-##  [94] callr_3.1.0               threejs_0.3.1             digest_0.6.18            
-##  [97] xtable_1.8-2              httpuv_1.4.4.2            stats4_3.5.1             
-## [100] munsell_0.5.0             beeswarm_0.2.3            vipor_0.4.5              
-## [103] shinyjs_1.0</code></pre>
+##  [1] nlme_3.1-137              matrixStats_0.54.0        xts_0.10-2               
+##  [4] lubridate_1.7.4           threejs_0.3.1             httr_1.3.1               
+##  [7] rprojroot_1.3-2           tools_3.5.1               backports_1.1.2          
+## [10] utf8_1.1.4                R6_2.3.0                  DT_0.4                   
+## [13] lazyeval_0.2.1            colorspace_1.3-2          withr_2.1.2              
+## [16] prettyunits_1.0.2         processx_3.2.1            tidyselect_0.2.5         
+## [19] Brobdingnag_1.2-5         compiler_3.5.1            cli_1.0.1                
+## [22] rvest_0.3.2               arrayhelpers_1.0-20160527 xml2_1.2.0               
+## [25] shinyjs_1.0               labeling_0.3              colourpicker_1.0         
+## [28] scales_1.0.0              dygraphs_1.1.1.5          mvtnorm_1.0-8            
+## [31] callr_3.1.0               ggridges_0.5.0            digest_0.6.18            
+## [34] rmarkdown_1.10            base64enc_0.1-3           pkgconfig_2.0.2          
+## [37] htmltools_0.3.6           htmlwidgets_1.2           rlang_0.3.1              
+## [40] readxl_1.1.0              rstudioapi_0.7            shiny_1.1.0              
+## [43] svUnit_0.7-12             generics_0.0.2            zoo_1.8-2                
+## [46] jsonlite_1.5              crosstalk_1.0.0           gtools_3.8.1             
+## [49] inline_0.3.15             magrittr_1.5              loo_2.1.0                
+## [52] bayesplot_1.6.0           Matrix_1.2-14             munsell_0.5.0            
+## [55] fansi_0.4.0               abind_1.4-5               stringi_1.2.3            
+## [58] yaml_2.1.19               MASS_7.3-50               ggstance_0.3             
+## [61] pkgbuild_1.0.2            plyr_1.8.4                grid_3.5.1               
+## [64] promises_1.0.1            crayon_1.3.4              miniUI_0.1.1.1           
+## [67] lattice_0.20-35           haven_1.1.2               hms_0.4.2                
+## [70] ps_1.2.1                  knitr_1.20                pillar_1.3.1             
+## [73] igraph_1.2.1              markdown_0.8              shinystan_2.5.0          
+## [76] codetools_0.2-15          stats4_3.5.1              reshape2_1.4.3           
+## [79] rstantools_1.5.0          glue_1.3.0                evaluate_0.10.1          
+## [82] modelr_0.1.2              httpuv_1.4.4.2            cellranger_1.1.0         
+## [85] gtable_0.2.0              assertthat_0.2.0          mime_0.5                 
+## [88] xtable_1.8-2              coda_0.19-2               later_0.7.3              
+## [91] rsconnect_0.8.8           viridisLite_0.3.0         shinythemes_1.1.1        
+## [94] bridgesampling_0.4-0</code></pre>
 
 </div>
 </div>

@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-17">
+<meta name="date" content="2019-04-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -501,7 +501,10 @@ dutchmasters<span class="op">$</span>pearl_earring</code></pre></div>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_rug</span>(<span class="dt">color =</span> <span class="st">&quot;#8B9DAF&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">7</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="312" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-6-1.png" />
+
+</div>
 <p>Again, these are not “data.” Figure 13.2 shows a distribution of <em>parameters</em>.</p>
 </div>
 <div id="simulate-observations." class="section level3">
@@ -549,7 +552,10 @@ d &lt;-
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>cafe, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-22-1.png" width="336" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-9-1.png" />
+
+</div>
 </div>
 <div id="the-varying-slopes-model." class="section level3">
 <h3><span class="header-section-number">13.1.3</span> The varying slopes model.</h3>
@@ -604,7 +610,10 @@ r_<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-24-1.png" width="288" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-11-1.png" />
+
+</div>
 <p>Okay, let’s get ready to model and switch out rethinking for brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(brms)</code></pre></div>
@@ -636,7 +645,10 @@ post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-26-1.png" width="288" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-13-1.png" />
+
+</div>
 <p>McElreath then depicted multidimensional shrinkage by plotting the posterior mean of the varying effects compared to their raw, unpooled estimated. With brms, we can get the <code>cafe</code>-specific intercepts and <code>afternoon</code> slopes with <code>coef()</code>, which returns a three-dimensional list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># coef(b13.1) %&gt;% glimpse()</span>
 
@@ -711,7 +723,7 @@ un_pooled_params &lt;-
 <span class="st">  </span><span class="kw">spread</span>(<span class="dt">key =</span> afternoon, <span class="dt">value =</span> mean) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># use `spread()` just as in the previous block</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Slope =</span> Slope <span class="op">-</span><span class="st"> </span>Intercept)          <span class="co"># finally, here&#39;s our slope!</span>
 
-<span class="co"># Here we combine the partially-pooled and unpooled means into a single data object, </span>
+<span class="co"># here we combine the partially-pooled and unpooled means into a single data object, </span>
 <span class="co"># which will make plotting easier.</span>
 params &lt;-
 <span class="st">  </span><span class="co"># `bind_rows()` will stack the second tibble below the first</span>
@@ -754,7 +766,10 @@ params <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(params<span class="op">$</span>Intercept),
                   <span class="dt">ylim =</span> <span class="kw">range</span>(params<span class="op">$</span>Slope)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="480" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-17-1.png" />
+
+</div>
 <p>Learn more about <code>stat_ellipse()</code>, <a href="https://ggplot2.tidyverse.org/reference/stat_ellipse.html">here</a>. Let’s prep for Figure 13.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># retrieve the partially-pooled estimates with `coef()`</span>
 partially_pooled_estimates &lt;-
@@ -799,7 +814,10 @@ estimates &lt;-
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;morning wait (mins)&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;afternoon wait (mins)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-32-1.png" width="451.2" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-19-1.png" />
+
+</div>
 </div>
 </div>
 <div id="example-admission-decisions-and-gender" class="section level2">
@@ -858,7 +876,7 @@ d &lt;-<span class="st"> </span>
 ## r_dept_id[6,Intercept]  -2.03    0.01 0.66  -3.38  -2.40  -2.03  -1.64  -0.72  1959    1
 ## lp__                   -61.84    0.05 2.51 -67.60 -63.34 -61.50 -60.02 -57.92  2635    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Wed Apr 17 15:50:10 2019.
+## Samples were drawn using NUTS(diag_e) at Thu Apr 18 16:09:31 2019.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
@@ -952,7 +970,7 @@ d &lt;-<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(broom)
 
 <span class="kw">tidy</span>(b13.<span class="dv">2</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)  <span class="co"># This line just rounds the output</span></code></pre></div>
+<span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, round, <span class="dt">digits =</span> <span class="dv">2</span>)  <span class="co"># this line just rounds the output</span></code></pre></div>
 <pre><code>##                      term estimate std.error  lower  upper
 ## 1             b_Intercept    -0.58      0.65  -1.58   0.47
 ## 2                  b_male    -0.10      0.08  -0.23   0.04
@@ -1010,7 +1028,10 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">825</span>, .<span class="dv">06</span>),
         <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-44-1.png" width="768" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-31-1.png" />
+
+</div>
 <p>Our chains look great. While we’re at it, let’s examine the <span class="math inline">\(\hat{R}\)</span> vales in a handmade plot, too.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rhat</span>(b13.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1029,7 +1050,10 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-45-1.png" width="768" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-32-1.png" />
+
+</div>
 <p>Them are some respectable <span class="math inline">\(\hat{R}\)</span> values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set <code>coord_cartesian(xlim = c(0.99, 1.01))</code>). Here are the random effects in the <strong>centered</strong> metric:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">3</span>)</code></pre></div>
 <pre><code>## $dept_id
@@ -1073,7 +1097,10 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="624" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-34-1.png" />
+
+</div>
 <p>Just like in the text, our <code>male</code> slopes are much less dispersed than our intercepts.</p>
 </div>
 <div id="shrinkage." class="section level3">
@@ -1094,7 +1121,10 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;The dot is at the median; the</span><span class="ch">\n</span><span class="st">horizontal bar is the 95% CI.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-48-1.png" width="288" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-35-1.png" />
+
+</div>
 <p>Much like for Figure 13.5.b, above, it’ll take a little data processing before we’re ready to reproduce Figure 13.6.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># here we put the partially-pooled estimate summaries in a tibble</span>
 partially_pooled_params &lt;-
@@ -1168,7 +1198,10 @@ params</code></pre></div>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;intercept (&quot;</span>, alpha[dept_id], <span class="st">&quot;)&quot;</span>)),
        <span class="dt">y =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;slope (&quot;</span>, beta[dept_id], <span class="st">&quot;)&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-50-1.png" width="480" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-37-1.png" />
+
+</div>
 </div>
 <div id="model-comparison.-1" class="section level3">
 <h3><span class="header-section-number">13.2.4</span> Model comparison.</h3>
@@ -1286,7 +1319,10 @@ neff <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;effective samples&quot;</span>,
        <span class="dt">subtitle =</span> <span class="st">&quot;The non-centered</span><span class="ch">\n</span><span class="st">parameterization is the</span><span class="ch">\n</span><span class="st">brms default. No fancy</span><span class="ch">\n</span><span class="st">coding required.&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-56-1.png" width="288" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-43-1.png" />
+
+</div>
 <p>As in the last chapter, we’ll use the <code>bayesplot::mcmc_neff()</code> function to examine the ratio of n.eff and the fill number of post-warm-up iterations, <span class="math inline">\(N\)</span>. Ideally, that ratio is closer to 1 than not.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bayesplot)
 
@@ -1294,7 +1330,10 @@ neff <span class="op">%&gt;%</span>
 
 <span class="kw">mcmc_neff</span>(ratios_cp, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-44-1.png" />
+
+</div>
 <p>Here are our standard deviation parameters.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.<span class="dv">6</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;sd_&quot;</span>)) <span class="op">%&gt;%</span>
@@ -1388,7 +1427,10 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-63-1.png" width="528" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-50-1.png" />
+
+</div>
 <p>Figure 13.8 shows the “shape of the function relating distance to the covariance <span class="math inline">\(\mathbf{K}_{ij}\)</span>.”</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(
   <span class="dt">x       =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">4</span>, <span class="dt">by =</span> .<span class="dv">01</span>),
@@ -1405,7 +1447,10 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
                      <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">5</span>, <span class="dv">1</span>),
                      <span class="dt">labels =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="st">&quot;.5&quot;</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-64-1.png" width="312" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-51-1.png" />
+
+</div>
 <p>Load the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(Kline2) <span class="co"># load the ordinary data, now with coordinates</span>
 
@@ -1536,7 +1581,10 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Not identical, but pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;intercept&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-73-1.png" width="576" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-60-1.png" />
+
+</div>
 <p>Now check the slopes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;bp&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1551,7 +1599,10 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Again, pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;slope&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-74-1.png" width="576" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-61-1.png" />
+
+</div>
 <p>This one, <span class="math inline">\(\eta^2\)</span>, required a little transformation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;etasq&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1566,7 +1617,10 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
        <span class="dt">x     =</span> <span class="kw">expression</span>(eta<span class="op">^</span><span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-75-1.png" width="576" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-62-1.png" />
+
+</div>
 <p><span class="math inline">\(\rho^2\)</span> required more extensive transformation of the brms posterior:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;rhosq&quot;</span>] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span><span class="op">%&gt;%</span><span class="st"> </span>
@@ -1584,7 +1638,10 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>package, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-76-1.png" width="768" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-63-1.png" />
+
+</div>
 <p>I’m in clinical psychology. Folks in my field don’t tend to use Gaussian processes, so getting to the bottom of this is low on my to-do list. Perhaps one of y’all are more experienced with Gaussian processes and see a flaw somewhere in my code. Please <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">hit me up</a> if you do.</p>
 <p>Anyways, here’s our brms + ggplot2 version of Figure 13.9.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for `sample_n()`</span>
@@ -1611,7 +1668,10 @@ post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">50</span>,
                   <span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-77-1.png" width="407.04" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-64-1.png" />
+
+</div>
 <p>Do note the scale on which we placed our x axis. Our brms parameterization resulted in a gentler decline in spatial covariance.</p>
 <p>Let’s finish this up and “push the parameters back through the function for <span class="math inline">\(\mathbf{K}\)</span>, the covariance matrix” (p. 415).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compute posterior median covariance among societies</span>
@@ -1702,7 +1762,10 @@ rho <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">roun
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>lat)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-82-1.png" width="384" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-69-1.png" />
+
+</div>
 <p>Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here’s our version of Figure 13.10.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data for `fitted()`</span>
 nd &lt;-<span class="st"> </span>
@@ -1737,7 +1800,10 @@ tidy_rho <span class="op">%&gt;%</span><span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>total_tools)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-83-1.png" width="384" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-70-1.png" />
+
+</div>
 <p>Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner’s thoughts on this model in brms, check out the <a href="https://github.com/paul-buerkner/brms/issues/300">thread on this issue</a>.</p>
 </div>
 </div>
@@ -1854,7 +1920,10 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="k
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-88-1.png" width="864" /></p>
+<div class="figure">
+<img src="13_files/figure-markdown_github/unnamed-chunk-75-1.png" />
+
+</div>
 <p>Note how the 95% intervals for all the random <code>male</code> slopes contain zero within their bounds. Here are the fixed effects:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.bonus_<span class="dv">2</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;b_&quot;</span>)) <span class="op">%&gt;%</span>
@@ -1881,7 +1950,7 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="k
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -1892,48 +1961,44 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="k
 ## 
 ## other attached packages:
 ##  [1] brms_2.8.0           bayesplot_1.6.0      ggbeeswarm_0.6.0     ggrepel_0.8.0       
-##  [5] broom_0.5.1          tidybayes_1.0.4      Rcpp_1.0.0           dutchmasters_0.1.0  
-##  [9] forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1        purrr_0.2.5         
-## [13] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1         tidyverse_1.2.1     
-## [17] rstan_2.18.2         StanHeaders_2.18.0-1 ggplot2_3.1.0       
+##  [5] tidybayes_1.0.4      broom_0.5.1          Rcpp_1.0.0           rstan_2.18.2        
+##  [9] StanHeaders_2.18.0-1 dutchmasters_0.1.0   forcats_0.3.0        stringr_1.3.1       
+## [13] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
+## [17] tibble_2.1.1         ggplot2_3.1.0        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.5          htmlwidgets_1.2           grid_3.5.1               
-##   [7] munsell_0.5.0             codetools_0.2-15          nleqslv_3.3.2            
-##  [10] DT_0.4                    miniUI_0.1.1.1            withr_2.1.2              
-##  [13] Brobdingnag_1.2-5         colorspace_1.3-2          highr_0.7                
-##  [16] knitr_1.20                rstudioapi_0.7            stats4_3.5.1             
-##  [19] Rttf2pt1_1.3.7            labeling_0.3              bridgesampling_0.4-0     
-##  [22] rprojroot_1.3-2           coda_0.19-2               generics_0.0.2           
-##  [25] xfun_0.3                  R6_2.3.0                  markdown_0.8             
-##  [28] HDInterval_0.2.0          reshape_0.8.7             assertthat_0.2.0         
-##  [31] promises_1.0.1            scales_1.0.0              beeswarm_0.2.3           
-##  [34] gtable_0.2.0              processx_3.2.1            rlang_0.3.1              
-##  [37] extrafontdb_1.0           lazyeval_0.2.1            inline_0.3.15            
-##  [40] yaml_2.1.19               reshape2_1.4.3            abind_1.4-5              
-##  [43] modelr_0.1.2              threejs_0.3.1             crosstalk_1.0.0          
-##  [46] backports_1.1.2           httpuv_1.4.4.2            rsconnect_0.8.8          
-##  [49] extrafont_0.17            tools_3.5.1               bookdown_0.9             
-##  [52] RColorBrewer_1.1-2        ggridges_0.5.0            plyr_1.8.4               
-##  [55] base64enc_0.1-3           ps_1.2.1                  prettyunits_1.0.2        
-##  [58] zoo_1.8-2                 haven_1.1.2               magrittr_1.5             
-##  [61] colourpicker_1.0          mvtnorm_1.0-8             matrixStats_0.54.0       
-##  [64] hms_0.4.2                 shinyjs_1.0               mime_0.5                 
-##  [67] evaluate_0.10.1           arrayhelpers_1.0-20160527 xtable_1.8-2             
-##  [70] shinystan_2.5.0           readxl_1.1.0              gridExtra_2.3            
-##  [73] rstantools_1.5.0          compiler_3.5.1            crayon_1.3.4             
-##  [76] htmltools_0.3.6           later_0.7.3               lubridate_1.7.4          
-##  [79] MASS_7.3-50               Matrix_1.2-14             cli_1.0.1                
-##  [82] bindr_0.1.1               igraph_1.2.1              pkgconfig_2.0.2          
-##  [85] xml2_1.2.0                svUnit_0.7-12             dygraphs_1.1.1.5         
-##  [88] vipor_0.4.5               rvest_0.3.2               callr_3.1.0              
-##  [91] digest_0.6.18             rmarkdown_1.10            cellranger_1.1.0         
-##  [94] gdtools_0.1.7             shiny_1.1.0               gtools_3.8.1             
-##  [97] nlme_3.1-137              jsonlite_1.5              fansi_0.4.0              
-## [100] pillar_1.3.1              lattice_0.20-35           loo_2.1.0                
-## [103] httr_1.3.1                pkgbuild_1.0.2            glue_1.3.0               
-## [106] xts_0.10-2                shinythemes_1.1.1         stringi_1.2.3</code></pre>
+##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
+##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
+##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
+## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-8            
+## [13] lubridate_1.7.4           xml2_1.2.0                bridgesampling_0.4-0     
+## [16] knitr_1.20                shinythemes_1.1.1         jsonlite_1.5             
+## [19] shiny_1.1.0               compiler_3.5.1            httr_1.3.1               
+## [22] backports_1.1.2           assertthat_0.2.0          Matrix_1.2-14            
+## [25] lazyeval_0.2.1            cli_1.0.1                 later_0.7.3              
+## [28] htmltools_0.3.6           prettyunits_1.0.2         tools_3.5.1              
+## [31] igraph_1.2.1              coda_0.19-2               gtable_0.2.0             
+## [34] glue_1.3.0                reshape2_1.4.3            cellranger_1.1.0         
+## [37] nlme_3.1-137              crosstalk_1.0.0           ps_1.2.1                 
+## [40] rvest_0.3.2               mime_0.5                  miniUI_0.1.1.1           
+## [43] gtools_3.8.1              nleqslv_3.3.2             MASS_7.3-50              
+## [46] zoo_1.8-2                 scales_1.0.0              colourpicker_1.0         
+## [49] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
+## [52] inline_0.3.15             shinystan_2.5.0           yaml_2.1.19              
+## [55] gridExtra_2.3             loo_2.1.0                 stringi_1.2.3            
+## [58] dygraphs_1.1.1.5          pkgbuild_1.0.2            rlang_0.3.1              
+## [61] pkgconfig_2.0.2           matrixStats_0.54.0        HDInterval_0.2.0         
+## [64] evaluate_0.10.1           lattice_0.20-35           rstantools_1.5.0         
+## [67] htmlwidgets_1.2           labeling_0.3              processx_3.2.1           
+## [70] tidyselect_0.2.5          plyr_1.8.4                magrittr_1.5             
+## [73] R6_2.3.0                  generics_0.0.2            pillar_1.3.1             
+## [76] haven_1.1.2               withr_2.1.2               xts_0.10-2               
+## [79] abind_1.4-5               modelr_0.1.2              crayon_1.3.4             
+## [82] arrayhelpers_1.0-20160527 utf8_1.1.4                rmarkdown_1.10           
+## [85] grid_3.5.1                readxl_1.1.0              callr_3.1.0              
+## [88] threejs_0.3.1             digest_0.6.18             xtable_1.8-2             
+## [91] httpuv_1.4.4.2            stats4_3.5.1              munsell_0.5.0            
+## [94] beeswarm_0.2.3            vipor_0.4.5               shinyjs_1.0</code></pre>
 
 </div>
 </div>

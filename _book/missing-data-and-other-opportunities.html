@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-17">
+<meta name="date" content="2019-04-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -481,7 +481,7 @@ p_pancake &lt;-<span class="st"> </span><span class="dv">1</span><span class="op
 <pre><code>##  num [1:2] 1 0</code></pre>
 <p>And that <code>1 0</code> corresponds to the pancake with one burnt (i.e., 1) and one unburnt (i.e., 0) side. So when McElreath then executed <code>sample(sides)</code>, he randomly sampled from one of those two values. In the case of <code>pancake == 2</code>, he randomly sampled one the pancake with one burnt and one unburnt side. Had he sampled from <code>pancake == 1</code>, he would have sampled from the pancake with both sides burnt.</p>
 <p>Going forward, let’s amend McElreath’s <code>sim_pancake()</code> function a bit. First, we’ll add a <code>seed</code> argument, with will allow us to make the output reproducible. We’ll be inserting <code>seed</code> into <code>set.seed()</code> in the two places preceding the <code>sample()</code> function. The second major change is that we’re going to convert the output of the <code>sim_pancake()</code> function to a tibble and adding a <code>side</code> column, which will contain the values <code>c(&quot;up&quot;, &quot;down&quot;)</code>. Just for pedagogical purposes, we’ll also add <code>pancake_n</code> and <code>pancake_chr</code> columns to help index which <code>pancake</code> the draws came from.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># simulate a pancake and return randomly ordered sides</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># simulate a `pancake` and return randomly ordered `sides`</span>
 sim_pancake &lt;-<span class="st"> </span><span class="cf">function</span>(seed) {
   <span class="kw">set.seed</span>(seed)
   pancake &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">1</span>)
@@ -496,7 +496,7 @@ sim_pancake &lt;-<span class="st"> </span><span class="cf">function</span>(seed)
                                 <span class="kw">ifelse</span>(pancake <span class="op">==</span><span class="st"> </span><span class="dv">2</span>, <span class="st">&quot;BU&quot;</span>, <span class="st">&quot;UU&quot;</span>)))
 }</code></pre></div>
 <p>Let’s take this baby for a whirl.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># How many simulations would you like?</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># how many simulations would you like?</span>
 n_sim &lt;-<span class="st"> </span><span class="fl">1e4</span>
 
 (
@@ -549,9 +549,9 @@ d &lt;-<span class="st"> </span>WaffleDivorce
 <span class="st">  </span><span class="cf">function</span>(<span class="dt">base_size=</span><span class="dv">12</span>, <span class="dt">base_family=</span><span class="st">&quot;&quot;</span>) {
     <span class="kw">theme_grey</span>(<span class="dt">base_size=</span>base_size, <span class="dt">base_family=</span>base_family) <span class="op">%+replace%</span>
 <span class="st">        </span><span class="kw">theme</span>(
-            <span class="co"># Specify axis options</span>
+            <span class="co"># specify axis options</span>
             <span class="dt">axis.line=</span><span class="kw">element_blank</span>(),
-            <span class="co"># All text colors used to be &quot;grey55&quot;</span>
+            <span class="co"># all text colors used to be &quot;grey55&quot;</span>
             <span class="dt">axis.text.x=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span><span class="fl">0.8</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>,
                 <span class="dt">lineheight=</span><span class="fl">0.9</span>, <span class="dt">vjust=</span><span class="dv">1</span>),
             <span class="dt">axis.text.y=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span><span class="fl">0.8</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>,
@@ -563,7 +563,7 @@ d &lt;-<span class="st"> </span>WaffleDivorce
                 <span class="dt">margin=</span>ggplot2<span class="op">::</span><span class="kw">margin</span>(.<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="st">&quot;lines&quot;</span>), <span class="dt">vjust=</span><span class="fl">0.5</span>),
             <span class="dt">axis.ticks.length=</span>grid<span class="op">::</span><span class="kw">unit</span>(<span class="fl">0.3</span>, <span class="st">&quot;lines&quot;</span>),
 
-            <span class="co"># Specify legend options</span>
+            <span class="co"># specify legend options</span>
             <span class="dt">legend.background=</span><span class="kw">element_rect</span>(<span class="dt">color=</span><span class="ot">NA</span>, <span class="dt">fill=</span><span class="st">&quot;black&quot;</span>),
             <span class="dt">legend.key=</span><span class="kw">element_rect</span>(<span class="dt">color=</span><span class="st">&quot;grey55&quot;</span>, <span class="dt">fill=</span><span class="st">&quot;black&quot;</span>),
             <span class="dt">legend.key.size=</span>grid<span class="op">::</span><span class="kw">unit</span>(<span class="fl">1.2</span>, <span class="st">&quot;lines&quot;</span>),
@@ -578,18 +578,18 @@ d &lt;-<span class="st"> </span>WaffleDivorce
             <span class="dt">legend.title.align=</span><span class="ot">NULL</span>,
             <span class="dt">legend.direction=</span><span class="st">&quot;vertical&quot;</span>,
             <span class="dt">legend.box=</span><span class="ot">NULL</span>,
-            <span class="co"># Specify panel options</span>
+            <span class="co"># specify panel options</span>
             <span class="dt">panel.background=</span><span class="kw">element_rect</span>(<span class="dt">fill=</span><span class="st">&quot;black&quot;</span>, <span class="dt">color =</span> <span class="ot">NA</span>),
             <span class="dt">panel.border=</span><span class="kw">element_rect</span>(<span class="dt">fill=</span><span class="ot">NA</span>, <span class="dt">color=</span><span class="st">&quot;grey55&quot;</span>),
             <span class="dt">panel.grid.major=</span><span class="kw">element_blank</span>(),
             <span class="dt">panel.grid.minor=</span><span class="kw">element_blank</span>(),
             <span class="dt">panel.spacing=</span>grid<span class="op">::</span><span class="kw">unit</span>(<span class="fl">0.25</span>,<span class="st">&quot;lines&quot;</span>),
-            <span class="co"># Specify facetting options</span>
+            <span class="co"># specify facetting options</span>
             <span class="dt">strip.background=</span><span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">color=</span><span class="st">&quot;grey10&quot;</span>), <span class="co"># fill=&quot;grey30&quot;</span>
             <span class="dt">strip.text.x=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span><span class="fl">0.8</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>),
             <span class="dt">strip.text.y=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span><span class="fl">0.8</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>,
                 <span class="dt">angle=</span><span class="op">-</span><span class="dv">90</span>),
-            <span class="co"># Specify plot options</span>
+            <span class="co"># specify plot options</span>
             <span class="dt">plot.background=</span><span class="kw">element_rect</span>(<span class="dt">color=</span><span class="st">&quot;black&quot;</span>, <span class="dt">fill=</span><span class="st">&quot;black&quot;</span>),
             <span class="dt">plot.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span><span class="fl">1.2</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>, <span class="dt">hjust =</span> <span class="dv">0</span>), <span class="co"># added hjust = 0</span>
             <span class="dt">plot.subtitle=</span><span class="kw">element_text</span>(<span class="dt">size=</span>base_size<span class="op">*</span>.<span class="dv">9</span>, <span class="dt">color=</span><span class="st">&quot;grey85&quot;</span>, <span class="dt">hjust =</span> <span class="dv">0</span>), <span class="co"># added line</span>
@@ -621,7 +621,10 @@ d &lt;-<span class="st"> </span>WaffleDivorce
 <span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_discrete</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Behold: viridis C!&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-16-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-16-1.png" />
+
+</div>
 <p>Now, let’s make use of our custom theme and reproduce/reimagine Figure 14.1.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">7</span>]
 
@@ -633,7 +636,10 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_pointrange</span>(<span class="dt">shape =</span> <span class="dv">20</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">color =</span> color) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Median age marriage&quot;</span> , 
        <span class="dt">y =</span> <span class="st">&quot;Divorce rate&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-17-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-17-1.png" />
+
+</div>
 <p>Notice how <code>viridis_pal(option = &quot;C&quot;)(7)[7]</code> called the seventh color in the color scheme, <code>&quot;#F0F921FF&quot;</code>. For Figure 14.1.b, we’ll select the sixth color in the palette by coding <code>viridis_pal(option = &quot;C&quot;)(7)[6]</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">6</span>]
 
@@ -645,7 +651,10 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_pointrange</span>(<span class="dt">shape =</span> <span class="dv">20</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">color =</span> color) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;log population&quot;</span>, 
        <span class="dt">y =</span> <span class="st">&quot;Divorce rate&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-18-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-18-1.png" />
+
+</div>
 <p>Just like in the text, our plot shows states with larger populations tend to have smaller measurement error.</p>
 <div id="error-on-the-outcome." class="section level3">
 <h3><span class="header-section-number">14.1.1</span> Error on the outcome.</h3>
@@ -671,18 +680,18 @@ d <span class="op">%&gt;%</span>
 <p>Now we’re ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the <code>se()</code> syntax, following the form <code>&lt;response&gt; | se(&lt;se_response&gt;, sigma = TRUE)</code>. With this syntax, <code>se</code> stands for standard error, the loose frequentist analogue to the Bayesian posterior <span class="math inline">\(SD\)</span>. Unless you’re <a href="https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/">fitting a meta-analysis</a> on summary information, make sure to specify <code>sigma = TRUE</code>. Without that you’ll have no estimate for <span class="math inline">\(\sigma\)</span>! For more information on the <code>se()</code> method, go to the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> and find the <em>Additional response information</em> subsection of the <code>brmsformula</code> section.</p>
 <p>The second way uses the <code>mi()</code> syntax, following the form <code>&lt;response&gt; | mi(&lt;se_response&gt;)</code>. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The <code>mi()</code> syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.</p>
 <p>We’ll start off useing both methods. Our first model, <code>b14.1_se</code>, will follow the <code>se()</code> syntax; the second model, <code>b14.1_mi</code>, will follow the <code>mi()</code> syntax.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Put the data into a list</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># put the data into a `list()`</span>
 dlist &lt;-<span class="st"> </span><span class="kw">list</span>(
     <span class="dt">div_obs =</span> d<span class="op">$</span>Divorce,
     <span class="dt">div_sd  =</span> d<span class="op">$</span>Divorce.SE,
     <span class="dt">R       =</span> d<span class="op">$</span>Marriage,
     <span class="dt">A       =</span> d<span class="op">$</span>MedianAgeMarriage)
 
-<span class="co"># Here we specify the initial (i.e., starting) values</span>
+<span class="co"># here we specify the initial (i.e., starting) values</span>
 inits      &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">Yl =</span> dlist<span class="op">$</span>div_obs)
 inits_list &lt;-<span class="st"> </span><span class="kw">list</span>(inits, inits)
 
-<span class="co"># Fit the models</span>
+<span class="co"># fit the models</span>
 b14.1_se &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dlist, <span class="dt">family =</span> gaussian,
       div_obs <span class="op">|</span><span class="st"> </span><span class="kw">se</span>(div_sd, <span class="dt">sigma =</span> <span class="ot">TRUE</span>) <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st"> </span>R <span class="op">+</span><span class="st"> </span>A,
@@ -888,7 +897,10 @@ data_error <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Divorce.SE, <span class="dt">y =</span> Estimate <span class="op">-</span><span class="st"> </span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> color)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-23-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-23-1.png" />
+
+</div>
 <p>Before we make Figure 14.2.b, we need to fit a model that ignores measurement error.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b14.1b &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dlist, <span class="dt">family =</span> gaussian,
@@ -950,12 +962,12 @@ color_r &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span 
 <span class="co"># plot</span>
 f_no_error <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> A, <span class="dt">y =</span> Estimate)) <span class="op">+</span>
-<span class="st">  </span><span class="co"># f_no_error</span>
+<span class="st">  </span><span class="co"># `f_no_error`</span>
 <span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
               <span class="dt">fill =</span> color_y, <span class="dt">color =</span> color_y, 
               <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="co"># f_error</span>
+<span class="st">  </span><span class="co"># `f_error`</span>
 <span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> f_error,
               <span class="kw">aes</span>(<span class="dt">ymin =</span> Q2.<span class="dv">5</span>, <span class="dt">ymax =</span> Q97.<span class="dv">5</span>),
               <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,
@@ -969,7 +981,10 @@ f_no_error <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Median age marriage&quot;</span> , <span class="dt">y =</span> <span class="st">&quot;Divorce rate (posterior)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_error<span class="op">$</span>A), 
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">15</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-25-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-25-1.png" />
+
+</div>
 <p>In our plot, it’s the reddish regression line that accounts for measurement error.</p>
 </div>
 <div id="error-on-both-outcome-and-predictor." class="section level3">
@@ -1073,7 +1088,10 @@ data_error <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Divorce.SE, <span class="dt">y =</span> Estimate <span class="op">-</span><span class="st"> </span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> color)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-28-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-28-1.png" />
+
+</div>
 <p>To get the posterior samples for error-adjusted <code>Marriage</code> rate, we’ll use <code>posterior_samples</code>. If you examine the object with <code>glimpse()</code>, you’ll notice 50 <code>Xme_memar_obsmar_sd[i]</code> vectors, with <span class="math inline">\(i\)</span> ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we can make our version of Figure 14.4.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color_y &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">7</span>]
 color_p &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">2</span>]
@@ -1096,7 +1114,10 @@ color_p &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span 
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">4</span>, <span class="dt">to =</span> <span class="dv">14</span>, <span class="dt">by =</span> <span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Marriage rate (posterior)&quot;</span> , <span class="dt">y =</span> <span class="st">&quot;Divorce rate (posterior)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="fl">14.5</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-29-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-29-1.png" />
+
+</div>
 <p>The yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath’s rethinking model. I’m unsure of why. If you understand the difference, <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">please share with the rest of the class</a>.</p>
 <p>Anyway,</p>
 <blockquote>
@@ -1302,7 +1323,10 @@ f_b14.<span class="dv">3</span> <span class="op">%&gt;%</span><span class="st"> 
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Note: For the regression line in this plot, log(mass)</span><span class="ch">\n</span><span class="st">has been set to its median, 1.244.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;neocortex proportion&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;kcal per gram&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-39-1.png" />
+
+</div>
 <p>Figure 14.4.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;D&quot;</span>)(<span class="dv">7</span>)[<span class="dv">4</span>]
 
@@ -1319,7 +1343,10 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;neocortex proportion&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_list<span class="op">$</span>logmass, <span class="dt">na.rm =</span> T),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">55</span>, .<span class="dv">8</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-40-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-40-1.png" />
+
+</div>
 </div>
 <div id="improving-the-imputation-model" class="section level3">
 <h3><span class="header-section-number">14.2.2</span> Improving the imputation model</h3>
@@ -1338,13 +1365,13 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 \end{eqnarray}
 \]</span></p>
 <p>As far as the brms code goes, adding <code>logmass</code> as a predictor to the <code>neocortex</code> submodel is pretty simple.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The model</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define the model</span>
 b_model &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">bf</span>(kcal <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">mi</span>(neocortex) <span class="op">+</span><span class="st"> </span>logmass) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bf</span>(neocortex <span class="op">|</span><span class="st"> </span><span class="kw">mi</span>() <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>logmass) <span class="op">+</span><span class="st"> </span><span class="co"># here&#39;s the big difference</span>
 <span class="st">  </span><span class="kw">set_rescor</span>(<span class="ot">FALSE</span>)
 
-<span class="co"># Fit the model</span>
+<span class="co"># fit the model</span>
 b14.<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> data_list, 
       <span class="dt">family =</span> gaussian,
@@ -1443,7 +1470,10 @@ f_b14.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st"> 
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Note: For the regression line in this plot, log(mass)</span><span class="ch">\n</span><span class="st">has been set to its median, 1.244.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;neocortex proportion&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;kcal per gram&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-43-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-43-1.png" />
+
+</div>
 <p>Figure 14.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;D&quot;</span>)(<span class="dv">7</span>)[<span class="dv">3</span>]
 
@@ -1460,7 +1490,10 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;neocortex proportion&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_list<span class="op">$</span>logmass, <span class="dt">na.rm =</span> T),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">55</span>, .<span class="dv">8</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-44-1.png" width="384" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-44-1.png" />
+
+</div>
 <p>If modern missing data methods are new to you, you might also check out van Burren’s great online text <a href="https://stefvanbuuren.name/fimd/"><em>Flexible Imputation of Missing Data. Second Edition</em></a>. I’m also a fan of Enders’ <a href="http://www.appliedmissingdata.com"><em>Applied Missing Data Analysis</em></a>, for which you can find a free sample chapter <a href="http://www.appliedmissingdata.com/sample-chapter.pdf">here</a>. I’ll also quickly mention that <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html">brms accommodates multiple imputation</a>, too.</p>
 </div>
 </div>
@@ -1691,7 +1724,10 @@ label &lt;-
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="kw">expression</span>(tau)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-51-1.png" width="480" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-51-1.png" />
+
+</div>
 <p>So at this point, the big story is there’s more variability between the studies than there is the outcomes. But I still want to get a sense of the individual outcomes. Here we’ll use <code>tidybayes::geom_halfeyeh()</code> to help us make our version of a <a href="https://cran.r-project.org/web/packages/forestplot/vignettes/forestplot.html">forest plot</a> and <code>tidybayes::spread_draws()</code> to help with the initial wrangling.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -1713,7 +1749,10 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-52-1.png" width="480" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-52-1.png" />
+
+</div>
 <p>The solid and dashed vertical white lines in the background mark off the grand mean (i.e., the meta-analytic effect) and its 95% intervals. But anyway, there’s not a lot of variability across the outcomes. Let’s go one step further with the model. Doubling back to Gelman and colleagues, we read:</p>
 <blockquote>
 <p>When assuming exchangeability we assume there are no important covariates that might form the basis of a more complex model, and this assumption (perhaps misguidedly) is widely adopted in meta-analysis. What if other information (in addition to the data <span class="math inline">\((n, y)\)</span>) is available to distinguish among the <span class="math inline">\(J\)</span> studies in a meta-analysis, so that an exchangeable model is inappropriate? In this situation, we can expand the framework of the model to be exchangeable in the observed data and covariates, for example using a hierarchical regression model. (p. 126)</p>
@@ -1770,7 +1809,10 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Overall difference for between- vs within-participant designs&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-55-1.png" width="432" /></p>
+<div class="figure">
+<img src="14_files/figure-markdown_github/unnamed-chunk-55-1.png" />
+
+</div>
 <p>That difference isn’t as large I’d expect it to be. But then again, I’m no spanking researcher. So what do I know?</p>
 <p>There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we’ve gone far enough to get you started.</p>
 <p>If you’d like to learn more about these methods, do check out Vourre’s <a href="https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/"><em>Meta-analysis is a special case of Bayesian multilevel modeling</em></a>. From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the <code>brmstools::forest()</code> function and how our Bayesian brms method compares with Frequentist meta-analyses via the <a href="http://www.metafor-project.org/doku.php/metafor">metafor package</a>. You might also check out Williams, Rast, and Bürkner’s manuscript, <a href="https://psyarxiv.com/7tbrm/"><em>Bayesian Meta-Analysis with Weakly Informative Prior Distributions</em></a> to give you an empirical justification for using a half-Cauchy prior for your meta-analysis <span class="math inline">\(\tau\)</span> parameters.</p>
@@ -1787,7 +1829,7 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -1797,50 +1839,45 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] tidybayes_1.0.4      broom_0.5.1          viridis_0.5.1        viridisLite_0.3.0   
-##  [5] brms_2.8.0           Rcpp_1.0.0           rstan_2.18.2         StanHeaders_2.18.0-1
-##  [9] forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1        purrr_0.2.5         
-## [13] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1         ggplot2_3.1.0       
-## [17] tidyverse_1.2.1     
+##  [1] tidybayes_1.0.4      broom_0.5.1          bayesplot_1.6.0      bindrcpp_0.2.2      
+##  [5] viridis_0.5.1        viridisLite_0.3.0    brms_2.8.0           Rcpp_1.0.0          
+##  [9] rstan_2.18.2         StanHeaders_2.18.0-1 forcats_0.3.0        stringr_1.3.1       
+## [13] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
+## [17] tibble_2.1.1         ggplot2_3.1.0        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.5          htmlwidgets_1.2           grid_3.5.1               
-##   [7] munsell_0.5.0             codetools_0.2-15          nleqslv_3.3.2            
-##  [10] DT_0.4                    miniUI_0.1.1.1            withr_2.1.2              
-##  [13] Brobdingnag_1.2-5         colorspace_1.3-2          highr_0.7                
-##  [16] knitr_1.20                rstudioapi_0.7            stats4_3.5.1             
-##  [19] Rttf2pt1_1.3.7            bayesplot_1.6.0           labeling_0.3             
-##  [22] bridgesampling_0.4-0      rprojroot_1.3-2           coda_0.19-2              
-##  [25] generics_0.0.2            xfun_0.3                  R6_2.3.0                 
-##  [28] markdown_0.8              HDInterval_0.2.0          reshape_0.8.7            
-##  [31] assertthat_0.2.0          promises_1.0.1            scales_1.0.0             
-##  [34] beeswarm_0.2.3            gtable_0.2.0              processx_3.2.1           
-##  [37] rlang_0.3.1               extrafontdb_1.0           lazyeval_0.2.1           
-##  [40] inline_0.3.15             yaml_2.1.19               reshape2_1.4.3           
-##  [43] abind_1.4-5               modelr_0.1.2              threejs_0.3.1            
-##  [46] crosstalk_1.0.0           backports_1.1.2           httpuv_1.4.4.2           
-##  [49] rsconnect_0.8.8           extrafont_0.17            tools_3.5.1              
-##  [52] bookdown_0.9              RColorBrewer_1.1-2        ggridges_0.5.0           
-##  [55] plyr_1.8.4                base64enc_0.1-3           ps_1.2.1                 
-##  [58] prettyunits_1.0.2         zoo_1.8-2                 haven_1.1.2              
-##  [61] magrittr_1.5              colourpicker_1.0          mvtnorm_1.0-8            
-##  [64] matrixStats_0.54.0        hms_0.4.2                 shinyjs_1.0              
-##  [67] mime_0.5                  evaluate_0.10.1           arrayhelpers_1.0-20160527
-##  [70] xtable_1.8-2              shinystan_2.5.0           readxl_1.1.0             
-##  [73] gridExtra_2.3             rstantools_1.5.0          compiler_3.5.1           
-##  [76] crayon_1.3.4              htmltools_0.3.6           later_0.7.3              
-##  [79] lubridate_1.7.4           MASS_7.3-50               Matrix_1.2-14            
-##  [82] cli_1.0.1                 bindr_0.1.1               igraph_1.2.1             
-##  [85] pkgconfig_2.0.2           xml2_1.2.0                svUnit_0.7-12            
-##  [88] dygraphs_1.1.1.5          vipor_0.4.5               rvest_0.3.2              
-##  [91] callr_3.1.0               digest_0.6.18             rmarkdown_1.10           
-##  [94] cellranger_1.1.0          gdtools_0.1.7             shiny_1.1.0              
-##  [97] gtools_3.8.1              nlme_3.1-137              jsonlite_1.5             
-## [100] fansi_0.4.0               pillar_1.3.1              lattice_0.20-35          
-## [103] loo_2.1.0                 httr_1.3.1                pkgbuild_1.0.2           
-## [106] glue_1.3.0                xts_0.10-2                shinythemes_1.1.1        
-## [109] stringi_1.2.3</code></pre>
+##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
+##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
+##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
+## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-8            
+## [13] lubridate_1.7.4           xml2_1.2.0                codetools_0.2-15         
+## [16] bridgesampling_0.4-0      knitr_1.20                shinythemes_1.1.1        
+## [19] jsonlite_1.5              shiny_1.1.0               compiler_3.5.1           
+## [22] httr_1.3.1                backports_1.1.2           assertthat_0.2.0         
+## [25] Matrix_1.2-14             lazyeval_0.2.1            cli_1.0.1                
+## [28] later_0.7.3               htmltools_0.3.6           prettyunits_1.0.2        
+## [31] tools_3.5.1               igraph_1.2.1              coda_0.19-2              
+## [34] gtable_0.2.0              glue_1.3.0                reshape2_1.4.3           
+## [37] cellranger_1.1.0          nlme_3.1-137              crosstalk_1.0.0          
+## [40] ps_1.2.1                  rvest_0.3.2               mime_0.5                 
+## [43] miniUI_0.1.1.1            gtools_3.8.1              MASS_7.3-50              
+## [46] zoo_1.8-2                 scales_1.0.0              colourpicker_1.0         
+## [49] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
+## [52] inline_0.3.15             shinystan_2.5.0           yaml_2.1.19              
+## [55] gridExtra_2.3             loo_2.1.0                 stringi_1.2.3            
+## [58] highr_0.7                 dygraphs_1.1.1.5          pkgbuild_1.0.2           
+## [61] rlang_0.3.1               pkgconfig_2.0.2           matrixStats_0.54.0       
+## [64] evaluate_0.10.1           lattice_0.20-35           bindr_0.1.1              
+## [67] rstantools_1.5.0          htmlwidgets_1.2           labeling_0.3             
+## [70] processx_3.2.1            tidyselect_0.2.5          plyr_1.8.4               
+## [73] magrittr_1.5              R6_2.3.0                  generics_0.0.2           
+## [76] pillar_1.3.1              haven_1.1.2               withr_2.1.2              
+## [79] xts_0.10-2                abind_1.4-5               modelr_0.1.2             
+## [82] crayon_1.3.4              arrayhelpers_1.0-20160527 utf8_1.1.4               
+## [85] rmarkdown_1.10            grid_3.5.1                readxl_1.1.0             
+## [88] callr_3.1.0               threejs_0.3.1             digest_0.6.18            
+## [91] xtable_1.8-2              httpuv_1.4.4.2            stats4_3.5.1             
+## [94] munsell_0.5.0             shinyjs_1.0</code></pre>
 
 </div>
 </div>

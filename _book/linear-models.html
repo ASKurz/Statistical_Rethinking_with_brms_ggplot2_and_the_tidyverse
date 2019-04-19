@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-14">
+<meta name="date" content="2019-04-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,11 +101,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#updates"><i class="fa fa-check"></i>Updates</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -426,19 +426,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Here’s a way to do the simulation necessary for the plot in the top panel of Figure 4.2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 
-<span class="co"># We set the seed to make the results of `runif()` reproducible.</span>
+<span class="co"># we set the seed to make the results of `runif()` reproducible.</span>
 <span class="kw">set.seed</span>(<span class="dv">4</span>)
 pos &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">replicate</span>(<span class="dv">100</span>, <span class="kw">runif</span>(<span class="dv">16</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st">        </span><span class="co"># Here&#39;s the simulation</span>
-<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st">                             </span><span class="co"># For data manipulation, we&#39;ll make this a tibble</span>
-<span class="st">  </span><span class="kw">rbind</span>(<span class="dv">0</span>, .) <span class="op">%&gt;%</span><span class="st">                             </span><span class="co"># Here we add a row of zeros above the simulation results</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">step =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">16</span>) <span class="op">%&gt;%</span><span class="st">                     </span><span class="co"># This adds a step index</span>
-<span class="st">  </span><span class="kw">gather</span>(key, value, <span class="op">-</span>step) <span class="op">%&gt;%</span><span class="st">               </span><span class="co"># Here we convert the data to the long format</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">person =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, <span class="dt">each =</span> <span class="dv">17</span>)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># This adds a person id index</span>
-<span class="st">  </span><span class="co"># The next two lines allow us to make cumulative sums within each person</span>
+<span class="st">  </span><span class="kw">replicate</span>(<span class="dv">100</span>, <span class="kw">runif</span>(<span class="dv">16</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st">        </span><span class="co"># here&#39;s the simulation</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st">                             </span><span class="co"># for data manipulation, we&#39;ll make this a tibble</span>
+<span class="st">  </span><span class="kw">rbind</span>(<span class="dv">0</span>, .) <span class="op">%&gt;%</span><span class="st">                             </span><span class="co"># here we add a row of zeros above the simulation results</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">step =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">16</span>) <span class="op">%&gt;%</span><span class="st">                     </span><span class="co"># this adds a step index</span>
+<span class="st">  </span><span class="kw">gather</span>(key, value, <span class="op">-</span>step) <span class="op">%&gt;%</span><span class="st">               </span><span class="co"># here we convert the data to the long format</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">person =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, <span class="dt">each =</span> <span class="dv">17</span>)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># this adds a person id index</span>
+<span class="st">  </span><span class="co"># the next two lines allow us to make cumulative sums within each person</span>
 <span class="st">  </span><span class="kw">group_by</span>(person) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">position =</span> <span class="kw">cumsum</span>(value)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ungroup</span>()  <span class="co"># Ungrouping allows for further data manipulation</span></code></pre></div>
+<span class="st">  </span><span class="kw">ungroup</span>()  <span class="co"># ungrouping allows for further data manipulation</span></code></pre></div>
 <p>We might <code>glimpse()</code> at the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">glimpse</span>(pos)</code></pre></div>
 <pre><code>## Observations: 1,700
@@ -457,7 +457,10 @@ pos &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_alpha_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;step number&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-3-1.png" width="614.4" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-3-1.png" />
+
+</div>
 <p>Here’s the code for the bottom three plots of Figure 4.2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Figure 4.2.a.</span>
 pos <span class="op">%&gt;%</span>
@@ -466,7 +469,10 @@ pos <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">stat =</span> <span class="st">&quot;density&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;dodgerblue1&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">6</span><span class="op">:</span><span class="dv">6</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;4 steps&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-4-1.png" width="312" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-4-1.png" />
+
+</div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Figure 4.2.b.</span>
 pos <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(step <span class="op">==</span><span class="st"> </span><span class="dv">8</span>) <span class="op">%&gt;%</span>
@@ -474,8 +480,11 @@ pos <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">color =</span> <span class="st">&quot;dodgerblue2&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">6</span><span class="op">:</span><span class="dv">6</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;8 steps&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-4-2.png" width="312" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># An intermediary step to get an SD value</span>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-4-2.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this is an intermediary step to get an SD value</span>
 pos <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(step <span class="op">==</span><span class="st"> </span><span class="dv">16</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">sd =</span> <span class="kw">sd</span>(position))</code></pre></div>
@@ -494,7 +503,10 @@ pos <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="op">-</span><span class="dv">6</span><span class="op">:</span><span class="dv">6</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;16 steps&quot;</span>,
        <span class="dt">y     =</span> <span class="st">&quot;density&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-4-3.png" width="312" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-4-3.png" />
+
+</div>
 <p>While we were at it, we explored a few ways to express densities. The main action was with the <code>geom_line()</code>, <code>geom_density()</code>, and <code>stat_function()</code> functions.</p>
 </div>
 <div id="normal-by-multiplication." class="section level3">
@@ -520,7 +532,10 @@ growth &lt;-<span class="st"> </span>
 
 <span class="kw">ggplot</span>(<span class="dt">data =</span> growth, <span class="kw">aes</span>(<span class="dt">x =</span> growth)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_density</span>()</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-7-1.png" width="312" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-7-1.png" />
+
+</div>
 <p>“The smaller the effect of each locus, the better this additive approximation will be” (p. 74). Let’s compare big and small.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># simulate</span>
 <span class="kw">set.seed</span>(<span class="dv">4</span>)
@@ -536,7 +551,10 @@ samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> samples)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">fill =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>distribution, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) </code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-8-1.png" />
+
+</div>
 <p>Yep, the <code>small</code> samples were more Gaussian.</p>
 </div>
 <div id="normal-by-log-multiplication." class="section level3">
@@ -548,7 +566,10 @@ samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> samples)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>, 
                <span class="dt">fill =</span> <span class="st">&quot;gray33&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="312" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-9-1.png" />
+
+</div>
 <p>What we did was really compact. Walking it out a bit, here’s what we all did within the second argument within <code>map_dbl()</code> (i.e., everything within <code>log()</code>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">a   =</span> <span class="kw">runif</span>(<span class="dv">12</span>, <span class="dv">0</span>, <span class="fl">0.5</span>),
        <span class="dt">b   =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -562,7 +583,7 @@ samples <span class="op">%&gt;%</span><span class="st"> </span>
 </div>
 <div id="using-gaussian-distributions." class="section level3">
 <h3><span class="header-section-number">4.1.4</span> Using Gaussian distributions.</h3>
-<p>I really like these justifications.</p>
+<p>I really like the justifications in the following subsections.</p>
 <div id="ontological-justification." class="section level4">
 <h4><span class="header-section-number">4.1.4.1</span> Ontological justification.</h4>
 <p>The Gaussian is</p>
@@ -639,7 +660,10 @@ d &lt;-
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="768" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-12-1.png" />
+
+</div>
 <p>The posterior is a combination of the prior and the likelihood. And when the prior is flat across the parameter space, the posterior is just the likelihood re-expressed as a probability. As we go along, you’ll see that we almost never use flat priors.</p>
 </div>
 </div>
@@ -703,7 +727,10 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
        <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">dnorm</span>(x, <span class="dt">mean =</span> <span class="dv">178</span>, <span class="dt">sd =</span> <span class="dv">20</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;density&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-18-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-18-1.png" />
+
+</div>
 <p>And here’s the ggplot2 code for our prior for <span class="math inline">\(\sigma\)</span>, a uniform distribution with a minimum value of 0 and a maximum value of 50. We don’t really need the y axis when looking at the shapes of a density, so we’ll just remove it with <code>scale_y_continuous()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="dv">10</span>, <span class="dt">to =</span> <span class="dv">60</span>, <span class="dt">by =</span> .<span class="dv">1</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span>
@@ -711,7 +738,10 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
 <span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-19-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-19-1.png" />
+
+</div>
 <p>We can simulate from both priors at once to get a prior probability distribution of <code>heights</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="fl">1e4</span>
 
@@ -726,7 +756,10 @@ d &lt;-<span class="st"> </span>Howell1</code></pre></div>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Prior predictive distribution for &quot;</span>, <span class="kw">italic</span>(h[i]))),
        <span class="dt">x        =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-20-1.png" />
+
+</div>
 <p>As McElreath wrote, we’ve made a “vaguely bell-shaped density with thick tails. It is the expected distribution of heights, averaged over the prior” (p. 83).</p>
 </div>
 <div id="grid-approximation-of-the-posterior-distribution." class="section level3">
@@ -784,7 +817,10 @@ d_grid &lt;-
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d_grid<span class="op">$</span>mu),
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d_grid<span class="op">$</span>sigma)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-24-1.png" width="384" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-24-1.png" />
+
+</div>
 <p>We’ll make our heat map with <code>geom_raster(aes(fill = probability))</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_grid <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> mu, <span class="dt">y =</span> sigma)) <span class="op">+</span><span class="st"> </span>
@@ -794,7 +830,10 @@ d_grid &lt;-
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(mu),
        <span class="dt">y =</span> <span class="kw">expression</span>(sigma)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-25-1.png" width="480" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-25-1.png" />
+
+</div>
 </div>
 <div id="sampling-from-the-posterior." class="section level3">
 <h3><span class="header-section-number">4.3.4</span> Sampling from the posterior.</h3>
@@ -811,7 +850,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(mu[samples]),
        <span class="dt">y =</span> <span class="kw">expression</span>(sigma[samples])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-26-1.png" width="384" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-26-1.png" />
+
+</div>
 <p>We can use <code>gather()</code> and then <code>facet_warp()</code> to plot the densities for both <code>mu</code> and <code>sigma</code> at once.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(mu, sigma) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -823,7 +865,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-27-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-27-1.png" />
+
+</div>
 <p>We’ll use the tidybayes package to compute their posterior modes and 95% HDIs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -880,7 +925,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(mu[samples]),
        <span class="dt">y =</span> <span class="kw">expression</span>(sigma[samples])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-33-1.png" width="384" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-33-1.png" />
+
+</div>
 <p>Behold the updated densities.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(mu, sigma) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -892,7 +940,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">scales=</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-34-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-34-1.png" />
+
+</div>
 <p>Sigma’s not so Gaussian with that small <span class="math inline">\(n\)</span>.</p>
 </div>
 </div>
@@ -916,7 +967,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
       <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
 <p>This leads to an important point. After running model with Hamiltonian Monte Carlo (HMC), it’s a good idea to inspect the chains. As we’ll see, McElreath coverd this in Chapter 8. Here’s a typical way to do so in brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b4.1_half_cauchy)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-35-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-35-1.png" />
+
+</div>
 <p>If you want detailed diagnostics for the HMC chains, call <code>launch_shinystan(b4.1)</code>. That’ll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results.</p>
 <p>Here’s how to get the model summary of our <code>brm()</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b4.1_half_cauchy)</code></pre></div>
@@ -950,7 +1004,7 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 ## sigma           7.75    0.01 0.29     7.21     7.56     7.75     7.94     8.36  3317    1
 ## lp__        -1227.52    0.03 1.01 -1230.29 -1227.90 -1227.21 -1226.80 -1226.54  1317    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Sun Apr 14 16:02:50 2019.
+## Samples were drawn using NUTS(diag_e) at Thu Apr 18 13:01:35 2019.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
@@ -984,7 +1038,10 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
       <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
 <p>Check the chains.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b4.<span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-39-1.png" />
+
+</div>
 <p>I had to increase the <code>warmup</code> due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. And again, to learn more about these technical details, check out Chapter 8.</p>
 <p>Here’s the model <code>summary()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(b4.<span class="dv">2</span>)</code></pre></div>
@@ -1111,7 +1168,10 @@ post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="kw">expression</span>(sigma)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-51-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-51-1.png" />
+
+</div>
 <p>See? HMC handled the mild skew just fine.</p>
 <p>But sometimes you want to actually model <span class="math inline">\(\sigma\)</span>, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. As he explained in the vignette, you actually model <span class="math inline">\(\text{log}(\sigma)\)</span> in those instances. If you’re curious, we’ll practice with a model like this in Chapter 9.</p>
 </div>
@@ -1125,7 +1185,10 @@ post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-52-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-52-1.png" />
+
+</div>
 <div id="the-linear-model-strategy" class="section level3">
 <h3><span class="header-section-number">4.4.1</span> The linear model strategy</h3>
 <p>In our new univariable model</p>
@@ -1160,7 +1223,10 @@ h_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
       <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
 <p>This was another example of how using a uniform prior for <span class="math inline">\(\sigma\)</span> required we use an unusually large number of <code>warmup</code> iterations before the HMC chains converged on the posterior. Change the prior to <code>cauchy(0, 1)</code> and the chains converge with no problem, resulting in much better effective samples, too. Here are the trace plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b4.<span class="dv">3</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-53-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-53-1.png" />
+
+</div>
 </div>
 <div id="interpreting-the-model-fit." class="section level3">
 <h3><span class="header-section-number">4.4.3</span> Interpreting the model fit.</h3>
@@ -1196,7 +1262,10 @@ h_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
       <span class="dt">iter =</span> <span class="dv">46000</span>, <span class="dt">warmup =</span> <span class="dv">45000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
       <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b4.<span class="dv">4</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-57-1.png" />
+
+</div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b4.<span class="dv">4</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, ]</code></pre></div>
 <pre><code>##                Estimate  Est.Error        Q2.5       Q97.5
 ## b_Intercept 154.5972099 0.27167270 154.0732619 155.1449945
@@ -1223,7 +1292,10 @@ h_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;royalblue&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-59-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-59-1.png" />
+
+</div>
 <p>In the brms reference manual, Bürkner described the job of the<code>fixef()</code> function as “extract[ing] the population-level (’fixed’) effects from a brmsfit object”. If you’re new to multilevel models, it might not be clear what he meant by “population-level” or “fixed” effects. Don’t worry. That’ll all become clear starting around Chapter 12. In the meantime, just think of them as the typical regression parameters, minus <span class="math inline">\(\sigma\)</span>.</p>
 </div>
 <div id="adding-uncertainty-around-the-mean." class="section level4">
@@ -1232,7 +1304,7 @@ h_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b4.<span class="dv">3</span>)
 
 post <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)  <span class="co"># This serves a similar function as `head()`</span></code></pre></div>
+<span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)  <span class="co"># this serves a similar function as `head()`</span></code></pre></div>
 <pre><code>##   b_Intercept  b_weight    sigma      lp__
 ## 1    113.1684 0.9199020 5.151709 -1082.192
 ## 2    113.0394 0.9195661 5.181224 -1082.471
@@ -1400,7 +1472,10 @@ p352 &lt;-<span class="st"> </span>
 }</code></pre></div>
 <p>We’re finally ready to use <code>multiplot()</code> to make Figure 4.5.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">multiplot</span>(p10, p150, p50, p352, <span class="dt">cols =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-65-1.png" width="480" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-65-1.png" />
+
+</div>
 </div>
 <div id="plotting-regression-intervals-and-contours." class="section level4">
 <h4><span class="header-section-number">4.4.3.4</span> Plotting regression intervals and contours.</h4>
@@ -1424,7 +1499,10 @@ p352 &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(mu[<span class="st">&quot;height | weight = 50&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_classic</span>()</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-67-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-67-1.png" />
+
+</div>
 <p>We’ll use <code>mean_hdi()</code> to get both 89% and 95% HPDIs along with the mean.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean_hdi</span>(mu_at_<span class="dv">50</span>[,<span class="dv">1</span>], <span class="dt">.width =</span> <span class="kw">c</span>(.<span class="dv">89</span>, .<span class="dv">95</span>))</code></pre></div>
 <pre><code>##          y     ymin     ymax .width .point .interval
@@ -1439,7 +1517,10 @@ p352 &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(mu[<span class="st">&quot;height | weight = 50&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_classic</span>()</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-69-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-69-1.png" />
+
+</div>
 <p>In brms, you would use <code>fitted()</code> to do what McElreath accomplished with <code>link()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span><span class="kw">fitted</span>(b4.<span class="dv">3</span>, <span class="dt">summary =</span> F)
 
@@ -1481,7 +1562,10 @@ mu &lt;-
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> height)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> mu <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(iter <span class="op">&lt;</span><span class="st"> </span><span class="dv">101</span>),
              <span class="dt">alpha =</span> .<span class="dv">1</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-73-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-73-1.png" />
+
+</div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># or prettied up a bit</span>
 d2 <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> weight, <span class="dt">y =</span> height)) <span class="op">+</span>
@@ -1489,7 +1573,10 @@ d2 <span class="op">%&gt;%</span>
              <span class="dt">color =</span> <span class="st">&quot;navyblue&quot;</span>, <span class="dt">alpha =</span> .<span class="dv">05</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-73-2.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-73-2.png" />
+
+</div>
 <p>With <code>fitted()</code>, it’s quite easy to plot a regression line and its intervals. Just omit the <code>summary = T</code> argument.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu_summary &lt;-
 <span class="st">  </span><span class="kw">fitted</span>(b4.<span class="dv">3</span>, 
@@ -1519,7 +1606,10 @@ d2 <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d2<span class="op">$</span>weight)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-75-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-75-1.png" />
+
+</div>
 <p>And if you wanted to use intervals other than the default 95% ones, you’d enter a <code>probs</code> argument like this: <code>fitted(b4.3, newdata = weight.seq, probs = c(.25, .75))</code>. The resulting third and fourth vectors from the <code>fitted()</code> object would be named <code>Q25</code> and <code>Q75</code> instead of the default <code>Q2.5</code> and <code>Q97.5</code>. The <a href="https://github.com/paul-buerkner/brms/issues/425"><code>Q</code> prefix</a> stands for quantile.</p>
 <div id="overthinking-how-link-fitted-works." class="section level5">
 <h5><span class="header-section-number">4.4.3.4.1</span> Overthinking: How <del>link</del> <code>fitted()</code> works.</h5>
@@ -1545,11 +1635,11 @@ pred_height <span class="op">%&gt;%</span>
 <pre><code>## # A tibble: 6 x 5
 ##   Estimate Est.Error  Q2.5 Q97.5 weight
 ##      &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-## 1     136.      5.22  126.  147.     25
-## 2     137.      5.18  127.  147.     26
-## 3     138.      5.23  128.  149.     27
-## 4     139.      5.11  129.  149.     28
-## 5     140.      5.14  130.  150.     29
+## 1     136.      5.24  126.  147.     25
+## 2     137.      5.21  127.  148.     26
+## 3     138.      5.25  128.  149.     27
+## 4     139.      5.13  129.  149.     28
+## 5     140.      5.15  130.  150.     29
 ## 6     141.      5.07  131.  151.     30</code></pre>
 <p>This time the summary information in our data frame is for, as McElreath put it, “simulated heights, not distributions of plausible average height, <span class="math inline">\(\mu\)</span>” (p. 108). Another way of saying that is that these simulations are the joint consequence of both <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>, unlike the results of <code>fitted()</code>, which only reflect <span class="math inline">\(\mu\)</span>. Our plot for Figure 4.8:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d2 <span class="op">%&gt;%</span>
@@ -1567,7 +1657,10 @@ pred_height <span class="op">%&gt;%</span>
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d2<span class="op">$</span>height)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-78-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-78-1.png" />
+
+</div>
 </div>
 </div>
 </div>
@@ -1598,7 +1691,10 @@ pred_height <span class="op">%&gt;%</span>
       <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
       <span class="dt">seed =</span> <span class="dv">4</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b4.<span class="dv">5</span>)</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-81-1.png" width="576" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-81-1.png" />
+
+</div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b4.<span class="dv">5</span>)</code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
@@ -1649,7 +1745,10 @@ p_quad &lt;-
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>weight_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-83-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-83-1.png" />
+
+</div>
 <p>From a formula perspective, the cubic model is a simple extenstion of the quadratic:</p>
 <p><span class="math display">\[\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3\]</span></p>
 <p>Fit it like so.</p>
@@ -1697,7 +1796,10 @@ p_cub &lt;-
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>weight_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-84-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-84-1.png" />
+
+</div>
 <p>And here’s the <code>fitted()</code>, <code>predict()</code>, and ggplot2 code for Figure 4.9.a, the linear model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f_line &lt;-
 <span class="st">  </span><span class="kw">fitted</span>(b4.<span class="dv">7</span>, 
@@ -1725,7 +1827,10 @@ p_line &lt;-
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(d<span class="op">$</span>weight_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-85-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-85-1.png" />
+
+</div>
 <div id="overthinking-converting-back-to-natural-scale." class="section level5">
 <h5><span class="header-section-number">4.5.0.0.1</span> Overthinking: Converting back to natural scale.</h5>
 <p>You can apply McElreath’s conversion trick within the ggplot2 environment, too. Here it is with the cubic model.</p>
@@ -1746,11 +1851,14 @@ p_line &lt;-
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">family =</span> <span class="st">&quot;Times&quot;</span>),
         <span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span>
-<span class="st">  </span><span class="co"># Here it is!</span>
+<span class="st">  </span><span class="co"># here it is!</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;standardized weight converted back&quot;</span>,
                      <span class="dt">breaks =</span> at,
                      <span class="dt">labels =</span> <span class="kw">round</span>(at <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(d<span class="op">$</span>weight) <span class="op">+</span><span class="st"> </span><span class="kw">mean</span>(d<span class="op">$</span>weight), <span class="dv">1</span>))</code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-86-1.png" width="288" /></p>
+<div class="figure">
+<img src="04_files/figure-markdown_github/unnamed-chunk-86-1.png" />
+
+</div>
 </div>
 </div>
 <div id="reference-3" class="section level2 unnumbered">
@@ -1765,7 +1873,7 @@ p_line &lt;-
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -1775,51 +1883,44 @@ p_line &lt;-
 ## [1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] viridis_0.5.1          viridisLite_0.3.0      ggbeeswarm_0.6.0       dutchmasters_0.1.0    
-##  [5] ghibli_0.2.0           hrbrthemes_0.6.0       broom_0.5.1            rcartocolor_1.0.0     
-##  [9] rethinking_1.80        gridExtra_2.3          loo_2.1.0              ggthemes_4.0.1        
-## [13] wesanderson_0.3.6.9000 GGally_1.4.0           bayesplot_1.6.0        fiftystater_1.0.1     
-## [17] bindrcpp_0.2.2         ggrepel_0.8.0          tidybayes_1.0.4        brms_2.8.0            
-## [21] Rcpp_1.0.0             rstan_2.18.2           StanHeaders_2.18.0-1   forcats_0.3.0         
-## [25] stringr_1.3.1          dplyr_0.8.0.1          purrr_0.2.5            readr_1.1.1           
-## [29] tidyr_0.8.1            tibble_2.1.1           ggplot2_3.1.0          tidyverse_1.2.1       
+##  [1] tidybayes_1.0.4      brms_2.8.0           Rcpp_1.0.0           rstan_2.18.2        
+##  [5] StanHeaders_2.18.0-1 forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1       
+##  [9] purrr_0.2.5          readr_1.1.1          tidyr_0.8.1          tibble_2.1.1        
+## [13] ggplot2_3.1.0        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] pacman_0.4.6              utf8_1.1.4                ggstance_0.3             
-##   [4] tidyselect_0.2.5          htmlwidgets_1.2           munsell_0.5.0            
-##   [7] codetools_0.2-15          DT_0.4                    miniUI_0.1.1.1           
-##  [10] withr_2.1.2               Brobdingnag_1.2-5         colorspace_1.3-2         
-##  [13] highr_0.7                 knitr_1.20                rstudioapi_0.7           
-##  [16] stats4_3.5.1              Rttf2pt1_1.3.7            labeling_0.3             
-##  [19] bridgesampling_0.4-0      rprojroot_1.3-2           coda_0.19-2              
-##  [22] generics_0.0.2            xfun_0.3                  R6_2.3.0                 
-##  [25] markdown_0.8              HDInterval_0.2.0          reshape_0.8.7            
-##  [28] assertthat_0.2.0          promises_1.0.1            scales_1.0.0             
-##  [31] beeswarm_0.2.3            gtable_0.2.0              processx_3.2.1           
-##  [34] rlang_0.3.1               extrafontdb_1.0           lazyeval_0.2.1           
-##  [37] inline_0.3.15             yaml_2.1.19               reshape2_1.4.3           
-##  [40] abind_1.4-5               modelr_0.1.2              threejs_0.3.1            
-##  [43] crosstalk_1.0.0           backports_1.1.2           httpuv_1.4.4.2           
-##  [46] rsconnect_0.8.8           extrafont_0.17            tools_3.5.1              
-##  [49] bookdown_0.9              RColorBrewer_1.1-2        ggridges_0.5.0           
-##  [52] plyr_1.8.4                base64enc_0.1-3           ps_1.2.1                 
-##  [55] prettyunits_1.0.2         zoo_1.8-2                 LaplacesDemon_16.1.1     
-##  [58] haven_1.1.2               magrittr_1.5              colourpicker_1.0         
-##  [61] mvtnorm_1.0-8             matrixStats_0.54.0        hms_0.4.2                
-##  [64] shinyjs_1.0               mime_0.5                  evaluate_0.10.1          
-##  [67] arrayhelpers_1.0-20160527 xtable_1.8-2              shinystan_2.5.0          
-##  [70] readxl_1.1.0              rstantools_1.5.0          compiler_3.5.1           
-##  [73] crayon_1.3.4              htmltools_0.3.6           later_0.7.3              
-##  [76] lubridate_1.7.4           MASS_7.3-50               Matrix_1.2-14            
-##  [79] cli_1.0.1                 bindr_0.1.1               igraph_1.2.1             
-##  [82] pkgconfig_2.0.2           xml2_1.2.0                svUnit_0.7-12            
-##  [85] dygraphs_1.1.1.5          vipor_0.4.5               rvest_0.3.2              
-##  [88] callr_3.1.0               digest_0.6.18             rmarkdown_1.10           
-##  [91] cellranger_1.1.0          gdtools_0.1.7             shiny_1.1.0              
-##  [94] gtools_3.8.1              nlme_3.1-137              jsonlite_1.5             
-##  [97] fansi_0.4.0               pillar_1.3.1              lattice_0.20-35          
-## [100] httr_1.3.1                pkgbuild_1.0.2            glue_1.3.0               
-## [103] xts_0.10-2                shinythemes_1.1.1         stringi_1.2.3</code></pre>
+##  [1] nlme_3.1-137              matrixStats_0.54.0        xts_0.10-2               
+##  [4] lubridate_1.7.4           threejs_0.3.1             httr_1.3.1               
+##  [7] LaplacesDemon_16.1.1      rprojroot_1.3-2           tools_3.5.1              
+## [10] backports_1.1.2           DT_0.4                    utf8_1.1.4               
+## [13] R6_2.3.0                  lazyeval_0.2.1            colorspace_1.3-2         
+## [16] withr_2.1.2               tidyselect_0.2.5          gridExtra_2.3            
+## [19] prettyunits_1.0.2         processx_3.2.1            Brobdingnag_1.2-5        
+## [22] compiler_3.5.1            cli_1.0.1                 rvest_0.3.2              
+## [25] HDInterval_0.2.0          arrayhelpers_1.0-20160527 shinyjs_1.0              
+## [28] xml2_1.2.0                colourpicker_1.0          labeling_0.3             
+## [31] scales_1.0.0              dygraphs_1.1.1.5          mvtnorm_1.0-8            
+## [34] ggridges_0.5.0            callr_3.1.0               digest_0.6.18            
+## [37] rmarkdown_1.10            base64enc_0.1-3           pkgconfig_2.0.2          
+## [40] htmltools_0.3.6           htmlwidgets_1.2           rlang_0.3.1              
+## [43] readxl_1.1.0              rstudioapi_0.7            shiny_1.1.0              
+## [46] svUnit_0.7-12             generics_0.0.2            zoo_1.8-2                
+## [49] jsonlite_1.5              gtools_3.8.1              crosstalk_1.0.0          
+## [52] inline_0.3.15             magrittr_1.5              loo_2.1.0                
+## [55] bayesplot_1.6.0           Matrix_1.2-14             munsell_0.5.0            
+## [58] fansi_0.4.0               abind_1.4-5               stringi_1.2.3            
+## [61] yaml_2.1.19               MASS_7.3-50               ggstance_0.3             
+## [64] pkgbuild_1.0.2            plyr_1.8.4                promises_1.0.1           
+## [67] crayon_1.3.4              miniUI_0.1.1.1            lattice_0.20-35          
+## [70] haven_1.1.2               hms_0.4.2                 knitr_1.20               
+## [73] ps_1.2.1                  pillar_1.3.1              igraph_1.2.1             
+## [76] markdown_0.8              shinystan_2.5.0           reshape2_1.4.3           
+## [79] stats4_3.5.1              rstantools_1.5.0          glue_1.3.0               
+## [82] evaluate_0.10.1           modelr_0.1.2              httpuv_1.4.4.2           
+## [85] cellranger_1.1.0          gtable_0.2.0              assertthat_0.2.0         
+## [88] mime_0.5                  xtable_1.8-2              broom_0.5.1              
+## [91] coda_0.19-2               later_0.7.3               viridisLite_0.3.0        
+## [94] rsconnect_0.8.8           shinythemes_1.1.1         bridgesampling_0.4-0</code></pre>
 
 </div>
 </div>
