@@ -148,7 +148,7 @@ post_mdn <-
 post_mdn
 ```
 
-For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.com/alex23lemm/theme_fivethirtyeight) for our plots. An easy way to do so is with help from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html).
+For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.com/alex23lemm/theme_fivethirtyeight) for this chapter’s plots. An easy way to do so is with help from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html).
 
 ```{r}
 # install.packages("ggthemes", dependencies = T) 
@@ -259,7 +259,7 @@ tibble(x = seq(from = 0, to = 6, by = .01)) %>%
                fill = "orange2", size = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = c(0, 5)) +
-  labs(title = "Bonus prior/posterior plot\nfor sd_tank__Intercept",
+  labs(title    = "Bonus prior/posterior plot\nfor sd_tank__Intercept",
        subtitle = "The prior is the semitransparent ramp in the\nbackground. The posterior is the solid orange\nmound.") +
   theme_fivethirtyeight()
 ```  
@@ -1562,7 +1562,7 @@ Now unlike with the previous two methods, our `fitted()` method will not allow u
 f2 <-
   fitted(b12.8,
          newdata = nd,
-         # this line allows us to average over the levels of block
+         # this line allows us to average over the levels of `block`
          re_formula = pulled_left ~ 1 + (1 | actor),
          summary = F,
          scale = "response") %>% 
