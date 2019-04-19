@@ -27,19 +27,19 @@ Here's a way to do the simulation necessary for the plot in the top panel of Fig
 ```{r, warning = F, message = F}
 library(tidyverse)
 
-# We set the seed to make the results of `runif()` reproducible.
+# we set the seed to make the results of `runif()` reproducible.
 set.seed(4)
 pos <- 
-  replicate(100, runif(16, -1, 1)) %>%        # Here's the simulation
-  as_tibble() %>%                             # For data manipulation, we'll make this a tibble
-  rbind(0, .) %>%                             # Here we add a row of zeros above the simulation results
-  mutate(step = 0:16) %>%                     # This adds a step index
-  gather(key, value, -step) %>%               # Here we convert the data to the long format
-  mutate(person = rep(1:100, each = 17)) %>%  # This adds a person id index
-  # The next two lines allow us to make cumulative sums within each person
+  replicate(100, runif(16, -1, 1)) %>%        # here's the simulation
+  as_tibble() %>%                             # for data manipulation, we'll make this a tibble
+  rbind(0, .) %>%                             # here we add a row of zeros above the simulation results
+  mutate(step = 0:16) %>%                     # this adds a step index
+  gather(key, value, -step) %>%               # here we convert the data to the long format
+  mutate(person = rep(1:100, each = 17)) %>%  # this adds a person id index
+  # the next two lines allow us to make cumulative sums within each person
   group_by(person) %>%
   mutate(position = cumsum(value)) %>%
-  ungroup()  # Ungrouping allows for further data manipulation
+  ungroup()  # ungrouping allows for further data manipulation
 ```
 
 We might `glimpse()` at the data.
@@ -80,7 +80,7 @@ pos %>%
   coord_cartesian(xlim = -6:6) +
   labs(title = "8 steps")
 
-# An intermediary step to get an SD value
+# this is an intermediary step to get an SD value
 pos %>%
   filter(step == 16) %>%
   summarise(sd = sd(position))
@@ -177,7 +177,7 @@ And based on the first argument within `map_dbl()`, we did that 10,000 times, af
 
 ### Using Gaussian distributions.
 
-I really like these justifications.
+I really like the justifications in the following subsections.
 
 #### Ontological justification.
 
@@ -888,7 +888,7 @@ Be default, we extract all the posterior iterations with `posterior_samples()`.
 post <- posterior_samples(b4.3)
 
 post %>%
-  slice(1:5)  # This serves a similar function as `head()`
+  slice(1:5)  # this serves a similar function as `head()`
 ```
 
 Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a half Cauchy(0, 1) prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well.
@@ -1447,7 +1447,7 @@ ggplot(data = d,
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank()) +
   
-  # Here it is!
+  # here it is!
   scale_x_continuous("standardized weight converted back",
                      breaks = at,
                      labels = round(at * sd(d$weight) + mean(d$weight), 1))
