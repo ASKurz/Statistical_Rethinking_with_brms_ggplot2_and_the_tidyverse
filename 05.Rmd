@@ -211,16 +211,14 @@ ggplot(data = f,
 
 Now we'll get both predictors in there with our very first multivariable model. We can write the statistical model as
 
-$$
-\begin{eqnarray}
-\text{Divorce}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
-\mu_i & = & \alpha + \beta_1 \text{Marriage_s}_i + \beta_2 \text{MedianAgeMarriage_s}_i \\
-\alpha & \sim & \text{Normal}(10, 10) \\
-\beta_1 & \sim & \text{Normal}(0, 1) \\
-\beta_2 & \sim & \text{Normal}(0, 1) \\
-\sigma & \sim & \text{Uniform}(0, 10)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{Divorce}_i & \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = \alpha + \beta_1 \text{Marriage\_s}_i + \beta_2 \text{MedianAgeMarriage\_s}_i \\
+\alpha & \sim \text{Normal}(10, 10) \\
+\beta_1 & \sim \text{Normal}(0, 1) \\
+\beta_2 & \sim \text{Normal}(0, 1) \\
+\sigma & \sim \text{Uniform}(0, 10)
+\end{align*}
 
 > It might help to read the $+$ symbols as "or" and then say: *A State’s divorce rate can be a function of its marriage rate **or** its median age at marriage*. The "or" indicates independent associations, which may be purely statistical or rather causal. (p. 124, *emphasis* in the original)
 
@@ -794,16 +792,14 @@ fitted(b5.6,
 
 Finally, we're ready to fit with both predictors included in the "joint model." Here's the statistical formula
 
-$$
-\begin{eqnarray}
-\text{kcal.per.g}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
-\mu_i & = & \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
-\alpha & \sim & \text{Normal}(0, 100) \\
-\beta_1 & \sim & \text{Normal}(0, 1) \\
-\beta_2 & \sim & \text{Normal}(0, 1) \\
-\sigma & \sim & \text{Uniform}(0, 1)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{kcal.per.g}_i & \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i   & = \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
+\alpha  & \sim \text{Normal}(0, 100) \\
+\beta_1 & \sim \text{Normal}(0, 1) \\
+\beta_2 & \sim \text{Normal}(0, 1) \\
+\sigma  & \sim \text{Uniform}(0, 1)
+\end{align*}
 
 Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
 
@@ -1049,12 +1045,10 @@ post %>%
 
 On page 165, McElreath clarified that "from the computer's perspective, this model is simply:"
 
-$$
-\begin{eqnarray}
-y_i & \sim & \text{Normal}(\mu_i, \sigma) \\
-\mu_i & = & \alpha + (\beta_1 + \beta_2) x_i
-\end{eqnarray}
-$$
+\begin{align*}
+y_i   & \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = \alpha + (\beta_1 + \beta_2) x_i
+\end{align*}
 
 Accordingly, here's the posterior of the sum of the two regression coefficients, Figure 6.2.b. We'll use `tidybayes::geom_halfeyeh()` to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.
 
@@ -1416,12 +1410,10 @@ fitted(b5.15,
 
 The reparameterized model follows the form
 
-$$
-\begin{eqnarray}
-\text{height}_i & \sim & \text{Normal}(\mu_i, \sigma) \\
-\mu_i & = & \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
-\end{eqnarray}
-$$
+\begin{align*}
+\text{height}_i & \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i & = \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
+\end{align*}
 
 So then a `female` dummy would satisfy the condition $\text{female}_i = (1 - \text{male}_i)$. Let's make that dummy.
 
