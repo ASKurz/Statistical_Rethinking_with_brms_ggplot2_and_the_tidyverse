@@ -190,13 +190,11 @@ ggplot(data = d_plot,
 
 McElreath's convention for this first type of statistical model is
 
-$$
-\begin{eqnarray} 
-R_i & \sim & \text{Ordered} (\mathbf p) \\
-\text{logit} (p_k) & = & \alpha_k \\
-\alpha_k & \sim & \text{Normal} (0, 10)
-\end{eqnarray}
-$$
+\begin{align*} 
+R_i & \sim \text{Ordered} (\mathbf p) \\
+\text{logit} (p_k) & = \alpha_k \\
+\alpha_k           & \sim \text{Normal} (0, 10)
+\end{align*}
 
 > The Ordered distribution is really just a categorical distribution that takes a vector $\mathbf p = {p_1, p_2, p_3, p_4, p_5, p_6}$ of probabilities of each response value below the maximum response (7 in this example). Each response value $k$ in this vector is defined by its link to an intercept parameter, $\alpha_k$. Finally, some weakly regularizing priors are placed on these intercepts. (p. 335)
 
@@ -256,12 +254,10 @@ posterior_samples(b11.1) %>%
 
 Now we define the linear model as $\phi_i = \beta x_i$. Accordingly, the formula for our cumulative logit model becomes
 
-$$
-\begin{eqnarray}
-\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} & = & \alpha_k - \phi_i\\
-\phi_i & = & \beta x_i
-\end{eqnarray}
-$$
+\begin{align*}
+\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} & = \alpha_k - \phi_i \\
+\phi_i & = \beta x_i
+\end{align*}
 
 I'm not aware that brms has an equivalent to the `rethinking::dordlogit()` function. So here we'll make it by hand. The code comes from McElreath's [GitHub page](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/distributions.r).
 
@@ -784,12 +780,10 @@ d <-
 
 With these data, the likelihood of observing zero on `y`, (i.e., the likelihood zero manuscripts were completed on a given occasion) is
 
-$$
-\begin{eqnarray}
-\text{Pr} (0 | p, \lambda) & = & \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
-& = & p + (1 - p) \text{ exp} (- \lambda)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{Pr} (0 | p, \lambda) & = \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
+                           & = p + (1 - p) \text{ exp} (- \lambda)
+\end{align*}
 
 And 
 
@@ -799,24 +793,20 @@ And
 >
 > And the likelihood of a non-zero value $y$ is:
 >
-> $$
-> \begin{eqnarray}
-> \text{Pr} (y | p, \lambda) & = & \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
-> & = & (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
-> \end{eqnarray}
-> $$
+> \begin{align*}
+> \text{Pr} (y | p, \lambda) & = \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
+>                            & = (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
+> \end{align*}
 >
 > Since drinking monks never produce $y > 0$, the expression above is just the chance the monks both work $1 - p$, and finish $y$ manuscripts. (p. 344, *emphasis* in the original)
 
 So letting $p$ be the probability $y$ is zero and $\lambda$ be the shape of the distribution, the zero-inflated Poisson (ZIPoisson) regression model takes the basic form
 
-$$
-\begin{eqnarray}
-y_i & \sim & \text{ZIPoisson} (p_i, \lambda_i)\\
-\text{logit} (p_i) & = & \alpha_p + \beta_p x_i \\
-\text{log} (\lambda_i) & = & \alpha_\lambda + \beta_\lambda x_i
-\end{eqnarray}
-$$
+\begin{align*}
+y_i & \sim \text{ZIPoisson} (p_i, \lambda_i)\\
+\text{logit} (p_i)     & = \alpha_p + \beta_p x_i \\
+\text{log} (\lambda_i) & = \alpha_\lambda + \beta_\lambda x_i
+\end{align*}
 
 One last thing to note is that in brms, $p_i$ is denoted `zi`. So the intercept [and zi] only zero-inflated Poisson model in brms looks like this.
 
@@ -1015,14 +1005,12 @@ If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$
 
 But remember, we’re not fitting a beta model. We’re using the beta-binomial. "We’re going to bind our linear model to $\overline p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
 
-$$
-\begin{eqnarray}
-\text{admit}_i & \sim & \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
-\text{logit} (\overline p_i) & = & \alpha \\
-\alpha & \sim & \text{Normal} (0, 2) \\
-\theta & \sim & \text{Exponential} (1)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{admit}_i & \sim \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
+\text{logit} (\overline p_i) & = \alpha \\
+\alpha                       & \sim \text{Normal} (0, 2) \\
+\theta                       & \sim \text{Exponential} (1)
+\end{align*}
 
 Here the size $n = \text{applications}$. In case you're confused, yes, our statistical model is not the one McElreath presented at the top of page 348 in the text. If you look closely, the statistical formula he presented does not match up with the one implied by his R code 11.26. Our statistical formula and the `brm()` model we'll be fitting, below, correspond to his R code 11.26.
 
