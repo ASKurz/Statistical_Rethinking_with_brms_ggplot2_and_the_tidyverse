@@ -164,20 +164,18 @@ d %>%
 
 The statistical formula for our varying-slopes model follows the form
 
-$$
-\begin{eqnarray}
-\text{wait}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha_{\text{cafe}_i} + \beta_{\text{cafe}_i} \text{afternoon}_i \\
-\begin{bmatrix} \alpha_\text{cafe} \\ \beta_\text{cafe} \end{bmatrix} & \sim & \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
-\mathbf S & = & \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \\
-\alpha & \sim & \text{Normal} (0, 10) \\
-\beta & \sim & \text{Normal} (0, 10) \\
-\sigma & \sim & \text{HalfCauchy} (0, 1) \\
-\sigma_\alpha & \sim & \text{HalfCauchy} (0, 1) \\
-\sigma_\beta & \sim & \text{HalfCauchy} (0, 1) \\
-\mathbf R & \sim & \text{LKJcorr} (2)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{wait}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i         & = \alpha_{\text{cafe}_i} + \beta_{\text{cafe}_i} \text{afternoon}_i \\
+\begin{bmatrix} \alpha_\text{cafe} \\ \beta_\text{cafe} \end{bmatrix} & \sim \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
+\mathbf S     & = \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \\
+\alpha        & \sim \text{Normal} (0, 10) \\
+\beta         & \sim \text{Normal} (0, 10) \\
+\sigma        & \sim \text{HalfCauchy} (0, 1) \\
+\sigma_\alpha & \sim \text{HalfCauchy} (0, 1) \\
+\sigma_\beta  & \sim \text{HalfCauchy} (0, 1) \\
+\mathbf R     & \sim \text{LKJcorr} (2)
+\end{align*}
 
 Of the notable new parts, $\mathbf S$ is the covariance matrix and $\mathbf R$ is the corresponding correlation matrix, which we might more fully express as
 
@@ -419,16 +417,14 @@ d <-
 
 The statistical formula for our varying-intercepts logistic regression model follows the form
 
-$$
-\begin{eqnarray}
-\text{admit}_i & \sim & \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) & = & \alpha_{\text{dept_id}_i} + \beta \text{male}_i \\
-\alpha_\text{dept_id} & \sim & \text{Normal} (\alpha, \sigma) \\
-\alpha & \sim & \text{Normal} (0, 10) \\
-\beta & \sim & \text{Normal} (0, 1) \\
-\sigma & \sim & \text{HalfCauchy} (0, 2) \\
-\end{eqnarray}
-$$
+\begin{align*}
+\text{admit}_i         & \sim \text{Binomial} (n_i, p_i) \\
+\text{logit} (p_i)     & = \alpha_{\text{dept\_id}_i} + \beta \text{male}_i \\
+\alpha_\text{dept\_id} & \sim \text{Normal} (\alpha, \sigma) \\
+\alpha                 & \sim \text{Normal} (0, 10) \\
+\beta                  & \sim \text{Normal} (0, 1) \\
+\sigma                 & \sim \text{HalfCauchy} (0, 2) \\
+\end{align*}
 
 Since there’s only one left-hand term in our `(1 | dept_id)` code, there’s only one random effect.
 
@@ -523,18 +519,16 @@ But note how, just as with `b13.2$fit`, this approach summarizes the posterior w
 
 Now we're ready to allow our `male` dummy to varies, too, the statistical model follows the form
 
-$$
-\begin{eqnarray}
-\text{admit}_i & \sim & \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) & = & \alpha_{\text{dept_id}_i} + \beta_{\text{dept_id}_i} \text{male}_i \\
-\begin{bmatrix} \alpha_\text{dept_id} \\ \beta_\text{dept_id} \end{bmatrix} & \sim & \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
-\mathbf S & = & \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \\
-\alpha & \sim & \text{Normal} (0, 10) \\
-\beta & \sim & \text{Normal} (0, 1) \\
-(\sigma_\alpha, \sigma_\beta) & \sim & \text{HalfCauchy} (0, 2) \\
-\mathbf R & \sim & \text{LKJcorr} (2)
-\end{eqnarray}
-$$
+\begin{align*}
+\text{admit}_i     & \sim \text{Binomial} (n_i, p_i) \\
+\text{logit} (p_i) & = \alpha_{\text{dept\_id}_i} + \beta_{\text{dept\_id}_i} \text{male}_i \\
+\begin{bmatrix} \alpha_\text{dept\_id} \\ \beta_\text{dept\_id} \end{bmatrix} & \sim \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
+\mathbf S & = \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha & 0 \\ 0 & \sigma_\beta \end{pmatrix} \\
+\alpha                        & \sim \text{Normal} (0, 10) \\
+\beta                         & \sim \text{Normal} (0, 1) \\
+(\sigma_\alpha, \sigma_\beta) & \sim \text{HalfCauchy} (0, 2) \\
+\mathbf R                     & \sim \text{LKJcorr} (2)
+\end{align*}
 
 Fit the model.
 
@@ -775,26 +769,26 @@ d <-
 
 My math's aren't the best. But if I'm following along correctly, here's a fuller statistical expression of our cross-classified model.
 
-$$\begin{eqnarray}
-\text{pulled_left}_i & \sim & \text{Binomial} (n = 1, p_i) \\
-\text{logit} (p_i) & = & \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc_left}_i  \\
-\alpha_i & = & \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block_id}_i} \\
-\beta_{1i} & = & \beta_1 + \beta_{1, \text{actor}_i} + \beta_{1, \text{block_id}_i} \\
-\beta_{2i} & = & \beta_2 + \beta_{2, \text{actor}_i} + \beta_{2, \text{block_id}_i} \\
-\begin{bmatrix} \alpha_\text{actor} \\ \beta_{1, \text{actor}} \\ \beta_{2, \text{actor}} \end{bmatrix} & \sim & \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{actor} \end{pmatrix} \\
-\begin{bmatrix} \alpha_\text{block_id} \\ \beta_{1, \text{block_id}} \\ \beta_{2, \text{block_id}} \end{bmatrix} & \sim & \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{block_id} \end{pmatrix} \\
-\mathbf S_\text{actor} & = & \begin{pmatrix} \sigma_{\alpha_\text{actor}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{actor}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} 
+\begin{align*}
+\text{pulled\_left}_i      & \sim \text{Binomial} (n = 1, p_i) \\
+\text{logit} (p_i)         & = \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc\_left}_i  \\
+\alpha_i                   & = \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block\_id}_i} \\
+\beta_{1i}                 & = \beta_1 + \beta_{1, \text{actor}_i} + \beta_{1, \text{block\_id}_i} \\
+\beta_{2i}                 & = \beta_2 + \beta_{2, \text{actor}_i} + \beta_{2, \text{block\_id}_i} \\
+\begin{bmatrix} \alpha_\text{actor} \\ \beta_{1, \text{actor}} \\ \beta_{2, \text{actor}} \end{bmatrix} & \sim \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{actor} \end{pmatrix} \\
+\begin{bmatrix} \alpha_\text{block\_id} \\ \beta_{1, \text{block\_id}} \\ \beta_{2, \text{block\_id}} \end{bmatrix} & \sim \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{block\_id} \end{pmatrix} \\
+\mathbf S_\text{actor}     & = \begin{pmatrix} \sigma_{\alpha_\text{actor}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{actor}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} 
 \mathbf R_\text{actor} \begin{pmatrix} \sigma_{\alpha_\text{actor}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{actor}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} \\
-\mathbf S_\text{block_id} & = & \begin{pmatrix} \sigma_{\alpha_\text{block_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} 
-\mathbf R_\text{block_id} \begin{pmatrix} \sigma_{\alpha_\text{block_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} \\
-\alpha  & \sim & \text{Normal} (0, 1) \\
-\beta_1 & \sim & \text{Normal} (0, 1) \\
-\beta_2 & \sim & \text{Normal} (0, 1) \\
-(\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) & \sim & \text{HalfCauchy} (0, 2) \\
-(\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) & \sim & \text{HalfCauchy} (0, 2) \\
-\mathbf R_\text{actor} & \sim & \text{LKJcorr} (4) \\
-\mathbf R_\text{block_id} & \sim & \text{LKJcorr} (4)
-\end{eqnarray}$$
+\mathbf S_\text{block\_id} & = \begin{pmatrix} \sigma_{\alpha_\text{block\_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block\_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block\_id}}} \end{pmatrix} 
+\mathbf R_\text{block\_id} \begin{pmatrix} \sigma_{\alpha_\text{block\_id}} & 0 & 0 \\ 0 & \sigma_{\beta_{1_\text{block\_id}}} & 0 \\ 0 & 0 & \sigma_{\beta_{2_\text{block\_id}}} \end{pmatrix} \\
+\alpha                     & \sim \text{Normal} (0, 1) \\
+\beta_1                    & \sim \text{Normal} (0, 1) \\
+\beta_2                    & \sim \text{Normal} (0, 1) \\
+(\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) & \sim \text{HalfCauchy} (0, 2) \\
+(\sigma_{\alpha_\text{block\_id}}, \sigma_{\beta_{1_\text{block\_id}}}, \sigma_{\beta_{2_\text{block\_id}}}) & \sim \text{HalfCauchy} (0, 2) \\
+\mathbf R_\text{actor}     & \sim \text{LKJcorr} (4) \\
+\mathbf R_\text{block\_id} & \sim \text{LKJcorr} (4)
+\end{align*}
 
 And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
