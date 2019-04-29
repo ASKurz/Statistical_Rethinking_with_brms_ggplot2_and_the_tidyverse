@@ -215,13 +215,11 @@ ggplot(aes(x = rugged)) +
 
 Yes, it sure does. But before we fit, here's the equation:
 
-$$
-\begin{eqnarray}
-\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-\gamma_i & = & \beta_1 + \beta_3 \text{cont_africa}_i
-\end{eqnarray}
-$$
+\begin{align*}
+\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
+\gamma_i & = \beta_1 + \beta_3 \text{cont\_africa}_i
+\end{align*}
 
 Fit the model.
 
@@ -261,12 +259,10 @@ model_weights(b7.3, b7.4, b7.5,
 
 The conventional equation for the interaction model might look like:
 
-$$
-\begin{eqnarray}
-\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i
-\end{eqnarray}
-$$
+\begin{align*}
+\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont\_africa}_i + \beta_3 \text{rugged}_i \times \text{cont\_africa}_i
+\end{align*}
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
@@ -410,26 +406,24 @@ post %>%
 
 Recall the original equation.
 
-$$
-\begin{eqnarray}
-\text{log_gdp}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-\gamma_i & = & \beta_1 + \beta_3 \text{cont_africa}_i
-\end{eqnarray}
-$$
+\begin{align*}
+\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
+\gamma_i & = \beta_1 + \beta_3 \text{cont\_africa}_i
+\end{align*}
 
 Next McElreath replaced $\gamma_i$ with the expression for $\mu_i$.
 
-$$
-\begin{eqnarray}
-\mu_i & = & \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-& = & \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i
-\end{eqnarray}
-$$
+\begin{align*}
+\mu_i & = \alpha + (\beta_1 + \beta_3 \text{cont\_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
+      & = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont\_africa}_i + \beta_2 \text{cont\_africa}_i
+\end{align*}
 
 And new we'll factor together the terms containing $\text{cont_africa}_i$.
 
-$$\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont_africa}_i$$
+$$
+\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont\_africa}_i
+$$
 
 And just as in the text, our $G$ term looks a lot like the original $\gamma_i$ term.
 
@@ -495,29 +489,26 @@ str(d)
 
 The likelihoods for the next two models are
 
-$$
-\begin{eqnarray}
-\text{blooms}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha + \beta_1 \text{water}_i + \beta_2 \text{shade}_i \\
-\alpha & \sim & \text{Normal} (0, 100) \\
-\beta_1 & \sim & \text{Normal} (0, 100) \\
-\beta_2 & \sim & \text{Normal} (0, 100) \\
-\sigma & \sim & \text{Uniform} (0, 100) \\
-\end{eqnarray}
-$$
+\begin{align*}
+\text{blooms}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i   & = \alpha + \beta_1 \text{water}_i + \beta_2 \text{shade}_i \\
+\alpha  & \sim \text{Normal} (0, 100) \\
+\beta_1 & \sim \text{Normal} (0, 100) \\
+\beta_2 & \sim \text{Normal} (0, 100) \\
+\sigma  & \sim \text{Uniform} (0, 100)
+\end{align*}
+
 and
 
-$$
-\begin{eqnarray}
-\text{blooms}_i & \sim & \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = & \alpha + \beta_1 \text{water} + \beta_2 \text{shade}_i + \beta_3 \text{water}_i \times \text{shade}_i\\
-\alpha & \sim & \text{Normal} (0, 100) \\
-\beta_1 & \sim & \text{Normal} (0, 100) \\
-\beta_2 & \sim & \text{Normal} (0, 100) \\
-\beta_3 & \sim & \text{Normal} (0, 100) \\
-\sigma & \sim & \text{Uniform} (0, 100) \\
-\end{eqnarray}
-$$
+\begin{align*}
+\text{blooms}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i   & = \alpha + \beta_1 \text{water} + \beta_2 \text{shade}_i + \beta_3 \text{water}_i \times \text{shade}_i \\
+\alpha  & \sim \text{Normal} (0, 100) \\
+\beta_1 & \sim \text{Normal} (0, 100) \\
+\beta_2 & \sim \text{Normal} (0, 100) \\
+\beta_3 & \sim \text{Normal} (0, 100) \\
+\sigma  & \sim \text{Uniform} (0, 100)
+\end{align*}
 
 Load brms.
 
