@@ -1258,7 +1258,7 @@ for(i in 1:n) career[i] <- sample(1:3, size = 1, prob = p)
 
 Here's what the data look like.
 
-```{r, fig.width = 3, fig.height = 2.25}
+```{r, fig.width = 3, fig.height = 2.25, message = F, warning = F}
 career %>%
   as_tibble() %>%
   ggplot(aes(x = value %>% as.factor())) +
@@ -1479,7 +1479,7 @@ The results:
 print(b10.18, digits = 2)
 ```
 
-It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) than rethinking does. It follows the form
+It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#binary-and-count-data-models) than rethinking does. It follows the form
 
 $$f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg (\frac{1}{\mu_i + 1} \bigg )$$
 
