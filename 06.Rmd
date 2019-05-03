@@ -152,7 +152,7 @@ Now for each subplot, we'll tack the subplot-specific components onto `p`. The m
 # linear
 p1 <- 
   p +
-  stat_smooth(method = "lm", fullrange = TRUE, level = .89,  # Note our rare use of 89% confidence intervals
+  stat_smooth(method = "lm", fullrange = TRUE, level = .89,  # note our rare use of 89% intervals
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
               size = 1/2, alpha = 1/3,
               formula = y ~ x) +
@@ -192,13 +192,15 @@ p5 <-
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
               size = 1/2, alpha = 1/3,              
               formula = y ~ poly(x, 5)) +
-  coord_cartesian(ylim = c(150, 1900)) +  # We're adjusting the y-axis range for this plot (and the next)
+  # we're adjusting the y-axis range for this plot (and the next)
+  coord_cartesian(ylim = c(150, 1900)) +
   ggtitle(NULL, subtitle = expression(paste(italic(R)^2, " = .99")))
   
 # sixth-order polynomial
 p6 <-
   p + 
-  geom_hline(yintercept = 0, color = carto_pal(7, "BurgYl")[2], linetype = 2) +  # to mark off 0 on the y-axis
+  # mark off 0 on the y-axis
+  geom_hline(yintercept = 0, color = carto_pal(7, "BurgYl")[2], linetype = 2) + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
               size = 1/2, alpha = 1/3,              
@@ -680,7 +682,7 @@ load("06_sims/sim_1.rda")
 
 If you didn't quite catch it, the simulation yields `dev_20` and `dev_100`. We'll want to convert them to tibbles, bind them together, and wrangle extensively before we're ready to plot.
 
-```{r}
+```{r, message = F, warning = F}
 dev_tibble <-
   dev_20 %>% 
   as_tibble() %>% 
@@ -773,7 +775,8 @@ n_sim <- 1e3
 make_sim <- function(n, b_sigma){
   sapply(kseq, function(k) {
     print(k);
-    r <- mcreplicate(n_sim, sim.train.test(N = n, k = k, b_sigma = b_sigma),  # this is an augmented line of code
+    # this is an augmented line of code
+    r <- mcreplicate(n_sim, sim.train.test(N = n, k = k, b_sigma = b_sigma),
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ])) }) %>% 
     
