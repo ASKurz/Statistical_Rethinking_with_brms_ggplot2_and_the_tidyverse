@@ -344,10 +344,13 @@ Learn more about `stat_ellipse()`, [here](https://ggplot2.tidyverse.org/referenc
 # retrieve the partially-pooled estimates with `coef()`
 partially_pooled_estimates <-
   coef(b13.1)$cafe[ , 1, 1:2] %>%
-  as_tibble() %>%                  # convert the two vectors to a tibble
-  rename(morning = Intercept) %>%  # the Intercept is the wait time for morning (i.e., `afternoon == 0`)
-  mutate(afternoon = morning + afternoon,  # `afternoon` wait time is the `morning` wait time plus the afternoon slope
-         cafe      = 1:n()) %>%  # Add the `cafe` index
+  # convert the two vectors to a tibble
+  as_tibble() %>%
+  # the Intercept is the wait time for morning (i.e., `afternoon == 0`)
+  rename(morning = Intercept) %>%
+  # `afternoon` wait time is the `morning` wait time plus the afternoon slope
+  mutate(afternoon = morning + afternoon,
+         cafe      = 1:n()) %>%  # add the `cafe` index
   select(cafe, everything()) 
 
 # compute unpooled estimates directly from data
@@ -356,9 +359,11 @@ un_pooled_estimates <-
   # as above, with these two lines, we compute each cafe's mean wait value by time of day
   group_by(afternoon, cafe) %>% 
   summarise(mean = mean(wait)) %>%
-  ungroup() %>%  # ungrouping allows us to alter the grouping variable, afternoon
+  # ungrouping allows us to alter the grouping variable, afternoon
+  ungroup() %>% 
   mutate(afternoon = ifelse(afternoon == 0, "morning", "afternoon")) %>%
-  spread(key = afternoon, value = mean)  # this seperates out the values into morning and afternoon columns
+  # this seperates out the values into morning and afternoon columns
+  spread(key = afternoon, value = mean)
 
 estimates <-
   bind_rows(partially_pooled_estimates, un_pooled_estimates) %>%
@@ -671,7 +676,8 @@ un_pooled_params <-
   mutate(male = ifelse(male == 0, "intercept", "slope")) %>%
   spread(key  = male, value = prob_admit) %>%
   rename(dept = dept_id) %>%
-  mutate(intercept = prob_to_logit(intercept),  # here we put our `prob_to_logit()` function to work
+  # here we put our `prob_to_logit()` function to work
+  mutate(intercept = prob_to_logit(intercept),
          slope     = prob_to_logit(slope)) %>%
   mutate(slope     = slope - intercept)
 
@@ -1188,7 +1194,8 @@ post_b13.7 %>%
   ggplot(aes(x = x, y = covariance)) +
   geom_line(aes(group = iter),
             size = 1/4, alpha = 1/4, color = "#EEDA9D") +
-  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *exp(-median(post_b13.7$lscale_gplatlon2)^2 *.5 * x^2),
+  stat_function(fun = function(x) median(post_b13.7$sdgp_gplatlon2)^2 *
+                  exp(-median(post_b13.7$lscale_gplatlon2)^2 *.5 * x^2),
                 color = "#EEDA9D", size = 1.1) +
   scale_x_continuous("distance (thousand km)", expand = c(0, 0),
                      breaks = seq(from = 0, to = 50, by = 10)) +
@@ -1206,7 +1213,9 @@ Let's finish this up and "push the parameters back through the function for $\ma
 k <- matrix(0, nrow = 10, ncol = 10)
 for (i in 1:10)
     for (j in 1:10)
-        k[i, j] <- median(post_b13.7$sdgp_gplatlon2^2) * exp(-median(post_b13.7$lscale_gplatlon2^2) * islandsDistMatrix[i, j]^2)
+        k[i, j] <- median(post_b13.7$sdgp_gplatlon2^2) * 
+  exp(-median(post_b13.7$lscale_gplatlon2^2) * 
+        islandsDistMatrix[i, j]^2)
 
 diag(k) <- median(post_b13.7$sdgp_gplatlon2^2) + 0.01
 
@@ -1319,7 +1328,9 @@ Here are the data:
 ```{r}
 funding <- 
   tibble(
-    discipline   = rep(c("Chemical sciences", "Physical sciences", "Physics", "Humanities", "Technical sciences",  "Interdisciplinary", "Earth/life sciences", "Social sciences", "Medical sciences"),
+    discipline   = rep(c("Chemical sciences", "Physical sciences", "Physics", "Humanities", 
+                         "Technical sciences",  "Interdisciplinary", "Earth/life sciences", 
+                         "Social sciences", "Medical sciences"),
                      each = 2),
     gender       = rep(c("m", "f"), times = 9),
     applications = c(83, 39, 135, 39, 67, 9, 230, 166, 189, 62, 105, 78, 156, 126, 425, 409, 245, 260) %>% as.integer(),
