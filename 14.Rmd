@@ -299,7 +299,7 @@ As in the text,
 >
 > All this does is define the measurement $D_{\text{OBS}i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST}i}$. So the above defines a probability for each State $i$’s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/) on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
@@ -593,7 +593,7 @@ Anyway,
 
 ## Missing data
 
-Starting with the developer's version 2.1.2, (or the official [version 2.3.1 available on CRAN](https://cran.r-project.org/web/packages/brms/index.html)) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) is quite helpful.
+Starting with [version 2.2.0](https://cran.r-project.org/web/packages/brms/news/news.html) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) is quite helpful.
 
 ### Imputing `neocortex`
 
@@ -912,7 +912,7 @@ If modern missing data methods are new to you, you might also check out van Burr
 
 If your mind isn’t fully blown by those measurement-error and missing-data models, let’s keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use `brms::brm()` to fit Bayesian meta-analyses, too. 
 
-Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre’s great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/). And since McElreath’s text doesn’t directly address meta-analyses, we’ll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin’s [*Bayesian data analysis, Third edition*](http://www.stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
+Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre’s great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). And since McElreath’s text doesn’t directly address meta-analyses, we’ll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin’s [*Bayesian data analysis, Third edition*](http://www.stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
 
 > Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected *a priori* to have predictable effects favoring one study over another.… this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…
 >
@@ -959,7 +959,7 @@ McElreath didn't really focus on effect sizes in his text. If you need a refresh
 
 So if you look back up at the results of `glimpse(spank)` you'll notice the column `d`, which is indeed a vector of *Cohen's d* effect sizes. The last two columns, `ll` and `ul`, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
 
-$$SE = \frac{\text{upper limit } - \text{lower limit}}{3.92}$$
+$$SE = \frac{\text{upper limit} - \text{lower limit}}{3.92}$$
 
 Here it is in code.
 
@@ -1136,7 +1136,7 @@ That difference isn't as large I'd expect it to be. But then again, I'm no spank
 
 There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we've gone far enough to get you started.
 
-If you’d like to learn more about these methods, do check out Vourre’s [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/). From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with Frequentist meta-analyses via the [metafor package](http://www.metafor-project.org/doku.php/metafor). You might also check out Williams, Rast, and Bürkner’s manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
+If you’d like to learn more about these methods, do check out Vourre’s [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with Frequentist meta-analyses via the [metafor package](http://www.metafor-project.org/doku.php/metafor). You might also check out Williams, Rast, and Bürkner’s manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
 
 ## Reference {-}
 
