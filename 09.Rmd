@@ -141,7 +141,8 @@ tibble(mu       = 0,
   expand(nesting(mu, beta, alpha), 
          value = seq(from = -5, to = 5, by = .1)) %>% 
   # behold the formula for the generalized normal distribution in code
-  mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
+  mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
+           exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   
   # plot
   ggplot(aes(x = value, y = density,
@@ -169,7 +170,8 @@ tibble(mu       = 0,
   unnest() %>%
   expand(nesting(mu, beta, alpha), 
          value = -8:8) %>% 
-  mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
+  mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
+           exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   group_by(beta) %>% 
   # this is just an abbreviated version of the formula we used in our first code block
   summarise(entropy = -sum(density * log(density))) %>% 
