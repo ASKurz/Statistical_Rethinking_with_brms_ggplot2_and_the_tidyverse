@@ -604,7 +604,8 @@ b12.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sd)),
-      iter = 5000, warmup = 1000, chains = 4, cores = 4,  # I'm using 4 cores, instead of the `cores=3` in McElreath's code
+      # I'm using 4 cores, instead of the `cores=3` in McElreath's code
+      iter = 5000, warmup = 1000, chains = 4, cores = 4,  
       control = list(adapt_delta = 0.95),
       seed = 12)
 ```
@@ -663,7 +664,8 @@ Our brms model with varying intercepts for both `actor` and `block` now employs 
 b12.5 <- 
   update(b12.4,
          newdata = d,
-         formula = pulled_left | trials(1) ~ 1 + prosoc_left + prosoc_left:condition + (1 | actor) + (1 | block),
+         formula = pulled_left | trials(1) ~ 1 + prosoc_left + prosoc_left:condition + 
+           (1 | actor) + (1 | block),
          iter = 6000, warmup = 1000, cores = 4, chains = 4, 
          control = list(adapt_delta = 0.99),
          seed = 12)
