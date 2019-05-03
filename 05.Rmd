@@ -1390,7 +1390,7 @@ fitted(b5.15,
 
 And you could even plot.
 
-```{r, fig.width = 3, fig.height = 3}
+```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 fitted(b5.15,
        newdata = nd,
        summary = F) %>% 
@@ -1558,7 +1558,8 @@ fitted(b5.16,
        summary = F) %>% 
   as_tibble() %>% 
   gather() %>% 
-  mutate(primate = rep(c("New World Monkey", "Old World Monkey", "Strepsirrhine", "Ape"), each = n() / 4)) %>% 
+  mutate(primate = rep(c("New World Monkey", "Old World Monkey", "Strepsirrhine", "Ape"), 
+                       each = n() / 4)) %>% 
   
   ggplot(aes(x = value, y = reorder(primate, value))) +
   geom_halfeyeh(fill = "firebrick4", 
