@@ -1,11 +1,15 @@
 --- 
 title: "*Statistical Rethinking* with brms, ggplot2, and the tidyverse"
-subtitle: "version 1.0.0"
+subtitle: "version 1.0.1"
 author: ["A Solomon Kurz"]
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
+geometry:
+  margin = 0.5in
+urlcolor: blue
+highlight: tango
 link-citations: yes
 github-repo: ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse
 twitter-handle: SolomonKurz
@@ -64,24 +68,30 @@ The source code of the project is available [here](https://github.com/ASKurz/Sta
 
 ## We have updates {-}
 
-I released the initial 0.9.0 version of this project In September 26, 2018. Welcome to 1.0.0! Here are some of the major changes:
+I released the initial 0.9.0 version of this project in September 26, 2018. In April 19, 2019 came the 1.0.0 version. Some of the major changes were:
 
-* All models have been refit with the current official version of brms, 2.8.0.
-* Adopting the `seed` argument within the `brm()` function has made the model results more reproducible.
-* The [loo package](https://github.com/stan-dev/loo) has been updated. As a consequence, our workflow for the WAIC and LOO has changed, too.
-* I have improved the brms alternative to McElreath’s `coeftab()` function.
+* All models were refit with the current official version of brms, 2.8.0.
+* Adopting the `seed` argument within the `brm()` function made the model results more reproducible.
+* The [loo package](https://github.com/stan-dev/loo) was updated. As a consequence, our workflow for the WAIC and LOO changed, too.
+* I improved the brms alternative to McElreath’s `coeftab()` function.
 * I made better use of the tidyverse, especially some of the [purrr](https://purrr.tidyverse.org/) functions.
 * Particularly in the later chapters, there’s a 
 greater emphasis on functions from the [tidybayes package](http://mjskay.github.io/tidybayes/).
 * Chapter 11 contains the updated brms 2.8.0 workflow for making custom distributions, using the beta-binomial model as the example.
-* Chapter 12 has a new bonus section contrasting different methods for working with multilevel posteriors.
-* Chapter 14 has a new bonus section introducing Bayesian meta-analysis and linking it to multilevel and measurement-error models.
-* With the help of others within the community, I’ve corrected many typos and streamlined some of the code (e.g., [dropped an unnecessary use of the `mi()` function in section 14.2.1](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/21))
-* And in some cases, I’ve corrected sections that were just plain wrong (e.g., some of my initial attempts in section 3.3 were incorrect).
+* Chapter 12 received a new bonus section contrasting different methods for working with multilevel posteriors.
+* Chapter 14 received a new bonus section introducing Bayesian meta-analysis and linking it to multilevel and measurement-error models.
+* With the help of others within the community, I corrected many typos and streamlined some of the code (e.g., [dropped an unnecessary use of the `mi()` function in section 14.2.1](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/21))
+* And in some cases, I corrected sections that were just plain wrong (e.g., some of my initial attempts in section 3.3 were incorrect).
 
-Even though I’m comfortable calling this the 1.0.0 version of the project, there’s room for improvement. There are still two models that need work. The current solution for model 10.6 is [wrong](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5), which I try to make clear in the prose. It also appears that the Gaussian process model from section 13.4 is off. Both models are beyond my current skill set and [friendly suggestions are welcome](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues). In addition to modeling concerns, typos may yet be looming and I’m sure there are places where the code could be made more streamlined, more elegant, or just more in-line with the tidyverse style. Which is all to say, I hope to release better and more useful updates in the future.
+In response to some reader requests, we finally have a PDF version! Making that happen required some formatting adjustments, resulting in version 1.0.1. Noteworthy changes include:
 
-Before we move on, I’d like to thank the following for their helpful contributions to this update: Paul-Christian Bürkner ([\@paul-buerkner](https://github.com/paul-buerkner)), Andrew Collier ([\@datawookie](https://github.com/datawookie)), Jeff Hammerbacher ([\@hammer](https://github.com/hammer)), Matthew Kay ([\@mjskay](https://github.com/mjskay)), TJ Mahr ([\@tjmahr](https://github.com/tjmahr)), Colin Quirk ([\@colinquirk](https://github.com/colinquirk)), Rishi Sadhir ([\@RishiSadhir](https://github.com/RishiSadhir)), Richard Torkar ([\@torkar](https://github.com/torkar)), Aki Vehtari ([\@avehtari](https://github.com/avehtari)).
+* Major revisions to the LaTeX syntax underlying many of the in-text equations (e.g., dropping the "eqnarray" environment for "align*")
+* Adjusting some of the image syntax
+* Updating the reference for the Bayesian $R^2$ ([Gelman, Goodrich, Gabry, & Vehtari, 2018](https://www.tandfonline.com/doi/abs/10.1080/00031305.2018.1549100?journalCode=utas20))
+
+Though we're into version 1.0.1, there’s room for improvement. There are still two models that need work. The current solution for model 10.6 is [wrong](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5), which I try to make clear in the prose. It also appears that the Gaussian process model from section 13.4 is off. Both models are beyond my current skill set and [friendly suggestions are welcome](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues). In addition to modeling concerns, typos may yet be looming and I’m sure there are places where the code could be made more streamlined, more elegant, or just more in-line with the tidyverse style. Which is all to say, I hope to release better and more useful updates in the future.
+
+Before we move on, I’d like to thank the following for their helpful contributions: Paul-Christian Bürkner ([\@paul-buerkner](https://github.com/paul-buerkner)), Andrew Collier ([\@datawookie](https://github.com/datawookie)), Jeff Hammerbacher ([\@hammer](https://github.com/hammer)), Matthew Kay ([\@mjskay](https://github.com/mjskay)), TJ Mahr ([\@tjmahr](https://github.com/tjmahr)), Stijn Masschelein ([\@stijnmasschelein](https://github.com/stijnmasschelein)), Colin Quirk ([\@colinquirk](https://github.com/colinquirk)), Rishi Sadhir ([\@RishiSadhir](https://github.com/RishiSadhir)), Richard Torkar ([\@torkar](https://github.com/torkar)), Aki Vehtari ([\@avehtari](https://github.com/avehtari)).
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
 pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
