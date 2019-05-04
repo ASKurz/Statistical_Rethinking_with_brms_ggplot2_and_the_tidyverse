@@ -6,6 +6,8 @@ output:
   github_document
 ---
 
+# What's the deal?
+
 Offering the project in both HTML and PDF versions presents difficulties with some of the [LaTeX](https://www.latex-project.org) code. The issue stems from underscores. In some of the mathematical formulas in the project, one or more of the variables include underscores within the name. For example, the equation in section 5.1.1 contains two predictors, `Marriage_s` and `MedianAgeMarriage_s`. Both names end in the suffix `_s`. This doesn’t cause any problems when rendering to HTML. For example, the pertinent line of LaTeX is 
 
 \\mu_i & = \\alpha + \\beta_1 \\text{Marriage_s}_i + \\beta_2 \\text{MedianAgeMarriage_s}_i
@@ -16,7 +18,11 @@ It renders beautifully. However, those `_1` suffixes produce errors when attempt
 
 When rendering to PDF, it works like a dream. However, when rendering to HTML, those extra backslashes get rendered as if there were part of the variable names. It’s a disaster. So the current fix is to document every place in the project including LaTeX syntax involving variable names including underscores. Happily, this only effects the `.Rmd` files for chapters 5, 7, 10, 12, and 13. Below I document each relevant section from each document with its line number.
 
-# Chapter 05
+# How do I use this document?
+
+The GitHub rendered version of this document (i.e., the `.md` file) is useful for understanding the problem. However, the rendering complications limit its utility for seeing the offending LaTeX code. For that, you’re probably best off checking out the `.Rmd` file.
+
+## Chapter 05
 
 line 214
 
@@ -35,8 +41,7 @@ $$
 \mu_i = \alpha + \beta_\text{clade\_nwm} \text{clade\_nwm}_i + \beta_\text{clade\_owm} \text{clade\_owm}_i + \beta_\text{clade\_s} \text{clade\_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i
 $$
 
-
-# Chapter 07
+## Chapter 07
 
 line 218
 
@@ -74,7 +79,7 @@ $$
 \mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont\_africa}_i
 $$
 
-# Chapter 10
+## Chapter 10
 
 line 51
 
@@ -105,7 +110,7 @@ line 864
 \beta_3 & \sim \text{Normal} (0, 1)
 \end{align*}
 
-# Chapter 12
+## Chapter 12
 
 line 542
 
@@ -166,7 +171,7 @@ line 1308
 \sigma_{\text{block}} & \sim \text{HalfCauchy} (0, 1)
 \end{align*}
 
-# Chapter 13
+## Chapter 13
 
 line 425
 
