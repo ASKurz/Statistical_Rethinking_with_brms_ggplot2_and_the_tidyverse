@@ -216,9 +216,9 @@ ggplot(aes(x = rugged)) +
 Yes, it sure does. But before we fit, here's the equation:
 
 \begin{align*}
-\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
-\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
-\gamma_i & = \beta_1 + \beta_3 \text{cont\_africa}_i
+\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i
 \end{align*}
 
 Fit the model.
@@ -260,8 +260,8 @@ model_weights(b7.3, b7.4, b7.5,
 The conventional equation for the interaction model might look like:
 
 \begin{align*}
-\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont\_africa}_i + \beta_3 \text{rugged}_i \times \text{cont\_africa}_i
+\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i
 \end{align*}
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
@@ -407,22 +407,22 @@ post %>%
 Recall the original equation.
 
 \begin{align*}
-\text{log\_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
-\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
-\gamma_i & = \beta_1 + \beta_3 \text{cont\_africa}_i
+\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i
 \end{align*}
 
 Next McElreath replaced $\gamma_i$ with the expression for $\mu_i$.
 
 \begin{align*}
-\mu_i & = \alpha + (\beta_1 + \beta_3 \text{cont\_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont\_africa}_i \\
-      & = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont\_africa}_i + \beta_2 \text{cont\_africa}_i
+\mu_i & = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
+      & = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i
 \end{align*}
 
-And new we'll factor together the terms containing $\text{cont\_africa}_i$.
+And new we'll factor together the terms containing $\text{cont_africa}_i$.
 
 $$
-\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont\_africa}_i
+\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont_africa}_i
 $$
 
 And just as in the text, our $G$ term looks a lot like the original $\gamma_i$ term.
