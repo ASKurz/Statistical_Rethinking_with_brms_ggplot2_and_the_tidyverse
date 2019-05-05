@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-18">
+<meta name="date" content="2019-05-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -457,10 +457,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(.<span class="dv">75</span>, <span class="fl">4.25</span>),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">75</span>, <span class="fl">5.25</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-3-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-3-1.png" width="120" /></p>
 <p>As a quick aside, check out Suzan Baert’s blog post <a href="https://suzan.rbind.io/2018/02/dplyr-tutorial-2/"><em>Data Wrangling Part 2: Transforming your columns into the right shape</em></a> for an extensive discussion on <code>dplyr::mutate()</code> and <code>dplyr::gather()</code>.</p>
 <p>Here’s the basic structure of the possibilities per marble draw.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">draw            =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,
@@ -527,10 +524,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-6-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
 <p>To my mind, the easiest way to connect the dots in the appropriate way is to make two auxiliary tibbles.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># these will connect the dots from the first and second draws</span>
 (
@@ -598,10 +592,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-8-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-8-1.png" width="768" /></p>
 <p>We’ve generated the values for <code>position</code> (i.e., the x-axis), in such a way that they’re all justified to the right, so to speak. But we’d like to center them. For <code>draw == 1</code>, we’ll need to subtract 0.5 from each. For <code>draw == 2</code>, we need to reduce the scale by a factor of 4 and we’ll then need to reduce the scale by another factor of 4 for <code>draw == 3</code>. The <code>ifelse()</code> function will be of use for that.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -688,10 +679,7 @@ d</code></pre></div>
 <span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values  =</span> <span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>, <span class="st">&quot;white&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-11-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-11-1.png" width="768" /></p>
 <p>For the final step, we’ll use <code>coord_polar()</code> to change the <a href="http://sape.inf.usi.ch/quick-reference/ggplot2/coord">coordinate system</a>, giving the plot a mandala-like feel.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> position, <span class="dt">y =</span> draw)) <span class="op">+</span>
@@ -711,10 +699,7 @@ d</code></pre></div>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-12-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-12-1.png" width="384" /></p>
 <p>To make our version of Figure 2.3, we’ll have to add an index to tell us which paths remain logically valid after each choice. We’ll call the index <code>remain</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lines_<span class="dv">1</span> &lt;-
 <span class="st">  </span>lines_<span class="dv">1</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -760,10 +745,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-13-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-13-1.png" width="384" /></p>
 <p>Letting “w” = a white dot and “b” = a blue dot, we might recreate the table in the middle of page 23 like so.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># if we make two custom functions, here, it will simplify the code within `mutate()`, below</span>
 n_blue &lt;-<span class="st"> </span><span class="cf">function</span>(x){
@@ -1042,10 +1024,7 @@ lines_<span class="dv">2</span> &lt;-
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid      =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_polar</span>()</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-19-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="using-prior-information." class="section level3">
 <h3><span class="header-section-number">2.1.2</span> Using prior information.</h3>
@@ -1199,18 +1178,20 @@ t <span class="op">%&gt;%</span><span class="st"> </span>
 <p>The opening sentences in this subsection are important: “It is helpful to think of this strategy as adhering to a principle of honest ignorance: <em>When we don’t know what caused the data, potential causes that may produce the data in more ways are more plausible</em>” (p. 26, <em>emphasis</em> in the original).</p>
 <p>We can define our updated plausibility as:</p>
 <center>
-<p>plausibility of <img src="Pictures/theta_02.png" /> after seeing <img src="Pictures/data_02.png" /></p>
+<p>plausibility of <img src="Pictures/theta_02.png" style="width:5.0%" /> after seeing <img src="Pictures/data_02.png" style="width:3.5%" /></p>
 <p><span class="math inline">\(\propto\)</span></p>
-<p>ways <img src="Pictures/theta_02.png" /> can produce <img src="Pictures/data_02.png" /></p>
+<p>ways <img src="Pictures/theta_02.png" style="width:5.0%" /> can produce <img src="Pictures/data_02.png" style="width:3.5%" /></p>
 <p><span class="math inline">\(\times\)</span></p>
-<p>prior plausibility of <img src="Pictures/theta_02.png" /></p>
+<p>prior plausibility of <img src="Pictures/theta_02.png" style="width:5.0%" /></p>
 </center>
 <p>In other words:</p>
-<center>
-<p>plausibility of <span class="math inline">\(p\)</span> after <span class="math inline">\(D_{\text{new}}\)</span> <span class="math inline">\(\propto\)</span> ways <span class="math inline">\(p\)</span> can produce <span class="math inline">\(D_{\text{new}} \times\)</span> prior plausibility of <span class="math inline">\(p\)</span></p>
-</center>
+<p><span class="math display">\[
+\text{plausibility of } p \text{ after } D_{\text{new}} \propto \text{ ways } p \text{ can produce } D_{\text{new}} \times \text{ prior plausibility of } p
+\]</span></p>
 <p>But since we have to standardize the results to get them into a probability metric, the full equation is:</p>
-<p><span class="math display">\[\text{plausibility of } p \text{ after } D_{\text{new}} = \frac{\text{ ways } p \text{ can produce } D_{\text{new}} \times \text{ prior plausibility of } p}{\text{sum of the products}}\]</span></p>
+<p><span class="math display">\[
+\text{plausibility of } p \text{ after } D_{\text{new}} = \frac{\text{ ways } p \text{ can produce } D_{\text{new}} \times \text{ prior plausibility of } p}{\text{sum of the products}}
+\]</span></p>
 <p>You might make the table in the middle of page 27 like this.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">t <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(p_<span class="dv">1</span><span class="op">:</span>p_<span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1309,10 +1290,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="st">&quot;plausibility&quot;</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>strip, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-26-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-26-1.png" width="576" /></p>
 <p>If it wasn’t clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don’t normalize (i.e., divide the density by the sum of the density), their respective heights don’t match up with those in the text. Furthermore, it’s the normalization that makes them directly comparable.</p>
 <p>To learn more about <code>dplyr::group_by()</code> and its opposite <code>dplyr::ungroup()</code>, check out <a href="http://r4ds.had.co.nz/transform.html"><em>R4DS</em>, Chapter 5</a>. To learn about <code>tidyr::expand()</code>, go <a href="https://tidyr.tidyverse.org/reference/expand.html">here</a>.</p>
 </div>
@@ -1346,10 +1324,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;probability&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;binomial likelihood&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-28-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-28-1.png" width="288" /></p>
 </div>
 <div id="parameters." class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Parameters.</h3>
@@ -1394,10 +1369,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid.minor   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.grid.major.x =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>b, <span class="dt">ncol =</span> <span class="dv">5</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-30-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-30-1.png" width="768" /></p>
 <p>And as we’ll learn much later in the project, the <span class="math inline">\(\text{Uniform} (0, 1)\)</span> distribution is special in that we can also express it as the beta distribution for which <span class="math inline">\(\alpha = 1 \text{ and } \beta = 1\)</span>. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">parameter_space =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="kw">dbeta</span>(parameter_space, <span class="dv">1</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1406,10 +1378,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_ribbon</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-31-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-31-1.png" width="240" /></p>
 </div>
 </div>
 <div id="posterior." class="section level3">
@@ -1483,10 +1452,7 @@ p3 &lt;-
 <span class="kw">library</span>(gridExtra)
 
 <span class="kw">grid.arrange</span>(p1, p2, p3, <span class="dt">ncol =</span> <span class="dv">3</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-33-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-33-1.png" width="576" /></p>
 <p>I’m not sure if it’s the same McElreath used in the text, but the formula I used for the tirangle-shaped prior is the <a href="http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html">Laplace distribution</a> with a location of .5 and a dispersion of .25.</p>
 <p>Also, to learn all about <code>dplyr::filter()</code>, check out Baert’s <a href="https://suzan.rbind.io/2018/02/dplyr-tutorial-3/"><em>Data Wrangling Part 3: Basic and more advanced ways to filter rows</em></a>.</p>
 <div id="grid-approximation." class="section level3">
@@ -1531,10 +1497,7 @@ p3 &lt;-
        <span class="dt">x =</span> <span class="st">&quot;probability of water&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;posterior probability&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-35-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-35-1.png" width="288" /></p>
 <p>Here it is with just 5 points, the left hand panel of Figure 2.7.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">p_grid            =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">5</span>),
        <span class="dt">prior             =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span>
@@ -1549,10 +1512,7 @@ p3 &lt;-
        <span class="dt">x =</span> <span class="st">&quot;probability of water&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;posterior probability&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-36-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-36-1.png" width="288" /></p>
 </div>
 <div id="quadratic-approximation." class="section level3">
 <h3><span class="header-section-number">2.4.2</span> Quadratic approximation.</h3>
@@ -1570,7 +1530,7 @@ globe_qa &lt;-
 <span class="co"># display summary of quadratic approximation</span>
 <span class="kw">precis</span>(globe_qa)</code></pre></div>
 <pre><code>##        mean        sd      5.5%     94.5%
-## p 0.6666664 0.1571338 0.4155361 0.9177966</code></pre>
+## p 0.6666664 0.1571338 0.4155362 0.9177967</code></pre>
 <p>In preparation for Figure 2.8, here’s the model with <span class="math inline">\(n = 18\)</span> and <span class="math inline">\(n = 36\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">globe_qa_<span class="dv">18</span> &lt;-
 <span class="st">  </span>rethinking<span class="op">::</span><span class="kw">map</span>(
@@ -1588,10 +1548,10 @@ globe_qa_<span class="dv">36</span> &lt;-
 
 <span class="kw">precis</span>(globe_qa_<span class="dv">18</span>)</code></pre></div>
 <pre><code>##        mean        sd      5.5%     94.5%
-## p 0.6666662 0.1111104 0.4890902 0.8442421</code></pre>
+## p 0.6666665 0.1111104 0.4890907 0.8442424</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">precis</span>(globe_qa_<span class="dv">36</span>)</code></pre></div>
-<pre><code>##        mean        sd      5.5%     94.5%
-## p 0.6666665 0.0785669 0.5411015 0.7922316</code></pre>
+<pre><code>##        mean         sd     5.5%     94.5%
+## p 0.6666704 0.07856645 0.541106 0.7922348</code></pre>
 <p>Here’s the legwork for Figure 2.8.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n_grid &lt;-<span class="st"> </span><span class="dv">100</span>
 
@@ -1618,10 +1578,7 @@ globe_qa_<span class="dv">36</span> &lt;-
        <span class="dt">y =</span> <span class="st">&quot;density&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-39-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-39-1.png" width="768" /></p>
 </div>
 <div id="markov-chain-monte-carlo." class="section level3">
 <h3><span class="header-section-number">2.4.3</span> Markov chain Monte Carlo.</h3>
@@ -1663,10 +1620,7 @@ globe_qa_<span class="dv">36</span> &lt;-
 <span class="st">  </span><span class="kw">xlim</span>(<span class="dv">0</span>, <span class="dv">1</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>n)</code></pre></div>
-<div class="figure">
-<img src="02_files/figure-markdown_github/unnamed-chunk-42-1.png" />
-
-</div>
+<p><img src="02_files/figure-html/unnamed-chunk-42-1.png" width="288" /></p>
 <p>If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4 and we’ll learn a lot about regression with the binomial likelihood in Chapter 10.</p>
 </div>
 </div>
@@ -1692,35 +1646,36 @@ globe_qa_<span class="dv">36</span> &lt;-
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] brms_2.8.0           Rcpp_1.0.0           rethinking_1.80      rstan_2.18.2        
-##  [5] StanHeaders_2.18.0-1 gridExtra_2.3        forcats_0.3.0        stringr_1.3.1       
+##  [1] brms_2.8.8           Rcpp_1.0.1           rethinking_1.80      rstan_2.18.2        
+##  [5] StanHeaders_2.18.0-1 gridExtra_2.3        forcats_0.3.0        stringr_1.4.0       
 ##  [9] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
-## [13] tibble_2.1.1         ggplot2_3.1.0        tidyverse_1.2.1     
+## [13] tibble_2.1.1         ggplot2_3.1.1        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-137         matrixStats_0.54.0   xts_0.10-2           lubridate_1.7.4     
 ##  [5] threejs_0.3.1        httr_1.3.1           rprojroot_1.3-2      tools_3.5.1         
-##  [9] backports_1.1.2      DT_0.4               utf8_1.1.4           R6_2.3.0            
-## [13] lazyeval_0.2.1       colorspace_1.3-2     withr_2.1.2          tidyselect_0.2.5    
-## [17] prettyunits_1.0.2    processx_3.2.1       Brobdingnag_1.2-5    compiler_3.5.1      
+##  [9] backports_1.1.4      DT_0.4               utf8_1.1.4           R6_2.3.0            
+## [13] lazyeval_0.2.2       colorspace_1.3-2     withr_2.1.2          tidyselect_0.2.5    
+## [17] prettyunits_1.0.2    processx_3.2.1       Brobdingnag_1.2-6    compiler_3.5.1      
 ## [21] cli_1.0.1            rvest_0.3.2          shinyjs_1.0          xml2_1.2.0          
-## [25] colourpicker_1.0     labeling_0.3         scales_1.0.0         dygraphs_1.1.1.5    
-## [29] mvtnorm_1.0-8        ggridges_0.5.0       callr_3.1.0          digest_0.6.18       
-## [33] rmarkdown_1.10       base64enc_0.1-3      pkgconfig_2.0.2      htmltools_0.3.6     
-## [37] highr_0.7            htmlwidgets_1.2      rlang_0.3.1          readxl_1.1.0        
-## [41] rstudioapi_0.7       shiny_1.1.0          generics_0.0.2       zoo_1.8-2           
-## [45] jsonlite_1.5         gtools_3.8.1         crosstalk_1.0.0      inline_0.3.15       
-## [49] magrittr_1.5         loo_2.1.0            bayesplot_1.6.0      Matrix_1.2-14       
-## [53] munsell_0.5.0        fansi_0.4.0          abind_1.4-5          stringi_1.2.3       
-## [57] yaml_2.1.19          MASS_7.3-50          pkgbuild_1.0.2       plyr_1.8.4          
-## [61] grid_3.5.1           promises_1.0.1       crayon_1.3.4         miniUI_0.1.1.1      
-## [65] lattice_0.20-35      haven_1.1.2          hms_0.4.2            knitr_1.20          
-## [69] ps_1.2.1             pillar_1.3.1         igraph_1.2.1         markdown_0.8        
-## [73] shinystan_2.5.0      reshape2_1.4.3       stats4_3.5.1         rstantools_1.5.0    
-## [77] glue_1.3.0           evaluate_0.10.1      modelr_0.1.2         httpuv_1.4.4.2      
-## [81] cellranger_1.1.0     gtable_0.2.0         assertthat_0.2.0     mime_0.5            
-## [85] xtable_1.8-2         broom_0.5.1          coda_0.19-2          later_0.7.3         
-## [89] rsconnect_0.8.8      shinythemes_1.1.1    bridgesampling_0.4-0</code></pre>
+## [25] colourpicker_1.0     labeling_0.3         bookdown_0.9         scales_1.0.0        
+## [29] dygraphs_1.1.1.5     mvtnorm_1.0-10       ggridges_0.5.0       callr_3.1.0         
+## [33] digest_0.6.18        rmarkdown_1.10       base64enc_0.1-3      pkgconfig_2.0.2     
+## [37] htmltools_0.3.6      highr_0.7            htmlwidgets_1.2      rlang_0.3.4         
+## [41] readxl_1.1.0         rstudioapi_0.7       shiny_1.1.0          generics_0.0.2      
+## [45] zoo_1.8-2            jsonlite_1.5         gtools_3.8.1         crosstalk_1.0.0     
+## [49] inline_0.3.15        magrittr_1.5         loo_2.1.0            bayesplot_1.6.0     
+## [53] Matrix_1.2-14        munsell_0.5.0        fansi_0.4.0          abind_1.4-5         
+## [57] stringi_1.4.3        yaml_2.1.19          MASS_7.3-50          pkgbuild_1.0.2      
+## [61] plyr_1.8.4           grid_3.5.1           promises_1.0.1       crayon_1.3.4        
+## [65] miniUI_0.1.1.1       lattice_0.20-35      haven_1.1.2          hms_0.4.2           
+## [69] knitr_1.20           ps_1.2.1             pillar_1.3.1         igraph_1.2.1        
+## [73] markdown_0.8         shinystan_2.5.0      reshape2_1.4.3       stats4_3.5.1        
+## [77] rstantools_1.5.1     glue_1.3.1.9000      evaluate_0.10.1      modelr_0.1.2        
+## [81] httpuv_1.4.4.2       cellranger_1.1.0     gtable_0.3.0         assertthat_0.2.0    
+## [85] xfun_0.3             mime_0.5             xtable_1.8-2         broom_0.5.1         
+## [89] coda_0.19-2          later_0.7.3          rsconnect_0.8.8      shinythemes_1.1.1   
+## [93] bridgesampling_0.6-0</code></pre>
 
 </div>
 </div>

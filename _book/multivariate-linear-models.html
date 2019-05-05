@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-18">
+<meta name="date" content="2019-05-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -450,10 +450,7 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce rate&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())  </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-4-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-4-1.png" width="288" /></p>
 <p>With <code>coord_map()</code> and help from the <a href="https://cran.r-project.org/web/packages/fiftystater/index.html">fiftystater package</a> (which gives us access to lat/long data for all fifty states via <code>fifty_states</code>), we can plot our three major variables in a map format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(fiftystater)
 
@@ -481,10 +478,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">legend.position  =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">strip.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;transparent&quot;</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key)</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-5-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-5-1.png" width="768" /></p>
 <p>One of the advantages of this visualization method is it just became clear that Nevada is missing from the <code>WaffleDivorce</code> data. Execute <code>d %&gt;% distinct(Location)</code> to see for yourself. Those missing data should motivate the skills we’ll cover in Chapter 14. But let’s get back on track.</p>
 <p>Here we’ll officially standardize the predictor, <code>MedianAgeMarriage</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
@@ -546,10 +540,7 @@ f &lt;-<span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())                   </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-8-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-8-1.png" width="288" /></p>
 <p>Before fitting the next model, we’ll standardize <code>Marriage</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
@@ -604,10 +595,7 @@ f &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())                   </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-11-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-11-1.png" width="288" /></p>
 <blockquote>
 <p>But merely comparing parameter means between different bivariate regressions is no way to decide which predictor is better Both of these predictors could provide independent value, or they could be redundant, or one could eliminate the value of the other. So we’ll build a multivariate model with the goal of measuring the partial value of each predictor. The question we want answered is:</p>
 <blockquote>
@@ -617,16 +605,14 @@ f &lt;-<span class="st"> </span>
 <div id="multivariate-notation." class="section level3">
 <h3><span class="header-section-number">5.1.1</span> Multivariate notation.</h3>
 <p>Now we’ll get both predictors in there with our very first multivariable model. We can write the statistical model as</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{Divorce}_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha + \beta_1 \text{Marriage_s}_i + \beta_2 \text{MedianAgeMarriage_s}_i \\
-\alpha &amp; \sim &amp; \text{Normal}(10, 10) \\
-\beta_1 &amp; \sim &amp; \text{Normal}(0, 1) \\
-\beta_2 &amp; \sim &amp; \text{Normal}(0, 1) \\
-\sigma &amp; \sim &amp; \text{Uniform}(0, 10)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{Divorce}_i &amp; \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i   &amp; = \alpha + \beta_1 \text{Marriage_s}_i + \beta_2 \text{MedianAgeMarriage_s}_i \\
+\alpha  &amp; \sim \text{Normal}(10, 10) \\
+\beta_1 &amp; \sim \text{Normal}(0, 1) \\
+\beta_2 &amp; \sim \text{Normal}(0, 1) \\
+\sigma  &amp; \sim \text{Uniform}(0, 10)
+\end{align*}\]</span>
 <blockquote>
 <p>It might help to read the <span class="math inline">\(+\)</span> symbols as “or” and then say: <em>A State’s divorce rate can be a function of its marriage rate <strong>or</strong> its median age at marriage</em>. The “or” indicates independent associations, which may be purely statistical or rather causal. (p. 124, <em>emphasis</em> in the original)</p>
 </blockquote>
@@ -665,10 +651,7 @@ f &lt;-<span class="st"> </span>
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>The <code>stanplot()</code> function is an easy way to get a default coefficient plot. You just put the brmsfit object into the function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">stanplot</span>(b5.<span class="dv">3</span>)</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-13-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
 <p>There are numerous ways to make a coefficient plot. Another is with the <code>mcmc_intervals()</code> function from the <a href="https://cran.r-project.org/web/packages/bayesplot/index.html">bayesplot package</a>. A nice feature of the bayesplot package is its convenient way to alter the color scheme with the <code>color_scheme_set()</code> function. Here, for example, we’ll make the theme <code>red</code>. But note how the <code>mcmc_intervals()</code> function requires you to work with the <code>posterior_samples()</code> instead of the brmsfit object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;bayesplot&quot;, dependencies = T)</span>
 <span class="kw">library</span>(bayesplot)
@@ -684,10 +667,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b5.
         <span class="dt">axis.line.x  =</span> <span class="kw">element_line</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>),
         <span class="dt">axis.line.y  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-14-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
 <p>Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html">this vignette</a>.</p>
 <p>The <code>tidybaes::stat_pointintervalh()</code> function offers a third way, this time with a more ground-up ggplot2 workflow.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
@@ -707,10 +687,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
         <span class="dt">panel.grid.major.y =</span> <span class="kw">element_line</span>(<span class="dt">color =</span> <span class="kw">alpha</span>(<span class="st">&quot;firebrick4&quot;</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="dt">linetype =</span> <span class="dv">3</span>),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-15-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-15-1.png" width="576" /></p>
 <p>The substantive interpretation of all those coefficient plots is: “<em>Once we know median age at marriage for a State, there is little or no additive predictive power in also knowing the rate of marriage in that State</em>” (p. 126, <em>emphasis</em> in the original).</p>
 </div>
 <div id="plotting-multivariate-posteriors." class="section level3">
@@ -785,10 +762,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>Marriage_s)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())     </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-18-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-18-1.png" width="288" /></p>
 <p>We get the residuals with the well-named <code>residuals()</code> function. Much like with <code>brms::fitted()</code>, <code>brms::residuals()</code> returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: <code>Estimate</code>, <code>Est.Error</code>, <code>Q2.5</code>, and <code>Q97.5</code>. See the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> for details.</p>
 <p>With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>
@@ -818,10 +792,7 @@ r <span class="op">%&gt;%</span><span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="fl">14.1</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-19-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-19-1.png" width="288" /></p>
 <p>To get the <code>MedianAgeMarriage_s</code> residuals, we have to fit the corresponding model first.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.4b &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -854,10 +825,7 @@ r <span class="op">%&gt;%</span><span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">6</span>, <span class="fl">14.1</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())  </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-20-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
 </div>
 <div id="counterfactual-plots." class="section level4">
 <h4><span class="header-section-number">5.1.3.2</span> Counterfactual plots.</h4>
@@ -899,10 +867,7 @@ nd &lt;-<span class="st"> </span>
        <span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())     </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-21-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-21-1.png" width="288" /></p>
 <p>We follow the same process for Figure 5.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data</span>
 nd &lt;-<span class="st"> </span>
@@ -935,10 +900,7 @@ nd &lt;-<span class="st"> </span>
        <span class="dt">y =</span> <span class="st">&quot;Divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())   </code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-22-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-22-1.png" width="288" /></p>
 <blockquote>
 <p>A tension with such plots, however, lies in their counterfactual nature. In the small world of the model, it is possible to change median age of marriage without also changing the marriage rate. But is this also possible in the large world of reality? Probably not…</p>
 <p>…If our goal is to intervene in the world, there may not be any realistic way to manipulate each predictor without also manipulating the others. This is a serious obstacle to applied science, whether you are an ecologist, an economist, or an epidemiologist [or a psychologist] (p. 131)</p>
@@ -968,10 +930,7 @@ nd &lt;-<span class="st"> </span>
        <span class="dt">y =</span> <span class="st">&quot;Predicted divorce&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-23-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-23-1.png" width="288" /></p>
 <p>In order to make Figure 5.6.b, we need to clarify the relationships among <code>fitted()</code>, <code>predict()</code>, and <code>residuals()</code>. Here’s my attempt in a table.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="st">`</span><span class="dt">brms function</span><span class="st">`</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;fitted&quot;</span>, <span class="st">&quot;predict&quot;</span>, <span class="st">&quot;residual&quot;</span>),
        <span class="dt">mean  =</span> <span class="kw">c</span>(<span class="st">&quot;same as the data&quot;</span>, <span class="st">&quot;same as the data&quot;</span>, <span class="st">&quot;in a deviance-score metric&quot;</span>),
@@ -1041,10 +1000,7 @@ nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-25-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-25-1.png" width="216" /></p>
 <p>Compared to the last couple plots, Figure 5.6.c is pretty simple.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">residuals</span>(b5.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1064,10 +1020,7 @@ nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Divorce error&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-26-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-26-1.png" width="288" /></p>
 <p>More McElreath inspiration: “No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation” (p. 134). To keep our deflation train going, it’s worthwhile to repeat the message in McElreath’s <strong>Rethinking: Stats, huh, yeah what is it good for?</strong> box.</p>
 <blockquote>
 <p>Often people want statistical modeling to do things that statistical modeling cannot do. For example, we’d like to know whether an effect is real or rather spurious. Unfortunately, modeling merely quantifies uncertainty in the precise way that the model understands the problem. Usually answers to large world questions about truth and causation depend upon information not included in the model. For example, any observed correlation between an outcome and predictor could be eliminated or reversed once another predictor is added to the model. But if we cannot think of another predictor, we might never notice this. Therefore all statistical models are vulnerable to and demand critique, regardless of the precision of their estimates and apparent accuracy of their predictions. (p. 134)</p>
@@ -1084,10 +1037,7 @@ d &lt;-<span class="st"> </span>
          <span class="dt">y =</span>      <span class="kw">rnorm</span>(n, x_real))  <span class="co"># y as Gaussian with mean = x_real</span></code></pre></div>
 <p>Here are the quick <code>pairs()</code> plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(d, <span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-28-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-28-1.png" width="432" /></p>
 <p>We may as well fit a model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
     y <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>x_real <span class="op">+</span><span class="st"> </span>x_spur,
@@ -1120,10 +1070,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(kcal.per.g, mass, neocortex.perc) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">pairs</span>(<span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-31-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-31-1.png" width="432" /></p>
 <p>By just looking at that mess, do you think you could describe the associations of <code>mass</code> and <code>neocortex.perc</code> with the criterion, <code>kcal.per.g</code>? I couldn’t. It’s a good thing we have math.</p>
 <p>McElreath has us start of with a simple univaraible <code>milk</code> model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">5</span> &lt;-<span class="st"> </span>
@@ -1188,10 +1135,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-35-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-35-1.png" width="288" /></p>
 <p>Do note the <code>probs</code> argument in the <code>fitted()</code> code, above. Let’s make the <code>log_mass</code> variable.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dcc &lt;-
 <span class="st">  </span>dcc <span class="op">%&gt;%</span>
@@ -1249,21 +1193,16 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-38-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-38-1.png" width="288" /></p>
 <p>Finally, we’re ready to fit with both predictors included in the “joint model.” Here’s the statistical formula</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{kcal.per.g}_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
-\alpha &amp; \sim &amp; \text{Normal}(0, 100) \\
-\beta_1 &amp; \sim &amp; \text{Normal}(0, 1) \\
-\beta_2 &amp; \sim &amp; \text{Normal}(0, 1) \\
-\sigma &amp; \sim &amp; \text{Uniform}(0, 1)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{kcal.per.g}_i &amp; \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i   &amp; = \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
+\alpha  &amp; \sim \text{Normal}(0, 100) \\
+\beta_1 &amp; \sim \text{Normal}(0, 1) \\
+\beta_2 &amp; \sim \text{Normal}(0, 1) \\
+\sigma  &amp; \sim \text{Uniform}(0, 1)
+\end{align*}\]</span>
 <p>Note, the HMC chains required a longer <code>warmup</code> period and a higher <code>adapt_delta</code> setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">7</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dcc, <span class="dt">family =</span> gaussian,
@@ -1320,10 +1259,7 @@ b5.<span class="dv">7</span> <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-40-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-40-1.png" width="288" /></p>
 <p>And make Figure 5.7, bottom right.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">log_mass       =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span><span class="fl">2.5</span>, <span class="dt">to =</span> <span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">30</span>),
@@ -1349,10 +1285,7 @@ b5.<span class="dv">7</span> <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;kcal.per.g&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-41-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-41-1.png" width="288" /></p>
 <blockquote>
 <p>What [this regression model did was] ask if species that have high neocortex percent <em>for their body mass</em> have higher milk energy. Likewise, the model [asked] if species with high body mass <em>for their neocortex percent</em> have higher milk energy. Bigger species, like apes, have milk with less energy. But species with more neocortex tend to have richer milk. The fact that these two variables, body size and neocortex, are correlated across species makes it hard to see these relationships, unless we statistically account for both. (pp. 140–141, <em>emphasis</em> in the original)</p>
 </blockquote>
@@ -1368,10 +1301,7 @@ d &lt;-<span class="st"> </span>
          <span class="dt">y     =</span> <span class="kw">rnorm</span>(n, x_pos <span class="op">-</span><span class="st"> </span>x_neg))                 <span class="co"># y equally associated with x_pos and x_neg</span></code></pre></div>
 <p>Here are the quick <code>pairs()</code> plots.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(d, <span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-43-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-43-1.png" width="432" /></p>
 <p>Here we fit the models with a little help from the <code>update()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.O.both &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1434,10 +1364,7 @@ d &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-47-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-47-1.png" width="288" /></p>
 <p>Here’s our attempt to predict <code>height</code> with both legs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">8</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1485,17 +1412,11 @@ d &lt;-<span class="st"> </span>
         <span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-49-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-49-1.png" width="624" /></p>
 <p>Now you can use the <code>brms::stanplot()</code> function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with <code>color_scheme_set()</code>.</p>
 <p>This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 6.2.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(b5.<span class="dv">8</span>, <span class="dt">pars =</span> <span class="kw">parnames</span>(b5.<span class="dv">8</span>)[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>])</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-50-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-50-1.png" width="288" /></p>
 <p>If you’d like a nicer and more focused attempt, you might have to revert to the <code>posterior_samples()</code> function and a little ggplot2 code.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b5.<span class="dv">8</span>)
   
@@ -1504,10 +1425,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;firebrick&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-51-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-51-1.png" width="288" /></p>
 <p>While we’re at it, you can make a similar plot with the <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html"><code>mcmc_scatter()</code> function</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mcmc_scatter</span>(<span class="dt">pars  =</span> <span class="kw">c</span>(<span class="st">&quot;b_leg_left&quot;</span>, <span class="st">&quot;b_leg_right&quot;</span>),
@@ -1515,10 +1433,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
                <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">10</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-52-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-52-1.png" width="288" /></p>
 <p>But wow, those coefficients look about as highly correlated as the predictors, just with the reversed sign.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(b_leg_left<span class="op">:</span>b_leg_right) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1527,12 +1442,10 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 ## b_leg_left   1.0000000  -0.9995795
 ## b_leg_right -0.9995795   1.0000000</code></pre>
 <p>On page 165, McElreath clarified that “from the computer’s perspective, this model is simply:”</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-y_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha + (\beta_1 + \beta_2) x_i
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+y_i   &amp; \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i &amp; = \alpha + (\beta_1 + \beta_2) x_i
+\end{align*}\]</span>
 <p>Accordingly, here’s the posterior of the sum of the two regression coefficients, Figure 6.2.b. We’ll use <code>tidybayes::geom_halfeyeh()</code> to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -1545,10 +1458,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
        <span class="dt">subtitle =</span> <span class="st">&quot;Marked by the median and 95% PIs&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-54-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-54-1.png" width="288" /></p>
 <p>Now we fit the model after ditching one of the leg lengths.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">9</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
@@ -1590,10 +1500,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
        <span class="dt">x        =</span> <span class="st">&quot;only b_leg_left, this time&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-56-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-56-1.png" width="288" /></p>
 <blockquote>
 <p><em>When two predictor variables are very strongly correlated, including both in a model may lead to confusion.</em> The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, <em>emphasis</em> in the original)</p>
 </blockquote>
@@ -1651,21 +1558,18 @@ b5.<span class="dv">11</span> &lt;-<span class="st"> </span>
          <span class="dt">formula =</span> kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>perc.fat <span class="op">+</span><span class="st"> </span>perc.lactose)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_summary</span>(b5.<span class="dv">12</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##                Estimate Est.Error   Q2.5  Q97.5
-## b_Intercept       1.014     0.223  0.590  1.466
-## b_perc.fat        0.002     0.003 -0.004  0.007
-## b_perc.lactose   -0.009     0.003 -0.014 -0.004
+## b_Intercept       1.008     0.227  0.558  1.455
+## b_perc.fat        0.002     0.003 -0.003  0.007
+## b_perc.lactose   -0.009     0.003 -0.014 -0.003
 ## sigma             0.068     0.010  0.051  0.091
-## lp__             27.662     1.494 23.898 29.547</code></pre>
+## lp__             27.570     1.535 23.649 29.514</code></pre>
 <p>You can make custom pairs plots with <a href="https://cran.r-project.org/web/packages/GGally/index.html">GGalley</a>, which will also compute the point estimates for the bivariate correlations. Here’s a default plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages(&quot;GGally&quot;, dependencies = T)</span>
 <span class="kw">library</span>(GGally)
 
 <span class="kw">ggpairs</span>(<span class="dt">data =</span> d, <span class="dt">columns =</span> <span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">6</span>)) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-62-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-62-1.png" width="288" /></p>
 <p>But you can customize <a href="http://ggobi.github.io/ggally/">these</a>, too. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_diag &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...){
   <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span>
@@ -1688,10 +1592,7 @@ my_lower &lt;-<span class="st"> </span><span class="cf">function</span>(data, ma
         <span class="dt">axis.text        =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks       =</span> <span class="kw">element_blank</span>(),
         <span class="dt">panel.grid       =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-63-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-63-1.png" width="288" /></p>
 <p>Our two predictor “variables are negatively correlated, and so strongly so that they are nearly redundant. Either helps in predicting <code>kcal.per.g</code>, but neither helps much <em>once you already know the other</em>” (p. 148, <em>emphasis</em> in the original). You can really see that on the lower two scatter plots. You’ll note the <code>ggpairs()</code> plot also showed the Pearson’s correlation coefficients, se we don’t need to use the <code>cor()</code> function like McElreath did in the text.</p>
 <p>In the next section, we’ll run the simulation necessary for our version of Figure 5.10.</p>
 <div id="overthinking-simulating-collinearity." class="section level4">
@@ -1735,10 +1636,7 @@ d &lt;-
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">0072</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-65-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-65-1.png" width="312" /></p>
 <p>Did you notice we used the base R <code>lm()</code> function to fit the models? As McElreath rightly pointed out, <code>lm()</code> presumes flat priors. Proper Bayesian modeling could improve on that. But then we’d have to wait for a whole lot of HMC chains to run and until our personal computers or the algorithms we use to fit our Bayesian models become orders of magnitude faster, we just don’t have time for that.</p>
 </div>
 </div>
@@ -1916,21 +1814,14 @@ post <span class="op">%&gt;%</span>
        <span class="dt">x =</span> <span class="kw">expression</span>(alpha <span class="op">+</span><span class="st"> </span>beta[<span class="st">&quot;male&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<pre><code>## Warning: `as_tibble.matrix()` requires a matrix with column names or a `.name_repair` argument. Using compatibility `.name_repair`.
-## This warning is displayed once per session.</code></pre>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-76-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-76-1.png" width="288" /></p>
 <div id="overthinking-re-parameterizing-the-model." class="section level4">
 <h4><span class="header-section-number">5.4.1.1</span> Overthinking: Re-parameterizing the model.</h4>
 <p>The reparameterized model follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{height}_i &amp; \sim &amp; \text{Normal}(\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{height}_i &amp; \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i &amp; = \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
+\end{align*}\]</span>
 <p>So then a <code>female</code> dummy would satisfy the condition <span class="math inline">\(\text{female}_i = (1 - \text{male}_i)\)</span>. Let’s make that dummy.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
@@ -1975,10 +1866,7 @@ post <span class="op">%&gt;%</span>
        <span class="dt">x =</span> <span class="kw">expression</span>(alpha[<span class="st">&quot;male&quot;</span>] <span class="op">-</span><span class="st"> </span>alpha[<span class="st">&quot;female&quot;</span>])) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-79-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-79-1.png" width="288" /></p>
 </div>
 </div>
 <div id="many-categories." class="section level3">
@@ -2093,7 +1981,8 @@ post<span class="op">$</span>mu_s   &lt;-<span class="st"> </span>post<span clas
        <span class="dt">summary =</span> F) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">primate =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;New World Monkey&quot;</span>, <span class="st">&quot;Old World Monkey&quot;</span>, <span class="st">&quot;Strepsirrhine&quot;</span>, <span class="st">&quot;Ape&quot;</span>), <span class="dt">each =</span> <span class="kw">n</span>() <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">primate =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;New World Monkey&quot;</span>, <span class="st">&quot;Old World Monkey&quot;</span>, <span class="st">&quot;Strepsirrhine&quot;</span>, <span class="st">&quot;Ape&quot;</span>), 
+                       <span class="dt">each =</span> <span class="kw">n</span>() <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">y =</span> <span class="kw">reorder</span>(primate, value))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_halfeyeh</span>(<span class="dt">fill =</span> <span class="st">&quot;firebrick4&quot;</span>, 
@@ -2104,10 +1993,7 @@ post<span class="op">$</span>mu_s   &lt;-<span class="st"> </span>post<span clas
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="05_files/figure-markdown_github/unnamed-chunk-88-1.png" />
-
-</div>
+<p><img src="05_files/figure-html/unnamed-chunk-88-1.png" width="576" /></p>
 <p>And there are multiple ways to compute summary statistics for the difference between <code>NWM</code> and <code>OWM</code>, too.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># base R</span>
 <span class="kw">quantile</span>(post<span class="op">$</span>mu_nwm <span class="op">-</span><span class="st"> </span>post<span class="op">$</span>mu_owm, <span class="dt">probs =</span> <span class="kw">c</span>(.<span class="dv">5</span>, .<span class="dv">025</span>, .<span class="dv">975</span>))</code></pre></div>
@@ -2123,7 +2009,9 @@ post <span class="op">%&gt;%</span>
 <div id="adding-regular-predictor-variables." class="section level3">
 <h3><span class="header-section-number">5.4.3</span> Adding regular predictor variables.</h3>
 <p>If we wanted to fit the model including <code>perc.fat</code> as an additional predictor, the basic statistical formula would be</p>
-<p><span class="math display">\[\mu_i = \alpha + \beta_\text{clade_nwm} \text{clade_nwm}_i + \beta_\text{clade_owm} \text{clade_owm}_i + \beta_\text{clade_s} \text{clade_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i\]</span></p>
+<p><span class="math display">\[
+\mu_i = \alpha + \beta_\text{clade_nwm} \text{clade_nwm}_i + \beta_\text{clade_owm} \text{clade_owm}_i + \beta_\text{clade_s} \text{clade_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i
+\]</span></p>
 <p>The corresponding <code>formula</code> argument within <code>brm()</code> would be <code>kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat</code>.</p>
 </div>
 <div id="another-approach-unique-intercepts." class="section level3">
@@ -2191,10 +2079,10 @@ post <span class="op">%&gt;%</span>
 ## other attached packages:
 ##  [1] GGally_1.4.0         tidybayes_1.0.4      bayesplot_1.6.0     
 ##  [4] fiftystater_1.0.1    ggrepel_0.8.0        forcats_0.3.0       
-##  [7] stringr_1.3.1        dplyr_0.8.0.1        purrr_0.2.5         
+##  [7] stringr_1.4.0        dplyr_0.8.0.1        purrr_0.2.5         
 ## [10] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1        
-## [13] tidyverse_1.2.1      brms_2.8.0           Rcpp_1.0.0          
-## [16] rstan_2.18.2         StanHeaders_2.18.0-1 ggplot2_3.1.0       
+## [13] tidyverse_1.2.1      brms_2.8.8           Rcpp_1.0.1          
+## [16] rstan_2.18.2         StanHeaders_2.18.0-1 ggplot2_3.1.1       
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] colorspace_1.3-2          ggridges_0.5.0           
@@ -2202,51 +2090,52 @@ post <span class="op">%&gt;%</span>
 ##   [5] ggstance_0.3              markdown_0.8             
 ##   [7] base64enc_0.1-3           rstudioapi_0.7           
 ##   [9] svUnit_0.7-12             DT_0.4                   
-##  [11] fansi_0.4.0               mvtnorm_1.0-8            
+##  [11] fansi_0.4.0               mvtnorm_1.0-10           
 ##  [13] lubridate_1.7.4           xml2_1.2.0               
-##  [15] bridgesampling_0.4-0      knitr_1.20               
+##  [15] bridgesampling_0.6-0      knitr_1.20               
 ##  [17] shinythemes_1.1.1         jsonlite_1.5             
 ##  [19] LaplacesDemon_16.1.1      broom_0.5.1              
 ##  [21] shiny_1.1.0               mapproj_1.2.6            
 ##  [23] compiler_3.5.1            httr_1.3.1               
-##  [25] backports_1.1.2           assertthat_0.2.0         
-##  [27] Matrix_1.2-14             lazyeval_0.2.1           
+##  [25] backports_1.1.4           assertthat_0.2.0         
+##  [27] Matrix_1.2-14             lazyeval_0.2.2           
 ##  [29] cli_1.0.1                 later_0.7.3              
 ##  [31] htmltools_0.3.6           prettyunits_1.0.2        
 ##  [33] tools_3.5.1               igraph_1.2.1             
-##  [35] coda_0.19-2               gtable_0.2.0             
-##  [37] glue_1.3.0                reshape2_1.4.3           
+##  [35] coda_0.19-2               gtable_0.3.0             
+##  [37] glue_1.3.1.9000           reshape2_1.4.3           
 ##  [39] maps_3.3.0                cellranger_1.1.0         
 ##  [41] nlme_3.1-137              crosstalk_1.0.0          
-##  [43] ps_1.2.1                  rvest_0.3.2              
-##  [45] mime_0.5                  miniUI_0.1.1.1           
-##  [47] gtools_3.8.1              MASS_7.3-50              
-##  [49] zoo_1.8-2                 scales_1.0.0             
-##  [51] colourpicker_1.0          hms_0.4.2                
-##  [53] promises_1.0.1            Brobdingnag_1.2-5        
-##  [55] inline_0.3.15             RColorBrewer_1.1-2       
-##  [57] shinystan_2.5.0           yaml_2.1.19              
-##  [59] gridExtra_2.3             loo_2.1.0                
-##  [61] reshape_0.8.7             stringi_1.2.3            
-##  [63] highr_0.7                 dygraphs_1.1.1.5         
-##  [65] pkgbuild_1.0.2            rlang_0.3.1              
-##  [67] pkgconfig_2.0.2           matrixStats_0.54.0       
-##  [69] HDInterval_0.2.0          evaluate_0.10.1          
-##  [71] lattice_0.20-35           rstantools_1.5.0         
-##  [73] htmlwidgets_1.2           labeling_0.3             
-##  [75] processx_3.2.1            tidyselect_0.2.5         
-##  [77] plyr_1.8.4                magrittr_1.5             
-##  [79] R6_2.3.0                  generics_0.0.2           
-##  [81] pillar_1.3.1              haven_1.1.2              
-##  [83] withr_2.1.2               xts_0.10-2               
-##  [85] abind_1.4-5               modelr_0.1.2             
-##  [87] crayon_1.3.4              arrayhelpers_1.0-20160527
-##  [89] utf8_1.1.4                rmarkdown_1.10           
-##  [91] grid_3.5.1                readxl_1.1.0             
-##  [93] callr_3.1.0               threejs_0.3.1            
-##  [95] digest_0.6.18             xtable_1.8-2             
-##  [97] httpuv_1.4.4.2            stats4_3.5.1             
-##  [99] munsell_0.5.0             shinyjs_1.0</code></pre>
+##  [43] xfun_0.3                  ps_1.2.1                 
+##  [45] rvest_0.3.2               mime_0.5                 
+##  [47] miniUI_0.1.1.1            gtools_3.8.1             
+##  [49] MASS_7.3-50               zoo_1.8-2                
+##  [51] scales_1.0.0              colourpicker_1.0         
+##  [53] hms_0.4.2                 promises_1.0.1           
+##  [55] Brobdingnag_1.2-6         inline_0.3.15            
+##  [57] RColorBrewer_1.1-2        shinystan_2.5.0          
+##  [59] yaml_2.1.19               gridExtra_2.3            
+##  [61] loo_2.1.0                 reshape_0.8.7            
+##  [63] stringi_1.4.3             highr_0.7                
+##  [65] dygraphs_1.1.1.5          pkgbuild_1.0.2           
+##  [67] rlang_0.3.4               pkgconfig_2.0.2          
+##  [69] matrixStats_0.54.0        HDInterval_0.2.0         
+##  [71] evaluate_0.10.1           lattice_0.20-35          
+##  [73] rstantools_1.5.1          htmlwidgets_1.2          
+##  [75] labeling_0.3              processx_3.2.1           
+##  [77] tidyselect_0.2.5          plyr_1.8.4               
+##  [79] magrittr_1.5              bookdown_0.9             
+##  [81] R6_2.3.0                  generics_0.0.2           
+##  [83] pillar_1.3.1              haven_1.1.2              
+##  [85] withr_2.1.2               xts_0.10-2               
+##  [87] abind_1.4-5               modelr_0.1.2             
+##  [89] crayon_1.3.4              arrayhelpers_1.0-20160527
+##  [91] utf8_1.1.4                rmarkdown_1.10           
+##  [93] grid_3.5.1                readxl_1.1.0             
+##  [95] callr_3.1.0               threejs_0.3.1            
+##  [97] digest_0.6.18             xtable_1.8-2             
+##  [99] httpuv_1.4.4.2            stats4_3.5.1             
+## [101] munsell_0.5.0             shinyjs_1.0</code></pre>
 
 </div>
 </div>

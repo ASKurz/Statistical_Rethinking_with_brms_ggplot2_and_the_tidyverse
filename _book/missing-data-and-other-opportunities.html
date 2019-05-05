@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-18">
+<meta name="date" content="2019-05-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -543,6 +543,7 @@ d &lt;-<span class="st"> </span>WaffleDivorce
 <p>Switch out rethinking for brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(brms)</code></pre></div>
+<pre><code>## Warning: package &#39;Rcpp&#39; was built under R version 3.5.2</code></pre>
 <p>The brms package currently supports <code>theme_black()</code>, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. You can find the origins of the code, <a href="https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/">here</a>.</p>
 <p>Though I like the idea of brms including <code>theme_black()</code>, I’m not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist <a href="https://github.com/trinker">Tyler Rinker</a> has some nice alternative <code>theme_black()</code> code you can find <a href="https://github.com/trinker/plotflow/blob/master/R/theme_black.R">here</a>. The version of <code>theme_black()</code> used for this chapter is based on his version, with a few amendments of my own.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">theme_black &lt;-<span class="st"> </span>
@@ -621,10 +622,7 @@ d &lt;-<span class="st"> </span>WaffleDivorce
 <span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_y_discrete</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Behold: viridis C!&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-16-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-16-1.png" width="384" /></p>
 <p>Now, let’s make use of our custom theme and reproduce/reimagine Figure 14.1.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">7</span>]
 
@@ -636,10 +634,7 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_pointrange</span>(<span class="dt">shape =</span> <span class="dv">20</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">color =</span> color) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Median age marriage&quot;</span> , 
        <span class="dt">y =</span> <span class="st">&quot;Divorce rate&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-17-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-17-1.png" width="384" /></p>
 <p>Notice how <code>viridis_pal(option = &quot;C&quot;)(7)[7]</code> called the seventh color in the color scheme, <code>&quot;#F0F921FF&quot;</code>. For Figure 14.1.b, we’ll select the sixth color in the palette by coding <code>viridis_pal(option = &quot;C&quot;)(7)[6]</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">6</span>]
 
@@ -651,10 +646,7 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">geom_pointrange</span>(<span class="dt">shape =</span> <span class="dv">20</span>, <span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">color =</span> color) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;log population&quot;</span>, 
        <span class="dt">y =</span> <span class="st">&quot;Divorce rate&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-18-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-18-1.png" width="384" /></p>
 <p>Just like in the text, our plot shows states with larger populations tend to have smaller measurement error.</p>
 <div id="error-on-the-outcome." class="section level3">
 <h3><span class="header-section-number">14.1.1</span> Error on the outcome.</h3>
@@ -677,7 +669,7 @@ d <span class="op">%&gt;%</span>
 <p><span class="math display">\[D_{\text{OBS}i} \sim \text{Normal} (D_{\text{EST}i}, D_{\text{SE}i})\]</span></p>
 <p>All this does is define the measurement <span class="math inline">\(D_{\text{OBS}i}\)</span> as having the specified Gaussian distribution centered on the unknown parameter <span class="math inline">\(D_{\text{EST}i}\)</span>. So the above defines a probability for each State <span class="math inline">\(i\)</span>’s observed divorce rate, given a known measurement error. (pp. 426–427)</p>
 </blockquote>
-<p>Now we’re ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the <code>se()</code> syntax, following the form <code>&lt;response&gt; | se(&lt;se_response&gt;, sigma = TRUE)</code>. With this syntax, <code>se</code> stands for standard error, the loose frequentist analogue to the Bayesian posterior <span class="math inline">\(SD\)</span>. Unless you’re <a href="https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/">fitting a meta-analysis</a> on summary information, make sure to specify <code>sigma = TRUE</code>. Without that you’ll have no estimate for <span class="math inline">\(\sigma\)</span>! For more information on the <code>se()</code> method, go to the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> and find the <em>Additional response information</em> subsection of the <code>brmsformula</code> section.</p>
+<p>Now we’re ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the <code>se()</code> syntax, following the form <code>&lt;response&gt; | se(&lt;se_response&gt;, sigma = TRUE)</code>. With this syntax, <code>se</code> stands for standard error, the loose frequentist analogue to the Bayesian posterior <span class="math inline">\(SD\)</span>. Unless you’re <a href="https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/">fitting a meta-analysis</a> on summary information, which we’ll be doing at the end of this chapter, make sure to specify <code>sigma = TRUE</code>. Without that you’ll have no estimate for <span class="math inline">\(\sigma\)</span>! For more information on the <code>se()</code> method, go to the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> and find the <em>Additional response information</em> subsection of the <code>brmsformula</code> section.</p>
 <p>The second way uses the <code>mi()</code> syntax, following the form <code>&lt;response&gt; | mi(&lt;se_response&gt;)</code>. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The <code>mi()</code> syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.</p>
 <p>We’ll start off useing both methods. Our first model, <code>b14.1_se</code>, will follow the <code>se()</code> syntax; the second model, <code>b14.1_mi</code>, will follow the <code>mi()</code> syntax.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># put the data into a `list()`</span>
@@ -869,17 +861,15 @@ b14.1_mi &lt;-<span class="st"> </span>
 ## 55        lp__  -152.51      6.58 -163.76 -141.95</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># you can get similar output with `b14.1_mi$fit`</span></code></pre></div>
 <p>Again, from <code>b_intercept</code> to <code>sigma</code>, the output is about the same. But model <code>b14.1_mi</code>, based on the <code>mi()</code> syntax, contained posterior summaries for all 50 of the criterion values. The <code>se()</code> method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as <code>div_est[i]</code>; with the <code>mi()</code> method, brms indexed them as <code>Yl[i]</code>–no big deal. So while both brms methods accommodated measurement error, the <code>mi()</code> method appears to be the brms analogue to what McElreath did with his model <code>m14.1</code> in the text. Thus, it’s our <code>b14.1_mi</code> model that follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{Divorce}_{\text{estimated}, i} &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
-\mu &amp; = &amp; \alpha + \beta_1 \text A_i + \beta_2 \text R_i \\
-\text{Divorce}_{\text{observed}, i} &amp; \sim &amp; \text{Normal} (\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta_1 &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta_2 &amp; \sim &amp; \text{Normal} (0, 10) \\
-\sigma &amp; \sim &amp; \text{HalfCauchy} (0, 2.5)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{Divorce}_{\text{estimated}, i} &amp; \sim \text{Normal} (\mu_i, \sigma) \\
+\mu     &amp; = \alpha + \beta_1 \text A_i + \beta_2 \text R_i \\
+\text{Divorce}_{\text{observed}, i}  &amp; \sim \text{Normal} (\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
+\alpha  &amp; \sim \text{Normal} (0, 10) \\
+\beta_1 &amp; \sim \text{Normal} (0, 10) \\
+\beta_2 &amp; \sim \text{Normal} (0, 10) \\
+\sigma  &amp; \sim \text{HalfCauchy} (0, 2.5)
+\end{align*}\]</span>
 <p><em>Note</em>. The <code>normal(0, 10)</code> prior McElreath used was <a href="https://github.com/paul-buerkner/brms/issues/114">quite informative and can lead to discrepancies between the rethinking and brms results</a> if you’re not careful. A large issue is the default way brms handles intercept priors. From the hyperlink, Bürkner wrote:</p>
 <blockquote>
 <p>The formula for the original intercept is <code>b_intercept = temp_intercept - dot_product(means_X, b)</code>, where <code>means_X</code> is the vector of means of the predictor variables and b is the vector of regression coefficients (fixed effects). That is, when transforming a prior on the intercept to an “equivalent” prior on the temporary intercept, you have to take the means of the predictors and well as the priors on the other coefficients into account.</p>
@@ -897,10 +887,7 @@ data_error <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Divorce.SE, <span class="dt">y =</span> Estimate <span class="op">-</span><span class="st"> </span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> color)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-23-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-23-1.png" width="384" /></p>
 <p>Before we make Figure 14.2.b, we need to fit a model that ignores measurement error.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b14.1b &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dlist, <span class="dt">family =</span> gaussian,
@@ -981,10 +968,7 @@ f_no_error <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Median age marriage&quot;</span> , <span class="dt">y =</span> <span class="st">&quot;Divorce rate (posterior)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_error<span class="op">$</span>A), 
                   <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">15</span>))</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-25-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-25-1.png" width="384" /></p>
 <p>In our plot, it’s the reddish regression line that accounts for measurement error.</p>
 </div>
 <div id="error-on-both-outcome-and-predictor." class="section level3">
@@ -1088,10 +1072,7 @@ data_error <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Divorce.SE, <span class="dt">y =</span> Estimate <span class="op">-</span><span class="st"> </span>Divorce)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">linetype =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> color)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-28-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-28-1.png" width="384" /></p>
 <p>To get the posterior samples for error-adjusted <code>Marriage</code> rate, we’ll use <code>posterior_samples</code>. If you examine the object with <code>glimpse()</code>, you’ll notice 50 <code>Xme_memar_obsmar_sd[i]</code> vectors, with <span class="math inline">\(i\)</span> ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we can make our version of Figure 14.4.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color_y &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">7</span>]
 color_p &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;C&quot;</span>)(<span class="dv">7</span>)[<span class="dv">2</span>]
@@ -1114,10 +1095,7 @@ color_p &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span 
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">4</span>, <span class="dt">to =</span> <span class="dv">14</span>, <span class="dt">by =</span> <span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Marriage rate (posterior)&quot;</span> , <span class="dt">y =</span> <span class="st">&quot;Divorce rate (posterior)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="fl">14.5</span>))</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-29-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-29-1.png" width="384" /></p>
 <p>The yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath’s rethinking model. I’m unsure of why. If you understand the difference, <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">please share with the rest of the class</a>.</p>
 <p>Anyway,</p>
 <blockquote>
@@ -1128,7 +1106,7 @@ color_p &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span 
 </div>
 <div id="missing-data" class="section level2">
 <h2><span class="header-section-number">14.2</span> Missing data</h2>
-<p>Starting with the developer’s version 2.1.2, (or the official <a href="https://cran.r-project.org/web/packages/brms/index.html">version 2.3.1 available on CRAN</a>) brms now supports Bayesian missing data imputation using adaptations of the <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html">multivariate syntax</a>. Bürkner’s <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html"><em>Handle Missing Values with brms</em> vignette</a> is quite helpful.</p>
+<p>Starting with <a href="https://cran.r-project.org/web/packages/brms/news/news.html">version 2.2.0</a> brms now supports Bayesian missing data imputation using adaptations of the <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html">multivariate syntax</a>. Bürkner’s <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html"><em>Handle Missing Values with brms</em> vignette</a> is quite helpful.</p>
 <div id="imputing-neocortex" class="section level3">
 <h3><span class="header-section-number">14.2.1</span> Imputing <code>neocortex</code></h3>
 <p>Once again, here are the <code>milk</code> data.</p>
@@ -1168,19 +1146,17 @@ data_list &lt;-<span class="st"> </span>
 ## [17]  1.9572739  1.1755733  2.0719133  2.5095993  2.0268316  1.6808279  2.3721112  3.5689692
 ## [25]  4.3748761  4.5821062  3.7072104  3.4998354  4.0064237</code></pre>
 <p>Our statistical model follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{kcal}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha + \beta_1 \text{neocortex}_i + \beta_2 \text{logmass}_i \\
-\text{neocortex}_i &amp; \sim &amp; \text{Normal} (\nu, \sigma_\text{neocortex}) \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 100) \\
-\beta_1 &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta_2 &amp; \sim &amp; \text{Normal} (0, 10) \\
-\sigma &amp; \sim &amp; \text{HalfCauchy} (0, 1) \\
-\nu &amp; \sim &amp; \text{Normal} (0.5, 1) \\
-\sigma_\text{neocortex} &amp; \sim &amp; \text{HalfCauchy} (0, 1)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{kcal}_i           &amp; \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i                   &amp; = \alpha + \beta_1 \text{neocortex}_i + \beta_2 \text{logmass}_i \\
+\text{neocortex}_i      &amp; \sim \text{Normal} (\nu, \sigma_\text{neocortex}) \\
+\alpha                  &amp; \sim \text{Normal} (0, 100) \\
+\beta_1                 &amp; \sim \text{Normal} (0, 10) \\
+\beta_2                 &amp; \sim \text{Normal} (0, 10) \\
+\sigma                  &amp; \sim \text{HalfCauchy} (0, 1) \\
+\nu                     &amp; \sim \text{Normal} (0.5, 1) \\
+\sigma_\text{neocortex} &amp; \sim \text{HalfCauchy} (0, 1)
+\end{align*}\]</span>
 <p>When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the <code>brm()</code> function. Otherwise, things get cluttered in a hurry.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b_model &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="co"># here&#39;s the primary `kcal` model</span>
@@ -1323,10 +1299,7 @@ f_b14.<span class="dv">3</span> <span class="op">%&gt;%</span><span class="st"> 
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Note: For the regression line in this plot, log(mass)</span><span class="ch">\n</span><span class="st">has been set to its median, 1.244.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;neocortex proportion&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;kcal per gram&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-39-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-39-1.png" width="384" /></p>
 <p>Figure 14.4.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;D&quot;</span>)(<span class="dv">7</span>)[<span class="dv">4</span>]
 
@@ -1343,27 +1316,20 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;neocortex proportion&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_list<span class="op">$</span>logmass, <span class="dt">na.rm =</span> T),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">55</span>, .<span class="dv">8</span>))</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-40-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-40-1.png" width="384" /></p>
 </div>
 <div id="improving-the-imputation-model" class="section level3">
 <h3><span class="header-section-number">14.2.2</span> Improving the imputation model</h3>
 <p>Like McElreath, we’ll update the imputation line of our statistical model to:</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{neocortex}_i &amp; \sim &amp; \text{Normal} (\nu_i, \sigma_\text{neocortex}) \\
-\nu_i &amp; = &amp; \alpha_\text{neocortex} + \gamma_1 \text{logmass}_i \\
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{neocortex}_i &amp; \sim \text{Normal} (\nu_i, \sigma_\text{neocortex}) \\
+\nu_i              &amp; = \alpha_\text{neocortex} + \gamma_1 \text{logmass}_i \\
+\end{align*}\]</span>
 <p>which includes the updated priors</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\alpha_\text{neocortex} &amp; \sim &amp; \text{Normal} (0.5, 1) \\
-\gamma_1 &amp; \sim &amp; \text{Normal} (0, 10)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\alpha_\text{neocortex} &amp; \sim \text{Normal} (0.5, 1) \\
+\gamma_1                &amp; \sim \text{Normal} (0, 10)
+\end{align*}\]</span>
 <p>As far as the brms code goes, adding <code>logmass</code> as a predictor to the <code>neocortex</code> submodel is pretty simple.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define the model</span>
 b_model &lt;-<span class="st"> </span>
@@ -1470,10 +1436,7 @@ f_b14.<span class="dv">4</span> <span class="op">%&gt;%</span><span class="st"> 
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;Note: For the regression line in this plot, log(mass)</span><span class="ch">\n</span><span class="st">has been set to its median, 1.244.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;neocortex proportion&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;kcal per gram&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-43-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-43-1.png" width="384" /></p>
 <p>Figure 14.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">color &lt;-<span class="st"> </span><span class="kw">viridis_pal</span>(<span class="dt">option =</span> <span class="st">&quot;D&quot;</span>)(<span class="dv">7</span>)[<span class="dv">3</span>]
 
@@ -1490,17 +1453,14 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;neocortex proportion&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(data_list<span class="op">$</span>logmass, <span class="dt">na.rm =</span> T),
                   <span class="dt">ylim =</span> <span class="kw">c</span>(.<span class="dv">55</span>, .<span class="dv">8</span>))</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-44-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-44-1.png" width="384" /></p>
 <p>If modern missing data methods are new to you, you might also check out van Burren’s great online text <a href="https://stefvanbuuren.name/fimd/"><em>Flexible Imputation of Missing Data. Second Edition</em></a>. I’m also a fan of Enders’ <a href="http://www.appliedmissingdata.com"><em>Applied Missing Data Analysis</em></a>, for which you can find a free sample chapter <a href="http://www.appliedmissingdata.com/sample-chapter.pdf">here</a>. I’ll also quickly mention that <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html">brms accommodates multiple imputation</a>, too.</p>
 </div>
 </div>
 <div id="summary-bonus-meta-analysis" class="section level2">
 <h2><span class="header-section-number">14.3</span> <del>Summary</del> Bonus: Meta-analysis</h2>
 <p>If your mind isn’t fully blown by those measurement-error and missing-data models, let’s keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use <code>brms::brm()</code> to fit Bayesian meta-analyses, too.</p>
-<p>Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre’s great blog post, <a href="https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/"><em>Meta-analysis is a special case of Bayesian multilevel modeling</em></a>. And since McElreath’s text doesn’t directly address meta-analyses, we’ll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin’s <a href="http://www.stat.columbia.edu/~gelman/book/"><em>Bayesian data analysis, Third edition</em></a>. We’ll let Gelman and colleagues introduce the topic:</p>
+<p>Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre’s great blog post, <a href="https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/"><em>Meta-analysis is a special case of Bayesian multilevel modeling</em></a>. And since McElreath’s text doesn’t directly address meta-analyses, we’ll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin’s <a href="http://www.stat.columbia.edu/~gelman/book/"><em>Bayesian data analysis, Third edition</em></a>. We’ll let Gelman and colleagues introduce the topic:</p>
 <blockquote>
 <p>Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected <em>a priori</em> to have predictable effects favoring one study over another.… this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…</p>
 <p>The first potential estimand of a meta-analysis, or a hierarchically structured problem in general, is the mean of the distribution of effect sizes, since this represents the overall ‘average’ effect across all studies that could be regarded as exchangeable with the observed studies. Other possible estimands are the effect size in any of the observed studies and the effect size in another, comparable (exchangeable) unobserved study. (pp. 125—126, <em>emphasis</em> in the original)</p>
@@ -1530,14 +1490,14 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 ## $ ll      &lt;dbl&gt; -1.76, -1.04, -0.09, -1.01, -0.82, 0.16, -0.14, 0.20, -0.42, -0.49, 0.15, 0.35, -…
 ## $ ul      &lt;dbl&gt; 0.28, 1.77, 0.76, 0.84, 1.03, 1.10, 0.53, 0.74, 0.70, 0.13, 2.22, 1.05, 1.71, 0.2…</code></pre>
 <p>In this paper, the effect size of interest is a <em>Cohen’s d</em>, derived from the formula</p>
-<p><span class="math display">\[d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_{pooled}}\]</span></p>
+<p><span class="math display">\[d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_\text{pooled}}\]</span></p>
 <p>where</p>
-<p><span class="math display">\[\sigma_{pooled} = \sqrt{\frac{((n_1 - 1) \sigma_1^2) + ((n_2 - 1) \sigma_2^2)}{n_1 + n_2 -2}}\]</span></p>
+<p><span class="math display">\[\sigma_\text{pooled} = \sqrt{\frac{((n_1 - 1) \sigma_1^2) + ((n_2 - 1) \sigma_2^2)}{n_1 + n_2 -2}}\]</span></p>
 <p>To help make the equation for <span class="math inline">\(d\)</span> clearer for our example, we might re-express it as</p>
-<p><span class="math display">\[d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_{pooled}}\]</span></p>
+<p><span class="math display">\[d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_\text{pooled}}\]</span></p>
 <p>McElreath didn’t really focus on effect sizes in his text. If you need a refresher, you might check out Kelley and Preacher’s <a href="https://www.researchgate.net/profile/Ken_Kelley/publication/270757972_On_Effect_Size/links/0046351b0cd48217ce000000/On-Effect-Size.pdf"><em>On effect size</em></a>. But in words, <em>Cohen’s d</em> is a standardized mean difference between two groups.</p>
 <p>So if you look back up at the results of <code>glimpse(spank)</code> you’ll notice the column <code>d</code>, which is indeed a vector of <em>Cohen’s d</em> effect sizes. The last two columns, <code>ll</code> and <code>ul</code>, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don’t want confidence intervals for our <code>d</code>-values; we want their standard errors. Fortunately, we can compute those with the following formula</p>
-<p><span class="math display">\[SE = \frac{\text{upper limit } – \text{lower limit}}{3.92}\]</span></p>
+<p><span class="math display">\[SE = \frac{\text{upper limit} - \text{lower limit}}{3.92}\]</span></p>
 <p>Here it is in code.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spank &lt;-
 <span class="st">  </span>spank <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1556,14 +1516,12 @@ data_list <span class="op">%&gt;%</span><span class="st"> </span>
 ## $ ul      &lt;dbl&gt; 0.28, 1.77, 0.76, 0.84, 1.03, 1.10, 0.53, 0.74, 0.70, 0.13, 2.22, 1.05, 1.71, 0.2…
 ## $ se      &lt;dbl&gt; 0.52040816, 0.71683673, 0.21683673, 0.47193878, 0.47193878, 0.23979592, 0.1709183…</code></pre>
 <p>Now are data are ready, we can express our first Bayesian meta-analysis with the formula</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{d}_i &amp; \sim &amp; \text{Normal}(\theta_i, \sigma_i = \text{se}_i) \\
-\theta_i &amp; \sim &amp; \text{Normal} (\mu, \tau) \\
-\mu &amp; \sim &amp; \text{Normal} (0, 1) \\
-\tau &amp; \sim &amp; \text{HalfCauchy} (0, 1)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{d}_i &amp; \sim \text{Normal}(\theta_i, \sigma_i = \text{se}_i) \\
+\theta_i   &amp; \sim \text{Normal} (\mu, \tau) \\
+\mu        &amp; \sim \text{Normal} (0, 1) \\
+\tau       &amp; \sim \text{HalfCauchy} (0, 1)
+\end{align*}\]</span>
 <p>The last two lines, of course, spell out our priors. In psychology, it’s pretty rare to see <em>Cohen’s d</em>-values greater than the absolute value of <span class="math inline">\(\pm 1\)</span>. So in the absence of more specific domain knowledge–which I don’t have–, it seems like <span class="math inline">\(\text{Normal} (0, 1)\)</span> is a reasonable place to start. And just like McElreath used <span class="math inline">\(\text{HalfCauchy} (0, 1)\)</span> as the default prior for the group-level standard deviations, <a href="https://psyarxiv.com/7tbrm/">it makes sense to use it here</a> for our meta-analytic <span class="math inline">\(\tau\)</span> parameter.</p>
 <p>Here’s the code for the first model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b14.<span class="dv">5</span> &lt;-<span class="st"> </span>
@@ -1724,10 +1682,7 @@ label &lt;-
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="kw">expression</span>(tau)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-51-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-51-1.png" width="480" /></p>
 <p>So at this point, the big story is there’s more variability between the studies than there is the outcomes. But I still want to get a sense of the individual outcomes. Here we’ll use <code>tidybayes::geom_halfeyeh()</code> to help us make our version of a <a href="https://cran.r-project.org/web/packages/forestplot/vignettes/forestplot.html">forest plot</a> and <code>tidybayes::spread_draws()</code> to help with the initial wrangling.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -1749,10 +1704,7 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-52-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-52-1.png" width="480" /></p>
 <p>The solid and dashed vertical white lines in the background mark off the grand mean (i.e., the meta-analytic effect) and its 95% intervals. But anyway, there’s not a lot of variability across the outcomes. Let’s go one step further with the model. Doubling back to Gelman and colleagues, we read:</p>
 <blockquote>
 <p>When assuming exchangeability we assume there are no important covariates that might form the basis of a more complex model, and this assumption (perhaps misguidedly) is widely adopted in meta-analysis. What if other information (in addition to the data <span class="math inline">\((n, y)\)</span>) is available to distinguish among the <span class="math inline">\(J\)</span> studies in a meta-analysis, so that an exchangeable model is inappropriate? In this situation, we can expand the framework of the model to be exchangeable in the observed data and covariates, for example using a hierarchical regression model. (p. 126)</p>
@@ -1809,13 +1761,10 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Overall difference for between- vs within-participant designs&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid   =</span> <span class="kw">element_blank</span>())</code></pre></div>
-<div class="figure">
-<img src="14_files/figure-markdown_github/unnamed-chunk-55-1.png" />
-
-</div>
+<p><img src="14_files/figure-html/unnamed-chunk-55-1.png" width="432" /></p>
 <p>That difference isn’t as large I’d expect it to be. But then again, I’m no spanking researcher. So what do I know?</p>
 <p>There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we’ve gone far enough to get you started.</p>
-<p>If you’d like to learn more about these methods, do check out Vourre’s <a href="https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/"><em>Meta-analysis is a special case of Bayesian multilevel modeling</em></a>. From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the <code>brmstools::forest()</code> function and how our Bayesian brms method compares with Frequentist meta-analyses via the <a href="http://www.metafor-project.org/doku.php/metafor">metafor package</a>. You might also check out Williams, Rast, and Bürkner’s manuscript, <a href="https://psyarxiv.com/7tbrm/"><em>Bayesian Meta-Analysis with Weakly Informative Prior Distributions</em></a> to give you an empirical justification for using a half-Cauchy prior for your meta-analysis <span class="math inline">\(\tau\)</span> parameters.</p>
+<p>If you’d like to learn more about these methods, do check out Vourre’s <a href="https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/"><em>Meta-analysis is a special case of Bayesian multilevel modeling</em></a>. From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the <code>brmstools::forest()</code> function and how our Bayesian brms method compares with Frequentist meta-analyses via the <a href="http://www.metafor-project.org/doku.php/metafor">metafor package</a>. You might also check out Williams, Rast, and Bürkner’s manuscript, <a href="https://psyarxiv.com/7tbrm/"><em>Bayesian Meta-Analysis with Weakly Informative Prior Distributions</em></a> to give you an empirical justification for using a half-Cauchy prior for your meta-analysis <span class="math inline">\(\tau\)</span> parameters.</p>
 </div>
 <div id="reference-13" class="section level2 unnumbered">
 <h2>Reference</h2>
@@ -1839,45 +1788,45 @@ b14.<span class="dv">6</span> <span class="op">%&gt;%</span><span class="st"> </
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] tidybayes_1.0.4      broom_0.5.1          bayesplot_1.6.0      bindrcpp_0.2.2      
-##  [5] viridis_0.5.1        viridisLite_0.3.0    brms_2.8.0           Rcpp_1.0.0          
-##  [9] rstan_2.18.2         StanHeaders_2.18.0-1 forcats_0.3.0        stringr_1.3.1       
-## [13] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
-## [17] tibble_2.1.1         ggplot2_3.1.0        tidyverse_1.2.1     
+##  [1] tidybayes_1.0.4      broom_0.5.1          viridis_0.5.1        viridisLite_0.3.0   
+##  [5] brms_2.8.8           Rcpp_1.0.1           rstan_2.18.2         StanHeaders_2.18.0-1
+##  [9] forcats_0.3.0        stringr_1.4.0        dplyr_0.8.0.1        purrr_0.2.5         
+## [13] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1         ggplot2_3.1.1       
+## [17] tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
 ##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
 ##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
-## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-8            
-## [13] lubridate_1.7.4           xml2_1.2.0                codetools_0.2-15         
-## [16] bridgesampling_0.4-0      knitr_1.20                shinythemes_1.1.1        
+## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-10           
+## [13] lubridate_1.7.4           xml2_1.2.0                bridgesampling_0.6-0     
+## [16] knitr_1.20                shinythemes_1.1.1         bayesplot_1.6.0          
 ## [19] jsonlite_1.5              shiny_1.1.0               compiler_3.5.1           
-## [22] httr_1.3.1                backports_1.1.2           assertthat_0.2.0         
-## [25] Matrix_1.2-14             lazyeval_0.2.1            cli_1.0.1                
+## [22] httr_1.3.1                backports_1.1.4           assertthat_0.2.0         
+## [25] Matrix_1.2-14             lazyeval_0.2.2            cli_1.0.1                
 ## [28] later_0.7.3               htmltools_0.3.6           prettyunits_1.0.2        
 ## [31] tools_3.5.1               igraph_1.2.1              coda_0.19-2              
-## [34] gtable_0.2.0              glue_1.3.0                reshape2_1.4.3           
+## [34] gtable_0.3.0              glue_1.3.1.9000           reshape2_1.4.3           
 ## [37] cellranger_1.1.0          nlme_3.1-137              crosstalk_1.0.0          
-## [40] ps_1.2.1                  rvest_0.3.2               mime_0.5                 
-## [43] miniUI_0.1.1.1            gtools_3.8.1              MASS_7.3-50              
-## [46] zoo_1.8-2                 scales_1.0.0              colourpicker_1.0         
-## [49] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
-## [52] inline_0.3.15             shinystan_2.5.0           yaml_2.1.19              
-## [55] gridExtra_2.3             loo_2.1.0                 stringi_1.2.3            
-## [58] highr_0.7                 dygraphs_1.1.1.5          pkgbuild_1.0.2           
-## [61] rlang_0.3.1               pkgconfig_2.0.2           matrixStats_0.54.0       
-## [64] evaluate_0.10.1           lattice_0.20-35           bindr_0.1.1              
-## [67] rstantools_1.5.0          htmlwidgets_1.2           labeling_0.3             
+## [40] xfun_0.3                  ps_1.2.1                  rvest_0.3.2              
+## [43] mime_0.5                  miniUI_0.1.1.1            gtools_3.8.1             
+## [46] MASS_7.3-50               zoo_1.8-2                 scales_1.0.0             
+## [49] colourpicker_1.0          hms_0.4.2                 promises_1.0.1           
+## [52] Brobdingnag_1.2-6         inline_0.3.15             shinystan_2.5.0          
+## [55] yaml_2.1.19               gridExtra_2.3             loo_2.1.0                
+## [58] stringi_1.4.3             highr_0.7                 dygraphs_1.1.1.5         
+## [61] pkgbuild_1.0.2            rlang_0.3.4               pkgconfig_2.0.2          
+## [64] matrixStats_0.54.0        evaluate_0.10.1           lattice_0.20-35          
+## [67] rstantools_1.5.1          htmlwidgets_1.2           labeling_0.3             
 ## [70] processx_3.2.1            tidyselect_0.2.5          plyr_1.8.4               
-## [73] magrittr_1.5              R6_2.3.0                  generics_0.0.2           
-## [76] pillar_1.3.1              haven_1.1.2               withr_2.1.2              
-## [79] xts_0.10-2                abind_1.4-5               modelr_0.1.2             
-## [82] crayon_1.3.4              arrayhelpers_1.0-20160527 utf8_1.1.4               
-## [85] rmarkdown_1.10            grid_3.5.1                readxl_1.1.0             
-## [88] callr_3.1.0               threejs_0.3.1             digest_0.6.18            
-## [91] xtable_1.8-2              httpuv_1.4.4.2            stats4_3.5.1             
-## [94] munsell_0.5.0             shinyjs_1.0</code></pre>
+## [73] magrittr_1.5              bookdown_0.9              R6_2.3.0                 
+## [76] generics_0.0.2            pillar_1.3.1              haven_1.1.2              
+## [79] withr_2.1.2               xts_0.10-2                abind_1.4-5              
+## [82] modelr_0.1.2              crayon_1.3.4              arrayhelpers_1.0-20160527
+## [85] utf8_1.1.4                rmarkdown_1.10            grid_3.5.1               
+## [88] readxl_1.1.0              callr_3.1.0               threejs_0.3.1            
+## [91] digest_0.6.18             xtable_1.8-2              httpuv_1.4.4.2           
+## [94] stats4_3.5.1              munsell_0.5.0             shinyjs_1.0</code></pre>
 
 </div>
 </div>

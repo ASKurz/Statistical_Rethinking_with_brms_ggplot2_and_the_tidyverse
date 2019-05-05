@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-18">
+<meta name="date" content="2019-05-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -501,10 +501,7 @@ dutchmasters<span class="op">$</span>pearl_earring</code></pre></div>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_rug</span>(<span class="dt">color =</span> <span class="st">&quot;#8B9DAF&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">7</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-6-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-6-1.png" width="312" /></p>
 <p>Again, these are not “data.” Figure 13.2 shows a distribution of <em>parameters</em>.</p>
 </div>
 <div id="simulate-observations." class="section level3">
@@ -552,28 +549,23 @@ d &lt;-
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>cafe, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-9-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-9-1.png" width="336" /></p>
 </div>
 <div id="the-varying-slopes-model." class="section level3">
 <h3><span class="header-section-number">13.1.3</span> The varying slopes model.</h3>
 <p>The statistical formula for our varying-slopes model follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{wait}_i &amp; \sim &amp; \text{Normal} (\mu_i, \sigma) \\
-\mu_i &amp; = &amp; \alpha_{\text{cafe}_i} + \beta_{\text{cafe}_i} \text{afternoon}_i \\
-\begin{bmatrix} \alpha_\text{cafe} \\ \beta_\text{cafe} \end{bmatrix} &amp; \sim &amp; \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
-\mathbf S &amp; = &amp; \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta &amp; \sim &amp; \text{Normal} (0, 10) \\
-\sigma &amp; \sim &amp; \text{HalfCauchy} (0, 1) \\
-\sigma_\alpha &amp; \sim &amp; \text{HalfCauchy} (0, 1) \\
-\sigma_\beta &amp; \sim &amp; \text{HalfCauchy} (0, 1) \\
-\mathbf R &amp; \sim &amp; \text{LKJcorr} (2)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{wait}_i &amp; \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i         &amp; = \alpha_{\text{cafe}_i} + \beta_{\text{cafe}_i} \text{afternoon}_i \\
+\begin{bmatrix} \alpha_\text{cafe} \\ \beta_\text{cafe} \end{bmatrix} &amp; \sim \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
+\mathbf S     &amp; = \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \\
+\alpha        &amp; \sim \text{Normal} (0, 10) \\
+\beta         &amp; \sim \text{Normal} (0, 10) \\
+\sigma        &amp; \sim \text{HalfCauchy} (0, 1) \\
+\sigma_\alpha &amp; \sim \text{HalfCauchy} (0, 1) \\
+\sigma_\beta  &amp; \sim \text{HalfCauchy} (0, 1) \\
+\mathbf R     &amp; \sim \text{LKJcorr} (2)
+\end{align*}\]</span>
 <p>Of the notable new parts, <span class="math inline">\(\mathbf S\)</span> is the covariance matrix and <span class="math inline">\(\mathbf R\)</span> is the corresponding correlation matrix, which we might more fully express as</p>
 <p><span class="math display">\[\begin{pmatrix} 1 &amp; \rho \\ \rho &amp; 1 \end{pmatrix}\]</span></p>
 <p>And according to our prior, <span class="math inline">\(\mathbf R\)</span> is distributed as <span class="math inline">\(\text{LKJcorr} (2)\)</span>. We’ll use <code>rethinking::rlkjcorr()</code> to get a better sense of what that even is.</p>
@@ -610,10 +602,7 @@ r_<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-11-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-11-1.png" width="288" /></p>
 <p>Okay, let’s get ready to model and switch out rethinking for brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(brms)</code></pre></div>
@@ -645,10 +634,7 @@ post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-13-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-13-1.png" width="288" /></p>
 <p>McElreath then depicted multidimensional shrinkage by plotting the posterior mean of the varying effects compared to their raw, unpooled estimated. With brms, we can get the <code>cafe</code>-specific intercepts and <code>afternoon</code> slopes with <code>coef()</code>, which returns a three-dimensional list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># coef(b13.1) %&gt;% glimpse()</span>
 
@@ -766,18 +752,18 @@ params <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">range</span>(params<span class="op">$</span>Intercept),
                   <span class="dt">ylim =</span> <span class="kw">range</span>(params<span class="op">$</span>Slope)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-17-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-17-1.png" width="480" /></p>
 <p>Learn more about <code>stat_ellipse()</code>, <a href="https://ggplot2.tidyverse.org/reference/stat_ellipse.html">here</a>. Let’s prep for Figure 13.5.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># retrieve the partially-pooled estimates with `coef()`</span>
 partially_pooled_estimates &lt;-
 <span class="st">  </span><span class="kw">coef</span>(b13.<span class="dv">1</span>)<span class="op">$</span>cafe[ , <span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st">                  </span><span class="co"># convert the two vectors to a tibble</span>
-<span class="st">  </span><span class="kw">rename</span>(<span class="dt">morning =</span> Intercept) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># the Intercept is the wait time for morning (i.e., `afternoon == 0`)</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">afternoon =</span> morning <span class="op">+</span><span class="st"> </span>afternoon,  <span class="co"># `afternoon` wait time is the `morning` wait time plus the afternoon slope</span>
-         <span class="dt">cafe      =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># Add the `cafe` index</span>
+<span class="st">  </span><span class="co"># convert the two vectors to a tibble</span>
+<span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># the Intercept is the wait time for morning (i.e., `afternoon == 0`)</span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="dt">morning =</span> Intercept) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># `afternoon` wait time is the `morning` wait time plus the afternoon slope</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">afternoon =</span> morning <span class="op">+</span><span class="st"> </span>afternoon,
+         <span class="dt">cafe      =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># add the `cafe` index</span>
 <span class="st">  </span><span class="kw">select</span>(cafe, <span class="kw">everything</span>()) 
 
 <span class="co"># compute unpooled estimates directly from data</span>
@@ -786,9 +772,11 @@ un_pooled_estimates &lt;-
 <span class="st">  </span><span class="co"># as above, with these two lines, we compute each cafe&#39;s mean wait value by time of day</span>
 <span class="st">  </span><span class="kw">group_by</span>(afternoon, cafe) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(wait)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># ungrouping allows us to alter the grouping variable, afternoon</span>
+<span class="st">  </span><span class="co"># ungrouping allows us to alter the grouping variable, afternoon</span>
+<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">afternoon =</span> <span class="kw">ifelse</span>(afternoon <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;morning&quot;</span>, <span class="st">&quot;afternoon&quot;</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">spread</span>(<span class="dt">key =</span> afternoon, <span class="dt">value =</span> mean)  <span class="co"># this seperates out the values into morning and afternoon columns</span>
+<span class="st">  </span><span class="co"># this seperates out the values into morning and afternoon columns</span>
+<span class="st">  </span><span class="kw">spread</span>(<span class="dt">key =</span> afternoon, <span class="dt">value =</span> mean)
 
 estimates &lt;-
 <span class="st">  </span><span class="kw">bind_rows</span>(partially_pooled_estimates, un_pooled_estimates) <span class="op">%&gt;%</span>
@@ -814,10 +802,7 @@ estimates &lt;-
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;morning wait (mins)&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;afternoon wait (mins)&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-19-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-19-1.png" width="451.2" /></p>
 </div>
 </div>
 <div id="example-admission-decisions-and-gender" class="section level2">
@@ -838,16 +823,14 @@ d &lt;-<span class="st"> </span>
 <div id="varying-intercepts." class="section level3">
 <h3><span class="header-section-number">13.2.1</span> Varying intercepts.</h3>
 <p>The statistical formula for our varying-intercepts logistic regression model follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{admit}_i &amp; \sim &amp; \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) &amp; = &amp; \alpha_{\text{dept_id}_i} + \beta \text{male}_i \\
-\alpha_\text{dept_id} &amp; \sim &amp; \text{Normal} (\alpha, \sigma) \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta &amp; \sim &amp; \text{Normal} (0, 1) \\
-\sigma &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{admit}_i         &amp; \sim \text{Binomial} (n_i, p_i) \\
+\text{logit} (p_i)     &amp; = \alpha_{\text{dept_id}_i} + \beta \text{male}_i \\
+\alpha_\text{dept_id} &amp; \sim \text{Normal} (\alpha, \sigma) \\
+\alpha                 &amp; \sim \text{Normal} (0, 10) \\
+\beta                  &amp; \sim \text{Normal} (0, 1) \\
+\sigma                 &amp; \sim \text{HalfCauchy} (0, 2) \\
+\end{align*}\]</span>
 <p>Since there’s only one left-hand term in our <code>(1 | dept_id)</code> code, there’s only one random effect.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">2</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> binomial,
@@ -860,7 +843,7 @@ d &lt;-<span class="st"> </span>
       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</code></pre></div>
 <p>Since we don’t have a <code>depth=2</code> argument in <code>brms::summary()</code>, we’ll have to get creative. One way to look at the parameters is with <code>b13.2$fit</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">2</span><span class="op">$</span>fit</code></pre></div>
-<pre><code>## Inference for Stan model: bc63eecab9ca7a1bd98aff8a3c74d8d2.
+<pre><code>## Inference for Stan model: de5d09c4423759e244c7781d0c649f86.
 ## 3 chains, each with iter=4500; warmup=500; thin=1; 
 ## post-warmup draws per chain=4000, total post-warmup draws=12000.
 ## 
@@ -876,13 +859,13 @@ d &lt;-<span class="st"> </span>
 ## r_dept_id[6,Intercept]  -2.03    0.01 0.66  -3.38  -2.40  -2.03  -1.64  -0.72  1959    1
 ## lp__                   -61.84    0.05 2.51 -67.60 -63.34 -61.50 -60.02 -57.92  2635    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Apr 18 16:09:31 2019.
+## Samples were drawn using NUTS(diag_e) at Sat May  4 14:22:51 2019.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
 <p>However, notice that the group-specific parameters don’t match up with those in the text. Though our <code>r_dept_id[1,Intercept]</code> had a posterior mean of 1.25, the number for <code>a_dept[1]</code> in the text is 0.67. This is because the brms package presented the random effects in the <strong>non-centered</strong> metric. The rethinking package, in contrast, presented the random effects in the <strong>centered</strong> metric. On page 399, McElreath wrote:</p>
 <blockquote>
-<p>Remember, the values above are the <span class="math inline">\(\alpha_{DEPT}\)</span> estimates, and so they are deviations from the global mean <span class="math inline">\(\alpha\)</span>, which in this case has posterior mean -0.58. So department A, “[1]” in the table, has the highest average admission rate. Department F, “[6]” in the table, has the lowest.</p>
+<p>Remember, the values above are the <span class="math inline">\(\alpha_\text{DEPT}\)</span> estimates, and so they are deviations from the global mean <span class="math inline">\(\alpha\)</span>, which in this case has posterior mean -0.58. So department A, “[1]” in the table, has the highest average admission rate. Department F, “[6]” in the table, has the lowest.</p>
 </blockquote>
 <p>Here’s another fun fact:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># numbers taken from the mean column on page 399 in the text</span>
@@ -987,18 +970,16 @@ d &lt;-<span class="st"> </span>
 <div id="varying-effects-of-being-male." class="section level3">
 <h3><span class="header-section-number">13.2.2</span> Varying effects of being <code>male</code>.</h3>
 <p>Now we’re ready to allow our <code>male</code> dummy to varies, too, the statistical model follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{admit}_i &amp; \sim &amp; \text{Binomial} (n_i, p_i) \\
-\text{logit} (p_i) &amp; = &amp; \alpha_{\text{dept_id}_i} + \beta_{\text{dept_id}_i} \text{male}_i \\
-\begin{bmatrix} \alpha_\text{dept_id} \\ \beta_\text{dept_id} \end{bmatrix} &amp; \sim &amp; \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
-\mathbf S &amp; = &amp; \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 10) \\
-\beta &amp; \sim &amp; \text{Normal} (0, 1) \\
-(\sigma_\alpha, \sigma_\beta) &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
-\mathbf R &amp; \sim &amp; \text{LKJcorr} (2)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{admit}_i     &amp; \sim \text{Binomial} (n_i, p_i) \\
+\text{logit} (p_i) &amp; = \alpha_{\text{dept_id}_i} + \beta_{\text{dept_id}_i} \text{male}_i \\
+\begin{bmatrix} \alpha_\text{dept_id} \\ \beta_\text{dept_id} \end{bmatrix} &amp; \sim \text{MVNormal} \bigg (\begin{bmatrix} \alpha \\ \beta \end{bmatrix}, \mathbf{S}  \bigg ) \\
+\mathbf S &amp; = \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \mathbf R \begin{pmatrix} \sigma_\alpha &amp; 0 \\ 0 &amp; \sigma_\beta \end{pmatrix} \\
+\alpha                        &amp; \sim \text{Normal} (0, 10) \\
+\beta                         &amp; \sim \text{Normal} (0, 1) \\
+(\sigma_\alpha, \sigma_\beta) &amp; \sim \text{HalfCauchy} (0, 2) \\
+\mathbf R                     &amp; \sim \text{LKJcorr} (2)
+\end{align*}\]</span>
 <p>Fit the model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">3</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> binomial,
@@ -1028,10 +1009,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">825</span>, .<span class="dv">06</span>),
         <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-31-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-31-1.png" width="768" /></p>
 <p>Our chains look great. While we’re at it, let’s examine the <span class="math inline">\(\hat{R}\)</span> vales in a handmade plot, too.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rhat</span>(b13.<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1050,10 +1028,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-32-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-32-1.png" width="768" /></p>
 <p>Them are some respectable <span class="math inline">\(\hat{R}\)</span> values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set <code>coord_cartesian(xlim = c(0.99, 1.01))</code>). Here are the random effects in the <strong>centered</strong> metric:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(b13.<span class="dv">3</span>)</code></pre></div>
 <pre><code>## $dept_id
@@ -1097,10 +1072,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y     =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-34-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-34-1.png" width="624" /></p>
 <p>Just like in the text, our <code>male</code> slopes are much less dispersed than our intercepts.</p>
 </div>
 <div id="shrinkage." class="section level3">
@@ -1121,10 +1093,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;The dot is at the median; the</span><span class="ch">\n</span><span class="st">horizontal bar is the 95% CI.&quot;</span>,
        <span class="dt">x =</span> <span class="st">&quot;correlation&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-35-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-35-1.png" width="288" /></p>
 <p>Much like for Figure 13.5.b, above, it’ll take a little data processing before we’re ready to reproduce Figure 13.6.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># here we put the partially-pooled estimate summaries in a tibble</span>
 partially_pooled_params &lt;-
@@ -1150,7 +1119,8 @@ un_pooled_params &lt;-
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">male =</span> <span class="kw">ifelse</span>(male <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="st">&quot;intercept&quot;</span>, <span class="st">&quot;slope&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">spread</span>(<span class="dt">key  =</span> male, <span class="dt">value =</span> prob_admit) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">rename</span>(<span class="dt">dept =</span> dept_id) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intercept =</span> <span class="kw">prob_to_logit</span>(intercept),  <span class="co"># here we put our `prob_to_logit()` function to work</span>
+<span class="st">  </span><span class="co"># here we put our `prob_to_logit()` function to work</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intercept =</span> <span class="kw">prob_to_logit</span>(intercept),
          <span class="dt">slope     =</span> <span class="kw">prob_to_logit</span>(slope)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">slope     =</span> slope <span class="op">-</span><span class="st"> </span>intercept)
 
@@ -1198,10 +1168,7 @@ params</code></pre></div>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;intercept (&quot;</span>, alpha[dept_id], <span class="st">&quot;)&quot;</span>)),
        <span class="dt">y =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;slope (&quot;</span>, beta[dept_id], <span class="st">&quot;)&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-37-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-37-1.png" width="480" /></p>
 </div>
 <div id="model-comparison.-1" class="section level3">
 <h3><span class="header-section-number">13.2.4</span> Model comparison.</h3>
@@ -1251,26 +1218,26 @@ d &lt;-
 <span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>recipient) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">block_id =</span> block)</code></pre></div>
 <p>My math’s aren’t the best. But if I’m following along correctly, here’s a fuller statistical expression of our cross-classified model.</p>
-<p><span class="math display">\[\begin{eqnarray}
-\text{pulled_left}_i &amp; \sim &amp; \text{Binomial} (n = 1, p_i) \\
-\text{logit} (p_i) &amp; = &amp; \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc_left}_i  \\
-\alpha_i &amp; = &amp; \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block_id}_i} \\
-\beta_{1i} &amp; = &amp; \beta_1 + \beta_{1, \text{actor}_i} + \beta_{1, \text{block_id}_i} \\
-\beta_{2i} &amp; = &amp; \beta_2 + \beta_{2, \text{actor}_i} + \beta_{2, \text{block_id}_i} \\
-\begin{bmatrix} \alpha_\text{actor} \\ \beta_{1, \text{actor}} \\ \beta_{2, \text{actor}} \end{bmatrix} &amp; \sim &amp; \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{actor} \end{pmatrix} \\
-\begin{bmatrix} \alpha_\text{block_id} \\ \beta_{1, \text{block_id}} \\ \beta_{2, \text{block_id}} \end{bmatrix} &amp; \sim &amp; \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{block_id} \end{pmatrix} \\
-\mathbf S_\text{actor} &amp; = &amp; \begin{pmatrix} \sigma_{\alpha_\text{actor}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{actor}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} 
+<span class="math display">\[\begin{align*}
+\text{pulled_left}_i       &amp; \sim \text{Binomial} (n = 1, p_i) \\
+\text{logit} (p_i)         &amp; = \alpha_i + (\beta_{1i} + \beta_{2i} \text{condition}_i) \text{prosoc_left}_i  \\
+\alpha_i                   &amp; = \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block_id}_i} \\
+\beta_{1i}                 &amp; = \beta_1 + \beta_{1, \text{actor}_i} + \beta_{1, \text{block_id}_i} \\
+\beta_{2i}                 &amp; = \beta_2 + \beta_{2, \text{actor}_i} + \beta_{2, \text{block_id}_i} \\
+\begin{bmatrix} \alpha_\text{actor} \\ \beta_{1, \text{actor}} \\ \beta_{2, \text{actor}} \end{bmatrix} &amp; \sim \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{actor} \end{pmatrix} \\
+\begin{bmatrix} \alpha_\text{block_id} \\ \beta_{1, \text{block_id}} \\ \beta_{2, \text{block_id}} \end{bmatrix} &amp; \sim \text{MVNormal} \begin{pmatrix} \begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} , \mathbf{S}_\text{block_id} \end{pmatrix} \\
+\mathbf S_\text{actor}     &amp; = \begin{pmatrix} \sigma_{\alpha_\text{actor}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{actor}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} 
 \mathbf R_\text{actor} \begin{pmatrix} \sigma_{\alpha_\text{actor}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{actor}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{actor}}} \end{pmatrix} \\
-\mathbf S_\text{block_id} &amp; = &amp; \begin{pmatrix} \sigma_{\alpha_\text{block_id}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{block_id}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} 
+\mathbf S_\text{block_id}  &amp; = \begin{pmatrix} \sigma_{\alpha_\text{block_id}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{block_id}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} 
 \mathbf R_\text{block_id} \begin{pmatrix} \sigma_{\alpha_\text{block_id}} &amp; 0 &amp; 0 \\ 0 &amp; \sigma_{\beta_{1_\text{block_id}}} &amp; 0 \\ 0 &amp; 0 &amp; \sigma_{\beta_{2_\text{block_id}}} \end{pmatrix} \\
-\alpha  &amp; \sim &amp; \text{Normal} (0, 1) \\
-\beta_1 &amp; \sim &amp; \text{Normal} (0, 1) \\
-\beta_2 &amp; \sim &amp; \text{Normal} (0, 1) \\
-(\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
-(\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) &amp; \sim &amp; \text{HalfCauchy} (0, 2) \\
-\mathbf R_\text{actor} &amp; \sim &amp; \text{LKJcorr} (4) \\
-\mathbf R_\text{block_id} &amp; \sim &amp; \text{LKJcorr} (4)
-\end{eqnarray}\]</span></p>
+\alpha                     &amp; \sim \text{Normal} (0, 1) \\
+\beta_1                    &amp; \sim \text{Normal} (0, 1) \\
+\beta_2                    &amp; \sim \text{Normal} (0, 1) \\
+(\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) &amp; \sim \text{HalfCauchy} (0, 2) \\
+(\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) &amp; \sim \text{HalfCauchy} (0, 2) \\
+\mathbf R_\text{actor}     &amp; \sim \text{LKJcorr} (4) \\
+\mathbf R_\text{block_id}  &amp; \sim \text{LKJcorr} (4)
+\end{align*}\]</span>
 <p>And now each <span class="math inline">\(\mathbf R\)</span> is a <span class="math inline">\(3 \times 3\)</span> correlation matrix.</p>
 <p>Let’s fit this beast.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b13.<span class="dv">6</span> &lt;-<span class="st"> </span>
@@ -1319,10 +1286,7 @@ neff <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;effective samples&quot;</span>,
        <span class="dt">subtitle =</span> <span class="st">&quot;The non-centered</span><span class="ch">\n</span><span class="st">parameterization is the</span><span class="ch">\n</span><span class="st">brms default. No fancy</span><span class="ch">\n</span><span class="st">coding required.&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-43-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-43-1.png" width="288" /></p>
 <p>As in the last chapter, we’ll use the <code>bayesplot::mcmc_neff()</code> function to examine the ratio of n.eff and the fill number of post-warm-up iterations, <span class="math inline">\(N\)</span>. Ideally, that ratio is closer to 1 than not.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bayesplot)
 
@@ -1330,10 +1294,7 @@ neff <span class="op">%&gt;%</span>
 
 <span class="kw">mcmc_neff</span>(ratios_cp, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-44-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 <p>Here are our standard deviation parameters.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.<span class="dv">6</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;sd_&quot;</span>)) <span class="op">%&gt;%</span>
@@ -1427,10 +1388,7 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-50-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-50-1.png" width="528" /></p>
 <p>Figure 13.8 shows the “shape of the function relating distance to the covariance <span class="math inline">\(\mathbf{K}_{ij}\)</span>.”</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(
   <span class="dt">x       =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">4</span>, <span class="dt">by =</span> .<span class="dv">01</span>),
@@ -1447,10 +1405,7 @@ d_mat &lt;-<span class="st"> </span>islandsDistMatrix
                      <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, .<span class="dv">5</span>, <span class="dv">1</span>),
                      <span class="dt">labels =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="st">&quot;.5&quot;</span>, <span class="dv">1</span>)) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-51-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-51-1.png" width="312" /></p>
 <p>Load the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(Kline2) <span class="co"># load the ordinary data, now with coordinates</span>
 
@@ -1581,10 +1536,7 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Not identical, but pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;intercept&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-60-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-60-1.png" width="576" /></p>
 <p>Now check the slopes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;bp&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1599,10 +1551,7 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Again, pretty close&quot;</span>,
        <span class="dt">x     =</span> <span class="st">&quot;slope&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-61-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-61-1.png" width="576" /></p>
 <p>This one, <span class="math inline">\(\eta^2\)</span>, required a little transformation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;etasq&quot;</span>] <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1617,10 +1566,7 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
        <span class="dt">x     =</span> <span class="kw">expression</span>(eta<span class="op">^</span><span class="dv">2</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-62-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-62-1.png" width="576" /></p>
 <p><span class="math inline">\(\rho^2\)</span> required more extensive transformation of the brms posterior:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post_m13.<span class="dv">7</span>[, <span class="st">&quot;rhosq&quot;</span>] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">bind_rows</span>(post_b13.<span class="dv">7</span><span class="op">%&gt;%</span><span class="st"> </span>
@@ -1638,10 +1584,7 @@ post_b13.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>package, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-63-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-63-1.png" width="768" /></p>
 <p>I’m in clinical psychology. Folks in my field don’t tend to use Gaussian processes, so getting to the bottom of this is low on my to-do list. Perhaps one of y’all are more experienced with Gaussian processes and see a flaw somewhere in my code. Please <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">hit me up</a> if you do.</p>
 <p>Anyways, here’s our brms + ggplot2 version of Figure 13.9.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for `sample_n()`</span>
@@ -1661,24 +1604,24 @@ post_b13.<span class="dv">7</span> <span class="op">%&gt;%</span><span class="st
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> covariance)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">group =</span> iter),
             <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_function</span>(<span class="dt">fun =</span> <span class="cf">function</span>(x) <span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>lscale_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>x<span class="op">^</span><span class="dv">2</span>),
+<span class="st">  </span><span class="kw">stat_function</span>(<span class="dt">fun =</span> <span class="cf">function</span>(x) <span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span>
+<span class="st">                  </span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>lscale_gplatlon2)<span class="op">^</span><span class="dv">2</span> <span class="op">*</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>x<span class="op">^</span><span class="dv">2</span>),
                 <span class="dt">color =</span> <span class="st">&quot;#EEDA9D&quot;</span>, <span class="dt">size =</span> <span class="fl">1.1</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="st">&quot;distance (thousand km)&quot;</span>, <span class="dt">expand =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),
                      <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">50</span>, <span class="dt">by =</span> <span class="dv">10</span>)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">50</span>,
                   <span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-64-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-64-1.png" width="407.04" /></p>
 <p>Do note the scale on which we placed our x axis. Our brms parameterization resulted in a gentler decline in spatial covariance.</p>
 <p>Let’s finish this up and “push the parameters back through the function for <span class="math inline">\(\mathbf{K}\)</span>, the covariance matrix” (p. 415).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compute posterior median covariance among societies</span>
 k &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)
 <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)
     <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)
-        k[i, j] &lt;-<span class="st"> </span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>lscale_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">*</span><span class="st"> </span>islandsDistMatrix[i, j]<span class="op">^</span><span class="dv">2</span>)
+        k[i, j] &lt;-<span class="st"> </span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">*</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">exp</span>(<span class="op">-</span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>lscale_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">*</span><span class="st"> </span>
+<span class="st">        </span>islandsDistMatrix[i, j]<span class="op">^</span><span class="dv">2</span>)
 
 <span class="kw">diag</span>(k) &lt;-<span class="st"> </span><span class="kw">median</span>(post_b13.<span class="dv">7</span><span class="op">$</span>sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="fl">0.01</span>
 
@@ -1762,10 +1705,7 @@ rho <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">roun
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>lat)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring </code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-69-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-69-1.png" width="384" /></p>
 <p>Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here’s our version of Figure 13.10.b.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># new data for `fitted()`</span>
 nd &lt;-<span class="st"> </span>
@@ -1800,10 +1740,7 @@ tidy_rho <span class="op">%&gt;%</span><span class="st"> </span>
                   <span class="dt">ylim =</span> <span class="kw">range</span>(d<span class="op">$</span>total_tools)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span>theme_pearl_earring</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-70-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-70-1.png" width="384" /></p>
 <p>Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner’s thoughts on this model in brms, check out the <a href="https://github.com/paul-buerkner/brms/issues/300">thread on this issue</a>.</p>
 </div>
 </div>
@@ -1814,7 +1751,9 @@ tidy_rho <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Here are the data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">funding &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">tibble</span>(
-    <span class="dt">discipline   =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;Chemical sciences&quot;</span>, <span class="st">&quot;Physical sciences&quot;</span>, <span class="st">&quot;Physics&quot;</span>, <span class="st">&quot;Humanities&quot;</span>, <span class="st">&quot;Technical sciences&quot;</span>,  <span class="st">&quot;Interdisciplinary&quot;</span>, <span class="st">&quot;Earth/life sciences&quot;</span>, <span class="st">&quot;Social sciences&quot;</span>, <span class="st">&quot;Medical sciences&quot;</span>),
+    <span class="dt">discipline   =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;Chemical sciences&quot;</span>, <span class="st">&quot;Physical sciences&quot;</span>, <span class="st">&quot;Physics&quot;</span>, <span class="st">&quot;Humanities&quot;</span>, 
+                         <span class="st">&quot;Technical sciences&quot;</span>,  <span class="st">&quot;Interdisciplinary&quot;</span>, <span class="st">&quot;Earth/life sciences&quot;</span>, 
+                         <span class="st">&quot;Social sciences&quot;</span>, <span class="st">&quot;Medical sciences&quot;</span>),
                      <span class="dt">each =</span> <span class="dv">2</span>),
     <span class="dt">gender       =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;m&quot;</span>, <span class="st">&quot;f&quot;</span>), <span class="dt">times =</span> <span class="dv">9</span>),
     <span class="dt">applications =</span> <span class="kw">c</span>(<span class="dv">83</span>, <span class="dv">39</span>, <span class="dv">135</span>, <span class="dv">39</span>, <span class="dv">67</span>, <span class="dv">9</span>, <span class="dv">230</span>, <span class="dv">166</span>, <span class="dv">189</span>, <span class="dv">62</span>, <span class="dv">105</span>, <span class="dv">78</span>, <span class="dv">156</span>, <span class="dv">126</span>, <span class="dv">425</span>, <span class="dv">409</span>, <span class="dv">245</span>, <span class="dv">260</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.integer</span>(),
@@ -1920,10 +1859,7 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="k
 <span class="st">  </span>theme_pearl_earring <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.text.y  =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="dv">0</span>))</code></pre></div>
-<div class="figure">
-<img src="13_files/figure-markdown_github/unnamed-chunk-75-1.png" />
-
-</div>
+<p><img src="13_files/figure-html/unnamed-chunk-75-1.png" width="864" /></p>
 <p>Note how the 95% intervals for all the random <code>male</code> slopes contain zero within their bounds. Here are the fixed effects:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tidy</span>(b13.bonus_<span class="dv">2</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(term , <span class="st">&quot;b_&quot;</span>)) <span class="op">%&gt;%</span>
@@ -1960,45 +1896,46 @@ b13.bonus_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="k
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] brms_2.8.0           bayesplot_1.6.0      ggbeeswarm_0.6.0     ggrepel_0.8.0       
-##  [5] tidybayes_1.0.4      broom_0.5.1          Rcpp_1.0.0           rstan_2.18.2        
-##  [9] StanHeaders_2.18.0-1 dutchmasters_0.1.0   forcats_0.3.0        stringr_1.3.1       
+##  [1] brms_2.8.8           bayesplot_1.6.0      ggbeeswarm_0.6.0     ggrepel_0.8.0       
+##  [5] tidybayes_1.0.4      broom_0.5.1          Rcpp_1.0.1           rstan_2.18.2        
+##  [9] StanHeaders_2.18.0-1 dutchmasters_0.1.0   forcats_0.3.0        stringr_1.4.0       
 ## [13] dplyr_0.8.0.1        purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
-## [17] tibble_2.1.1         ggplot2_3.1.0        tidyverse_1.2.1     
+## [17] tibble_2.1.1         ggplot2_3.1.1        tidyverse_1.2.1     
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] colorspace_1.3-2          ggridges_0.5.0            rsconnect_0.8.8          
 ##  [4] rprojroot_1.3-2           ggstance_0.3              markdown_0.8             
 ##  [7] base64enc_0.1-3           rstudioapi_0.7            svUnit_0.7-12            
-## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-8            
-## [13] lubridate_1.7.4           xml2_1.2.0                bridgesampling_0.4-0     
+## [10] DT_0.4                    fansi_0.4.0               mvtnorm_1.0-10           
+## [13] lubridate_1.7.4           xml2_1.2.0                bridgesampling_0.6-0     
 ## [16] knitr_1.20                shinythemes_1.1.1         jsonlite_1.5             
 ## [19] shiny_1.1.0               compiler_3.5.1            httr_1.3.1               
-## [22] backports_1.1.2           assertthat_0.2.0          Matrix_1.2-14            
-## [25] lazyeval_0.2.1            cli_1.0.1                 later_0.7.3              
+## [22] backports_1.1.4           assertthat_0.2.0          Matrix_1.2-14            
+## [25] lazyeval_0.2.2            cli_1.0.1                 later_0.7.3              
 ## [28] htmltools_0.3.6           prettyunits_1.0.2         tools_3.5.1              
-## [31] igraph_1.2.1              coda_0.19-2               gtable_0.2.0             
-## [34] glue_1.3.0                reshape2_1.4.3            cellranger_1.1.0         
-## [37] nlme_3.1-137              crosstalk_1.0.0           ps_1.2.1                 
-## [40] rvest_0.3.2               mime_0.5                  miniUI_0.1.1.1           
-## [43] gtools_3.8.1              nleqslv_3.3.2             MASS_7.3-50              
-## [46] zoo_1.8-2                 scales_1.0.0              colourpicker_1.0         
-## [49] hms_0.4.2                 promises_1.0.1            Brobdingnag_1.2-5        
-## [52] inline_0.3.15             shinystan_2.5.0           yaml_2.1.19              
-## [55] gridExtra_2.3             loo_2.1.0                 stringi_1.2.3            
-## [58] dygraphs_1.1.1.5          pkgbuild_1.0.2            rlang_0.3.1              
-## [61] pkgconfig_2.0.2           matrixStats_0.54.0        HDInterval_0.2.0         
-## [64] evaluate_0.10.1           lattice_0.20-35           rstantools_1.5.0         
-## [67] htmlwidgets_1.2           labeling_0.3              processx_3.2.1           
-## [70] tidyselect_0.2.5          plyr_1.8.4                magrittr_1.5             
-## [73] R6_2.3.0                  generics_0.0.2            pillar_1.3.1             
-## [76] haven_1.1.2               withr_2.1.2               xts_0.10-2               
-## [79] abind_1.4-5               modelr_0.1.2              crayon_1.3.4             
-## [82] arrayhelpers_1.0-20160527 utf8_1.1.4                rmarkdown_1.10           
-## [85] grid_3.5.1                readxl_1.1.0              callr_3.1.0              
-## [88] threejs_0.3.1             digest_0.6.18             xtable_1.8-2             
-## [91] httpuv_1.4.4.2            stats4_3.5.1              munsell_0.5.0            
-## [94] beeswarm_0.2.3            vipor_0.4.5               shinyjs_1.0</code></pre>
+## [31] igraph_1.2.1              coda_0.19-2               gtable_0.3.0             
+## [34] glue_1.3.1.9000           reshape2_1.4.3            cellranger_1.1.0         
+## [37] nlme_3.1-137              crosstalk_1.0.0           xfun_0.3                 
+## [40] ps_1.2.1                  rvest_0.3.2               mime_0.5                 
+## [43] miniUI_0.1.1.1            gtools_3.8.1              nleqslv_3.3.2            
+## [46] MASS_7.3-50               zoo_1.8-2                 scales_1.0.0             
+## [49] colourpicker_1.0          hms_0.4.2                 promises_1.0.1           
+## [52] Brobdingnag_1.2-6         inline_0.3.15             shinystan_2.5.0          
+## [55] yaml_2.1.19               gridExtra_2.3             loo_2.1.0                
+## [58] stringi_1.4.3             dygraphs_1.1.1.5          pkgbuild_1.0.2           
+## [61] rlang_0.3.4               pkgconfig_2.0.2           matrixStats_0.54.0       
+## [64] HDInterval_0.2.0          evaluate_0.10.1           lattice_0.20-35          
+## [67] rstantools_1.5.1          htmlwidgets_1.2           labeling_0.3             
+## [70] processx_3.2.1            tidyselect_0.2.5          plyr_1.8.4               
+## [73] magrittr_1.5              bookdown_0.9              R6_2.3.0                 
+## [76] generics_0.0.2            pillar_1.3.1              haven_1.1.2              
+## [79] withr_2.1.2               xts_0.10-2                abind_1.4-5              
+## [82] modelr_0.1.2              crayon_1.3.4              arrayhelpers_1.0-20160527
+## [85] utf8_1.1.4                rmarkdown_1.10            grid_3.5.1               
+## [88] readxl_1.1.0              callr_3.1.0               threejs_0.3.1            
+## [91] digest_0.6.18             xtable_1.8-2              httpuv_1.4.4.2           
+## [94] stats4_3.5.1              munsell_0.5.0             beeswarm_0.2.3           
+## [97] vipor_0.4.5               shinyjs_1.0</code></pre>
 
 </div>
 </div>

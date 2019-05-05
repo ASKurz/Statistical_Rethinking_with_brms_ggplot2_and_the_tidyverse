@@ -2,7 +2,7 @@
 title: "*Statistical Rethinking* with brms, ggplot2, and the tidyverse"
 subtitle: "version 1.0.1"
 author: ["A Solomon Kurz"]
-date: "2019-05-03"
+date: "2019-05-05"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
@@ -10,6 +10,9 @@ geometry:
   margin = 0.5in
 urlcolor: blue
 highlight: tango
+header-includes:
+  \usepackage{underscore}
+  \usepackage[T1]{fontenc}
 link-citations: yes
 github-repo: ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse
 twitter-handle: SolomonKurz
@@ -88,7 +91,7 @@ greater emphasis on functions from the [tidybayes package](http://mjskay.github.
 * With the help of others within the community, I corrected many typos and streamlined some of the code (e.g., [dropped an unnecessary use of the `mi()` function in section 14.2.1](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/21))
 * And in some cases, I corrected sections that were just plain wrong (e.g., some of my initial attempts in section 3.3 were incorrect).
 
-In response to some reader requests, we finally have a PDF version! Making that happen required some formatting adjustments, resulting in version 1.0.1. Noteworthy changes include:
+In response to some reader requests, we finally have a [PDF version](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/blob/master/recoding_Statistical_Rethinking_1.0.1_PDF_version.pdf)! Making that happen required some formatting adjustments, resulting in version 1.0.1. Noteworthy changes include:
 
 * Major revisions to the LaTeX syntax underlying many of the in-text equations (e.g., dropping the "eqnarray" environment for "align*")
 * Adjusting some of the image syntax

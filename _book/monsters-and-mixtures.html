@@ -25,7 +25,7 @@
 <meta name="author" content="A Solomon Kurz">
 
 
-<meta name="date" content="2019-04-18">
+<meta name="date" content="2019-05-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -426,13 +426,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="example-moral-intuition." class="section level3">
 <h3><span class="header-section-number">11.1.1</span> Example: Moral intuition.</h3>
 <p>Let’s get the <code>Trolley</code> data from rethinking.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
-<span class="kw">data</span>(Trolley)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)</code></pre></div>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(Trolley)
 d &lt;-<span class="st"> </span>Trolley</code></pre></div>
 <p>Unload rethinking and load brms.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(Trolley)
 <span class="kw">detach</span>(package<span class="op">:</span>rethinking, <span class="dt">unload =</span> T)
 <span class="kw">library</span>(brms)</code></pre></div>
+<pre><code>## Warning: package &#39;Rcpp&#39; was built under R version 3.5.2</code></pre>
 <p>Use the tidyverse to get a sense of the dimensions of the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 
@@ -462,14 +464,11 @@ d &lt;-<span class="st"> </span>Trolley</code></pre></div>
 </div>
 <div id="describing-an-ordered-distribution-with-intercepts." class="section level3">
 <h3><span class="header-section-number">11.1.2</span> Describing an ordered distribution with intercepts.</h3>
-<p>Before we get to plotting, in this chapter we’ll use theme settings and a color palette from the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>, which you might learn more about <a href="https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html">here</a>.</p>
+<p>Before we get to plotting, in this chapter we’ll use theme settings and a color palette from the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggthemes)</code></pre></div>
 <p>We’ll take our basic theme settings from the <code>theme_hc()</code> function. We’ll use the <code>Green fields</code> color palette, which we can inspect with the <code>canva_pal()</code> function and a little help from <code>scales::show_col()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">scales<span class="op">::</span><span class="kw">show_col</span>(<span class="kw">canva_pal</span>(<span class="st">&quot;Green fields&quot;</span>)(<span class="dv">4</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-6-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">canva_pal</span>(<span class="st">&quot;Green fields&quot;</span>)(<span class="dv">4</span>)</code></pre></div>
 <pre><code>## [1] &quot;#919636&quot; &quot;#524a3a&quot; &quot;#fffae1&quot; &quot;#5a5f37&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">canva_pal</span>(<span class="st">&quot;Green fields&quot;</span>)(<span class="dv">4</span>)[<span class="dv">3</span>]</code></pre></div>
@@ -484,10 +483,7 @@ d &lt;-<span class="st"> </span>Trolley</code></pre></div>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-7-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-7-1.png" width="240" /></p>
 <p>Our cumulative proportion plot, Figure 11.1.b, will require some pre-plot wrangling.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(response) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -510,10 +506,7 @@ d &lt;-<span class="st"> </span>Trolley</code></pre></div>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-8-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-8-1.png" width="240" /></p>
 <p>In order to make the next plot, we’ll need McElreath’s <code>logit()</code> function. Here it is, the logarithm of cumulative odds plot, Figure 11.1.c.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># McElreath&#39;s convenience function from page 335</span>
 logit &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">log</span>(x <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>x))
@@ -541,10 +534,7 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-9-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-9-1.png" width="240" /></p>
 <p>The code for Figure 11.2 is itself something of a monster.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d_plot &lt;-
 <span class="st">  </span>d <span class="op">%&gt;%</span>
@@ -587,18 +577,13 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-10-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-10-1.png" width="336" /></p>
 <p>McElreath’s convention for this first type of statistical model is</p>
-<p><span class="math display">\[
-\begin{eqnarray} 
-R_i &amp; \sim &amp; \text{Ordered} (\mathbf p) \\
-\text{logit} (p_k) &amp; = &amp; \alpha_k \\
-\alpha_k &amp; \sim &amp; \text{Normal} (0, 10)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*} 
+R_i &amp; \sim \text{Ordered} (\mathbf p) \\
+\text{logit} (p_k) &amp; = \alpha_k \\
+\alpha_k           &amp; \sim \text{Normal} (0, 10)
+\end{align*}\]</span>
 <blockquote>
 <p>The Ordered distribution is really just a categorical distribution that takes a vector <span class="math inline">\(\mathbf p = {p_1, p_2, p_3, p_4, p_5, p_6}\)</span> of probabilities of each response value below the maximum response (7 in this example). Each response value <span class="math inline">\(k\)</span> in this vector is defined by its link to an intercept parameter, <span class="math inline">\(\alpha_k\)</span>. Finally, some weakly regularizing priors are placed on these intercepts. (p. 335)</p>
 </blockquote>
@@ -676,12 +661,10 @@ b11.<span class="dv">1</span> &lt;-<span class="st"> </span>
 <div id="adding-predictor-variables." class="section level3">
 <h3><span class="header-section-number">11.1.3</span> Adding predictor variables.</h3>
 <p>Now we define the linear model as <span class="math inline">\(\phi_i = \beta x_i\)</span>. Accordingly, the formula for our cumulative logit model becomes</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} &amp; = &amp; \alpha_k - \phi_i\\
-\phi_i &amp; = &amp; \beta x_i
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} &amp; = \alpha_k - \phi_i \\
+\phi_i &amp; = \beta x_i
+\end{align*}\]</span>
 <p>I’m not aware that brms has an equivalent to the <code>rethinking::dordlogit()</code> function. So here we’ll make it by hand. The code comes from McElreath’s <a href="https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/distributions.r">GitHub page</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># first, we needed to specify the `logistic()` function, which is apart of the `dordlogit()` function</span>
 logistic &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
@@ -827,14 +810,14 @@ b11.<span class="dv">3</span> &lt;-<span class="st"> </span>
 ##    &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
 ##  1 b_Intercept[1]       -1.92  -2.84 -2.64
 ##  2 b_Intercept[2]       -1.27  -2.16 -1.94
-##  3 b_Intercept[3]       -0.72  -1.57 -1.34
+##  3 b_Intercept[3]       -0.72  -1.57 -1.35
 ##  4 b_Intercept[4]        0.25  -0.55 -0.31
 ##  5 b_Intercept[5]        0.89   0.12  0.36
 ##  6 b_Intercept[6]        1.77   1.02  1.27
 ##  7 b_action             NA     -0.71 -0.47
 ##  8 b_intention          NA     -0.72 -0.28
 ##  9 b_contact            NA     -0.96 -0.33
-## 10 b_action:intention   NA     NA    -0.45
+## 10 b_action:intention   NA     NA    -0.44
 ## 11 b_intention:contact  NA     NA    -1.27</code></pre>
 <p>If you really wanted that last <code>nobs</code> row at the bottom, you could elaborate on this code: <code>b11.1$data %&gt;% count()</code>. Also, if you want a proper <code>coeftab()</code> function for brms, McElreath’s code lives <a href="https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r">here</a>. Give it a whirl.</p>
 <p>Here we compute the WAIC. <em>Caution: This took some time to compute.</em></p>
@@ -845,11 +828,11 @@ b11.<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">add
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">loo_compare</span>(b11.<span class="dv">1</span>, b11.<span class="dv">2</span>, b11.<span class="dv">3</span>, <span class="dt">criterion =</span> <span class="st">&quot;waic&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">print</span>(<span class="dt">simplify =</span> F)</code></pre></div>
 <pre><code>##       elpd_diff se_diff  elpd_waic se_elpd_waic p_waic   se_p_waic
-## b11.3      0.0       0.0 -18464.7      40.6         11.1      0.1 
-## b11.2    -80.3      12.8 -18544.9      38.1          9.0      0.0 
-## b11.1   -462.5      31.3 -18927.2      28.8          6.0      0.0 
+## b11.3      0.0       0.0 -18464.5      40.6         10.9      0.1 
+## b11.2    -80.4      12.8 -18544.9      38.1          9.0      0.0 
+## b11.1   -462.7      31.3 -18927.2      28.8          6.0      0.0 
 ##       waic     se_waic 
-## b11.3  36929.3     81.2
+## b11.3  36929.0     81.3
 ## b11.2  37089.9     76.3
 ## b11.1  37854.4     57.6</code></pre>
 <p>Here are the WAIC weights.</p>
@@ -874,20 +857,20 @@ max_iter &lt;-<span class="st"> </span><span class="dv">100</span>
 <span class="st">  </span><span class="kw">glimpse</span>()</code></pre></div>
 <pre><code>## Observations: 100
 ## Variables: 14
-## $ `1.1` &lt;dbl&gt; 0.06151896, 0.06819546, 0.06566523, 0.06679611, 0.07012461…
-## $ `2.1` &lt;dbl&gt; 0.08604487, 0.09150754, 0.08438692, 0.08558636, 0.08932578…
-## $ `1.2` &lt;dbl&gt; 0.05638434, 0.05891473, 0.05760255, 0.06068136, 0.06055538…
-## $ `2.2` &lt;dbl&gt; 0.07500568, 0.07544584, 0.07128915, 0.07481739, 0.07422010…
-## $ `1.3` &lt;dbl&gt; 0.07624184, 0.08143722, 0.08275470, 0.08290460, 0.08382021…
-## $ `2.3` &lt;dbl&gt; 0.09601190, 0.09918119, 0.09821124, 0.09797691, 0.09854529…
-## $ `1.4` &lt;dbl&gt; 0.2123135, 0.2145308, 0.2164357, 0.2195083, 0.2192644, 0.2…
-## $ `2.4` &lt;dbl&gt; 0.2387826, 0.2361730, 0.2357125, 0.2381002, 0.2370023, 0.2…
-## $ `1.5` &lt;dbl&gt; 0.1707081, 0.1642605, 0.1647564, 0.1618385, 0.1603306, 0.1…
-## $ `2.5` &lt;dbl&gt; 0.1663649, 0.1597226, 0.1614248, 0.1581231, 0.1565191, 0.1…
-## $ `1.6` &lt;dbl&gt; 0.2028201, 0.1888234, 0.1913308, 0.1846210, 0.1909507, 0.1…
-## $ `2.6` &lt;dbl&gt; 0.1736299, 0.1647273, 0.1707318, 0.1648632, 0.1704823, 0.1…
-## $ `1.7` &lt;dbl&gt; 0.2200131, 0.2238379, 0.2214547, 0.2236502, 0.2149540, 0.2…
-## $ `2.7` &lt;dbl&gt; 0.1641602, 0.1732425, 0.1782436, 0.1805328, 0.1739051, 0.1…</code></pre>
+## $ `1.1` &lt;dbl&gt; 0.06431154, 0.06654538, 0.06539877, 0.06865674, 0.07194016…
+## $ `2.1` &lt;dbl&gt; 0.08606223, 0.09177197, 0.08797653, 0.09108951, 0.09013832…
+## $ `1.2` &lt;dbl&gt; 0.05476174, 0.06128931, 0.05620629, 0.06030583, 0.06191991…
+## $ `2.2` &lt;dbl&gt; 0.07018978, 0.08024188, 0.07228319, 0.07646513, 0.07479958…
+## $ `1.3` &lt;dbl&gt; 0.07845195, 0.08089936, 0.07992199, 0.08131879, 0.08317862…
+## $ `2.3` &lt;dbl&gt; 0.09593491, 0.10013379, 0.09786148, 0.09822813, 0.09665743…
+## $ `1.4` &lt;dbl&gt; 0.2181005, 0.2124984, 0.2160383, 0.2177055, 0.2116564, 0.2…
+## $ `2.4` &lt;dbl&gt; 0.2413372, 0.2356276, 0.2389400, 0.2384760, 0.2279406, 0.2…
+## $ `1.5` &lt;dbl&gt; 0.1700717, 0.1635829, 0.1701502, 0.1637571, 0.1704034, 0.1…
+## $ `2.5` &lt;dbl&gt; 0.1659739, 0.1585014, 0.1656836, 0.1590970, 0.1668038, 0.1…
+## $ `1.6` &lt;dbl&gt; 0.1935246, 0.1922405, 0.1892956, 0.1900185, 0.1902459, 0.1…
+## $ `2.6` &lt;dbl&gt; 0.1691378, 0.1653796, 0.1649466, 0.1662835, 0.1709148, 0.1…
+## $ `1.7` &lt;dbl&gt; 0.2207780, 0.2229442, 0.2229889, 0.2182374, 0.2106555, 0.2…
+## $ `2.7` &lt;dbl&gt; 0.1713642, 0.1683438, 0.1723086, 0.1703608, 0.1727455, 0.1…</code></pre>
 <p>Hopefully by now it’s clear why we needed the <code>nd</code> tibble, which we made use of in the <code>newdata = nd</code> argument. Because we set <code>summary = F</code>, we get draws from the posterior instead of summaries. With <code>max_iter</code>, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by <code>brms::fitted()</code> default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two <code>intention</code> values the draw is based on (i.e., 1 stands for <code>intention == 0</code>, 2, stands for <code>intention == 1</code>). The numbers on the right of the decimals are the seven response options for <code>response</code>. For each posterior draw, you get one of those for each value of <code>intention</code>. Finally, it might not be immediately apparent, but the values are in the probability scale, just like <code>pk</code> on page 338.</p>
 <p>Now we know what we have in hand, it’s just a matter of careful wrangling to get those probabilities into a more useful format to feed into ggplot2. I’ve extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-
@@ -908,7 +891,8 @@ max_iter &lt;-<span class="st"> </span><span class="dv">100</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">iter =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>max_iter, <span class="dt">times =</span> <span class="dv">14</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="co"># this step isn’t technically necessary, but I prefer my `iter` index at the far left.</span>
 <span class="st">  </span><span class="kw">select</span>(iter, <span class="kw">everything</span>()) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="co"># here we extract the `intention` and `response` information out of the `key` vector and spread it into two vectors.</span>
+<span class="st">  </span><span class="co"># here we extract the `intention` and `response` information out of the `key` vector and </span>
+<span class="st">  </span><span class="co"># spread it into two vectors.</span>
 <span class="st">  </span><span class="kw">separate</span>(key, <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;intention&quot;</span>, <span class="st">&quot;rating&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="co"># that step produced two character vectors. they’ll be more useful as numbers</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intention =</span> intention <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.double</span>(),
@@ -949,10 +933,7 @@ max_iter &lt;-<span class="st"> </span><span class="dv">100</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-23-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-23-1.png" width="240" /></p>
 <p>Boom!</p>
 <p>Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, <code>make_Figure_11.3_data()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">make_Figure_<span class="fl">11.</span>3_data &lt;-<span class="st"> </span><span class="cf">function</span>(action, contact, max_iter){
@@ -1069,10 +1050,7 @@ p3 &lt;-
 <span class="kw">library</span>(gridExtra)
 
 <span class="kw">grid.arrange</span>(p1, p2, p3, <span class="dt">ncol =</span> <span class="dv">3</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-25-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <p>If you’d like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre’s <a href="https://psyarxiv.com/x8swp/"><em>Ordinal Regression Models in Psychology: A Tutorial</em></a>.</p>
 </div>
 <div id="bonus-figure-11.3-alternative." class="section level3">
@@ -1157,10 +1135,7 @@ p3 &lt;-
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)
 
 <span class="kw">grid.arrange</span>(p1, p2, p3, <span class="dt">ncol =</span> <span class="dv">3</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-27-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>Finally; now those are plots I can sell in a clinical psychology journal!</p>
 </div>
 </div>
@@ -1206,17 +1181,12 @@ y &lt;-<span class="st"> </span>(<span class="dv">1</span> <span class="op">-</s
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-29-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-29-1.png" width="480" /></p>
 <p>With these data, the likelihood of observing zero on <code>y</code>, (i.e., the likelihood zero manuscripts were completed on a given occasion) is</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{Pr} (0 | p, \lambda) &amp; = &amp; \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
-&amp; = &amp; p + (1 - p) \text{ exp} (- \lambda)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{Pr} (0 | p, \lambda) &amp; = \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
+                           &amp; = p + (1 - p) \text{ exp} (- \lambda)
+\end{align*}\]</span>
 <p>And</p>
 <blockquote>
 <p>since the Poisson likelihood of <span class="math inline">\(y\)</span> is <span class="math inline">\(\text{Pr} (y | \lambda) = \lambda^y \text{exp} (- \lambda) / y!\)</span>, the likelihood of <span class="math inline">\(y = 0\)</span> is just <span class="math inline">\(\text{exp} (- \lambda)\)</span>. The above is just the mathematics for:</p>
@@ -1224,22 +1194,18 @@ y &lt;-<span class="st"> </span>(<span class="dv">1</span> <span class="op">-</s
 <p><em>The probability of observing a zero is the probability that the monks didn’t drink OR (<span class="math inline">\(+\)</span>) the probability that the monks worked AND (<span class="math inline">\(\times\)</span>) failed to finish anything</em>.</p>
 </blockquote>
 <p>And the likelihood of a non-zero value <span class="math inline">\(y\)</span> is:</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{Pr} (y | p, \lambda) &amp; = &amp; \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
-&amp; = &amp; (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{Pr} (y | p, \lambda) &amp; = \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
+                           &amp; = (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
+\end{align*}\]</span>
 <p>Since drinking monks never produce <span class="math inline">\(y &gt; 0\)</span>, the expression above is just the chance the monks both work <span class="math inline">\(1 - p\)</span>, and finish <span class="math inline">\(y\)</span> manuscripts. (p. 344, <em>emphasis</em> in the original)</p>
 </blockquote>
 <p>So letting <span class="math inline">\(p\)</span> be the probability <span class="math inline">\(y\)</span> is zero and <span class="math inline">\(\lambda\)</span> be the shape of the distribution, the zero-inflated Poisson (ZIPoisson) regression model takes the basic form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-y_i &amp; \sim &amp; \text{ZIPoisson} (p_i, \lambda_i)\\
-\text{logit} (p_i) &amp; = &amp; \alpha_p + \beta_p x_i \\
-\text{log} (\lambda_i) &amp; = &amp; \alpha_\lambda + \beta_\lambda x_i
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+y_i &amp; \sim \text{ZIPoisson} (p_i, \lambda_i)\\
+\text{logit} (p_i)     &amp; = \alpha_p + \beta_p x_i \\
+\text{log} (\lambda_i) &amp; = \alpha_\lambda + \beta_\lambda x_i
+\end{align*}\]</span>
 <p>One last thing to note is that in brms, <span class="math inline">\(p_i\)</span> is denoted <code>zi</code>. So the intercept [and zi] only zero-inflated Poisson model in brms looks like this.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b11.<span class="dv">4</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> zero_inflated_poisson,
@@ -1267,7 +1233,7 @@ y_i &amp; \sim &amp; \text{ZIPoisson} (p_i, \lambda_i)\\
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>The zero-inflated Poisson is <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html">parameterized in brms</a> a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, <span class="math inline">\(\lambda\)</span>. In both here and in the text, <span class="math inline">\(\lambda\)</span> was about zero. However, it did influence the summary of <code>zi</code>. Note how McElreath’s <code>logistic(-1.39)</code> yielded 0.1994078. Seems rather close to our <code>zi</code> estimate of 0.235. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that <code>zi</code> in brms is already in the probability metric. There’s no need to convert it.</p>
+<p>The zero-inflated Poisson is <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#zero-inflated-and-hurdle-models">parameterized in brms</a> a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, <span class="math inline">\(\lambda\)</span>. In both here and in the text, <span class="math inline">\(\lambda\)</span> was about zero. However, it did influence the summary of <code>zi</code>. Note how McElreath’s <code>logistic(-1.39)</code> yielded 0.1994078. Seems rather close to our <code>zi</code> estimate of 0.235. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that <code>zi</code> in brms is already in the probability metric. There’s no need to convert it.</p>
 <p>In the <code>prior</code> argument, we used <code>beta(2, 2)</code> for <code>zi</code> and also mentioned in the margin that the brms default is <code>beta(1, 1)</code>. To give you a sense of the priors, let’s plot them.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="st">`</span><span class="dt">zi prior</span><span class="st">`</span>=<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="dv">50</span>)) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">beta(1, 1)</span><span class="st">`</span> =<span class="st"> </span><span class="kw">dbeta</span>(<span class="st">`</span><span class="dt">zi prior</span><span class="st">`</span>, <span class="dv">1</span>, <span class="dv">1</span>),
@@ -1286,10 +1252,7 @@ y_i &amp; \sim &amp; \text{ZIPoisson} (p_i, \lambda_i)\\
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>prior)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-31-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-31-1.png" width="576" /></p>
 <p>Hopefully this clarifies that the brms default is flat, whereas our prior regularized a bit toward .5. Anyway, here’s that exponentiated <span class="math inline">\(\lambda\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(b11.<span class="dv">4</span>)[<span class="dv">1</span>, ] <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">exp</span>()</code></pre></div>
@@ -1321,10 +1284,7 @@ lambda_b11.<span class="dv">4</span> &lt;-<span class="st"> </span><span class="
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Manuscripts completed&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-34-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-34-1.png" width="480" /></p>
 <p>If you look up to the histogram we made at the beginning of this section, you’ll see this isn’t a terrible approximation.</p>
 </div>
 </div>
@@ -1344,7 +1304,7 @@ lambda_b11.<span class="dv">4</span> &lt;-<span class="st"> </span><span class="
 <p>Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we’ve run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability <span class="math inline">\(\overline{p}\)</span> and a shape parameter <span class="math inline">\(\theta\)</span>. In his R code 11.24, which we’ll reproduce in a bit, he demonstrated that parameterization with the <code>rethinking::dbeta2()</code> function. The nice thing about this parameterization is how intuitive the <code>pbar</code> parameter is. If you want a beta with an average of .2, you set <code>pbar &lt;- .2</code>. If you want the distribution to be more or less certain, make the <code>theta</code> argument more or less large, respectively.</p>
 <p>However, the beta density is typically defined in terms of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>. If you denote the data as <span class="math inline">\(y\)</span>, this follows the form</p>
 <p><span class="math display">\[\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)}\]</span></p>
-<p>which you can verify in the <em>Continuous Distributions on [0, 1]</em> section of the <a href="http://mc-stan.org/users/documentation/index.html">Stan reference manual</a>. In the formula, <span class="math inline">\(\text B\)</span> stands for the Beta function, which computes a normalizing constant, which you can learn about in the <em>Mathematical Functions</em> of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for <code>zi</code> in the last model, it was using this parameterization. Also, if you look at the base R <code>dbeta()</code> function, you’ll learn it takes two parameters, <code>shape1</code> and <code>shape2</code>. Those uncreatively-named parameters are the same <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> from the density, above. They do not correspond to the <code>pbar</code> and <code>theta</code> parameters of McEreath’s <code>rethinking::dbeta2()</code>.</p>
+<p>which you can verify in the <em>Continuous Distributions on [0, 1]</em> section of the <a href="https://mc-stan.org/docs/2_18/functions-reference/beta-distribution.html">Stan Functions Reference</a>. In the formula, <span class="math inline">\(\text B\)</span> stands for the Beta function, which computes a normalizing constant, which you can learn about in the <em>Mathematical Functions</em> of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for <code>zi</code> in the last model, it was using this parameterization. Also, if you look at the base R <code>dbeta()</code> function, you’ll learn it takes two parameters, <code>shape1</code> and <code>shape2</code>. Those uncreatively-named parameters are the same <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> from the density, above. They do not correspond to the <code>pbar</code> and <code>theta</code> parameters of McEreath’s <code>rethinking::dbeta2()</code>.</p>
 <p>McElreath had good reason for using <code>dbeta2()</code>. Beta’s typical <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> parameters aren’t the most intuitive to use; the parameters in McElreath’s <code>dbeta2()</code> are much nicer. But if you’re willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> like this</p>
 <p><span class="math display">\[\mu = \frac{\alpha}{\alpha + \beta}\]</span></p>
 <p>We can talk about the spread of the distribution, sometimes called <span class="math inline">\(\kappa\)</span>, in terms <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> like this</p>
@@ -1366,10 +1326,7 @@ theta &lt;-<span class="st"> </span><span class="dv">5</span>
           <span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Defined in terms of &quot;</span>, mu, <span class="st">&quot; (i.e., pbar) and &quot;</span>, kappa, <span class="st">&quot; (i.e., theta)&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-35-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-35-1.png" width="384" /></p>
 <p>In his 2014 text, <a href="https://sites.google.com/site/doingbayesiandataanalysis/"><em>Doing Bayesian Data Analysis</em></a>, Kruschke provided code for a convenience function that will take <code>pbar</code> and <code>theta</code> as inputs and return the corresponding <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> values. Here’s the function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betaABfromMeanKappa &lt;-<span class="st"> </span><span class="cf">function</span>(mean, kappa) {
   <span class="cf">if</span> (mean <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>mean <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span>) <span class="kw">stop</span>(<span class="st">&quot;must have 0 &lt; mean &lt; 1&quot;</span>)
@@ -1397,10 +1354,7 @@ theta &lt;-<span class="st"> </span><span class="dv">5</span>
           <span class="dt">subtitle =</span> <span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;This time defined in terms of &quot;</span>, alpha, <span class="st">&quot; and &quot;</span>, beta))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-38-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-38-1.png" width="384" /></p>
 <p>McElreath encouraged us to “explore different values for <code>pbar</code> and <code>theta</code>” (p. 348). Here’s a grid of plots with <code>pbar = c(.25, .5, .75)</code> and <code>theta = c(5, 10, 15)</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data</span>
 <span class="kw">tibble</span>(<span class="dt">pbar =</span> <span class="kw">c</span>(.<span class="dv">25</span>, .<span class="dv">5</span>, .<span class="dv">75</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -1423,20 +1377,15 @@ theta &lt;-<span class="st"> </span><span class="dv">5</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_grid</span>(kappa <span class="op">~</span><span class="st"> </span>mu, <span class="dt">labeller =</span> label_parsed)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-39-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-39-1.png" width="480" /></p>
 <p>If you’d like to see how to make a similar plot in terms of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>, see <a href="https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse/blob/master/06.md">the chapter 6 document</a> of my project <a href="https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse">recoding Kruschke’s text into tidyverse and brms code</a>.</p>
 <p>But remember, we’re not fitting a beta model. We’re using the beta-binomial. “We’re going to bind our linear model to <span class="math inline">\(\overline p\)</span>, so that changes in predictor variables change the central tendency of the distribution” (p. 348). The statistical model we’ll be fitting follows the form</p>
-<p><span class="math display">\[
-\begin{eqnarray}
-\text{admit}_i &amp; \sim &amp; \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
-\text{logit} (\overline p_i) &amp; = &amp; \alpha \\
-\alpha &amp; \sim &amp; \text{Normal} (0, 2) \\
-\theta &amp; \sim &amp; \text{Exponential} (1)
-\end{eqnarray}
-\]</span></p>
+<span class="math display">\[\begin{align*}
+\text{admit}_i &amp; \sim \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
+\text{logit} (\overline p_i) &amp; = \alpha \\
+\alpha                       &amp; \sim \text{Normal} (0, 2) \\
+\theta                       &amp; \sim \text{Exponential} (1)
+\end{align*}\]</span>
 <p>Here the size <span class="math inline">\(n = \text{applications}\)</span>. In case you’re confused, yes, our statistical model is not the one McElreath presented at the top of page 348 in the text. If you look closely, the statistical formula he presented does not match up with the one implied by his R code 11.26. Our statistical formula and the <code>brm()</code> model we’ll be fitting, below, correspond to his R code 11.26.</p>
 <p>Before we fit, we have an additional complication. The beta-binomial distribution is <a href="https://github.com/paul-buerkner/brms/issues/144">not implemented in brms at this time</a>. However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html">vignette here</a>. Happily, Bürkner even used the <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution">beta-binomial distribution as the exemplar</a> in the vignette.</p>
 <p>Before we get carried away, let’s load the data.</p>
@@ -1547,10 +1496,7 @@ lines &lt;-
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;probability admit&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-47-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-47-1.png" width="384" /></p>
 <p>There are other ways to do this. For ideas, check out my blog post <a href="https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/"><em>Make rotated Gaussians, Kruschke style</em></a>.</p>
 <p>Before we can do our variant of Figure 11.5.b, we’ll need to define a few more custom functions. The <code>log_lik_beta_binomial2()</code> and <code>predict_beta_binomial2()</code> functions are required for <code>brms::predict()</code> to work with our <code>family = beta_binomial2</code> brmfit object. Similarly, <code>fitted_beta_binomial2()</code> is required for <code>brms::fitted()</code> to work properly. And before all that, we need to throw in a line with the <code>expose_functions()</code> function. Just go with it.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">expose_functions</span>(b11.<span class="dv">5</span>, <span class="dt">vectorize =</span> <span class="ot">TRUE</span>)
@@ -1619,10 +1565,7 @@ fitted_beta_binomial2 &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>),
         <span class="dt">axis.ticks.x    =</span> <span class="kw">element_blank</span>(),
         <span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-49-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-49-1.png" width="384" /></p>
 <p>As in the text, the raw data are consistent with the prediction intervals. But those intervals are so incredibly wide, they’re hardly an endorsement of the model. Once we learn about hierarchical models, we’ll be able to do much better.</p>
 </div>
 <div id="negative-binomial-or-gamma-poisson." class="section level3">
@@ -1646,10 +1589,7 @@ theta &lt;-<span class="st"> </span><span class="dv">1</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Our sweet &quot;</span>, gamma, <span class="st">&quot;(3, 1)&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-50-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-50-1.png" width="336" /></p>
 <div id="bonus-lets-fit-a-negative-binomial-model." class="section level4">
 <h4><span class="header-section-number">11.3.2.1</span> Bonus: Let’s fit a negative-binomial model.</h4>
 <p>McElreath didn’t give an example of negative-binomial regression in the text. Here’s one with the <code>UCBadmit</code> data.</p>
@@ -1697,10 +1637,7 @@ theta &lt;-<span class="st"> </span><span class="dv">1</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">expression</span>(<span class="kw">paste</span>(<span class="st">&quot;Our brms default &quot;</span>, gamma, <span class="st">&quot;(0.01, 0.01) prior&quot;</span>))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_hc</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;grey92&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="11_files/figure-markdown_github/unnamed-chunk-52-1.png" />
-
-</div>
+<p><img src="11_files/figure-html/unnamed-chunk-52-1.png" width="336" /></p>
 </div>
 </div>
 <div id="over-dispersion-entropy-and-information-criteria." class="section level3">
@@ -1734,60 +1671,61 @@ theta &lt;-<span class="st"> </span><span class="dv">1</span>
 ## 
 ## other attached packages:
 ##  [1] gridExtra_2.3        broom_0.5.1          ggthemes_4.0.1      
-##  [4] forcats_0.3.0        stringr_1.3.1        dplyr_0.8.0.1       
+##  [4] forcats_0.3.0        stringr_1.4.0        dplyr_0.8.0.1       
 ##  [7] purrr_0.2.5          readr_1.1.1          tidyr_0.8.1         
-## [10] tibble_2.1.1         tidyverse_1.2.1      brms_2.8.0          
-## [13] Rcpp_1.0.0           rstan_2.18.2         StanHeaders_2.18.0-1
-## [16] ggplot2_3.1.0       
+## [10] tibble_2.1.1         tidyverse_1.2.1      brms_2.8.8          
+## [13] Rcpp_1.0.1           rstan_2.18.2         StanHeaders_2.18.0-1
+## [16] ggplot2_3.1.1       
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-137              matrixStats_0.54.0       
 ##  [3] xts_0.10-2                lubridate_1.7.4          
 ##  [5] threejs_0.3.1             httr_1.3.1               
 ##  [7] rprojroot_1.3-2           tools_3.5.1              
-##  [9] backports_1.1.2           utf8_1.1.4               
+##  [9] backports_1.1.4           utf8_1.1.4               
 ## [11] R6_2.3.0                  DT_0.4                   
-## [13] lazyeval_0.2.1            colorspace_1.3-2         
+## [13] lazyeval_0.2.2            colorspace_1.3-2         
 ## [15] withr_2.1.2               tidyselect_0.2.5         
 ## [17] prettyunits_1.0.2         processx_3.2.1           
-## [19] Brobdingnag_1.2-5         compiler_3.5.1           
+## [19] Brobdingnag_1.2-6         compiler_3.5.1           
 ## [21] rvest_0.3.2               cli_1.0.1                
 ## [23] arrayhelpers_1.0-20160527 xml2_1.2.0               
 ## [25] shinyjs_1.0               labeling_0.3             
-## [27] colourpicker_1.0          scales_1.0.0             
-## [29] dygraphs_1.1.1.5          mvtnorm_1.0-8            
-## [31] ggridges_0.5.0            callr_3.1.0              
-## [33] digest_0.6.18             rmarkdown_1.10           
-## [35] rethinking_1.80           base64enc_0.1-3          
-## [37] pkgconfig_2.0.2           htmltools_0.3.6          
-## [39] htmlwidgets_1.2           rlang_0.3.1              
-## [41] readxl_1.1.0              rstudioapi_0.7           
-## [43] shiny_1.1.0               svUnit_0.7-12            
-## [45] generics_0.0.2            zoo_1.8-2                
-## [47] jsonlite_1.5              crosstalk_1.0.0          
-## [49] gtools_3.8.1              inline_0.3.15            
-## [51] magrittr_1.5              loo_2.1.0                
-## [53] bayesplot_1.6.0           Matrix_1.2-14            
-## [55] fansi_0.4.0               munsell_0.5.0            
-## [57] abind_1.4-5               stringi_1.2.3            
-## [59] yaml_2.1.19               MASS_7.3-50              
-## [61] ggstance_0.3              pkgbuild_1.0.2           
-## [63] plyr_1.8.4                grid_3.5.1               
-## [65] promises_1.0.1            crayon_1.3.4             
-## [67] miniUI_0.1.1.1            lattice_0.20-35          
-## [69] haven_1.1.2               hms_0.4.2                
-## [71] knitr_1.20                ps_1.2.1                 
-## [73] pillar_1.3.1              igraph_1.2.1             
-## [75] markdown_0.8              shinystan_2.5.0          
-## [77] reshape2_1.4.3            stats4_3.5.1             
-## [79] rstantools_1.5.0          glue_1.3.0               
-## [81] evaluate_0.10.1           modelr_0.1.2             
-## [83] httpuv_1.4.4.2            cellranger_1.1.0         
-## [85] gtable_0.2.0              assertthat_0.2.0         
-## [87] mime_0.5                  xtable_1.8-2             
-## [89] coda_0.19-2               later_0.7.3              
-## [91] rsconnect_0.8.8           shinythemes_1.1.1        
-## [93] tidybayes_1.0.4           bridgesampling_0.4-0</code></pre>
+## [27] colourpicker_1.0          bookdown_0.9             
+## [29] scales_1.0.0              dygraphs_1.1.1.5         
+## [31] mvtnorm_1.0-10            ggridges_0.5.0           
+## [33] callr_3.1.0               digest_0.6.18            
+## [35] rmarkdown_1.10            rethinking_1.80          
+## [37] base64enc_0.1-3           pkgconfig_2.0.2          
+## [39] htmltools_0.3.6           readxl_1.1.0             
+## [41] htmlwidgets_1.2           rlang_0.3.4              
+## [43] rstudioapi_0.7            shiny_1.1.0              
+## [45] svUnit_0.7-12             generics_0.0.2           
+## [47] zoo_1.8-2                 jsonlite_1.5             
+## [49] crosstalk_1.0.0           gtools_3.8.1             
+## [51] inline_0.3.15             magrittr_1.5             
+## [53] loo_2.1.0                 bayesplot_1.6.0          
+## [55] Matrix_1.2-14             fansi_0.4.0              
+## [57] munsell_0.5.0             abind_1.4-5              
+## [59] stringi_1.4.3             yaml_2.1.19              
+## [61] MASS_7.3-50               ggstance_0.3             
+## [63] pkgbuild_1.0.2            plyr_1.8.4               
+## [65] grid_3.5.1                promises_1.0.1           
+## [67] crayon_1.3.4              miniUI_0.1.1.1           
+## [69] lattice_0.20-35           haven_1.1.2              
+## [71] hms_0.4.2                 knitr_1.20               
+## [73] ps_1.2.1                  pillar_1.3.1             
+## [75] igraph_1.2.1              markdown_0.8             
+## [77] shinystan_2.5.0           reshape2_1.4.3           
+## [79] stats4_3.5.1              rstantools_1.5.1         
+## [81] glue_1.3.1.9000           evaluate_0.10.1          
+## [83] modelr_0.1.2              httpuv_1.4.4.2           
+## [85] cellranger_1.1.0          gtable_0.3.0             
+## [87] assertthat_0.2.0          xfun_0.3                 
+## [89] mime_0.5                  xtable_1.8-2             
+## [91] coda_0.19-2               later_0.7.3              
+## [93] rsconnect_0.8.8           shinythemes_1.1.1        
+## [95] tidybayes_1.0.4           bridgesampling_0.6-0</code></pre>
 
 </div>
 </div>
