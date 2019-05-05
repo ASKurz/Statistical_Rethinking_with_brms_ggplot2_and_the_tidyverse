@@ -34,7 +34,7 @@ It hasn't been that way, for me.
 
 Most of my data have a complicated multilevel structure and often aren’t very well behaved. It’s normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it’s not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files. 
 
-Consider this model. It’s taken from Bürkner’s vignette, [*Estimating Multivariate Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). It took about five minutes for my several-year-old laptop to fit.
+Consider this model. It’s taken from Bürkner’s vignette, [*Estimating Multivariate Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about five minutes for my several-year-old laptop to fit.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -171,7 +171,7 @@ Relatedly, and perhaps even a precursor, you should [always plot your data](http
 
 ## Use the `0 + intercept` syntax
 
-We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.8.0), we read:
+We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms) (version 2.8.0), we read:
 
 > Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 153) 
 

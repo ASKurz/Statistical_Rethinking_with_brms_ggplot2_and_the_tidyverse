@@ -483,7 +483,7 @@ d <span class="op">%&gt;%</span>
                 <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sd)),
       <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores =</span> <span class="dv">4</span>,
       <span class="dt">seed =</span> <span class="dv">12</span>)</code></pre></div>
-<p>The syntax for the varying effects follows the <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf">lme4 style</a>, <code>( &lt;varying parameter(s)&gt; | &lt;grouping variable(s)&gt; )</code>. In this case <code>(1 | tank)</code> indicates only the intercept, <code>1</code>, varies by <code>tank</code>. The extent to which parameters vary is controlled by the prior, <code>prior(cauchy(0, 1), class = sd)</code>, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It’s common in multilevel software to model in the variance metric, instead.</p>
+<p>The syntax for the varying effects follows the <a href="https://cran.r-project.org/package=brms/vignettes/brms_overview.pdf">lme4 style</a>, <code>( &lt;varying parameter(s)&gt; | &lt;grouping variable(s)&gt; )</code>. In this case <code>(1 | tank)</code> indicates only the intercept, <code>1</code>, varies by <code>tank</code>. The extent to which parameters vary is controlled by the prior, <code>prior(cauchy(0, 1), class = sd)</code>, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It’s common in multilevel software to model in the variance metric, instead.</p>
 <p>Let’s do the WAIC comparisons.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b12.<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b12.<span class="dv">1</span>, <span class="st">&quot;waic&quot;</span>)
 b12.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b12.<span class="dv">2</span>, <span class="st">&quot;waic&quot;</span>)
@@ -527,7 +527,7 @@ post_mdn</code></pre></div>
 ##  9   -0.183     0.606 -1.41  0.992      10 pred  big       4      0.4     9    0.454
 ## 10    2.06      0.839  0.596 4.05       10 pred  big       9      0.9    10    0.887
 ## # … with 38 more rows</code></pre>
-<p>For kicks and giggles, let’s use a <a href="https://github.com/alex23lemm/theme_fivethirtyeight">FiveThirtyEight-like theme</a> for this chapter’s plots. An easy way to do so is with help from the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>.</p>
+<p>For kicks and giggles, let’s use a <a href="https://github.com/alex23lemm/theme_fivethirtyeight">FiveThirtyEight-like theme</a> for this chapter’s plots. An easy way to do so is with help from the <a href="https://cran.r-project.org/package=ggthemes">ggthemes package</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;ggthemes&quot;, dependencies = T) </span>
 
 <span class="kw">library</span>(ggthemes) </code></pre></div>
