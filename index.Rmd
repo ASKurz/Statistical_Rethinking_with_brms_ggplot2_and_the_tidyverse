@@ -23,7 +23,7 @@ description: "This project is an attempt to re-express the code in McElreath’s
 
 I love McElreath’s [*Statistical Rethinking* text](http://xcelab.net/rm/statistical-rethinking/). It's the entry-level textbook for applied researchers I spent years looking for. McElreath's [freely-available lectures](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) on the book are really great, too.
 
-However, I prefer using Bürkner’s [brms package](https://github.com/paul-buerkner/brms) when doing Bayeian regression in R. [It's just spectacular](http://andrewgelman.com/2017/01/10/r-packages-interfacing-stan-brms/). I also prefer plotting with Wickham's [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html), and coding with functions and principles from the [tidyverse](https://www.tidyverse.org), which you might learn about [here](http://style.tidyverse.org) or [here](http://r4ds.had.co.nz/transform.html).
+However, I prefer using Bürkner’s [brms package](https://github.com/paul-buerkner/brms) when doing Bayesian regression in R. [It's just spectacular](http://andrewgelman.com/2017/01/10/r-packages-interfacing-stan-brms/). I also prefer plotting with Wickham's [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html), and coding with functions and principles from the [tidyverse](https://www.tidyverse.org), which you might learn about [here](http://style.tidyverse.org) or [here](http://r4ds.had.co.nz/transform.html).
 
 So, this project is an attempt to reexpress the code in McElreath’s textbook. His models are re-fit with brms, the figures are reproduced or reimagined with ggplot2, and the general data wrangling code now predominantly follows the tidyverse style.
 
