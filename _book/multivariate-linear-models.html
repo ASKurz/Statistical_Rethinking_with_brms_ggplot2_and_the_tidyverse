@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -1072,7 +1072,7 @@ d &lt;-<span class="st"> </span>milk</code></pre></div>
 <span class="st">  </span><span class="kw">pairs</span>(<span class="dt">col =</span> <span class="st">&quot;firebrick4&quot;</span>)</code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-31-1.png" width="432" /></p>
 <p>By just looking at that mess, do you think you could describe the associations of <code>mass</code> and <code>neocortex.perc</code> with the criterion, <code>kcal.per.g</code>? I couldn’t. It’s a good thing we have math.</p>
-<p>McElreath has us start of with a simple univaraible <code>milk</code> model.</p>
+<p>McElreath has us start of with a simple univariable <code>milk</code> model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">5</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> d, <span class="dt">family =</span> gaussian,
       kcal.per.g <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>neocortex.perc,
@@ -1551,7 +1551,7 @@ b5.<span class="dv">11</span> &lt;-<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">posterior_interval</span>(b5.<span class="dv">11</span>)[<span class="dv">2</span>, ] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
 <pre><code>##   2.5%  97.5% 
 ## -0.012 -0.009</code></pre>
-<p>Now “watch what happens when we place both predictor varaibles in the same regression model” (p. 146).</p>
+<p>Now “watch what happens when we place both predictor variables in the same regression model” (p. 146).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b5.<span class="dv">12</span> &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">update</span>(b5.<span class="dv">11</span>,
          <span class="dt">newdata =</span> d,
@@ -1730,8 +1730,8 @@ d &lt;-<span class="st"> </span>
 <p>“Now the impact of treatment is strong and positive, as it should be” (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., <code>h1</code>). The second outcome, which was clearly related to <code>h1</code>, was the presence of fungus, captured by our binomial variable <code>fungus</code>. If you wanted to model that, you’d fit a logistic regression model, which we’ll learn about in Chapter 10.</p>
 </div>
 </div>
-<div id="categorical-varaibles" class="section level2">
-<h2><span class="header-section-number">5.4</span> Categorical varaibles</h2>
+<div id="categorical-variables" class="section level2">
+<h2><span class="header-section-number">5.4</span> Categorical variables</h2>
 <blockquote>
 <p>Many readers will already know that variables like this, routinely called <em>factors</em>, can easily be included in linear models. But what is not widely understood is how these variables are included in a model… Knowing how the machine works removes a lot of this difficulty. (p. 153, <em>emphasis</em> in the original)</p>
 </blockquote>
