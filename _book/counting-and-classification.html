@@ -492,7 +492,7 @@ b10.<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">add
 ## b10.2      0.00 0.00
 ## b10.3      2.06 0.90
 ## b10.1      7.57 6.21</code></pre>
-<p>For this chapter, we’ll take our color scheme from the <a href="https://cran.r-project.org/web/packages/wesanderson/index.html">wesanderson package</a>’s <code>Moonrise2</code> palette.</p>
+<p>For this chapter, we’ll take our color scheme from the <a href="https://cran.r-project.org/package=wesanderson">wesanderson package</a>’s <code>Moonrise2</code> palette.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;wesanderson&quot;, dependencies = T)</span>
 <span class="kw">library</span>(wesanderson)
 
@@ -500,7 +500,7 @@ b10.<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">add
 <p><img src="10_files/figure-html/unnamed-chunk-8-1.png" width="288" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">wes_palette</span>(<span class="st">&quot;Moonrise2&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
 <pre><code>## [1] &quot;#798E87&quot; &quot;#C27D38&quot; &quot;#CCC591&quot; &quot;#29211F&quot;</code></pre>
-<p>We’ll also take a few formatting cues from <a href="https://www.edwardtufte.com/tufte/books_vdqi">Edward Tufte</a>, curtesy of the <a href="https://cran.r-project.org/web/packages/ggthemes/index.html">ggthemes package</a>. The <code>theme_tufte()</code> function will change the default font and remove some chart junk. The <code>theme_set()</code> function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute <code>theme_set(theme_default())</code>.</p>
+<p>We’ll also take a few formatting cues from <a href="https://www.edwardtufte.com/tufte/books_vdqi">Edward Tufte</a>, curtesy of the <a href="https://cran.r-project.org/package=ggthemes">ggthemes package</a>. The <code>theme_tufte()</code> function will change the default font and remove some chart junk. The <code>theme_set()</code> function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute <code>theme_set(theme_default())</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggthemes)
 <span class="kw">library</span>(bayesplot)
 
@@ -896,7 +896,7 @@ b10.<span class="dv">7</span> &lt;-<span class="st"> </span><span class="kw">add
 <pre><code>## Warning: Found 4 observations with a pareto_k &gt; 0.7 in model &#39;b10.7&#39;. It is recommended to set &#39;reloo = TRUE&#39;
 ## in order to calculate the ELPD without the assumption that these observations are negligible. This will refit
 ## the model 4 times to compute the ELPDs for the problematic observations directly.</code></pre>
-<p>If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the <code>loo()</code>! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto <span class="math inline">\(k\)</span> parameter, which you can learn all about in the <code>loo-package</code> section of the <a href="https://cran.r-project.org/web/packages/loo/loo.pdf">loo reference manual</a>. As it turns out, the Pareto <span class="math inline">\(k\)</span> <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics">can be used as a diagnostic tool</a>. Each case in the data gets its own <span class="math inline">\(k\)</span> value and we like it when those <span class="math inline">\(k\)</span>s are low. The makers of the loo package get worried when those <span class="math inline">\(k\)</span>s exceed 0.7 and as a result, <code>loo()</code> spits out a warning message when they do.</p>
+<p>If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the <code>loo()</code>! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto <span class="math inline">\(k\)</span> parameter, which you can learn all about in the <code>loo-package</code> section of the <a href="https://cran.r-project.org/package=loo">loo reference manual</a>. As it turns out, the Pareto <span class="math inline">\(k\)</span> <a href="https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics">can be used as a diagnostic tool</a>. Each case in the data gets its own <span class="math inline">\(k\)</span> value and we like it when those <span class="math inline">\(k\)</span>s are low. The makers of the loo package get worried when those <span class="math inline">\(k\)</span>s exceed 0.7 and as a result, <code>loo()</code> spits out a warning message when they do.</p>
 <p>First things first, if you explicitly open the loo package, you’ll have access to some handy diagnostic functions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(loo)</code></pre></div>
 <p>We’ll be leveraging those <span class="math inline">\(k\)</span> values with the <code>pareto_k_table()</code> and <code>pareto_k_ids()</code> functions. Both functions take objects created by the <code>loo()</code> or <code>psis()</code> functions. So, before we can get busy, we’ll first make two objects with the <code>loo()</code>.</p>
@@ -1404,7 +1404,7 @@ b10.<span class="dv">14</span> &lt;-<span class="st"> </span><span class="kw">ad
        <span class="dt">title =</span> <span class="st">&quot;WAIC&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.ticks.y    =</span> <span class="kw">element_blank</span>())</code></pre></div>
 <p><img src="10_files/figure-html/unnamed-chunk-66-1.png" width="432" /></p>
-<p>Here’s our version of Figure 10.9. Recall, to do an “ensemble” posterior prediction in brms, one uses the <code>pp_average()</code> function. I know we were just lazy and focused on the WAIC. But let’s play around, a bit. Here we’ll weight the models based on the LOO by adding a <code>weights = &quot;loo&quot;</code> argument to the <code>pp_average()</code> function. If you check the corresponding section of the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a>, you’ll find several weighting schemes.</p>
+<p>Here’s our version of Figure 10.9. Recall, to do an “ensemble” posterior prediction in brms, one uses the <code>pp_average()</code> function. I know we were just lazy and focused on the WAIC. But let’s play around, a bit. Here we’ll weight the models based on the LOO by adding a <code>weights = &quot;loo&quot;</code> argument to the <code>pp_average()</code> function. If you check the corresponding section of the <a href="https://cran.r-project.org/package=brms">brms reference manual</a>, you’ll find several weighting schemes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nd &lt;-
 <span class="st">  </span><span class="kw">tibble</span>(<span class="dt">contact_high =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">expand</span>(contact_high,
@@ -1757,7 +1757,7 @@ b_pois &lt;-
       <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
       <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">cores =</span> <span class="dv">3</span>, <span class="dt">chains =</span> <span class="dv">3</span>,
       <span class="dt">seed =</span> <span class="dv">10</span>)</code></pre></div>
-<p>Note, the <code>mvbind()</code> syntax made <code>b_pois</code> a multivariate Poisson model. Starting with version 2.0.0, <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html">brms supports a variety of multivariate models</a>. Anyway, here are the implications of <code>b_pois</code>.</p>
+<p>Note, the <code>mvbind()</code> syntax made <code>b_pois</code> a multivariate Poisson model. Starting with version 2.0.0, <a href="https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html">brms supports a variety of multivariate models</a>. Anyway, here are the implications of <code>b_pois</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># extract the samples</span>
 post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b_pois)
 
@@ -1875,7 +1875,7 @@ y &lt;-<span class="st"> </span><span class="kw">rgeom</span>(n, <span class="dt
 ## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>It turns out brms uses a <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#binary-and-count-data-models">different parameterization for the geometric distribution</a> than rethinking does. It follows the form</p>
+<p>It turns out brms uses a <a href="https://cran.r-project.org/package=brms/vignettes/brms_families.html#binary-and-count-data-models">different parameterization for the geometric distribution</a> than rethinking does. It follows the form</p>
 <p><span class="math display">\[f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg (\frac{1}{\mu_i + 1} \bigg )\]</span></p>
 <p>Even though the parameters brms yielded look different from those in the text, their predictions describe the data well. Here’s the <code>marginal_effects()</code> plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">marginal_effects</span>(b10.<span class="dv">18</span>),

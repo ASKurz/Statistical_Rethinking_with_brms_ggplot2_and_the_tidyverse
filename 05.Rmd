@@ -42,7 +42,7 @@ head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/package=ggrepel). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
 ```{r, fig.width = 3, fig.height = 3}
 # install.packages("ggrepel", depencencies = T)
@@ -63,7 +63,7 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-With `coord_map()` and help from the [fiftystater package](https://cran.r-project.org/web/packages/fiftystater/index.html) (which gives us access to lat/long data for all fifty states via `fifty_states`), we can plot our three major variables in a map format.
+With `coord_map()` and help from the [fiftystater package](https://cran.r-project.org/package=fiftystater) (which gives us access to lat/long data for all fifty states via `fifty_states`), we can plot our three major variables in a map format.
 
 ```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
 library(fiftystater)
@@ -247,7 +247,7 @@ The `stanplot()` function is an easy way to get a default coefficient plot. You 
 stanplot(b5.3)
 ```
 
-There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/web/packages/bayesplot/index.html). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object. 
+There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/package=bayesplot). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object. 
 
 ```{r, message = F, warning = F, fig.width = 6, fig.height = 1.5}
 # install.packages("bayesplot", dependencies = T)
@@ -266,7 +266,7 @@ mcmc_intervals(post[, 1:4],
         axis.ticks.y = element_blank())
 ```
 
-Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
+Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
 The `tidybaes::stat_pointintervalh()` function offers a third way, this time with a more ground-up ggplot2 workflow.
 
@@ -346,7 +346,7 @@ f %>%
   theme(panel.grid = element_blank())     
 ```
 
-We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
+We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) for details.
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
@@ -1024,7 +1024,7 @@ post %>%
   theme(panel.grid = element_blank())
 ```
 
-While we're at it, you can make a similar plot with the [`mcmc_scatter()` function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
+While we're at it, you can make a similar plot with the [`mcmc_scatter()` function](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
 ```{r, fig.width = 3, fig.height = 3}
 post %>% 
@@ -1167,7 +1167,7 @@ b5.12 <-
 posterior_summary(b5.12) %>% round(digits = 3)
 ```
 
-You can make custom pairs plots with [GGalley](https://cran.r-project.org/web/packages/GGally/index.html), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
+You can make custom pairs plots with [GGalley](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
@@ -1616,7 +1616,7 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 ## ~~Ordinary least squares and `lm()`~~
 
-Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/web/packages/lme4/index.html) syntax for multilevel models.
+Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) syntax for multilevel models.
 
 Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We’ve already made use of it in the "Polynomial regression" section of Chapter 4.
 
