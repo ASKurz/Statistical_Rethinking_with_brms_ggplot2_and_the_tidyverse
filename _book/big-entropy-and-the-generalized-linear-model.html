@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -578,7 +578,7 @@ d <span class="op">%&gt;%</span><span class="st"> </span>
 <p><span class="math display">\[\text{Pr} (y | n, p) = \frac{n!}{y! (n - y)!} p^y (1 - p)^{n - y}\]</span></p>
 <p>It may help to note that the fraction with the factorials is just saying how many different ordered sequences of <span class="math inline">\(n\)</span> outcomes have a count of <span class="math inline">\(y\)</span>. (p. 275)</p>
 </blockquote>
-<p>For me, that last sentence made more sense when I walked it out in an example. To do so, lets wrap that fraction of factorials into a function.</p>
+<p>For me, that last sentence made more sense when I walked it out in an example. To do so, let's wrap that fraction of factorials into a function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">count_ways &lt;-<span class="st"> </span><span class="cf">function</span>(n, y){
   <span class="co"># n = the total number of trials (i.e., the number of rows in your vector)</span>
   <span class="co"># y = the total number of 1s (i.e., successes) in your vector</span>
@@ -1004,7 +1004,7 @@ y_i                   &amp; \sim \text{Normal} (\mu, \sigma_i) \\
 \end{align*}\]</span>
 <p>In this model, the mean <span class="math inline">\(\mu\)</span> is constant, but the standard deviation scales with the value <span class="math inline">\(x_i\)</span>. (p. 268)</p>
 </blockquote>
-<p>This kind of model is trivial in the brms framework, which you can learn more about in Bürkner’s vignette <a href="https://cran.r-project.org/package=brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. Before moving on with the text, let’s detour and see how we might fit such a model. First, let’s simulate some continuous data <code>y</code> for which the <span class="math inline">\(SD\)</span> is effected by a dummy variable <code>x</code>.</p>
+<p>This kind of model is trivial in the brms framework, which you can learn more about in Bürkner’s vignette <a href="https://cran.r-project.org/package=brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. Before moving on with the text, let’s detour and see how we might fit such a model. First, let’s simulate some continuous data <code>y</code> for which the <span class="math inline">\(SD\)</span> is affected by a dummy variable <code>x</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">9</span>)
 (
   d &lt;-

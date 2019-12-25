@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -747,7 +747,7 @@ d_grid &lt;-
 ## 4   140  4.08
 ## 5   140  4.10
 ## 6   140  4.13</code></pre>
-<p><code>d_grid</code> contains every combination of <code>mu</code> and <code>sigma</code> across their specified values. Instead of base R <code>sapply()</code>, we’ll do the computateions by making a custom function which we’ll plug into <code>purrr::map2().</code></p>
+<p><code>d_grid</code> contains every combination of <code>mu</code> and <code>sigma</code> across their specified values. Instead of base R <code>sapply()</code>, we’ll do the computations by making a custom function which we’ll plug into <code>purrr::map2().</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grid_function &lt;-<span class="st"> </span><span class="cf">function</span>(mu, sigma){
   <span class="kw">dnorm</span>(d2<span class="op">$</span>height, <span class="dt">mean =</span> mu, <span class="dt">sd =</span> sigma, <span class="dt">log =</span> T) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">sum</span>()
@@ -837,7 +837,7 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Let’s say you wanted their posterior medians and 50% quantile-based intervals, instead. Just switch out the last line for <code>median_qi(value, .width = .5)</code>.</p>
 <div id="overthinking-sample-size-and-the-normality-of-sigmas-posterior." class="section level4">
 <h4><span class="header-section-number">4.3.4.1</span> Overthinking: Sample size and the normality of <span class="math inline">\(\sigma\)</span>’s posterior.</h4>
-<p>Since we’ll be fitting models with brms almost exclusively from here on out, this section is largely mute. But we’ll do it anyway for the sake of practice. I’m going to break the steps up like before rather than compress the code together. Here’s <code>d3</code>.</p>
+<p>Since we’ll be fitting models with brms almost exclusively from here on out, this section is largely moot. But we’ll do it anyway for the sake of practice. I’m going to break the steps up like before rather than compress the code together. Here’s <code>d3</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">4</span>)
 (d3 &lt;-<span class="st"> </span><span class="kw">sample</span>(d2<span class="op">$</span>height, <span class="dt">size =</span> <span class="dv">20</span>))</code></pre></div>
 <pre><code>##  [1] 149.225 156.845 150.495 149.225 158.750 169.545 167.005 160.655 141.605 146.050 168.910 163.195

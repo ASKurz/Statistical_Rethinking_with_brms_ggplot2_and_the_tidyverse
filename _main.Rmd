@@ -111,7 +111,7 @@ As he opened the chapter, McElreath told us that
 >
 > Scientists also make golems. Our golems rarely have physical form, but they too are often made of clay, living in silicon as computer code. These golems are scientific model. But these golems have real effects on the world, through the predictions they make and the intuitions they challenge or inspire. A concern with truth enlivens these models, but just like a golem or a modern robot, scientific models are neither true nor false, neither prophets nor charlatans. Rather they are constructs engineered for some purpose. These constructs are incredibly powerful, dutifully conducting their programmed calculations. (p. 1, *emphasis* in the original)
 
-There are a lot of great points, themes, methods, and factoids in this text. For me, one of the most powerful themes interlaced throughout the pages is how we should be skeptical of our models. Yes, learn Bayes. Pour over this book. Fit models until late into the night. But please don’t fall into blind love with their elegance and power. If we all knew what we were doing, there’d be no need for science. For more wise deflation along these lines, do check out [*A personal essay on Bayes factors*](https://djnavarro.net/post/2018-09-15-open-closed/), [*Between the Devil and the Deep Blue Sea: Tensions Between Scientific Judgement and Statistical Model Selection*](https://link.springer.com/article/10.1007/s42113-018-0019-z) and [*Science, statistics and the problem of "pretty good inference"*](https://www.youtube.com/watch?v=tNkmsAOn7aU), a blog, paper and talk by the inimitable [Danielle Navarro](https://twitter.com/djnavarro?lang=en). 
+There are a lot of great points, themes, methods, and factoids in this text. For me, one of the most powerful themes interlaced throughout the pages is how we should be skeptical of our models. Yes, learn Bayes. Pour over this book. Fit models until late into the night. But please don’t fall into blind love with their elegance and power. If we all knew what we were doing, there’d be no need for science. For more wise deflation along these lines, do check out [*A personal essay on Bayes factors*](https://djnavarro.net/post/a-personal-essay-on-bayes-factors/), [*Between the Devil and the Deep Blue Sea: Tensions Between Scientific Judgement and Statistical Model Selection*](https://link.springer.com/article/10.1007/s42113-018-0019-z) and [*Science, statistics and the problem of "pretty good inference"*](https://www.youtube.com/watch?v=tNkmsAOn7aU), a blog, paper and talk by the inimitable [Danielle Navarro](https://twitter.com/djnavarro?lang=en).
 
 Anyway, McElreath left us no code or figures to translate in this chapter. But before you skip off to the next one, why not invest a little time soaking in this chapter’s material by watching [McElreath present it](https://www.youtube.com/watch?v=oy7Ks3YfbDg&t=14s&frags=pl%2Cwn)? He's an engaging speaker and the material in his online lectures does not entirely overlap with that in the text.
 
@@ -931,7 +931,7 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-I'm not sure if it's the same McElreath used in the text, but the formula I used for the tirangle-shaped prior is the [Laplace distribution](http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html) with a location of .5 and a dispersion of .25.
+I'm not sure if it's the same McElreath used in the text, but the formula I used for the triangle-shaped prior is the [Laplace distribution](http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html) with a location of .5 and a dispersion of .25.
 
 Also, to learn all about `dplyr::filter()`, check out Baert's [*Data Wrangling Part 3: Basic and more advanced ways to filter rows*](https://suzan.rbind.io/2018/02/dplyr-tutorial-3/).
 
@@ -1152,7 +1152,7 @@ tibble(pr_positive_vampire   = .95,
   glimpse()
 ```
 
-Here's the other way of tackling the vampire problem, this time useing the frequency format.
+Here's the other way of tackling the vampire problem, this time using the frequency format.
 
 ```{r}
 tibble(pr_vampire            = 100 / 100000,
@@ -2448,7 +2448,7 @@ d_grid <-
 head(d_grid)
 ```
 
-`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computateions by making a custom function which we'll plug into `purrr::map2().`
+`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computations by making a custom function which we'll plug into `purrr::map2().`
 
 ```{r}
 grid_function <- function(mu, sigma){
@@ -2548,7 +2548,7 @@ Let's say you wanted their posterior medians and 50% quantile-based intervals, i
 
 #### Overthinking: Sample size and the normality of $\sigma$'s posterior.
 
-Since we'll be fitting models with brms almost exclusively from here on out, this section is largely mute. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
+Since we'll be fitting models with brms almost exclusively from here on out, this section is largely moot. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
 
 ```{r}
 set.seed(4)
@@ -3551,7 +3551,7 @@ output:
 
 # Multivariate Linear Models
 
-McElreath's listed reasons for multivaraiable regression include:
+McElreath's listed reasons for multivariable regression include:
 
 * statistical control for confounds
 * multiple causation
@@ -4216,7 +4216,7 @@ d %>%
 
 By just looking at that mess, do you think you could describe the associations of `mass` and `neocortex.perc` with the criterion, `kcal.per.g`? I couldn't. It's a good thing we have math.
 
-McElreath has us start of with a simple univaraible `milk` model.
+McElreath has us start of with a simple univariable `milk` model.
 
 ```{r b5.5_, cache = T, message = F, warning = F}
 b5.5 <- 
@@ -4703,7 +4703,7 @@ posterior_interval(b5.10)[2, ] %>% round(digits = 3)
 posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 ```
 
-Now "watch what happens when we place both predictor varaibles in the same regression model" (p. 146).
+Now "watch what happens when we place both predictor variables in the same regression model" (p. 146).
 
 ```{r b5.12, cache = T, message = F, warning = F, results = 'hide'}
 b5.12 <- 
@@ -4716,7 +4716,7 @@ b5.12 <-
 posterior_summary(b5.12) %>% round(digits = 3)
 ```
 
-You can make custom pairs plots with [GGalley](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
+You can make custom pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
@@ -4868,7 +4868,7 @@ print(b5.14)
 
 "Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in Chapter 10.
 
-## Categorical varaibles
+## Categorical variables
 
 > Many readers will already know that variables like this, routinely called *factors*, can easily be included in linear models. But what is not widely understood is how these variables are included in a model... Knowing how the machine works removes a lot of this difficulty. (p. 153, *emphasis* in the original)
 
@@ -8209,7 +8209,7 @@ tibble(y     = rcauchy(n, location = 0, scale = 5),
   theme_ipsum()
 ```
 
-The whole thing is quite remarkible. Just for kicks, here we do it again, this time with eight simulations.
+The whole thing is quite remarkable. Just for kicks, here we do it again, this time with eight simulations.
 
 ```{r, fig.height = 4, fig.width = 10}
 n <- 1e4
@@ -8545,7 +8545,7 @@ The binomial likelihood entails
 >
 > It may help to note that the fraction with the factorials is just saying how many different ordered sequences of $n$ outcomes have a count of $y$. (p. 275)
 
-For me, that last sentence made more sense when I walked it out in an example. To do so, lets wrap that fraction of factorials into a function.
+For me, that last sentence made more sense when I walked it out in an example. To do so, let's wrap that fraction of factorials into a function.
 
 ```{r}
 count_ways <- function(n, y){
@@ -8996,7 +8996,7 @@ grid.arrange(p1, p2, ncol = 2)
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
 
-This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
+This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is affected by a dummy variable `x`.
 
 ```{r}
 set.seed(9)
@@ -9304,7 +9304,7 @@ wes_palette("Moonrise2")
 wes_palette("Moonrise2")[1:4]
 ```
 
-We'll also take a few formatting cues from [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi), curtesy of the [ggthemes package](https://cran.r-project.org/package=ggthemes). The `theme_tufte()` function will change the default font and remove some chart junk. The `theme_set()` function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute `theme_set(theme_default())`.
+We'll also take a few formatting cues from [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi), courtesy of the [ggthemes package](https://cran.r-project.org/package=ggthemes). The `theme_tufte()` function will change the default font and remove some chart junk. The `theme_set()` function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute `theme_set(theme_default())`.
 
 ```{r, message = F, warning = F}
 library(ggthemes)
@@ -9713,7 +9713,7 @@ There are those warning messages, again. Using the loo-object for model `b10.6`,
 pareto_k_table(l_b10.6) 
 ```
 
-You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like nice and low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range We can take a closer look like this:
+You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like nice and low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range. We can take a closer look like this:
 
 ```{r, fig.width = 4.5, fig.height = 3.5}
 plot(l_b10.6)
@@ -15495,7 +15495,7 @@ Now we're ready to fit some models. In brms, there are at least two ways to acco
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
-We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
+We'll start off using both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
 ```{r b14.1_se_and_b14.1_mi, cache = T, message = F, warning = F}
 # put the data into a `list()`
