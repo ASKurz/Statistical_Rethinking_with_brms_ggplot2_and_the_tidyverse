@@ -634,11 +634,11 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-If you’d like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre’s [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/).
+If you’d like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the open science framework.
 
 ### Bonus: Figure 11.3 alternative.
 
-I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody’s got time for that. We’ve have clients to serve! Happily, we can go further. Look back at McElreath’s R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here’s the adjusted function:
+I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody's got time for that. We've have clients to serve! Happily, we can go further. Look back at McElreath's R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here's the adjusted function:
 
 ```{r}
 make_data_for_an_alternative_fiture <- function(action, contact, max_iter) {
@@ -909,7 +909,7 @@ However, the beta density is typically defined in terms of $\alpha$ and $\beta$.
 
 $$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)}$$
 
-which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan Functions Reference](https://mc-stan.org/docs/2_18/functions-reference/beta-distribution.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()`.
+which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan Functions Reference](https://mc-stan.org/docs/2_21/functions-reference/beta-distribution.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()`.
 
 McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use; the parameters in McElreath's `dbeta2()` are much nicer. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
 
@@ -976,7 +976,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01))) +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-McElreath encouraged us to "explore different values for `pbar` and `theta`" (p. 348). Here’s a grid of plots with `pbar = c(.25, .5, .75)` and `theta = c(5, 10, 15)`
+McElreath encouraged us to "explore different values for `pbar` and `theta`" (p. 348). Here's a grid of plots with `pbar = c(.25, .5, .75)` and `theta = c(5, 10, 15)`
 
 ```{r, fig.width = 5, fig.height = 5}
 # data
@@ -1002,9 +1002,9 @@ crossing(pbar  = c(.25, .5, .75),
   facet_grid(kappa ~ mu, labeller = label_parsed)
 ```
 
-If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [the chapter 6 document](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse/blob/master/06.md) of my project [recoding Kruschke's text into tidyverse and brms code](https://github.com/ASKurz/Doing-Bayesian-Data-Analysis-in-brms-and-the-tidyverse).
+If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [Chapter 6](https://bookdown.org/ajkurz/DBDA_recoded/inferring-a-binomial-probability-via-exact-mathematical-analysis.html#a-description-of-credibilities-the-beta-distribution) of my project [recoding Kruschke's text into tidyverse and brms code](https://bookdown.org/ajkurz/DBDA_recoded/).
 
-But remember, we’re not fitting a beta model. We’re using the beta-binomial. "We’re going to bind our linear model to $\overline p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
+But remember, we're not fitting a beta model. We're using the beta-binomial. "We're going to bind our linear model to $\overline p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
 
 \begin{align*}
 \text{admit}_i & \sim \text{BetaBinomial} (n_i, \overline p_i, \theta)\\
@@ -1279,7 +1279,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
 
 ## Reference {-}
 
-[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
