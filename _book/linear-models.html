@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -747,7 +747,7 @@ d_grid &lt;-
 ## 4   140  4.08
 ## 5   140  4.10
 ## 6   140  4.13</code></pre>
-<p><code>d_grid</code> contains every combination of <code>mu</code> and <code>sigma</code> across their specified values. Instead of base R <code>sapply()</code>, we’ll do the computateions by making a custom function which we’ll plug into <code>purrr::map2().</code></p>
+<p><code>d_grid</code> contains every combination of <code>mu</code> and <code>sigma</code> across their specified values. Instead of base R <code>sapply()</code>, we’ll do the computations by making a custom function which we’ll plug into <code>purrr::map2().</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grid_function &lt;-<span class="st"> </span><span class="cf">function</span>(mu, sigma){
   <span class="kw">dnorm</span>(d2<span class="op">$</span>height, <span class="dt">mean =</span> mu, <span class="dt">sd =</span> sigma, <span class="dt">log =</span> T) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">sum</span>()
@@ -837,7 +837,7 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Let’s say you wanted their posterior medians and 50% quantile-based intervals, instead. Just switch out the last line for <code>median_qi(value, .width = .5)</code>.</p>
 <div id="overthinking-sample-size-and-the-normality-of-sigmas-posterior." class="section level4">
 <h4><span class="header-section-number">4.3.4.1</span> Overthinking: Sample size and the normality of <span class="math inline">\(\sigma\)</span>’s posterior.</h4>
-<p>Since we’ll be fitting models with brms almost exclusively from here on out, this section is largely mute. But we’ll do it anyway for the sake of practice. I’m going to break the steps up like before rather than compress the code together. Here’s <code>d3</code>.</p>
+<p>Since we’ll be fitting models with brms almost exclusively from here on out, this section is largely moot. But we’ll do it anyway for the sake of practice. I’m going to break the steps up like before rather than compress the code together. Here’s <code>d3</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">4</span>)
 (d3 &lt;-<span class="st"> </span><span class="kw">sample</span>(d2<span class="op">$</span>height, <span class="dt">size =</span> <span class="dv">20</span>))</code></pre></div>
 <pre><code>##  [1] 149.225 156.845 150.495 149.225 158.750 169.545 167.005 160.655 141.605 146.050 168.910 163.195
@@ -936,7 +936,7 @@ d_grid_samples <span class="op">%&gt;%</span><span class="st"> </span>
 ## is a crude measure of effective sample size, and Rhat is the potential 
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>The <code>summary()</code> function works in a similar way.</p>
-<p>You can also get a <a href="https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html">Stan-like summary</a> with this:</p>
+<p>You can also get a <a href="https://cran.r-project.org/package=rstan/vignettes/rstan.html">Stan-like summary</a> with this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b4.1_half_cauchy<span class="op">$</span>fit</code></pre></div>
 <pre><code>## Inference for Stan model: 252a73b897ed8b29d2decfe77302d732.
 ## 4 chains, each with iter=2000; warmup=1000; thin=1; 
@@ -1042,13 +1042,13 @@ post <span class="op">%&gt;%</span>
 <pre><code>##             b_Intercept       sigma
 ## b_Intercept  1.00000000 -0.02680604
 ## sigma       -0.02680604  1.00000000</code></pre>
-<p>With our <code>post &lt;- posterior_samples(b4.1_half_cauchy)</code> code from a few lines above, we’ve already done the brms version of what McElreath did with <code>extract.samples()</code> on page 90. However, what happened under the hood was different. Whereas rethinking used the <code>mvnorm()</code> function from the <a href="https://cran.r-project.org/web/packages/MASS/index.html">MASS package</a>, in brms we just extracted the iterations of the HMC chains and put them in a data frame.</p>
+<p>With our <code>post &lt;- posterior_samples(b4.1_half_cauchy)</code> code from a few lines above, we’ve already done the brms version of what McElreath did with <code>extract.samples()</code> on page 90. However, what happened under the hood was different. Whereas rethinking used the <code>mvnorm()</code> function from the <a href="https://cran.r-project.org/package=MASS">MASS package</a>, in brms we just extracted the iterations of the HMC chains and put them in a data frame.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(post)</code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    4000 obs. of  3 variables:
 ##  $ b_Intercept: num  155 154 155 155 155 ...
 ##  $ sigma      : num  7.34 7.65 7.5 7.57 7.57 ...
 ##  $ lp__       : num  -1228 -1227 -1227 -1228 -1228 ...</code></pre>
-<p>Notice how our data frame, <code>post</code>, includes a third vector, <code>lp__</code>. That’s the log posterior. See the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> or the “The Log-Posterior (function and gradient)” section of the Stan Development Team’s <a href="https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient"><em>RStan: the R interface to Stan</em></a> for details. The log posterior will largely be outside of our focus in this project.</p>
+<p>Notice how our data frame, <code>post</code>, includes a third vector, <code>lp__</code>. That’s the log posterior. See the <a href="https://cran.r-project.org/package=brms">brms reference manual</a> or the “The Log-Posterior (function and gradient)” section of the Stan Development Team’s <a href="https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient"><em>RStan: the R interface to Stan</em></a> for details. The log posterior will largely be outside of our focus in this project.</p>
 <p>The <code>summary()</code> function doesn’t work for brms posterior data frames quite the way <code>precis()</code> does for posterior data frames from the rethinking package. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(post[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>])</code></pre></div>
 <pre><code>##   b_Intercept        sigma      
@@ -1097,7 +1097,7 @@ post <span class="op">%&gt;%</span>
 ## 2 sigma         7.75   7.21   8.36   0.95 mean   qi</code></pre>
 <div id="overthinking-under-the-hood-with-multivariate-sampling." class="section level4">
 <h4><span class="header-section-number">4.3.6.1</span> Overthinking: Under the hood with multivariate sampling.</h4>
-<p>Again, <code>brms::posterior_samples()</code> is not the same as <code>rethinking::extract.samples()</code>. Rather than use the <code>MASS::mvnorm()</code>, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">reference manual</a> or <a href="https://github.com/paul-buerkner/brms">GitHub page</a> for details.</p>
+<p>Again, <code>brms::posterior_samples()</code> is not the same as <code>rethinking::extract.samples()</code>. Rather than use the <code>MASS::mvnorm()</code>, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms <a href="https://cran.r-project.org/package=brms">reference manual</a> or <a href="https://github.com/paul-buerkner/brms">GitHub page</a> for details.</p>
 </div>
 <div id="overthinking-getting-sigma-right." class="section level4">
 <h4><span class="header-section-number">4.3.6.2</span> Overthinking: Getting <span class="math inline">\(\sigma\)</span> right.</h4>
@@ -1110,7 +1110,7 @@ post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
 <p><img src="04_files/figure-html/unnamed-chunk-51-1.png" width="288" /></p>
 <p>See? HMC handled the mild skew just fine.</p>
-<p>But sometimes you want to actually model <span class="math inline">\(\sigma\)</span>, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. As he explained in the vignette, you actually model <span class="math inline">\(\text{log}(\sigma)\)</span> in those instances. If you’re curious, we’ll practice with a model like this in Chapter 9.</p>
+<p>But sometimes you want to actually model <span class="math inline">\(\sigma\)</span>, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette <a href="https://cran.r-project.org/package=brms/vignettes/brms_distreg.html"><em>Estimating Distributional Models with brms</em></a>. As he explained in the vignette, you actually model <span class="math inline">\(\text{log}(\sigma)\)</span> in those instances. If you’re curious, we’ll practice with a model like this in Chapter 9.</p>
 </div>
 </div>
 </div>

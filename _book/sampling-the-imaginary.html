@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -430,7 +430,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## $ pr_vampire          &lt;dbl&gt; 0.001
 ## $ pr_positive         &lt;dbl&gt; 0.01094
 ## $ pr_vampire_positive &lt;dbl&gt; 0.08683729</code></pre>
-<p>Here’s the other way of tackling the vampire problem, this time useing the frequency format.</p>
+<p>Here’s the other way of tackling the vampire problem, this time using the frequency format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">pr_vampire            =</span> <span class="dv">100</span> <span class="op">/</span><span class="st"> </span><span class="dv">100000</span>,
        <span class="dt">pr_positive_vampire   =</span> <span class="dv">95</span> <span class="op">/</span><span class="st"> </span><span class="dv">100</span>,
        <span class="dt">pr_positive_mortal    =</span> <span class="dv">99</span> <span class="op">/</span><span class="st"> </span><span class="dv">99900</span>) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -659,13 +659,13 @@ d &lt;-
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rethinking<span class="op">::</span><span class="kw">PI</span>(samples<span class="op">$</span>p_grid, <span class="dt">prob =</span> .<span class="dv">5</span>)</code></pre></div>
 <pre><code>##   25%   75% 
 ## 0.703 0.934</code></pre>
-<p>Now’s a good time to introduce Matthew Kay’s <a href="http://mjskay.github.io/tidybayes/">tidybayes package</a>, which offers an <a href="https://cran.r-project.org/web/packages/tidybayes/vignettes/tidy-brms.html">array of convenience functions</a> for Bayesian models of the type we’ll be working with in this project.</p>
+<p>Now’s a good time to introduce Matthew Kay’s <a href="http://mjskay.github.io/tidybayes/">tidybayes package</a>, which offers an <a href="https://cran.r-project.org/package=tidybayes/vignettes/tidy-brms.html">array of convenience functions</a> for Bayesian models of the type we’ll be working with in this project.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
 <span class="kw">median_qi</span>(samples<span class="op">$</span>p_grid, <span class="dt">.width =</span> .<span class="dv">5</span>)</code></pre></div>
 <pre><code>##       y  ymin  ymax .width .point .interval
 ## 1 0.841 0.703 0.934    0.5 median        qi</code></pre>
-<p>The tidybayes package offers a <a href="https://cran.r-project.org/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi">family of functions</a> that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With <code>median_qi()</code>, we asked for the median and quantile-based intervals–just like we’ve been doing with <code>quantile()</code>. Note how the <code>.width</code> argument within <code>median_qi()</code> worked the same way the <code>prob</code> argument did within <code>rethinking::PI()</code>. With <code>.width = .5</code>, we indicated we wanted a quantile-based 50% interval, which was returned in the <code>ymin</code> and <code>ymax</code> columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we’ll request 50%, 80%, and 99% intervals.</p>
+<p>The tidybayes package offers a <a href="https://cran.r-project.org/package=tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi">family of functions</a> that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With <code>median_qi()</code>, we asked for the median and quantile-based intervals–just like we’ve been doing with <code>quantile()</code>. Note how the <code>.width</code> argument within <code>median_qi()</code> worked the same way the <code>prob</code> argument did within <code>rethinking::PI()</code>. With <code>.width = .5</code>, we indicated we wanted a quantile-based 50% interval, which was returned in the <code>ymin</code> and <code>ymax</code> columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we’ll request 50%, 80%, and 99% intervals.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">median_qi</span>(samples<span class="op">$</span>p_grid, <span class="dt">.width =</span> <span class="kw">c</span>(.<span class="dv">5</span>, .<span class="dv">8</span>, .<span class="dv">99</span>))</code></pre></div>
 <pre><code>##       y     ymin  ymax .width .point .interval
 ## 1 0.841 0.703000 0.934   0.50 median        qi
