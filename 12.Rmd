@@ -25,7 +25,7 @@ These benefits include:
 >
 > When it comes to regression, multilevel regression deserves to be the default approach. There are certainly contexts in which it would be better to use an old-fashioned single-level model. But the contexts in which multilevel models are superior are much more numerous. It is better to begin to build a multilevel analysis, and then realize it’s unnecessary, than to overlook it. And once you grasp the basic multilevel stragety, it becomes much easier to incorporate related tricks such as allowing for measurement error in the data and even model missing data itself (Chapter 14). (p. 356)
 
-I’m totally on board with this. After learning about the multilevel model, I see it everywhere. For more on the sentiment it should be the default, check out McElreath’s blog post, [*Multilevel Regression as Default*](http://elevanth.org/blog/2017/08/24/multilevel-regression-as-default/).
+I’m totally on board with this. After learning about the multilevel model, I see it everywhere. For more on the sentiment it should be the default, check out McElreath's blog post, [*Multilevel Regression as Default*](https://elevanth.org/blog/2017/08/24/multilevel-regression-as-default/).
 
 ## Example: Multilevel tadpoles
 
@@ -123,7 +123,7 @@ cbind(waic_diff = w[, 1] * -2,
       se        = w[, 2] *  2)
 ```
 
-I’m not going to show it here, but if you’d like a challenge, try comparing the models with the LOO. You’ll learn all about high `pareto_k` values, `kfold()` recommendations, and challenges implementing those `kfold()` recommendations. If you’re interested, pour yourself a calming adult  beverage, execute the code below, and check out the [*Kfold(): “Error: New factor levels are not allowed”*](https://discourse.mc-stan.org/t/kfold-error-new-factor-levels-are-not-allowed/8299) thread in the Stan forums.
+I’m not going to show it here, but if you’d like a challenge, try comparing the models with the LOO. You’ll learn all about high `pareto_k` values, `kfold()` recommendations, and challenges implementing those `kfold()` recommendations. If you’re interested, pour yourself a calming adult  beverage, execute the code below, and check out the [*Kfold(): "Error: New factor levels are not allowed"*](https://discourse.mc-stan.org/t/kfold-error-new-factor-levels-are-not-allowed/8299) thread in the Stan forums.
 
 ```{r, eval = F}
 b12.1 <- add_criterion(b12.1, "loo")
@@ -457,9 +457,9 @@ dsim %>%
             median_error = median(value) %>% round(digits = 3))
 ```
 
-I originally learned about the multilevel in order to work with [longitudinal data](http://gseacademic.harvard.edu/alda/). In that context, I found the basic principles of a multilevel structure quite intuitive. The concept of partial pooling, however, took me some time to wrap my head around. If you’re struggling with this, be patient and keep chipping away. 
+I originally learned about the multilevel in order to work with [longitudinal data](https://gseacademic.harvard.edu/alda/). In that context, I found the basic principles of a multilevel structure quite intuitive. The concept of partial pooling, however, took me some time to wrap my head around. If you're struggling with this, be patient and keep chipping away. 
 
-When McElreath [lectured on this topic in 2015](https://www.youtube.com/watch?v=82TaniPgzQc&t=2048s&frags=pl%2Cwn), he traced partial pooling to statistician [Charles M. Stein](http://bulletin.imstat.org/2017/05/obituary-charles-m-stein-1920-2016/). In 1977, Efron and Morris wrote the now classic paper, [*Stein’s Paradox in Statistics*](http://statweb.stanford.edu/%7Eckirby/brad/other/Article1977.pdf), which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you’d like more practice seeing how partial pooling works--or if you just like baseball--, check out my blog post, [*Stein’s Paradox and What Partial Pooling Can Do For You*](https://solomonkurz.netlify.com/post/stein-s-paradox-and-what-partial-pooling-can-do-for-you/).
+When McElreath [lectured on this topic in 2015](https://www.youtube.com/watch?v=82TaniPgzQc&t=2048s&frags=pl%2Cwn), he traced partial pooling to statistician [Charles M. Stein](https://imstat.org/2017/05/15/obituary-charles-m-stein-1920-2016/). In 1977, Efron and Morris wrote the now classic paper, [*Stein’s Paradox in Statistics*](https://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf), which does a nice job breaking down why partial pooling can be so powerful. One of the primary examples they used in the paper was of 1970 batting average data. If you'd like more practice seeing how partial pooling works--or if you just like baseball--, check out my blog post, [*Stein's Paradox and What Partial Pooling Can Do For You*](https://solomonkurz.netlify.com/post/stein-s-paradox-and-what-partial-pooling-can-do-for-you/).
 
 #### Overthinking: Repeating the pond simulation. 
 
@@ -837,7 +837,7 @@ McElreath built his own `link()` function. Here we'll build an alternative to `f
 
 ```{r}
 # our hand-made `brms::fitted()` alternative
-my_fitted <- function(prosoc_left, condition){
+my_fitted <- function(prosoc_left, condition) {
   post %>%
     transmute(fitted = (b_Intercept + 
                           `r_actor[5,Intercept]` + 
@@ -1209,7 +1209,7 @@ p %>%
   glimpse()
 ```
 
-For a detailed discussion on this way of using `brms::predict()`, see [Andrew MacDonald’s great blogpost on this very figure](http://thestudyofthehousehold.com/2018/02/13/2018-02-13-easily-made-fitted-and-predicted-values-made-easy/). Here’s what we’ve been working for:
+For a detailed discussion on this way of using `brms::predict()`, see [Andrew MacDonald's great blogpost on this very figure](https://thestudyofthehousehold.me/2018/02/13/2018-02-13-easily-made-fitted-and-predicted-values-made-easy/). Here's what we’ve been working for.
 
 ```{r, fig.width = 3.75, fig.height = 3.5}
 p %>%
