@@ -1317,9 +1317,9 @@ The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll disc
 
 Let's get back on track with the text. To put all this model comparison in perspective, 
 
-> in this analysis, the best model has more than 90% of the model weight. That's pretty good. But with only 12 cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don't get too excited. If we take the standard error of the difference from the [`loo_compare()`] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [`b6.14` and `b6.11`]) on [`r round(w[4, 1] * -2, 2)`] with a standard deviation of [`r round(w[4, 2] * 2, 2)`]. (p. 200)
+> in this analysis, the best model has more than 90% of the model weight. That's pretty good. But with only [17] cases, the error on the WAIC estimate is substantial, and of course that uncertainty should propagate to the Akaike weights. So don't get too excited. If we take the standard error of the difference from the [`loo_compare()`] table literally, you can think of the difference as a Gaussian distribution centered (for the difference between models [`b6.14` and `b6.11`]) on [`r round(w[4, 1] * -2, 2)`] with a standard deviation of [`r round(w[4, 2] * 2, 2)`]. (p. 200)
 
-Here are those two values in the $\text{elpd}$ metric.
+Did you notice the "[17]" part of the quote? In his [Errata](https://github.com/rmcelreath/rethinking/blob/master/ERRATA.md), McElreath pointed out he accidentally referred to the number of cases as 12, though it was indeed 17 (execute `dim(d)`). The quotation here reflects that correction. Anyway, here are those two values in the $\text{elpd}$ metric.
 
 ```{r elpd_diff}
 w[4, 1:2]
