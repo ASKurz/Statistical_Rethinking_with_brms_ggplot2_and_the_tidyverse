@@ -514,7 +514,7 @@ Boom!
 Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, `make_Figure_11.3_data()`. 
 
 ```{r}
-make_Figure_11.3_data <- function(action, contact, max_iter){
+make_Figure_11.3_data <- function(action, contact, max_iter) {
   
   nd <-
     tibble(action    = action,
@@ -641,7 +641,7 @@ If you’d like to learn more about these kinds of models and how to fit them in
 I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody’s got time for that. We’ve have clients to serve! Happily, we can go further. Look back at McElreath’s R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here’s the adjusted function:
 
 ```{r}
-make_data_for_an_alternative_fiture <- function(action, contact, max_iter){
+make_data_for_an_alternative_fiture <- function(action, contact, max_iter) {
   
   nd <-
     tibble(action    = action,
@@ -980,8 +980,8 @@ McElreath encouraged us to "explore different values for `pbar` and `theta`" (p.
 
 ```{r, fig.width = 5, fig.height = 5}
 # data
-tibble(pbar = c(.25, .5, .75)) %>% 
-  expand(pbar, theta = c(5, 15, 30)) %>% 
+crossing(pbar  = c(.25, .5, .75),
+         theta = c(5, 15, 30)) %>% 
   expand(nesting(pbar, theta), x = seq(from = 0, to = 1, length.out = 100)) %>% 
   mutate(density = rethinking::dbeta2(x, pbar, theta),
          mu      = str_c("mu == ", pbar %>% str_remove(., "0")),
