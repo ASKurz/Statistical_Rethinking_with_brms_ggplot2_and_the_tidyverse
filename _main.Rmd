@@ -16,7 +16,7 @@ description: "This project is an attempt to re-express the code in McElreath’s
 
 I love McElreath’s [*Statistical Rethinking* text](http://xcelab.net/rm/statistical-rethinking/). It's the entry-level textbook for applied researchers I spent years looking for. McElreath's [freely-available lectures](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) on the book are really great, too.
 
-However, I prefer using Bürkner’s [brms package](https://github.com/paul-buerkner/brms) when doing Bayeian regression in R. [It's just spectacular](http://andrewgelman.com/2017/01/10/r-packages-interfacing-stan-brms/). I also prefer plotting with Wickham's [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html), and coding with functions and principles from the [tidyverse](https://www.tidyverse.org), which you might learn about [here](http://style.tidyverse.org) or [here](http://r4ds.had.co.nz/transform.html).
+However, I prefer using Bürkner’s [brms package](https://github.com/paul-buerkner/brms) when doing Bayesian regression in R. [It's just spectacular](http://andrewgelman.com/2017/01/10/r-packages-interfacing-stan-brms/). I also prefer plotting with Wickham's [ggplot2](https://cran.r-project.org/package=ggplot2), and coding with functions and principles from the [tidyverse](https://www.tidyverse.org), which you might learn about [here](http://style.tidyverse.org) or [here](http://r4ds.had.co.nz/transform.html).
 
 So, this project is an attempt to reexpress the code in McElreath’s textbook. His models are re-fit with brms, the figures are reproduced or reimagined with ggplot2, and the general data wrangling code now predominantly follows the tidyverse style.
 
@@ -26,7 +26,7 @@ I’m not a statistician and I have no formal background in computer science. Th
 
 With that in mind, one of the strengths of McElreath’s text is its thorough integration with the [rethinking package](https://github.com/rmcelreath/rethinking). The rethinking package is a part of the R ecosystem, which is great because R is free and open source. And McElreath has made the source code for rethinking [publically available](https://github.com/rmcelreath/rethinking), too. Since he completed his text, [many other packages have been developed](https://www.youtube.com/watch?v=pKZLJPrZLhU&t=29073s&frags=pl%2Cwn) to help users of the R ecosystem interface with [Stan](https://mc-stan.org). Of those alternative packages, I think Bürkner’s [brms](https://github.com/paul-buerkner/brms) is the best for general-purpose Bayesian data analysis. It’s flexible, uses reasonably-approachable syntax, has sensible defaults, and offers a vast array of post-processing convenience functions. And brms has only gotten [better over time](https://github.com/paul-buerkner/brms/blob/master/NEWS.md). To my knowledge, there are no textbooks on the market that highlight the brms package, which seems like an evil worth correcting.
 
-In addition, McElreath’s data wrangling code is based in the base R style and he made most of his figures with base R plots. Though there are benefits to sticking close to base R functions (e.g., less dependencies leading to a lower likelihood that your code will break in the future), there are downsides. [For beginners, base R functions can be difficult both to learn and to read](http://varianceexplained.org/r/teach-tidyverse/). Happily, in recent years Hadley Wickham and others have been developing a group of packages collectively called the [tidyverse](https://www.tidyverse.org). These tidyverse packages (e.g., [dplyr](https://dplyr.tidyverse.org), [tidyr](https://tidyr.tidyverse.org), [purrr](https://purrr.tidyverse.org)) were developed according to an [underlying philosophy](https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html) and they are designed to work together coherently and seamlessly. Though [not all](https://news.ycombinator.com/item?id=16421295) within the R community share this opinion, I am among those who think the tydyverse style of coding is generally [easier to learn and sufficiently powerful](http://varianceexplained.org/r/teach-tidyverse/) that these packages can accommodate the bulk of your data needs. I also find tydyverse-style syntax easier to read. And of course, the widely-used [ggplot2 package](https://ggplot2.tidyverse.org) is part of the tidyverse, too.
+In addition, McElreath’s data wrangling code is based in the base R style and he made most of his figures with base R plots. Though there are benefits to sticking close to base R functions (e.g., fewer dependencies leading to a lower likelihood that your code will break in the future), there are downsides. [For beginners, base R functions can be difficult both to learn and to read](http://varianceexplained.org/r/teach-tidyverse/). Happily, in recent years Hadley Wickham and others have been developing a group of packages collectively called the [tidyverse](https://www.tidyverse.org). These tidyverse packages (e.g., [dplyr](https://dplyr.tidyverse.org), [tidyr](https://tidyr.tidyverse.org), [purrr](https://purrr.tidyverse.org)) were developed according to an [underlying philosophy](https://cran.r-project.org/package=tidyverse/vignettes/manifesto.html) and they are designed to work together coherently and seamlessly. Though [not all](https://news.ycombinator.com/item?id=16421295) within the R community share this opinion, I am among those who think the tidyverse style of coding is generally [easier to learn and sufficiently powerful](http://varianceexplained.org/r/teach-tidyverse/) that these packages can accommodate the bulk of your data needs. I also find tidyverse-style syntax easier to read. And of course, the widely-used [ggplot2 package](https://ggplot2.tidyverse.org) is part of the tidyverse, too.
 
 To be clear, students can get a great education in both Bayesian statistics and programming in R with McElreath’s text just the way it is. Just go slow, work through all the examples, and read the text closely. It’s a pedagogical boon. I could not have done better or even closely so. But what I can offer is a parallel introduction on how to fit the statistical models with the ever-improving and already-quite-impressive brms package. I can throw in examples of how to perform other operations according to the ethic of the tidyverse. And I can also offer glimpses of some of the other great packages in the R + Stan ecosystem, such as [loo](https://github.com/stan-dev/loo), [bayesplot](https://github.com/stan-dev/bayesplot), and [tidybayes](https://github.com/mjskay/tidybayes).
 
@@ -111,7 +111,7 @@ As he opened the chapter, McElreath told us that
 >
 > Scientists also make golems. Our golems rarely have physical form, but they too are often made of clay, living in silicon as computer code. These golems are scientific model. But these golems have real effects on the world, through the predictions they make and the intuitions they challenge or inspire. A concern with truth enlivens these models, but just like a golem or a modern robot, scientific models are neither true nor false, neither prophets nor charlatans. Rather they are constructs engineered for some purpose. These constructs are incredibly powerful, dutifully conducting their programmed calculations. (p. 1, *emphasis* in the original)
 
-There are a lot of great points, themes, methods, and factoids in this text. For me, one of the most powerful themes interlaced throughout the pages is how we should be skeptical of our models. Yes, learn Bayes. Pour over this book. Fit models until late into the night. But please don’t fall into blind love with their elegance and power. If we all knew what we were doing, there’d be no need for science. For more wise deflation along these lines, do check out [*A personal essay on Bayes factors*](https://djnavarro.net/post/2018-09-15-open-closed/), [*Between the Devil and the Deep Blue Sea: Tensions Between Scientific Judgement and Statistical Model Selection*](https://link.springer.com/article/10.1007/s42113-018-0019-z) and [*Science, statistics and the problem of "pretty good inference"*](https://www.youtube.com/watch?v=tNkmsAOn7aU), a blog, paper and talk by the inimitable [Danielle Navarro](https://twitter.com/djnavarro?lang=en). 
+There are a lot of great points, themes, methods, and factoids in this text. For me, one of the most powerful themes interlaced throughout the pages is how we should be skeptical of our models. Yes, learn Bayes. Pour over this book. Fit models until late into the night. But please don’t fall into blind love with their elegance and power. If we all knew what we were doing, there’d be no need for science. For more wise deflation along these lines, do check out [*A personal essay on Bayes factors*](https://djnavarro.net/post/a-personal-essay-on-bayes-factors/), [*Between the Devil and the Deep Blue Sea: Tensions Between Scientific Judgement and Statistical Model Selection*](https://link.springer.com/article/10.1007/s42113-018-0019-z) and [*Science, statistics and the problem of "pretty good inference"*](https://www.youtube.com/watch?v=tNkmsAOn7aU), a blog, paper and talk by the inimitable [Danielle Navarro](https://twitter.com/djnavarro?lang=en).
 
 Anyway, McElreath left us no code or figures to translate in this chapter. But before you skip off to the next one, why not invest a little time soaking in this chapter’s material by watching [McElreath present it](https://www.youtube.com/watch?v=oy7Ks3YfbDg&t=14s&frags=pl%2Cwn)? He's an engaging speaker and the material in his online lectures does not entirely overlap with that in the text.
 
@@ -931,7 +931,7 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-I'm not sure if it's the same McElreath used in the text, but the formula I used for the tirangle-shaped prior is the [Laplace distribution](http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html) with a location of .5 and a dispersion of .25.
+I'm not sure if it's the same McElreath used in the text, but the formula I used for the triangle-shaped prior is the [Laplace distribution](http://ugrad.stat.ubc.ca/R/library/rmutil/html/Laplace.html) with a location of .5 and a dispersion of .25.
 
 Also, to learn all about `dplyr::filter()`, check out Baert's [*Data Wrangling Part 3: Basic and more advanced ways to filter rows*](https://suzan.rbind.io/2018/02/dplyr-tutorial-3/).
 
@@ -1152,7 +1152,7 @@ tibble(pr_positive_vampire   = .95,
   glimpse()
 ```
 
-Here's the other way of tackling the vampire problem, this time useing the frequency format.
+Here's the other way of tackling the vampire problem, this time using the frequency format.
 
 ```{r}
 tibble(pr_vampire            = 100 / 100000,
@@ -1376,7 +1376,7 @@ quantile(samples$p_grid, prob = c(.25, .75))
 rethinking::PI(samples$p_grid, prob = .5)
 ```
 
-Now's a good time to introduce Matthew Kay's [tidybayes package](http://mjskay.github.io/tidybayes/), which offers an [array of convenience functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
+Now's a good time to introduce Matthew Kay's [tidybayes package](http://mjskay.github.io/tidybayes/), which offers an [array of convenience functions](ftp://cran.r-project.org/pub/R/package=tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
 
 ```{r, message = F, warning = F}
 library(tidybayes)
@@ -1384,7 +1384,7 @@ library(tidybayes)
 median_qi(samples$p_grid, .width = .5)
 ```
 
-The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
+The tidybayes package offers a [family of functions](ftp://cran.r-project.org/pub/R/package=tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
 ```{r}
 median_qi(samples$p_grid, .width = c(.5, .8, .99))
@@ -2448,7 +2448,7 @@ d_grid <-
 head(d_grid)
 ```
 
-`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computateions by making a custom function which we'll plug into `purrr::map2().`
+`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computations by making a custom function which we'll plug into `purrr::map2().`
 
 ```{r}
 grid_function <- function(mu, sigma){
@@ -2548,7 +2548,7 @@ Let's say you wanted their posterior medians and 50% quantile-based intervals, i
 
 #### Overthinking: Sample size and the normality of $\sigma$'s posterior.
 
-Since we'll be fitting models with brms almost exclusively from here on out, this section is largely mute. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
+Since we'll be fitting models with brms almost exclusively from here on out, this section is largely moot. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
 
 ```{r}
 set.seed(4)
@@ -2666,7 +2666,7 @@ print(b4.1_half_cauchy)
 
 The `summary()` function works in a similar way. 
 
-You can also get a [Stan-like summary](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html) with this:
+You can also get a [Stan-like summary](https://cran.r-project.org/package=rstan/vignettes/rstan.html) with this:
 
 ```{r}
 b4.1_half_cauchy$fit
@@ -2744,13 +2744,13 @@ select(b_Intercept, sigma) %>%
   cor()
 ```
 
-With our `post <- posterior_samples(b4.1_half_cauchy)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- posterior_samples(b4.1_half_cauchy)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 ```{r}
 str(post)
 ```
 
-Notice how our data frame, `post`, includes a third vector, `lp__`. That's the log posterior. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [*RStan: the R interface to Stan*](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient) for details. The log posterior will largely be outside of our focus in this project.
+Notice how our data frame, `post`, includes a third vector, `lp__`. That's the log posterior. See the [brms reference manual](https://cran.r-project.org/package=brms) or the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient) for details. The log posterior will largely be outside of our focus in this project.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package. E.g.,
 
@@ -2796,7 +2796,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -2813,7 +2813,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine. 
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
 
 ## Adding a predictor
 
@@ -3551,7 +3551,7 @@ output:
 
 # Multivariate Linear Models
 
-McElreath's listed reasons for multivaraiable regression include:
+McElreath's listed reasons for multivariable regression include:
 
 * statistical control for confounds
 * multiple causation
@@ -3585,7 +3585,7 @@ head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/web/packages/ggrepel/index.html). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/package=ggrepel). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
 ```{r, fig.width = 3, fig.height = 3}
 # install.packages("ggrepel", depencencies = T)
@@ -3606,7 +3606,7 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-With `coord_map()` and help from the [fiftystater package](https://cran.r-project.org/web/packages/fiftystater/index.html) (which gives us access to lat/long data for all fifty states via `fifty_states`), we can plot our three major variables in a map format.
+With `coord_map()` and help from the [fiftystater package](https://cran.r-project.org/package=fiftystater) (which gives us access to lat/long data for all fifty states via `fifty_states`), we can plot our three major variables in a map format.
 
 ```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
 library(fiftystater)
@@ -3792,7 +3792,7 @@ The `stanplot()` function is an easy way to get a default coefficient plot. You 
 stanplot(b5.3)
 ```
 
-There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/web/packages/bayesplot/index.html). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object. 
+There are numerous ways to make a coefficient plot. Another is with the `mcmc_intervals()` function from the [bayesplot package](https://cran.r-project.org/package=bayesplot). A nice feature of the bayesplot package is its convenient way to alter the color scheme with the `color_scheme_set()` function. Here, for example, we'll make the theme `red`. But note how the `mcmc_intervals()` function requires you to work with the `posterior_samples()` instead of the brmsfit object. 
 
 ```{r, message = F, warning = F, fig.width = 6, fig.height = 1.5}
 # install.packages("bayesplot", dependencies = T)
@@ -3811,7 +3811,7 @@ mcmc_intervals(post[, 1:4],
         axis.ticks.y = element_blank())
 ```
 
-Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
+Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
 The `tidybaes::stat_pointintervalh()` function offers a third way, this time with a more ground-up ggplot2 workflow.
 
@@ -3891,7 +3891,7 @@ f %>%
   theme(panel.grid = element_blank())     
 ```
 
-We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) for details.
+We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms) for details.
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
@@ -4216,7 +4216,7 @@ d %>%
 
 By just looking at that mess, do you think you could describe the associations of `mass` and `neocortex.perc` with the criterion, `kcal.per.g`? I couldn't. It's a good thing we have math.
 
-McElreath has us start of with a simple univaraible `milk` model.
+McElreath has us start of with a simple univariable `milk` model.
 
 ```{r b5.5_, cache = T, message = F, warning = F}
 b5.5 <- 
@@ -4571,7 +4571,7 @@ post %>%
   theme(panel.grid = element_blank())
 ```
 
-While we're at it, you can make a similar plot with the [`mcmc_scatter()` function](https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html).
+While we're at it, you can make a similar plot with the [`mcmc_scatter()` function](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
 ```{r, fig.width = 3, fig.height = 3}
 post %>% 
@@ -4703,7 +4703,7 @@ posterior_interval(b5.10)[2, ] %>% round(digits = 3)
 posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 ```
 
-Now "watch what happens when we place both predictor varaibles in the same regression model" (p. 146).
+Now "watch what happens when we place both predictor variables in the same regression model" (p. 146).
 
 ```{r b5.12, cache = T, message = F, warning = F, results = 'hide'}
 b5.12 <- 
@@ -4716,7 +4716,7 @@ b5.12 <-
 posterior_summary(b5.12) %>% round(digits = 3)
 ```
 
-You can make custom pairs plots with [GGalley](https://cran.r-project.org/web/packages/GGally/index.html), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
+You can make custom pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
@@ -4868,7 +4868,7 @@ print(b5.14)
 
 "Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in Chapter 10.
 
-## Categorical varaibles
+## Categorical variables
 
 > Many readers will already know that variables like this, routinely called *factors*, can easily be included in linear models. But what is not widely understood is how these variables are included in a model... Knowing how the machine works removes a lot of this difficulty. (p. 153, *emphasis* in the original)
 
@@ -5164,7 +5164,7 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 ## ~~Ordinary least squares and `lm()`~~
 
-Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/web/packages/lme4/index.html) syntax for multilevel models.
+Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) syntax for multilevel models.
 
 Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We’ve already made use of it in the "Polynomial regression" section of Chapter 4.
 
@@ -5236,7 +5236,7 @@ library(tidyverse)
   )
 ```
 
-Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/web/packages/rcartocolor/index.html), which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
+Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/package=rcartocolor), which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
 
 ```{r, warning = F, message = F}
 # install.packages("rcartocolor", dependencies = T)
@@ -5268,7 +5268,7 @@ d %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-Let's fit the first six models in bulk. First we'll make a custom function, `fit_lm()`, into which we'll feed the desired names and formulas of our models. We'll make a tibble initially composed of those names (i.e., `model`) and formulas (i.e., `formula`). Via `purrr::map2()` within `mutate()`, we'll then fit the models and save the model objects within the tibble. The [broom package](https://cran.r-project.org/web/packages/broom/index.html) provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We'll employ `broom::tidy()` and `broom::glance()` to extract information from the model fits.
+Let's fit the first six models in bulk. First we'll make a custom function, `fit_lm()`, into which we'll feed the desired names and formulas of our models. We'll make a tibble initially composed of those names (i.e., `model`) and formulas (i.e., `formula`). Via `purrr::map2()` within `mutate()`, we'll then fit the models and save the model objects within the tibble. The [broom package](https://cran.r-project.org/package=broom) provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We'll employ `broom::tidy()` and `broom::glance()` to extract information from the model fits.
 
 ```{r, message = F, warning = F}
 library(broom)
@@ -6036,7 +6036,7 @@ For more on this how to choose your priors, consider Gelman, Simpson, and Betanc
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.8.0)](https://cran.r-project.org/web/packages/brms/brms.pdf). Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual (version 2.8.0)](https://cran.r-project.org/package=brms). Here's an extract from the section:
 
 > The horseshoe prior is a special shrinkage prior initially proposed by [Carvalho et al. (2009)](http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf). It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is non- zero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 70)
 
@@ -6395,7 +6395,7 @@ In brms, you can get a model's WAIC value with the `waic()` function.
 waic(b6.14)
 ```
 
-Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/web/packages/loo/index.html). For now, back to the WAIC.
+Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/package=loo). For now, back to the WAIC.
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
@@ -6504,7 +6504,7 @@ We briefly discussed the alternative information criteria, the LOO, above. Here�
 loo(b6.11)
 ```
 
-The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/web/packages/loo/index.html) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/web/packages/loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/package=loo) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
 
 Let's get back on track with the text. To put all this model comparison in perspective, 
 
@@ -6919,7 +6919,7 @@ f <-
   mutate(cont_africa = rep(c("Africa", "not Africa"), each = 30))
 ```
 
-For this chapter, we'll take our plot theme from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html), which you can learn more about [here](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
+For this chapter, we'll take our plot theme from the [ggthemes package](https://cran.r-project.org/package=ggthemes), which you can learn more about [here](https://cran.r-project.org/package=ggthemes/vignettes/ggthemes.html).
 
 ```{r, message = F}
 # install.packages("ggthemes", dependencies = T)
@@ -7776,7 +7776,7 @@ for (i in 1:num_weeks) {
 }
 ```
 
-In this chapter, we'll borrow a theme, `theme_ipsum()`, from the [hrbrthemes package](https://cran.r-project.org/web/packages/hrbrthemes/index.html).
+In this chapter, we'll borrow a theme, `theme_ipsum()`, from the [hrbrthemes package](https://cran.r-project.org/package=hrbrthemes).
 
 ```{r, warning = F, message = F}
 # install.packages("hrbrthemes", dependencies = T)
@@ -7929,7 +7929,7 @@ pairs(b8.1,
       off_diag_args = list(size = 1/5, alpha = 1/5))
 ```
 
-Another nice way to customize your pairs plot is with the [GGally package](https://cran.r-project.org/web/packages/GGally/index.html).
+Another nice way to customize your pairs plot is with the [GGally package](https://cran.r-project.org/package=GGally).
 
 ```{r, message = F}
 library(GGally)
@@ -8011,7 +8011,7 @@ $$p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta$$
 
 "is the leave-one-out predictive density given the data without the $i$th data point" (p. 3). And recall, you can convert the $\text{elpd}$ to the conventional information criteria metric by multiplying it by -2.
 
-To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/web/packages/loo/index.html). And if you prefer watching video lectures to reading technical papers, check out Vehtari's [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/package=loo). And if you prefer watching video lectures to reading technical papers, check out Vehtari's [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
 
 ### Checking the chain.
 
@@ -8021,7 +8021,7 @@ Using `plot()` for a `brm()` fit returns both density and trace lots for the par
 plot(b8.1)
 ```
 
-The bayesplot package allows a little more control. Here, we use [bayesplot's](https://cran.r-project.org/web/packages/bayesplot/index.html) `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects. There's a further complication. Recall how we made `post` (i.e., `post <- posterior_samples(b8.1)`). Our `post` data frame carries no information on chains. To retain that information, we'll need to add an `add_chain = T` argument to our `posterior_samples()` function.
+The bayesplot package allows a little more control. Here, we use [bayesplot's](https://cran.r-project.org/package=bayesplot) `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects. There's a further complication. Recall how we made `post` (i.e., `post <- posterior_samples(b8.1)`). Our `post` data frame carries no information on chains. To retain that information, we'll need to add an `add_chain = T` argument to our `posterior_samples()` function.
 
 ```{r, warning = F, message = F}
 library(bayesplot)
@@ -8079,7 +8079,7 @@ The brms defaults for `iter` and `warmup` match those of McElreath's rethinking.
 
 > The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\hat{R}$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](http://mc-stan.org/users/documentation/index.html) for more details. It’s important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
 
-For more on `n_eff` and `Rhat`, you might also check out Gabry and Modrák's vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics).
+For more on `n_eff` and `Rhat`, you might also check out Gabry and Modrák's vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics).
 
 The $\hat{R}$ has been our friend for many years. But times are changing. As it turns out, the Stan team has found some deficiencies with the $\hat{R}$, for which they’ve made recommendations that will be implemented in the Stan ecosystem sometime soon. In the meantime, you can read all about it in their [preprint](https://arxiv.org/abs/1903.08008) and in one of Dan Simpson’s [blogs](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/). If you learn best by sassy twitter banter, [click through this interchange](https://twitter.com/betanalpha/status/1108185746870030336) among some of our Stan team all-stars.
 
@@ -8209,7 +8209,7 @@ tibble(y     = rcauchy(n, location = 0, scale = 5),
   theme_ipsum()
 ```
 
-The whole thing is quite remarkible. Just for kicks, here we do it again, this time with eight simulations.
+The whole thing is quite remarkable. Just for kicks, here we do it again, this time with eight simulations.
 
 ```{r, fig.height = 4, fig.width = 10}
 n <- 1e4
@@ -8545,7 +8545,7 @@ The binomial likelihood entails
 >
 > It may help to note that the fraction with the factorials is just saying how many different ordered sequences of $n$ outcomes have a count of $y$. (p. 275)
 
-For me, that last sentence made more sense when I walked it out in an example. To do so, lets wrap that fraction of factorials into a function.
+For me, that last sentence made more sense when I walked it out in an example. To do so, let's wrap that fraction of factorials into a function.
 
 ```{r}
 count_ways <- function(n, y){
@@ -8996,7 +8996,7 @@ grid.arrange(p1, p2, ncol = 2)
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
 
-This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is effected by a dummy variable `x`.
+This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is affected by a dummy variable `x`.
 
 ```{r}
 set.seed(9)
@@ -9293,7 +9293,7 @@ cbind(waic_diff = w[, 1] * -2,
   round(digits = 2)
 ```
 
-For this chapter, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/web/packages/wesanderson/index.html)'s `Moonrise2` palette.
+For this chapter, we'll take our color scheme from the [wesanderson package](https://cran.r-project.org/package=wesanderson)'s `Moonrise2` palette.
 
 ```{r, message = F, fig.width = 3, fig.height = 1}
 # install.packages("wesanderson", dependencies = T)
@@ -9304,7 +9304,7 @@ wes_palette("Moonrise2")
 wes_palette("Moonrise2")[1:4]
 ```
 
-We'll also take a few formatting cues from [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi), curtesy of the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html). The `theme_tufte()` function will change the default font and remove some chart junk. The `theme_set()` function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute `theme_set(theme_default())`.
+We'll also take a few formatting cues from [Edward Tufte](https://www.edwardtufte.com/tufte/books_vdqi), courtesy of the [ggthemes package](https://cran.r-project.org/package=ggthemes). The `theme_tufte()` function will change the default font and remove some chart junk. The `theme_set()` function, below, will make these adjustments the default for all subsequent ggplot2 plots. To undo this, just execute `theme_set(theme_default())`.
 
 ```{r, message = F, warning = F}
 library(ggthemes)
@@ -9692,7 +9692,7 @@ b10.6 <- add_criterion(b10.6, "loo")
 b10.7 <- add_criterion(b10.7, "loo")
 ```
 
-If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/web/packages/loo/loo.pdf). As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics). Each case in the data gets its own $k$ value and we like it when those $k$s are low. The makers of the loo package get worried when those $k$s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
+If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo). As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics). Each case in the data gets its own $k$ value and we like it when those $k$s are low. The makers of the loo package get worried when those $k$s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
 
 First things first, if you explicitly open the loo package, you’ll have access to some handy diagnostic functions.
 
@@ -9713,7 +9713,7 @@ There are those warning messages, again. Using the loo-object for model `b10.6`,
 pareto_k_table(l_b10.6) 
 ```
 
-You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like nice and low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range We can take a closer look like this:
+You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like nice and low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range. We can take a closer look like this:
 
 ```{r, fig.width = 4.5, fig.height = 3.5}
 plot(l_b10.6)
@@ -10221,7 +10221,7 @@ w %>%
   theme(axis.ticks.y    = element_blank())
 ```
 
-Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf), you'll find several weighting schemes.
+Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/package=brms), you'll find several weighting schemes.
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
 nd <-
@@ -10558,7 +10558,7 @@ b_pois <-
       seed = 10)
 ```
 
-Note, the `mvbind()` syntax made `b_pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b_pois`.
+Note, the `mvbind()` syntax made `b_pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b_pois`.
 
 ```{r, fig.height = 2.5, fig.width = 6.5}
 # extract the samples
@@ -10659,7 +10659,7 @@ The results:
 print(b10.18, digits = 2)
 ```
 
-It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) than rethinking does. It follows the form
+It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/package=brms/vignettes/brms_families.html) than rethinking does. It follows the form
 
 $$f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg (\frac{1}{\mu_i + 1} \bigg )$$
 
@@ -10755,7 +10755,7 @@ d %>%
 
 ### Describing an ordered distribution with intercepts.
 
-Before we get to plotting, in this chapter we'll use theme settings and a color palette from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html), which you might learn more about [here](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html).
+Before we get to plotting, in this chapter we'll use theme settings and a color palette from the [ggthemes package](https://cran.r-project.org/package=ggthemes), which you might learn more about [here](https://cran.r-project.org/package=ggthemes/vignettes/ggthemes.html).
 
 ```{r, warning = F, message = F}
 library(ggthemes)
@@ -11084,7 +11084,7 @@ b11.3 <-
          inits = list(inits, inits))
 ```
 
-We don't have a `coeftab()` function in brms like for rethinking. But as we did for Chapter 6, we can reproduce it with help from the [broom package](https://cran.r-project.org/web/packages/broom/index.html) and a bit of data wrangling.
+We don't have a `coeftab()` function in brms like for rethinking. But as we did for Chapter 6, we can reproduce it with help from the [broom package](https://cran.r-project.org/package=broom) and a bit of data wrangling.
 
 ```{r, message = F}
 library(broom)
@@ -11436,7 +11436,7 @@ Finally; now those are plots I can sell in a clinical psychology journal!
 >
 > Count variables are especially prone to needing a mixture treatment. The reason is that a count of zero can often arise more than one way. A "zero" means that nothing happened, and nothing can happen either because the rate of events is low or rather because the process that generates events failed to get started. (p. 342, *emphasis* in the original)
 
-In his **Rethinking: Breaking the law** box, McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's vignette, [*Define Custom Response Distributions with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
+In his **Rethinking: Breaking the law** box, McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's vignette, [*Define Custom Response Distributions with brms*](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
 
 ### Example: Zero-inflated Poisson.
 
@@ -11533,7 +11533,7 @@ b11.4 <-
 print(b11.4)
 ```
 
-The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about zero. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of `r round(posterior_summary(b11.4)[2, 1], 3)`. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
+The zero-inflated Poisson is [parameterized in brms](https://cran.r-project.org/package=brms/vignettes/brms_families.html) a little differently than it is in rethinking. The different parameterization did not influence the estimate for the Intercept, $\lambda$. In both here and in the text, $\lambda$  was about zero. However, it did influence the summary of `zi`. Note how McElreath's `logistic(-1.39)` yielded 0.1994078. Seems rather close to our `zi` estimate of `r round(posterior_summary(b11.4)[2, 1], 3)`. First off, because he didn’t set his seed in the text before simulating, we couldn’t exactly reproduce his simulated drunk monk data. So our results will vary a little due to that alone. But after accounting for simulation variance, hopefully it’s clear that `zi` in brms is already in the probability metric. There's no need to convert it.
 
 In the `prior` argument, we used `beta(2, 2)` for `zi` and also mentioned in the margin that the brms default is `beta(1, 1)`. To give you a sense of the priors, let's plot them.
 
@@ -11725,7 +11725,7 @@ $$
 
 Here the size $n = \text{applications}$. In case you're confused, yes, our statistical model is not the one McElreath presented at the top of page 348 in the text. If you look closely, the statistical formula he presented does not match up with the one implied by his R code 11.26. Our statistical formula and the `brm()` model we'll be fitting, below, correspond to his R code 11.26.
 
-Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/web/packages/brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
+Before we fit, we have an additional complication. The beta-binomial distribution is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [vignette here](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
 Before we get carried away, let's load the data.
 
@@ -12120,7 +12120,7 @@ b12.2 <-
       seed = 12)
 ```
 
-The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf), `( <varying parameter(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. 
+The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/package=brms/vignettes/brms_overview.pdf), `( <varying parameter(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. 
 
 Let's do the WAIC comparisons.
 
@@ -12161,7 +12161,7 @@ post_mdn <-
 post_mdn
 ```
 
-For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.com/alex23lemm/theme_fivethirtyeight) for this chapter’s plots. An easy way to do so is with help from the [ggthemes package](https://cran.r-project.org/web/packages/ggthemes/index.html).
+For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.com/alex23lemm/theme_fivethirtyeight) for this chapter’s plots. An easy way to do so is with help from the [ggthemes package](https://cran.r-project.org/package=ggthemes).
 
 ```{r}
 # install.packages("ggthemes", dependencies = T) 
@@ -14228,7 +14228,7 @@ rbind(coef(b13.2)$dept_id[, , "Intercept"],
 
 I’m not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you’re fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
 
-One last thing. The [broom package](https://cran.r-project.org/web/packages/broom/index.html) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
+One last thing. The [broom package](https://cran.r-project.org/package=broom) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
 
 ```{r}
 library(broom)
@@ -14550,7 +14550,7 @@ neff <-
 head(neff)
 ```
 
-Now we're ready for our variant of Figure 13.7. The handy [ggbeeswarm package](https://cran.r-project.org/web/packages/ggbeeswarm/index.html) and its `geom_quasirandom()` function will give a better sense of the distribution.
+Now we're ready for our variant of Figure 13.7. The handy [ggbeeswarm package](https://cran.r-project.org/package=ggbeeswarm) and its `geom_quasirandom()` function will give a better sense of the distribution.
 
 ```{r, fig.width = 3, fig.height = 3}
 library(ggbeeswarm)
@@ -15408,7 +15408,7 @@ theme_set(theme_black())
 # execute `theme_set(theme_default())`
 ```
 
-In the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/web/packages/viridis/index.html), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html).
+In the [brms reference manual](https://cran.r-project.org/package=brms), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/package=viridis), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html).
 
 ```{r, message = F, warning = F}
 # install.packages("viridis")
@@ -15491,11 +15491,11 @@ As in the text,
 >
 > All this does is define the measurement $D_{\text{OBS}i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST}i}$. So the above defines a probability for each State $i$’s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/) on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://vuorre.netlify.com/post/2016/2016-09-29-bayesian-meta-analysis/) on summary information, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms) and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
-We'll start off useing both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
+We'll start off using both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
 ```{r b14.1_se_and_b14.1_mi, cache = T, message = F, warning = F}
 # put the data into a `list()`
@@ -15787,7 +15787,7 @@ Anyway,
 
 ## Missing data
 
-Starting with the developer's version 2.1.2, (or the official [version 2.3.1 available on CRAN](https://cran.r-project.org/web/packages/brms/index.html)) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html) is quite helpful.
+Starting with the developer's version 2.1.2, (or the official [version 2.3.1 available on CRAN](https://cran.r-project.org/package=brms)) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/package=brms/vignettes/brms_missings.html) is quite helpful.
 
 ### Imputing `neocortex`
 
@@ -16106,7 +16106,7 @@ data_list %>%
                   ylim = c(.55, .8))
 ```
 
-If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I’ll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/web/packages/brms/vignettes/brms_missings.html), too.
+If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I’ll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
 
 ## ~~Summary~~ Bonus: Meta-analysis
 
@@ -16198,7 +16198,7 @@ b14.5 <-
 
 One thing you might notice is our `se(se)` function excluded the `sigma` argument. If you recall from section 14.1, we specified `sigma = T` in our measurement-error models. The brms default is that within `se()`, `sigma = FALSE`. As such, we have no estimate for sigma the way we would if we were doing this analysis with the raw data from the studies. Hopefully this makes sense. The uncertainty around the `d`-value for each study $i$ has already been encoded in the data as `se`.
 
-This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publically available. So effect size summaries were the best we typically had. However, times are changing (e.g., [here](https://www.apa.org/monitor/2017/11/trends-open-science.aspx), [here](https://www.blog.google/products/search/making-it-easier-discover-datasets/)). If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html#a-simple-distributional-model) and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
+This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publically available. So effect size summaries were the best we typically had. However, times are changing (e.g., [here](https://www.apa.org/monitor/2017/11/trends-open-science.aspx), [here](https://www.blog.google/products/search/making-it-easier-discover-datasets/)). If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html#a-simple-distributional-model) and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
 But enough technical talk. Let’s look at the model results.
 
 ```{r}
@@ -16266,7 +16266,7 @@ posterior_samples(b14.6) %>%
   theme(panel.grid = element_blank())
 ```
 
-So at this point, the big story is there's more variability between the studies than there is the outcomes. But I still want to get a sense of the individual outcomes. Here we'll use `tidybayes::geom_halfeyeh()` to help us make our version of a [forest plot](https://cran.r-project.org/web/packages/forestplot/vignettes/forestplot.html) and `tidybayes::spread_draws()` to help with the initial wrangling.
+So at this point, the big story is there's more variability between the studies than there is the outcomes. But I still want to get a sense of the individual outcomes. Here we'll use `tidybayes::geom_halfeyeh()` to help us make our version of a [forest plot](https://cran.r-project.org/package=forestplot/vignettes/forestplot.html) and `tidybayes::spread_draws()` to help with the initial wrangling.
 
 ```{r, fig.width = 5, fig.height = 4, message = F, warning = F}
 library(tidybayes)
@@ -16400,7 +16400,7 @@ It hasn't been that way, for me.
 
 Most of my data have a complicated multilevel structure and often aren’t very well behaved. It’s normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it’s not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files. 
 
-Consider this model. It’s taken from Bürkner’s vignette, [*Estimating Multivariate Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_multivariate.html). It took about five minutes for my several-year-old laptop to fit.
+Consider this model. It’s taken from Bürkner’s vignette, [*Estimating Multivariate Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about five minutes for my several-year-old laptop to fit.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -16537,7 +16537,7 @@ Relatedly, and perhaps even a precursor, you should [always plot your data](http
 
 ## Use the `0 + intercept` syntax
 
-We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) (version 2.8.0), we read:
+We covered this a little in the last couple chapters, but it’s easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it’s important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms) (version 2.8.0), we read:
 
 > Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 153) 
 

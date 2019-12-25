@@ -380,7 +380,7 @@ d_grid <-
 head(d_grid)
 ```
 
-`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computateions by making a custom function which we'll plug into `purrr::map2().`
+`d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computations by making a custom function which we'll plug into `purrr::map2().`
 
 ```{r}
 grid_function <- function(mu, sigma){
@@ -480,7 +480,7 @@ Let's say you wanted their posterior medians and 50% quantile-based intervals, i
 
 #### Overthinking: Sample size and the normality of $\sigma$'s posterior.
 
-Since we'll be fitting models with brms almost exclusively from here on out, this section is largely mute. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
+Since we'll be fitting models with brms almost exclusively from here on out, this section is largely moot. But we'll do it anyway for the sake of practice. I'm going to break the steps up like before rather than compress the code together. Here's `d3`.
 
 ```{r}
 set.seed(4)
@@ -598,7 +598,7 @@ print(b4.1_half_cauchy)
 
 The `summary()` function works in a similar way. 
 
-You can also get a [Stan-like summary](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html) with this:
+You can also get a [Stan-like summary](https://cran.r-project.org/package=rstan/vignettes/rstan.html) with this:
 
 ```{r}
 b4.1_half_cauchy$fit
@@ -676,13 +676,13 @@ select(b_Intercept, sigma) %>%
   cor()
 ```
 
-With our `post <- posterior_samples(b4.1_half_cauchy)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/web/packages/MASS/index.html), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- posterior_samples(b4.1_half_cauchy)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 ```{r}
 str(post)
 ```
 
-Notice how our data frame, `post`, includes a third vector, `lp__`. That's the log posterior. See the [brms reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [*RStan: the R interface to Stan*](https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient) for details. The log posterior will largely be outside of our focus in this project.
+Notice how our data frame, `post`, includes a third vector, `lp__`. That's the log posterior. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) or the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient) for details. The log posterior will largely be outside of our focus in this project.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package. E.g.,
 
@@ -728,7 +728,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/web/packages/brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -745,7 +745,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine. 
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\text{log}(\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
 
 ## Adding a predictor
 

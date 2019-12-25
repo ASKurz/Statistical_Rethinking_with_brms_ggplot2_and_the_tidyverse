@@ -190,7 +190,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-varaibles"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -433,7 +433,7 @@ current   &lt;-<span class="st"> </span><span class="dv">10</span>
   prob_move &lt;-<span class="st"> </span>proposal <span class="op">/</span><span class="st"> </span>current
   current   &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">runif</span>(<span class="dv">1</span>) <span class="op">&lt;</span><span class="st"> </span>prob_move, proposal, current)
 }</code></pre></div>
-<p>In this chapter, we’ll borrow a theme, <code>theme_ipsum()</code>, from the <a href="https://cran.r-project.org/web/packages/hrbrthemes/index.html">hrbrthemes package</a>.</p>
+<p>In this chapter, we’ll borrow a theme, <code>theme_ipsum()</code>, from the <a href="https://cran.r-project.org/package=hrbrthemes">hrbrthemes package</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;hrbrthemes&quot;, dependencies = T)</span>
 <span class="kw">library</span>(hrbrthemes)</code></pre></div>
 <p>Figure 8.2.a.</p>
@@ -594,7 +594,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(b8.<span class="dv">1</span>,
       <span class="dt">off_diag_args =</span> <span class="kw">list</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>))</code></pre></div>
 <p><img src="08_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
-<p>Another nice way to customize your pairs plot is with the <a href="https://cran.r-project.org/web/packages/GGally/index.html">GGally package</a>.</p>
+<p>Another nice way to customize your pairs plot is with the <a href="https://cran.r-project.org/package=GGally">GGally package</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GGally)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">select</span>(b_Intercept<span class="op">:</span>sigma) <span class="op">%&gt;%</span>
@@ -707,14 +707,14 @@ post <span class="op">%&gt;%</span>
 <p>where</p>
 <p><span class="math display">\[p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta\]</span></p>
 <p>“is the leave-one-out predictive density given the data without the <span class="math inline">\(i\)</span>th data point” (p. 3). And recall, you can convert the <span class="math inline">\(\text{elpd}\)</span> to the conventional information criteria metric by multiplying it by -2.</p>
-<p>To learn more about the <span class="math inline">\(\text{elpd}\)</span>, read the rest of the paper and the <a href="https://cran.r-project.org/web/packages/loo/index.html">other works referenced by the loo package team</a>. And if you prefer watching video lectures to reading technical papers, check out Vehtari’s <a href="https://www.youtube.com/watch?v=Re-2yVd0Mqk"><em>Model assessment, selection and averaging</em></a>.</p>
+<p>To learn more about the <span class="math inline">\(\text{elpd}\)</span>, read the rest of the paper and the <a href="https://cran.r-project.org/package=loo">other works referenced by the loo package team</a>. And if you prefer watching video lectures to reading technical papers, check out Vehtari’s <a href="https://www.youtube.com/watch?v=Re-2yVd0Mqk"><em>Model assessment, selection and averaging</em></a>.</p>
 </div>
 <div id="checking-the-chain." class="section level3">
 <h3><span class="header-section-number">8.3.6</span> Checking the chain.</h3>
 <p>Using <code>plot()</code> for a <code>brm()</code> fit returns both density and trace lots for the parameters.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b8.<span class="dv">1</span>)</code></pre></div>
 <p><img src="08_files/figure-html/unnamed-chunk-22-1.png" width="768" /></p>
-<p>The bayesplot package allows a little more control. Here, we use <a href="https://cran.r-project.org/web/packages/bayesplot/index.html">bayesplot’s</a> <code>mcmc_trace()</code> to show only trace plots with our custom theme. Note that <code>mcmc_trace()</code> works with data frames, not brmfit objects. There’s a further complication. Recall how we made <code>post</code> (i.e., <code>post &lt;- posterior_samples(b8.1)</code>). Our <code>post</code> data frame carries no information on chains. To retain that information, we’ll need to add an <code>add_chain = T</code> argument to our <code>posterior_samples()</code> function.</p>
+<p>The bayesplot package allows a little more control. Here, we use <a href="https://cran.r-project.org/package=bayesplot">bayesplot’s</a> <code>mcmc_trace()</code> to show only trace plots with our custom theme. Note that <code>mcmc_trace()</code> works with data frames, not brmfit objects. There’s a further complication. Recall how we made <code>post</code> (i.e., <code>post &lt;- posterior_samples(b8.1)</code>). Our <code>post</code> data frame carries no information on chains. To retain that information, we’ll need to add an <code>add_chain = T</code> argument to our <code>posterior_samples()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bayesplot)
 
 post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">1</span>, <span class="dt">add_chain =</span> T)
@@ -806,7 +806,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 <blockquote>
 <p>The default diagnostic output from Stan includes two metrics, <code>n_eff</code> and <code>Rhat</code>. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, <span class="math inline">\(\hat{R}\)</span>. When <code>n_eff</code> is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When <code>Rhat</code> is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the <a href="http://mc-stan.org/users/documentation/index.html">Stan user manual</a> for more details. It’s important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)</p>
 </blockquote>
-<p>For more on <code>n_eff</code> and <code>Rhat</code>, you might also check out Gabry and Modrák’s vignette, <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics"><em>Visual MCMC diagnostics using the bayesplot package</em></a>.</p>
+<p>For more on <code>n_eff</code> and <code>Rhat</code>, you might also check out Gabry and Modrák’s vignette, <a href="https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics"><em>Visual MCMC diagnostics using the bayesplot package</em></a>.</p>
 <p>The <span class="math inline">\(\hat{R}\)</span> has been our friend for many years. But times are changing. As it turns out, the Stan team has found some deficiencies with the <span class="math inline">\(\hat{R}\)</span>, for which they’ve made recommendations that will be implemented in the Stan ecosystem sometime soon. In the meantime, you can read all about it in their <a href="https://arxiv.org/abs/1903.08008">preprint</a> and in one of Dan Simpson’s <a href="https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/">blogs</a>. If you learn best by sassy twitter banter, <a href="https://twitter.com/betanalpha/status/1108185746870030336">click through this interchange</a> among some of our Stan team all-stars.</p>
 </div>
 </div>
@@ -942,7 +942,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 <span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
 <p><img src="08_files/figure-html/unnamed-chunk-32-1.png" width="384" /></p>
-<p>The whole thing is quite remarkible. Just for kicks, here we do it again, this time with eight simulations.</p>
+<p>The whole thing is quite remarkable. Just for kicks, here we do it again, this time with eight simulations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="fl">1e4</span>
 
 <span class="kw">set.seed</span>(<span class="dv">8</span>)
