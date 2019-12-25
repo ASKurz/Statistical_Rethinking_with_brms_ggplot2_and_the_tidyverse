@@ -128,7 +128,7 @@ $$\alpha = \sqrt{ \frac{\sigma^2 \Gamma (1/\beta)}{\Gamma (3/\beta)} }$$
 I got the formula from [Wikipedia.com](https://en.wikipedia.org/wiki/Generalized_normal_distribution). Don't judge. We can wrap that formula in a custom function, `alpha_per_beta()`, use it to solve for the desired $\beta$ values, and plot. But one more thing: McElreath didn't tell us exactly which $\beta$ values the left panel of Figure 9.2 was based on. So the plot below is my best guess.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-alpha_per_beta <- function(variance, beta){
+alpha_per_beta <- function(variance, beta) {
   sqrt((variance * gamma(1 / beta)) / gamma(3 / beta))
 }
 
@@ -184,7 +184,7 @@ tibble(mu       = 0,
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
-If you look closely, you’ll see our version doesn’t quite match up with McElreath’s. Over x-axis values of 2 to 4, they match up pretty well. But as you go from 2 to 1, you’ll see our line drops off more steeply than his did. [And no, `coord_cartesian()` isn't the problem.] If you can figure out why our numbers diverged, [please share the answer](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
+If you look closely, you'll see our version doesn’t quite match up with McElreath's. Over x-axis values of 2 to 4, they match up pretty well. But as you go from 2 to 1, you'll see our line drops off more steeply than his did. [And no, `coord_cartesian()` isn't the problem.] If you can figure out why our numbers diverged, [please share the answer](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 But getting back on track: 
 
@@ -203,7 +203,7 @@ The binomial likelihood entails
 For me, that last sentence made more sense when I walked it out in an example. To do so, let's wrap that fraction of factorials into a function.
 
 ```{r}
-count_ways <- function(n, y){
+count_ways <- function(n, y) {
   # n = the total number of trials (i.e., the number of rows in your vector)
   # y = the total number of 1s (i.e., successes) in your vector
   (factorial(n) / (factorial(y) * factorial(n - y)))
@@ -551,7 +551,7 @@ tibble(x = 0:10) %>%
 
 > In traditional statistics, likelihood functions are "objective" and prior distributions "subjective." However, likelihoods are themselves prior probability distributions: They are priors for the data, conditional on the parameters. And just like with other priors, there is no correct likelihood. But there are better and worse likelihoods, depending upon context. (p. 284)
 
-For a little more in this, check out McElreath’s great lecture, [Bayesian Statistics without Frequentist Language](https://www.youtube.com/watch?v=yakg94HyWdE&t=1s&frags=pl%2Cwn). This subsection also reminds me of the title of one of Gelman’s blog posts, [*"It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood"*](https://andrewgelman.com/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/). The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It’s taken some time for the weight of that quote to sink in with me, and indeed it’s still sinking. Perhaps you’ll benefit from it, too.
+For a little more in this, check out McElreath’s great lecture, [Bayesian Statistics without Frequentist Language](https://www.youtube.com/watch?v=yakg94HyWdE&t=1s&frags=pl%2Cwn). This subsection also reminds me of the title of one of Gelman’s blog posts, [*"It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood"*](https://statmodeling.stat.columbia.edu/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/). The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It's taken some time for the weight of that quote to sink in with me, and indeed it’s still sinking. Perhaps you’ll benefit from it, too.
 
 ### Linking linear models to distributions.
 
@@ -585,7 +585,7 @@ Speaking of,
 
 If we do the final algebraic manipulation on page 285, we can solve for $p_i$ in terms of the linear model:
 
-$$p_i = \frac{\text{exp} (\alpha + \beta x_i)}{1 + \text{exp} (\alpha + \beta x_i)}$$
+$$p_i = \frac{\exp (\alpha + \beta x_i)}{1 + \exp (\alpha + \beta x_i)}$$
 
 As we'll see later, we will make great use of this formula via the `brms::inv_logit_scaled()` when making sense of logistic regression models. Now we have that last formula in hand, we can make the data necessary for Figure 9.7.
 
@@ -741,7 +741,7 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis’ [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
+For more on models like this, check out Christakis's [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), my translation for which lives [here](https://bookdown.org/ajkurz/DBDA_recoded/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
 
 But getting back to the text,
 
@@ -796,7 +796,7 @@ grid.arrange(p1, p2, ncol = 2)
 
 ## Reference {-}
 
-[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
