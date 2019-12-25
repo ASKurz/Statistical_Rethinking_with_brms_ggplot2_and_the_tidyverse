@@ -1045,9 +1045,8 @@ Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior predict
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
 nd <-
-  tibble(contact_high = 0:1) %>% 
-  expand(contact_high,
-         log_pop = seq(from = 6.5, to = 13, length.out = 50))
+  crossing(contact_high = 0:1,
+           log_pop      = seq(from = 6.5, to = 13, length.out = 50))
 
 ppa <- 
   pp_average(b10.10, b10.11, b10.12,
