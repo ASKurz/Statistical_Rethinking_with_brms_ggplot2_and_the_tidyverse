@@ -372,10 +372,9 @@ As McElreath explained, you'll never use this for practical data analysis. But I
 n <- 200
 
 d_grid <-
-  tibble(mu    = seq(from = 140, to = 160, length.out = n),
-         sigma = seq(from = 4,   to = 9,   length.out = n)) %>% 
-  # we'll accomplish with `tidyr::expand()` what McElreath did with base R `expand.grid()`
-  expand(mu, sigma)
+  # we'll accomplish with `tidyr::crossing()` what McElreath did with base R `expand.grid()`
+  crossing(mu    = seq(from = 140, to = 160, length.out = n),
+           sigma = seq(from = 4,   to = 9,   length.out = n))
 
 head(d_grid)
 ```
@@ -383,7 +382,7 @@ head(d_grid)
 `d_grid` contains every combination of `mu` and `sigma` across their specified values. Instead of base R `sapply()`, we'll do the computations by making a custom function which we'll plug into `purrr::map2().`
 
 ```{r}
-grid_function <- function(mu, sigma){
+grid_function <- function(mu, sigma) {
   dnorm(d2$height, mean = mu, sd = sigma, log = T) %>% 
     sum()
 }
@@ -502,7 +501,7 @@ d_grid <-
 Second, we'll redefine our custom `grid_function()` function to operate over the `height` values of `d3`.
 
 ```{r}
-grid_function <- function(mu, sigma){
+grid_function <- function(mu, sigma) {
   dnorm(d3, mean = mu, sd = sigma, log = T) %>% 
     sum()
 }
