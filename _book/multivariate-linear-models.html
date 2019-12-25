@@ -433,7 +433,7 @@ d &lt;-<span class="st"> </span>WaffleDivorce</code></pre></div>
 <p>I’m not going to show the output, but you might go ahead and investigate the data with the typical functions. E.g.,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(d)
 <span class="kw">glimpse</span>(d)</code></pre></div>
-<p>Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the <code>geom_text_repel()</code> function from the <a href="https://cran.r-project.org/web/packages/ggrepel/index.html">ggrepel package</a>. But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with <code>theme_bw() + theme(panel.grid = element_rect())</code> and coloring based off of <code>&quot;firebrick&quot;</code>.</p>
+<p>Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the <code>geom_text_repel()</code> function from the <a href="https://cran.r-project.org/package=ggrepel">ggrepel package</a>. But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with <code>theme_bw() + theme(panel.grid = element_rect())</code> and coloring based off of <code>&quot;firebrick&quot;</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;ggrepel&quot;, depencencies = T)</span>
 <span class="kw">library</span>(ggrepel)
 
@@ -451,7 +451,7 @@ d <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())  </code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-4-1.png" width="288" /></p>
-<p>With <code>coord_map()</code> and help from the <a href="https://cran.r-project.org/web/packages/fiftystater/index.html">fiftystater package</a> (which gives us access to lat/long data for all fifty states via <code>fifty_states</code>), we can plot our three major variables in a map format.</p>
+<p>With <code>coord_map()</code> and help from the <a href="https://cran.r-project.org/package=fiftystater">fiftystater package</a> (which gives us access to lat/long data for all fifty states via <code>fifty_states</code>), we can plot our three major variables in a map format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(fiftystater)
 
 d <span class="op">%&gt;%</span><span class="st"> </span>
@@ -652,7 +652,7 @@ f &lt;-<span class="st"> </span>
 <p>The <code>stanplot()</code> function is an easy way to get a default coefficient plot. You just put the brmsfit object into the function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">stanplot</span>(b5.<span class="dv">3</span>)</code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
-<p>There are numerous ways to make a coefficient plot. Another is with the <code>mcmc_intervals()</code> function from the <a href="https://cran.r-project.org/web/packages/bayesplot/index.html">bayesplot package</a>. A nice feature of the bayesplot package is its convenient way to alter the color scheme with the <code>color_scheme_set()</code> function. Here, for example, we’ll make the theme <code>red</code>. But note how the <code>mcmc_intervals()</code> function requires you to work with the <code>posterior_samples()</code> instead of the brmsfit object.</p>
+<p>There are numerous ways to make a coefficient plot. Another is with the <code>mcmc_intervals()</code> function from the <a href="https://cran.r-project.org/package=bayesplot">bayesplot package</a>. A nice feature of the bayesplot package is its convenient way to alter the color scheme with the <code>color_scheme_set()</code> function. Here, for example, we’ll make the theme <code>red</code>. But note how the <code>mcmc_intervals()</code> function requires you to work with the <code>posterior_samples()</code> instead of the brmsfit object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;bayesplot&quot;, dependencies = T)</span>
 <span class="kw">library</span>(bayesplot)
 
@@ -668,7 +668,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b5.
         <span class="dt">axis.line.y  =</span> <span class="kw">element_blank</span>(),
         <span class="dt">axis.ticks.y =</span> <span class="kw">element_blank</span>())</code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
-<p>Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html">this vignette</a>.</p>
+<p>Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out <a href="https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">this vignette</a>.</p>
 <p>The <code>tidybaes::stat_pointintervalh()</code> function offers a third way, this time with a more ground-up ggplot2 workflow.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
 
@@ -763,7 +763,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())     </code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-18-1.png" width="288" /></p>
-<p>We get the residuals with the well-named <code>residuals()</code> function. Much like with <code>brms::fitted()</code>, <code>brms::residuals()</code> returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: <code>Estimate</code>, <code>Est.Error</code>, <code>Q2.5</code>, and <code>Q97.5</code>. See the <a href="https://cran.r-project.org/web/packages/brms/brms.pdf">brms reference manual</a> for details.</p>
+<p>We get the residuals with the well-named <code>residuals()</code> function. Much like with <code>brms::fitted()</code>, <code>brms::residuals()</code> returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: <code>Estimate</code>, <code>Est.Error</code>, <code>Q2.5</code>, and <code>Q97.5</code>. See the <a href="https://cran.r-project.org/package=brms">brms reference manual</a> for details.</p>
 <p>With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">residuals</span>(b5.<span class="dv">4</span>) <span class="op">%&gt;%</span>
@@ -1426,7 +1426,7 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</code></pre></div>
 <p><img src="05_files/figure-html/unnamed-chunk-51-1.png" width="288" /></p>
-<p>While we’re at it, you can make a similar plot with the <a href="https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html"><code>mcmc_scatter()</code> function</a>.</p>
+<p>While we’re at it, you can make a similar plot with the <a href="https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html"><code>mcmc_scatter()</code> function</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mcmc_scatter</span>(<span class="dt">pars  =</span> <span class="kw">c</span>(<span class="st">&quot;b_leg_left&quot;</span>, <span class="st">&quot;b_leg_right&quot;</span>),
                <span class="dt">size  =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>, 
@@ -1563,7 +1563,7 @@ b5.<span class="dv">11</span> &lt;-<span class="st"> </span>
 ## b_perc.lactose   -0.009     0.003 -0.014 -0.003
 ## sigma             0.068     0.010  0.051  0.091
 ## lp__             27.570     1.535 23.649 29.514</code></pre>
-<p>You can make custom pairs plots with <a href="https://cran.r-project.org/web/packages/GGally/index.html">GGally</a>, which will also compute the point estimates for the bivariate correlations. Here’s a default plot.</p>
+<p>You can make custom pairs plots with <a href="https://cran.r-project.org/package=GGally">GGally</a>, which will also compute the point estimates for the bivariate correlations. Here’s a default plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages(&quot;GGally&quot;, dependencies = T)</span>
 <span class="kw">library</span>(GGally)
 
@@ -2051,7 +2051,7 @@ post <span class="op">%&gt;%</span>
 </div>
 <div id="ordinary-least-squares-and-lm" class="section level2">
 <h2><span class="header-section-number">5.5</span> <del>Ordinary least squares and <code>lm()</code></del></h2>
-<p>Since this section centers on the frequentist <code>lm()</code> function, I’m going to largely ignore it. A couple things, though. You’ll note how the brms package uses the <code>lm()</code>-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular <a href="https://cran.r-project.org/web/packages/lme4/index.html">lme4</a> syntax for multilevel models.</p>
+<p>Since this section centers on the frequentist <code>lm()</code> function, I’m going to largely ignore it. A couple things, though. You’ll note how the brms package uses the <code>lm()</code>-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular <a href="https://cran.r-project.org/package=lme4">lme4</a> syntax for multilevel models.</p>
 <p>Also, on page 161 McElreath clarified that one cannot use the <code>I()</code> syntax with his rethinking package. Not so with brms. The <code>I()</code> syntax works just fine with <code>brms::brm()</code>. We’ve already made use of it in the “Polynomial regression” section of Chapter 4.</p>
 </div>
 <div id="reference-4" class="section level2 unnumbered">

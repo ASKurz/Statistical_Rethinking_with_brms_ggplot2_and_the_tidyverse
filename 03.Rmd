@@ -253,7 +253,7 @@ quantile(samples$p_grid, prob = c(.25, .75))
 rethinking::PI(samples$p_grid, prob = .5)
 ```
 
-Now's a good time to introduce Matthew Kay's [tidybayes package](http://mjskay.github.io/tidybayes/), which offers an [array of convenience functions](https://cran.r-project.org/web/packages/tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
+Now's a good time to introduce Matthew Kay's [tidybayes package](http://mjskay.github.io/tidybayes/), which offers an [array of convenience functions](https://cran.r-project.org/package=tidybayes/vignettes/tidy-brms.html) for Bayesian models of the type we’ll be working with in this project.
 
 ```{r, message = F, warning = F}
 library(tidybayes)
@@ -261,7 +261,7 @@ library(tidybayes)
 median_qi(samples$p_grid, .width = .5)
 ```
 
-The tidybayes package offers a [family of functions](https://cran.r-project.org/web/packages/tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
+The tidybayes package offers a [family of functions](https://cran.r-project.org/package=tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
 ```{r}
 median_qi(samples$p_grid, .width = c(.5, .8, .99))
