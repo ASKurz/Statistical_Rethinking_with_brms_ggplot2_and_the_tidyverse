@@ -148,7 +148,7 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-The brms package currently supports `theme_black()`, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. You can find the origins of the code, [here](https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/). 
+The brms package currently supports `theme_black()`, which changes the default ggplot2 theme to a black background with white lines, text, and so forth. The origins of this version of the code are from [this post](https://jonlefcheck.net/2013/03/11/black-theme-for-ggplot2-2/) on Jon Lefcheck's website.
 
 Though I like the idea of brms including `theme_black()`, I'm not a fan of some of the default settings (e.g., it includes gridlines). Happily, data scientist [Tyler Rinker](https://github.com/trinker) has some nice alternative `theme_black()` code you can find [here](https://github.com/trinker/plotflow/blob/master/R/theme_black.R). The version of `theme_black()` used for this chapter is based on his version, with a few amendments of my own.
 
@@ -908,13 +908,13 @@ data_list %>%
                   ylim = c(.55, .8))
 ```
 
-If modern missing data methods are new to you, you might also check out van Burren’s great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders’ [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I’ll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
+If modern missing data methods are new to you, you might also check out van Burren's great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders's [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
 
 ## ~~Summary~~ Bonus: Meta-analysis
 
 If your mind isn’t fully blown by those measurement-error and missing-data models, let’s keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use `brms::brm()` to fit Bayesian meta-analyses, too. 
 
-Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre’s great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). And since McElreath’s text doesn’t directly address meta-analyses, we’ll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin’s [*Bayesian data analysis, Third edition*](http://www.stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
+Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre's great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). And since McElreath's text doesn’t directly address meta-analyses, we'll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin's [*Bayesian data analysis, Third edition*](https://stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
 
 > Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected *a priori* to have predictable effects favoring one study over another.… this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…
 >
@@ -932,12 +932,12 @@ $$\theta_i \sim \text{Normal} (\mu, \tau)$$
 
 where $\mu$ is the meta-analytic effect (i.e., the population mean) and $\tau$ is the variation around that mean, what you might also think of as $\sigma_\tau$.
 
-Since there’s no example of a meta-analysis in the text, we’ll have to get our data elsewhere. We’ll focus on Gershoff and Grogan-Kaylor’s (2016) paper, [*Spanking and Child Outcomes: Old Controversies and New Meta-Analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
+Since there’s no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's (2016) paper, [*Spanking and Child Outcomes: Old Controversies and New Meta-Analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
 
-> Around the world, most children (80%) are spanked or otherwise physically punished by their parents ([UNICEF, 2014](https://www.unicef.org/publications/index_74865.html)). The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world ([Gershoff, 2013](https://onlinelibrary.wiley.com/doi/abs/10.1111/cdep.12038)). Several hundred studies have been conducted on the associations between parents’ use of spanking or physical punishment and children’s behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
+> Around the world, most children (80%) are spanked or otherwise physically punished by their parents ([UNICEF, 2014](https://www.unicef.org/publications/index_74865.html)). The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world ([Gershoff, 2013](https://onlinelibrary.wiley.com/doi/abs/10.1111/cdep.12038)). Several hundred studies have been conducted on the associations between parents' use of spanking or physical punishment and children’s behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
 
-Our goal will be to learn Bayesian meta-analysis by answering part of that question. I’ve transcribed the values directly from Gershoff and Grogan-Kaylor’s paper and saved them as a file called `spank.xlsx`.
-You can find the data in [this project’s GitHub repository](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse). Let's load them and `glimpse()`.
+Our goal will be to learn Bayesian meta-analysis by answering part of that question. I've transcribed the values directly from Gershoff and Grogan-Kaylor’s paper and saved them as a file called `spank.xlsx`.
+You can find the data in [this project's GitHub repository](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse). Let's load them and `glimpse()`.
 
 ```{r}
 spank <- readxl::read_excel("spank.xlsx")
@@ -945,7 +945,7 @@ spank <- readxl::read_excel("spank.xlsx")
 glimpse(spank)
 ```
 
-In this paper, the effect size of interest is a *Cohen's d*, derived from the formula
+In this paper, the effect size of interest is a Cohen's $d$, derived from the formula
 
 $$d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_\text{pooled}}$$
 
@@ -957,9 +957,9 @@ To help make the equation for $d$ clearer for our example, we might re-express i
 
 $$d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_\text{pooled}}$$
 
-McElreath didn't really focus on effect sizes in his text. If you need a refresher, you might check out Kelley and Preacher's [*On effect size*](https://www.researchgate.net/profile/Ken_Kelley/publication/270757972_On_Effect_Size/links/0046351b0cd48217ce000000/On-Effect-Size.pdf). But in words, *Cohen's d* is a standardized mean difference between two groups.
+McElreath didn't really focus on effect sizes in his text. If you need a refresher, you might check out Kelley and Preacher's [*On effect size*](https://www.researchgate.net/profile/Ken_Kelley/publication/270757972_On_Effect_Size/links/0046351b0cd48217ce000000/On-Effect-Size.pdf). But in words, Cohen's $d$ is a standardized mean difference between two groups.
 
-So if you look back up at the results of `glimpse(spank)` you'll notice the column `d`, which is indeed a vector of *Cohen's d* effect sizes. The last two columns, `ll` and `ul`, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
+So if you look back up at the results of `glimpse(spank)` you'll notice the column `d`, which is indeed a vector of Cohen's $d$ effect sizes. The last two columns, `ll` and `ul`, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
 
 $$SE = \frac{\text{upper limit} - \text{lower limit}}{3.92}$$
 
@@ -982,7 +982,7 @@ Now are data are ready, we can express our first Bayesian meta-analysis with the
 \tau       & \sim \text{HalfCauchy} (0, 1)
 \end{align*}
 
-The last two lines, of course, spell out our priors. In psychology, it’s pretty rare to see *Cohen’s d*-values greater than the absolute value of $\pm 1$. So in the absence of more specific domain knowledge--which I don't have--, it seems like $\text{Normal} (0, 1)$ is a reasonable place to start. And just like McElreath used $\text{HalfCauchy} (0, 1)$ as the default prior for the group-level standard deviations, [it makes sense to use it here](https://psyarxiv.com/7tbrm/) for our meta-analytic $\tau$ parameter.
+The last two lines, of course, spell out our priors. In psychology, it's pretty rare to see Cohen's $d$-values greater than the absolute value of $\pm 1$. So in the absence of more specific domain knowledge--which I don't have--, it seems like $\text{Normal} (0, 1)$ is a reasonable place to start. And just like McElreath used $\text{HalfCauchy} (0, 1)$ as the default prior for the group-level standard deviations, [it makes sense to use it here](https://psyarxiv.com/7tbrm/) for our meta-analytic $\tau$ parameter.
 
 Here's the code for the first model.
 
@@ -1005,7 +1005,7 @@ But enough technical talk. Let’s look at the model results.
 print(b14.5)
 ```
 
-Thus, in our simple Bayesian meta-analysis, we have a population *Cohen's d* of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these* Cohen's d*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
+Thus, in our simple Bayesian meta-analysis, we have a population Cohen's $d$ of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these Cohen's* d*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
 
 ```{r}
 spank %>% 
@@ -1102,7 +1102,7 @@ spank %>%
   count(between)
 ```
 
-When I use dummies in my models, I prefer to have the majority group stand as the reference category. As such, I typically name those variables by the minority group. In this case, most occasions are based on within-participant designs. Thus, we’ll go ahead and add the `between` variable to the model. While we’re at it, we’ll practice using the `0 + intercept` syntax.
+When I use dummies in my models, I prefer to have the majority group stand as the reference category. As such, I typically name those variables by the minority group. In this case, most occasions are based on within-participant designs. Thus, we'll go ahead and add the `between` variable to the model. While we're at it, we'll practice using the `0 + intercept` syntax.
 
 ```{r b14.7, cache = T, message = F, warning = F}
 b14.7 <- 
@@ -1138,11 +1138,11 @@ That difference isn't as large I'd expect it to be. But then again, I'm no spank
 
 There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we've gone far enough to get you started.
 
-If you’d like to learn more about these methods, do check out Vourre’s [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you’ll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with Frequentist meta-analyses via the [metafor package](http://www.metafor-project.org/doku.php/metafor). You might also check out Williams, Rast, and Bürkner’s manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
+If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with Frequentist meta-analyses via the [metafor package](http://www.metafor-project.org/doku.php/metafor). You might also check out Williams, Rast, and Bürkner's manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
 
 ## Reference {-}
 
-[McElreath, R. (2016). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
@@ -1161,3 +1161,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
+
