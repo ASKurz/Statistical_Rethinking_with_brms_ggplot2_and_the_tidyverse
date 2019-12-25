@@ -593,7 +593,7 @@ Anyway,
 
 ## Missing data
 
-Starting with [version 2.2.0](https://cran.r-project.org/package=brms/news/news.html) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Bürkner’s [*Handle Missing Values with brms* vignette](https://cran.r-project.org/package=brms/vignettes/brms_missings.html) is quite helpful.
+Starting with [version 2.2.0](https://cran.r-project.org/package=brms/news/news.html) brms now supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Bürkner's [*Handle Missing Values with brms* vignette](https://cran.r-project.org/package=brms/vignettes/brms_missings.html) is quite helpful.
 
 ### Imputing `neocortex`
 
@@ -644,6 +644,8 @@ Our statistical model follows the form
 \nu                     & \sim \text{Normal} (0.5, 1) \\
 \sigma_\text{neocortex} & \sim \text{HalfCauchy} (0, 1)
 \end{align*}
+
+If you look closely, you’ll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \text{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter
 
 When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the `brm()` function. Otherwise, things get cluttered in a hurry.
 
