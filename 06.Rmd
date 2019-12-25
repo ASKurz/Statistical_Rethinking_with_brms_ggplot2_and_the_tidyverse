@@ -79,7 +79,7 @@ Let's fit the first six models in bulk. First we'll make a custom function, `fit
 ```{r, message = F, warning = F}
 library(broom)
 
-fit_lm <- function(model, formula){
+fit_lm <- function(model, formula) {
   model <- lm(data = d, formula = formula)
 }
 
@@ -260,7 +260,7 @@ We can then extend that logic into a custom function, `make_lines()`, that will 
 # because these lines are straight, we only need new data over two points of `mass`
 nd <- tibble(mass = c(30, 70))
 
-make_lines <- function(row){
+make_lines <- function(row) {
   my_fit <-
     d %>%
     filter(row_number() != row) %>% 
@@ -301,7 +301,7 @@ To make the right panel for Figure 6.5, we’ll need to increase the number of `
 nd <- tibble(mass = seq(from = 30, to = 65, length.out = 200))
 
 # redifine the function
-make_lines <- function(row){
+make_lines <- function(row) {
   my_fit <-
     d %>%
     filter(row_number() != row) %>% 
@@ -772,7 +772,7 @@ library(rethinking)
 # I've reduced this number by one order of magnitude to reduce computation time
 n_sim <- 1e3
 
-make_sim <- function(n, b_sigma){
+make_sim <- function(n, b_sigma) {
   sapply(kseq, function(k) {
     print(k);
     # this is an augmented line of code
@@ -1031,7 +1031,7 @@ Once again, we'll wrap McElreath's `sim.train.test()`-based simulation code with
 ```{r, eval = F}
 n_sim <- 1e3
 
-make_sim <- function(b_sigma){
+make_sim <- function(b_sigma) {
   sapply(kseq, function(k) {
     print(k);
     r <- mcreplicate(n_sim, 
