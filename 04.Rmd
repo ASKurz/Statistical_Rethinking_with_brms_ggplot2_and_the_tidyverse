@@ -772,11 +772,13 @@ h_i & \sim \text{Normal}(\mu_i, \sigma) \\
 
 ### Fitting the model.
 
-The `brms::brm()` syntax doesn't mirror the statistical notation. But here are the analogues to the exposition at the bottom of page 95.
+If you look closely at the statistical model and corresponding rethinking code at the bottom of page 95, you’ll see they contradict each other on the prior for $\alpha$. Though we didn’t note it at the time, there was similar contradiction in the middle of page 87 for `m4.1`. McElreath acknowledged this in his [Errata](https://github.com/rmcelreath/rethinking/blob/master/ERRATA.md), where he indicated the intended prior was $\alpha \sim \text{Normal}(178, 100)$. We will use that prior here, too.
+
+Unlike with the rethinking package, our `brms::brm()` syntax won't perfectly mirror the formal statistical notation. But here are the analogues to the exposition at the bottom of page 95 (with the corrected $\alpha$ prior).
 
 * $h_i \sim \text{Normal}(\mu_i, \sigma)$: `family = gaussian`
 * $\mu_i = \alpha + \beta x_i$: `height ~ 1 + weight`
-* $\alpha \sim \text{Normal}(156, 100)$: `prior(normal(156, 100), class = Intercept`
+* $\alpha \sim \text{Normal}(178, 100)$: `prior(normal(178, 100), class = Intercept`
 * $\beta \sim \text{Normal}(0, 10)$: ` prior(normal(0, 10), class = b)`
 * $\sigma \sim \text{Uniform}(0, 50)$: `prior(uniform(0, 50), class = sigma)`
 
@@ -786,7 +788,7 @@ Thus, to add a predictor you just the `+` operator in the model `formula`.
 b4.3 <- 
   brm(data = d2, family = gaussian,
       height ~ 1 + weight,
-      prior = c(prior(normal(156, 100), class = Intercept),
+      prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 50), class = sigma)),
       iter = 41000, warmup = 40000, chains = 4, cores = 4,
