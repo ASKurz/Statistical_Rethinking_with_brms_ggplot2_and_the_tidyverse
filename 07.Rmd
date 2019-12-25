@@ -679,11 +679,11 @@ print(b7.9)
 
 Now we're ready for the bottom row of Figure 7.7. Here's our variation on McElreath's tryptych loop code, adjusted for brms and ggplot2.
 
-```{r, fig.height = 2, fig.width = 2.27}
+```{r, fig.height = 2, fig.width = 2.3}
 # loop over values of `water_c` and plot predictions
 shade_seq <- -1:1
 
-for(w in -1:1){
+for(w in -1:1) {
   # define the subset of the original data
   dt <- d[d$water_c == w, ]
   # defining our new data
@@ -757,9 +757,9 @@ fitted(b7.8) %>%
 
 The brms syntax generally follows the design formulas typical of `lm()`. Hopefully this is all old hat.
 
-## ~~Summary~~ Bonus: `marginal_effects()`
+## ~~Summary~~ Bonus: `marginal_effects()`/`conditional_effects()`
 
-The brms package includes the `marginal_effects()` function as a convenient way to look at simple effects and two-way interactions. Recall the simple univariable model, `b7.3`:
+The brms package includes the `conditional_effects()` (previously known as `marginal_effects()` until version 2.10.3; see [here](https://github.com/paul-buerkner/brms/issues/735)) function as a convenient way to look at simple effects and two-way interactions. Recall the simple univariable model, `b7.3`:
 
 ```{r}
 b7.3$formula
@@ -768,20 +768,20 @@ b7.3$formula
 We can look at the regression line and its percentile-based intervals like so:
 
 ```{r, fig.height = 3, fig.width = 3.5}
-marginal_effects(b7.3)
+conditional_effects(b7.3)
 ```
 
-If we nest `marginal_effects()` within `plot()` with a `points = T` argument, we can add the original data to the figure.
+If we nest `conditional_effects()` within `plot()` with a `points = T` argument, we can add the original data to the figure.
 
 ```{r, fig.height = 3, fig.width = 3.5}
-plot(marginal_effects(b7.3), points = T)
+plot(conditional_effects(b7.3), points = T)
 ```
 
 We can further customize the plot. For example, we can replace the intervals with a spaghetti plot. While we're at it, we can use `point_args` to adjust the `geom_jitter()` parameters.
 
 ```{r, fig.height = 3, fig.width = 3.5}
-plot(marginal_effects(b7.3,
-                      spaghetti = T, nsamples = 200),
+plot(conditional_effects(b7.3,
+                         spaghetti = T, nsamples = 200),
      points = T,
      point_args = c(alpha = 1/2, size = 1))
 ```
@@ -791,7 +791,8 @@ With multiple predictors, things get more complicated. Consider our multivariabl
 ```{r, fig.height = 3, fig.width = 3.5}
 b7.4$formula
 
-marginal_effects(b7.4)
+conditional_effects(b7.4)
+
 ```
 
 We got one plot for each predictor, controlling the other predictor at zero. Note how the plot for `cont_africa` treated it as a continuous variable. This is because the variable was saved as an integer in the original data set:
@@ -814,7 +815,7 @@ b7.4_factor <- update(b7.4, newdata = d_factor)
 Using the `update()` syntax often speeds up the re-fitting process.
 
 ```{r, fig.height = 3, fig.width = 3.5}
-marginal_effects(b7.4_factor)
+conditional_effects(b7.4_factor)
 ```
 
 Now our second marginal plot more clearly expresses the `cont_africa` predictor as categorical.
@@ -824,10 +825,10 @@ Things get more complicated with the interaction model, `b7.5`.
 ```{r, fig.height = 3, fig.width = 3.5}
 b7.5$formula
 
-marginal_effects(b7.5)
+conditional_effects(b7.5)
 ```
 
-The `marginal_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean +/- one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
+The `conditional_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean $\pm$ one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
 
 ```{r, message = F, warning = F, results = "hide"}
 d_factor <-
@@ -840,16 +841,16 @@ b7.5_factor <- update(b7.5, newdata = d_factor)
 Just for kicks, we'll use `probs = c(.25, .75)` to return [50% intervals](http://andrewgelman.com/2016/11/05/why-i-prefer-50-to-95-intervals/), rather than the conventional 95%.
 
 ```{r, fig.height = 3, fig.width = 4}
-marginal_effects(b7.5_factor,
-                 probs = c(.25, .75))
+conditional_effects(b7.5_factor,
+                    probs = c(.25, .75))
 ```
 
 With the `effects` argument, we can just return the interaction effect, which is where all the action's at. While we're at it, we'll use `plot()` to change some of the settings.
 
 ```{r, fig.height = 3, fig.width = 4}
-plot(marginal_effects(b7.5_factor,
-                      effects = "rugged:cont_africa", 
-                      spaghetti = T, nsamples = 150),
+plot(conditional_effects(b7.5_factor,
+                         effects = "rugged:cont_africa", 
+                         spaghetti = T, nsamples = 150),
      points = T,
      point_args = c(alpha = 2/3, size = 1), mean = F)
 ```
@@ -863,12 +864,12 @@ b7.9$formula
 The plot tells a slightly different story, depending on whether you specify `effects = "shade_c:water_c"` or `effects = "water_c:shade_c"`.
 
 ```{r, fig.height = 3, fig.width = 4}
-plot(marginal_effects(b7.9, 
-                      effects = "shade_c:water_c"),
+plot(conditional_effects(b7.9, 
+                         effects = "shade_c:water_c"),
      points = T)
      
-plot(marginal_effects(b7.9, 
-                      effects = "water_c:shade_c"),
+plot(conditional_effects(b7.9, 
+                         effects = "water_c:shade_c"),
      points = T)
 ```
 
@@ -878,9 +879,9 @@ One might want to evaluate the effects of the second term in the interaction--`w
 ic <- 
   list(water_c = c(-1, 0, 1))
 
-plot(marginal_effects(b7.9, 
-                      effects = "shade_c:water_c",
-                      int_conditions = ic),
+plot(conditional_effects(b7.9,
+                         effects = "shade_c:water_c",
+                         int_conditions = ic),
      points = T)
 ```
 
@@ -905,3 +906,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
+
