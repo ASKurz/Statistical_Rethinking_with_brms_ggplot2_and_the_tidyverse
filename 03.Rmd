@@ -412,7 +412,7 @@ d %>%
 What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-named functions (e.g., `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is itself part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about how to use the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
 
 ```{r}
-make_loss <- function(our_d){
+make_loss <- function(our_d) {
   d %>% 
   mutate(loss = posterior * abs(our_d - p_grid)) %>% 
   summarise(weighted_average_loss = sum(loss))
@@ -459,7 +459,7 @@ The quadratic loss $(d - p)^2$ suggests we should use the mean instead. Let's in
 
 ```{r, fig.width = 3.5, fig.height = 3}
 # ammend our loss function
-make_loss <- function(our_d){
+make_loss <- function(our_d) {
   d %>% 
   mutate(loss = posterior * (our_d - p_grid)^2) %>% 
   summarise(weighted_average_loss = sum(loss))
@@ -575,14 +575,14 @@ McElreath suggested we play around with different values of `size` and `prob`. W
 ```{r}
 n_draws <- 1e5
 
-simulate_binom <- function(n, probability){
+simulate_binom <- function(n, probability) {
   set.seed(3)
   rbinom(n_draws, size = n, prob = probability) 
 }
 
 d <-
-  tibble(n = c(3, 6, 9)) %>% 
-  expand(n, probability = c(.3, .6, .9)) %>% 
+  crossing(n           = c(3, 6, 9),
+           probability = c(.3, .6, .9)) %>% 
   mutate(draws       = map2(n, probability, simulate_binom)) %>% 
   ungroup() %>% 
   mutate(n           = str_c("n = ", n),
@@ -676,7 +676,7 @@ We'll need to do a bit of wrangling before we're ready to make the plot in the m
 ```{r}
 n_draws <- 1e5
 
-simulate_binom <- function(probability){
+simulate_binom <- function(probability) {
   set.seed(3)
   rbinom(n_draws, size = 9, prob = probability) 
 }
