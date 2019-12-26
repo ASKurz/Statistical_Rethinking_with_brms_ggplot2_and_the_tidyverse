@@ -153,7 +153,7 @@ Now we have officially ditched the uniform distribution for $\sigma$. We'll only
 print(b8.1)
 ```
 
-Do note a couple things: If you look closely at the summary information at the top, you'll see that the `brms::brm()` function defaults to `chains = 4`. If you check the manual, you'll see it also defaults to `cores = 1`. You'll also note it defaults to `iter = 2000, warmup = 1000`. Also of note, McElreath's `rethinking::precis()` returns highest posterior density intervals (HPDIs) when summarizing `map2stan()` models. Not so with brms. If you want HPDIs, you'll have to use the convenience functions from the tidybayes package.
+Do note a couple things: If you look closely at the summary information at the top, you'll see that the `brms::brm()` function defaults to `chains = 4`. If you check the manual, you'll see it also defaults to `cores = 1`. You'll also note it defaults to `iter = 2000, warmup = 1000`. Also of note, McElreath's `rethinking::precis()` returns highest posterior density intervals (HPDIs) when summarizing `map2stan()` models. Not so with brms. If you want HPDIs, you'll have to use the convenience functions from the tidybayes package. Here's an example.
 
 ```{r, warning = F, message = F}
 library(tidybayes)
@@ -165,6 +165,12 @@ post %>%
   group_by(key) %>% 
   mean_hdi(value, .width = .89)  # note our rare use of 89% intervals
 ```
+
+There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [(2019) paper](https://arxiv.org/abs/1903.08008?) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
+
+> If you plan to report quantile estimates or posterior intervals, we strongly suggest assessing the convergence of the chains for these quantiles. In Section 4.3 we show that convergence of Markov chains is not uniform across the parameter space and propose diagnostics and effective sample sizes specifically for extreme quantiles. This is *different* from the standard ESS estimate (which we refer to as the "bulk-ESS"), which mainly assesses how well the centre of the distribution is resolved. Instead, these "tail-ESS" measures allow the user to estimate the MCSE for interval estimates. (p. 5, *emphasis* in the original)
+
+For more technical details, see the paper. In short, `Bulk_ESS` in the output from brms 2.10.0+ is what was previously referred to as `Eff.Sample` in earlier versions. It's also what corresponds to what McElreath calls `n_eff`. This indexed the number of effective samples in 'the centre of the' posterior distribution (i.e., the posterior mean or median). But since we also care about uncertainty in our parameters, we also care about stability in the 95% intervals and such. The new `Tail_ESS` in brms output allows us to gauge the effective sample size for those intervals.
 
 ### Sampling again, in parallel.
 
@@ -262,17 +268,17 @@ b8.1$waic
 b8.1$loo
 ```
 
-In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we’ve been bantering on about the $\text{elpd}$ and its relation to the WAIC and the LOO since Chapter 6. This is a fine place to go into some detail.
+In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we've been bantering on about the $\text{elpd}$ and its relation to the WAIC and the LOO since Chapter 6. This is a fine place to go into some detail.
 
 The `elpd` values returned by `loo()` and `waic()` are the expected log pointwise predictive density for new data. It follows the formula
 
-$$\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde{y}_i) \text{log} p (\tilde{y}_i | y) d \tilde{y}_i,$$
+$$\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde y_i) \log p (\tilde y_i | y) d \tilde y_i,$$
 
-> where $p_t (\tilde{y}_i)$ is the distribution representing the true data-generating process for $\tilde{y}_i$. The $p_t (\tilde{y}_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. ([Vehtari, Gelman, & Gabry, 2016, p. 2](https://arxiv.org/abs/1507.04544)).
+> where $p_t (\tilde y_i)$ is the distribution representing the true data-generating process for $\tilde y_i$. The $p_t (\tilde y_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. ([Vehtari, Gelman, & Gabry, 2016, p. 2](https://arxiv.org/abs/1507.04544)).
 
 Later in the paper, we learn the `elpd_loo` (i.e., the Bayesian LOO estimate of out-of-sample predictive fit) is defined as
 
-$$\text{elpd}_{\text{loo}} = \sum_{i = 1}^n \text{log } p (y_i | y - _i),$$
+$$\text{elpd}_\text{loo} = \sum_{i = 1}^n \log p (y_i | y - _i),$$
 
 where
 
@@ -340,17 +346,21 @@ The brms defaults for `iter` and `warmup` match those of McElreath's rethinking.
 
 > If all you want are posterior means, it doesn’t take many samples at all to get very good estimates. Even a couple hundred samples will do. But if you care about the exact shape in the extreme tails of the posterior, the 99th percentile or so, then you’ll need many many more. So there is no universally useful number of samples to aim for. In most typical regression applications, you can get a very good estimate of the posterior mean with as few as 200 effective samples. And if the posterior is approximately Gaussian, then all you need in addition is a good estimate of the variance, which can be had with one order of magnitude more, in most cases. For highly skewed posteriors, you’ll have to think more about which region of the distribution interests you. (p. 255)
 
+And remember, with changes from brms version 2.10.0, we now have both `Bulk_ESS` and `Tail_ESS` to consult when thinking about the effective sample size.
+
 ### How many chains do you need?
 
 "Using 3 or 4 chains is conventional, and quite often more than enough to reassure us that the sampling is working properly" (p. 257).
 
 #### Convergence diagnostics.
 
-> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\hat{R}$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
+Times have changed. In the text, we read:
 
-For more on `n_eff` and `Rhat`, you might also check out Gabry and Modrák's vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics).
+> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\hat R$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
 
-The $\hat{R}$ has been our friend for many years. But times are changing. As it turns out, the Stan team has found some deficiencies with the $\hat{R}$, for which they’ve made recommendations that will be implemented in the Stan ecosystem sometime soon. In the meantime, you can read all about it in their [preprint](https://arxiv.org/abs/1903.08008) and in one of Dan Simpson’s [blogs](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/). If you learn best by sassy twitter banter, [click through this interchange](https://twitter.com/betanalpha/status/1108185746870030336) among some of our Stan team all-stars.
+We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\hat R$, too. As it turns out, the Stan team has found some deficiencies with the $\hat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon. In the meantime, you can read all about it in their [preprint](https://arxiv.org/abs/1903.08008) and in one of Dan Simpson's [blogs](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/). If you learn best by sassy twitter banter, [click through this interchange](https://twitter.com/betanalpha/status/1108185746870030336) among some of our Stan team all-stars.
+
+For more on these topics, you might also check out Gabry and Modrák's vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics).
 
 ### Taming a wild chain.
 
