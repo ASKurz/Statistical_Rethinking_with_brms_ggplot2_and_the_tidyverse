@@ -8,13 +8,13 @@ output:
 
 # Monsters and Mixtures
 
-> [Of these majestic creatures], we’ll consider two common and useful examples. The first type is the ordered categorical model, useful for categorical outcomes with a fixed ordering. This model is built by merging a categorical likelihood function with a special kind of link function, usually a cumulative link. The second type is a family of zero-inflated and zero-augmented models, each of which mixes a binary event within an ordinary GLM likelihood like a Poisson or binomial.
+> [Of these majestic creatures], we'll consider two common and useful examples. The first type is the ordered categorical model, useful for categorical outcomes with a fixed ordering. This model is built by merging a categorical likelihood function with a special kind of link function, usually a cumulative link. The second type is a family of zero-inflated and zero-augmented models, each of which mixes a binary event within an ordinary GLM likelihood like a Poisson or binomial.
 >
 > Both types of models help us transform our modeling to cope with the inconvenient realities of measurement, rather than transforming measurements to cope with the constraints of our models. (p. 331)
 
 ## Ordered categorical outcomes
 
-> It is very common in the social sciences, and occasional in the natural sciences, to have an outcome variable that is discrete, like a count, but in which the values merely indicate different ordered *levels* along some dimension. For example, if I were to ask you how much you like to eat fish, on a scale from 1 to 7, you might say 5. If I were to ask 100 people the same question, I’d end up with 100 values between 1 and 7. In modeling each outcome value, I’d have to keep in mind that these values are *ordered* because 7 is greater than 6, which is greater than 5, and so on. But unlike a count, the differences in values are not necessarily equal.
+> It is very common in the social sciences, and occasional in the natural sciences, to have an outcome variable that is discrete, like a count, but in which the values merely indicate different ordered *levels* along some dimension. For example, if I were to ask you how much you like to eat fish, on a scale from 1 to 7, you might say 5. If I were to ask 100 people the same question, I'd end up with 100 values between 1 and 7. In modeling each outcome value, I’d have to keep in mind that these values are *ordered* because 7 is greater than 6, which is greater than 5, and so on. But unlike a count, the differences in values are not necessarily equal.
 >
 > In principle, an ordered categorical variable is just a multinomial prediction problem (page 323). But the constraint that the categories be ordered demands special treatment…
 >
@@ -74,7 +74,8 @@ canva_pal("Green fields")(4)[3]
 Now we're ready to make our ggplot2 version of the simple histogram, Figure 11.1.a.
 
 ```{r, fig.width = 2.5, fig.height = 3}
-ggplot(data = d, aes(x = response, fill = ..x..)) +
+p1 <-
+  ggplot(data = d, aes(x = response, fill = ..x..)) +
   geom_histogram(binwidth = 1/4, size = 0) +
   scale_x_continuous(breaks = 1:7) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
@@ -83,12 +84,15 @@ ggplot(data = d, aes(x = response, fill = ..x..)) +
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+
+p1
 ```
 
 Our cumulative proportion plot, Figure 11.1.b, will require some pre-plot wrangling.
 
 ```{r, fig.width = 2.5, fig.height = 3}
-d %>%
+p2 <-
+  d %>%
   group_by(response) %>% 
   count() %>%
   mutate(pr_k     = n / nrow(d)) %>% 
@@ -109,6 +113,8 @@ d %>%
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+
+p2
 ```
 
 In order to make the next plot, we'll need McElreath's `logit()` function. Here it is, the logarithm of cumulative odds plot, Figure 11.1.c.
@@ -117,7 +123,8 @@ In order to make the next plot, we'll need McElreath's `logit()` function. Here 
 # McElreath's convenience function from page 335
 logit <- function(x) log(x / (1 - x))
 
-d %>%
+p3 <-
+  d %>%
   group_by(response) %>% 
   count() %>%
   mutate(pr_k     = n / nrow(d)) %>% 
@@ -140,6 +147,16 @@ d %>%
   theme(axis.ticks.x    = element_blank(),
         plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
+
+p3
+```
+
+Why not combine the three subplots with patchwork?
+
+```{r, fig.width = 7, fig.height = 3}
+library(patchwork)
+
+p1 | p2 | p3
 ```
 
 The code for Figure 11.2 is itself something of a monster.
@@ -226,7 +243,7 @@ McElreath needed to include the `depth=2` argument in the `rethinking::precis()`
 print(b11.1)
 ```
 
-What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above. The summaries look like those in the text, number of effective samples are high, and the $\hat{R}$ values are great. The model looks good.
+What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above. The summaries look like those in the text, the $\hat R $ values are great, and both measures of effective sample size are reasonably high. The model looks good.
 
 Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `logistic()` function to get these into the probability metric.
 
