@@ -71,7 +71,7 @@ vary_effects <-
 head(vary_effects)
 ```
 
-Let’s make sure we’re keeping this all straight. ` a_cafe ` = our café-specific intercepts; `b_cafe ` = our café-specific slopes. These aren’t the actual data, yet. But at this stage, it might make sense to ask *What's the distribution of `a_cafe` and `b_cafe`?* Our variant of Figure 13.2 contains the answer.
+Let's make sure we’re keeping this all straight. ` a_cafe ` = our café-specific intercepts; `b_cafe ` = our café-specific slopes. These aren’t the actual data, yet. But at this stage, it might make sense to ask *What's the distribution of `a_cafe` and `b_cafe`?* Our variant of Figure 13.2 contains the answer.
 
 For our plots in this chapter, we'll use a custom theme. The color palette will come from the "pearl_earring" palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
 
@@ -572,7 +572,7 @@ post %>%
   facet_wrap(~key, ncol = 3, scales = "free_y")
 ```
 
-Our chains look great. While we're at it, let's examine the $\hat{R}$ vales in a handmade plot, too.
+Our chains look great. While we're at it, let's examine the $\hat R$ vales in a handmade plot, too.
 
 ```{r, fig.width = 8, fig.height = 3.25}
 rhat(b13.3) %>% 
@@ -594,7 +594,7 @@ rhat(b13.3) %>%
         axis.text.y     = element_text(hjust = 0))
 ```
 
-Them are some respectable $\hat{R}$ values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric:
+Them are some respectable $\hat R$ values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric:
 
 ```{r}
 coef(b13.3)
@@ -816,7 +816,7 @@ b13.6 <-
 
 Even though it's not apparent in the syntax, our model `b13.6` was already fit using the [non-centered parameterization. Behind the scenes, Bürkner has brms do this automatically](https://github.com/paul-buerkner/brms/issues/211). It's been that way all along. 
 
-If you recall from last chapter, we can compute the number of effective samples for our parameters like so.
+It's a little janky, but we can compute the number of effective samples for all our parameters like so.
 
 ```{r, fig.width = 3.25, fig.height = 3}
 ratios_cp <- neff_ratio(b13.6)
@@ -849,17 +849,6 @@ neff %>%
   theme_pearl_earring
 ```
 
-As in the last chapter, we'll use the `bayesplot::mcmc_neff()` function to examine the ratio of n.eff and the fill number of post-warm-up iterations, $N$. Ideally, that ratio is closer to 1 than not.
-
-```{r, warning = F, message = F, fig.height = 3.5}
-library(bayesplot)
-
-color_scheme_set(c("#DCA258", "#EEDA9D", "#394165", "#8B9DAF", "#A65141", "#A65141"))
-
-mcmc_neff(ratios_cp, size = 2) +
-  theme_pearl_earring
-```
-
 Here are our standard deviation parameters.
 
 ```{r}
@@ -879,7 +868,7 @@ fitted(b13.6,
 
 First off, recall that `fitted()` returns summary values, by default. If we want individual values, set `summary = FALSE`. It's also the `fitted()` default to use all posterior iterations, which is 12,000 in this case. To match the text, we need to set `nsamples = 1000`. But those are just details. The main point is that `fitted()` only returns one matrix, which is the analogue to the `p` matrix in the text.
 
-Moving forward, before we can follow along with McElreath’s R code 13.27, we need to refit the simpler model from way back in Chapter 12.
+Moving forward, before we can follow along with McElreath's R code 13.27, we need to refit the simpler model from way back in Chapter 12.
 
 ```{r b12.5_redo, cache = T, message = F, warning = F, results = "hide"}
 b12.5 <- 
@@ -902,6 +891,8 @@ b12.5 <- add_criterion(b12.5, "waic")
 loo_compare(b13.6, b12.5, criterion = "waic") %>% 
   print(simplify = F)
 ```
+
+If you look at the `p_waic` column, you'll notice `b13.6` has about 18 effective parameters, much like McElreath reported on pages 406 and 407. Here are the WAIC weights.
 
 ```{r, message = F}
 model_weights(b13.6, b12.5, weights = "waic")
@@ -954,7 +945,7 @@ d_mat %>%
         axis.text.y = element_text(hjust = 0))
 ```
 
-Figure 13.8 shows the "shape of the function relating distance to the covariance $\mathbf{K}_{ij}$."
+Figure 13.8 shows the "shape of the function relating distance to the covariance $\mathbf K_{ij}$."
  
 ```{r, fig.width = 3.25, fig.height = 3}
 tibble(
@@ -1024,7 +1015,7 @@ $$k(x_{i},x_{j}) = sdgp^2 \text{exp} \big (-||x_i - x_j||^2 / (2 lscale^2) \big 
 
 What McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplatlon2` before it's on the same scale as `etasq` in the text. Here it is.
 
-```{r}
+```{r, warning = F}
 posterior_samples(b13.7) %>% 
   transmute(sdgp_squared = sdgp_gplatlon2^2) %>% 
   mean_hdi(sdgp_squared, .width = .89) %>% 
@@ -1039,7 +1030,7 @@ $$\rho^2 = 1/(2 \cdot lscale^2)$$
 
 But that doesn't appear to be the case. *Sigh*. 
 
-```{r}
+```{r, warning = F}
 posterior_samples(b13.7) %>% 
   transmute(rho_squared = 1 / (2 * lscale_gplatlon2^2)) %>% 
   mean_hdi(rho_squared, .width = .89) %>% 
@@ -1055,7 +1046,7 @@ get_prior(data = d, family = poisson,
 
 That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha) [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
 
-Now that we’ve hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath’s model with rethinking. 
+Now that we've hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath's model with rethinking. 
 
 Switch out brms for rethinking.
 
@@ -1243,7 +1234,7 @@ d %>%
   transmute(psize = exp(psize * 1.5) - 2)
 ```
 
-As far as I can figure, you still have to get `rho` into a tidy data frame before feeding it into ggplot2. Here’s my attempt at doing so.
+As far as I can figure, you still have to get `rho` into a tidy data frame before feeding it into ggplot2. Here's my attempt at doing so.
 
 ```{r}
 tidy_rho <-
@@ -1365,7 +1356,7 @@ tidy(b13.bonus_0) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like:
+Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like this.
 
 ```{r}
 posterior_samples(b13.bonus_0) %>%
@@ -1434,7 +1425,7 @@ b13.bonus_2 %>%
         axis.text.y  = element_text(hjust = 0))
 ```
 
-Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects:
+Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
 
 ```{r}
 tidy(b13.bonus_2) %>%
@@ -1442,7 +1433,7 @@ tidy(b13.bonus_2) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model:
+And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model, you might execute this.
 
 ```{r}
 posterior_samples(b13.bonus_2) %>%
