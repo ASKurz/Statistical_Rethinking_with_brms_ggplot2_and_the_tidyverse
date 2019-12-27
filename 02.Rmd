@@ -747,7 +747,7 @@ d <-
 
 To learn more about `dplyr::arrange()`, chech out [*R4DS*, Chapter 5.3](https://r4ds.had.co.nz/transform.html#arrange-rows-with-arrange).
 
-In order to avoid unnecessary facet labels for the rows, it was easier to just make each column of the plot separately and then recombine them with `gridExtra::grid.arrange()`.
+In order to avoid unnecessary facet labels for the rows, it was easier to just make each column of the plot separately and then recombine them. Whereas in earlier editions of this project I relied on the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) and the `grid.arrange()` function from the [**gridExtra** package](https://cran.r-project.org/web/packages/gridExtra/index.html) to combine ggplots, we will put them aside for the elegant and powerful syntax from [Thomas Lin Pedersen](https://twitter.com/thomasp85)'s [**patchwork** package](https://cran.r-project.org/web/packages/gridExtra/index.html).
 
 ```{r, fig.width = 6, fig.height = 5, warning = F, message = F}
 p1 <-
@@ -789,9 +789,9 @@ p3 <-
         strip.text       = element_blank()) +
   facet_wrap(row ~ ., scales = "free_y", ncol = 1)
 
-library(gridExtra)
+library(patchwork)
 
-grid.arrange(p1, p2, p3, ncol = 3)
+p1 | p2 | p3
 ```
 
 I'm not sure if it's the same McElreath used in the text, but the formula I used for the triangle-shaped prior is the [Laplace distribution](https://rdrr.io/cran/rmutil/man/Laplace.html) with a location of .5 and a dispersion of .25.
