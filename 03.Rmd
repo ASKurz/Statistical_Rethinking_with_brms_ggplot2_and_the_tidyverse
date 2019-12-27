@@ -958,7 +958,13 @@ library(brms)
 
 In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
 
-```{r b3.1, cache = T, message = F, warning = F, results = 'hide'}
+```{r b3.1, echo = F}
+# save(b3.1, file = "fits/b03.01.rda")
+# rm(b3.1)
+load("fits/b03.01.rda")
+```
+
+```{r, eval = F}
 b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
@@ -1041,7 +1047,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(n, n_success, n_trials, d, n_samples, samples, q_80, q_10_and_90, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
+rm(n, n_success, n_trials, d, n_samples, samples, p1, p2, q_80, q_10_and_90, new_d, new_samples, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
