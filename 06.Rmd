@@ -51,7 +51,7 @@ library(rcartocolor)
 
 The specific palette we'll be using is "BurgYl." In addition to palettes, the rcartocolor package offers a few convenience functions which make it easier to use their palettes. The `carto_pal()` function will return the HEX numbers associated with a given palette's colors and the `display_carto_pal()` function will display the actual colors.
 
-```{r, fig.width = 6, fig.height = 2.5}
+```{r, fig.width = 6, fig.height = 2.25}
 carto_pal(7, "BurgYl")
 display_carto_pal(7, "BurgYl")
 ```
@@ -131,7 +131,7 @@ fits %>%
   select(model, `(Intercept)`, mass, everything())
 ```
 
-For Figure 6.3, we’ll make each plot individually and them glue them together with `gridExtra::grid.arrange()`. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
+For Figure 6.3, we’ll make each plot individually and them glue them together with the patchwork package. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
 ```{r}
 p <-
@@ -212,9 +212,9 @@ p6 <-
 Okay, now we're ready to combine the six subplots and produce our version of Figure 6.3.
 
 ```{r, fig.width = 6, fig.height = 8, warning = F, message = F}
-library(gridExtra)
+library(patchwork)
 
-grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 2)
+(p1 + p2) / (p3 + p4) / (p5 + p6)
 ```
 
 ### Too few parameters hurts, too.
