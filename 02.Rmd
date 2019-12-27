@@ -351,9 +351,7 @@ move_over <- function(position, index) {
   }
 ```
 
-If you’re new to making your own R functions, check out [Chapter 19](https://r4ds.had.co.nz/functions.html) of *R4DS* or [Chapter 14](https://bookdown.org/rdpeng/rprogdatascience/functions.html) of *R Programming for Data Science*.
-
-Anyway, now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_over()` to adjust their `x` and `xend` positions to the correct spots.
+Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_over()` to adjust their `x` and `xend` positions to the correct spots.
 
 ```{r}
 (
@@ -448,7 +446,7 @@ lines_2 <-
          )
 ```
 
-We're finally ready to plot our Figure 2.4.
+We're finally ready to plot our Figure 2.4!
 
 ```{r, fig.width = 7, fig.height = 7}
 d %>% 
@@ -539,7 +537,7 @@ $$
 But since we have to standardize the results to get them into a probability metric, the full equation is:
 
 $$
-\text{plausibility of } p \text{ after } D_{\text{new}} = \frac{\text{ ways } p \text{ can produce } D_{\text{new}} \times \text{ prior plausibility of } p}{\text{sum of the products}}
+\text{plausibility of } p \text{ after } D_\text{new} = \frac{\text{ ways } p \text{ can produce } D_\text{new} \times \text{ prior plausibility of } p}{\text{sum of the products}}
 $$
 
 You might make the table in the middle of page 27 like this.
@@ -585,7 +583,7 @@ Here we'll add the cumulative number of trials, `n_trials`, and the cumulative n
   )
 ```
 
-Fair warning: We don’t learn the skills for making Figure 2.5 until later in the chapter. So consider the data wrangling steps in this section as something of a preview.
+Fair warning: We don't learn the skills for making Figure 2.5 until later in the chapter. So consider the data wrangling steps in this section as something of a preview.
 
 ```{r, fig.width = 6, fig.height = 5}
 sequence_length <- 50
@@ -623,7 +621,7 @@ d %>%
   facet_wrap(~strip, scales = "free_y")
 ```
 
-If it wasn't clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don't normalize (i.e., divide the density by the sum of the density), their respective heights don't match up with those in the text. Furthermore, it’s the normalization that makes them directly comparable. 
+If it wasn't clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don't normalize (i.e., divide the density by the sum of the density), their respective heights don't match up with those in the text. Furthermore, it's the normalization that makes them directly comparable. 
 
 To learn more about `dplyr::group_by()` and its opposite `dplyr::ungroup()`, check out [*R4DS*, Chapter 5](https://r4ds.had.co.nz/transform.html). To learn about `tidyr::expand()`, go [here](https://tidyr.tidyverse.org/reference/expand.html).
 
@@ -753,7 +751,7 @@ d <-
 
 To learn more about `dplyr::arrange()`, chech out [*R4DS*, Chapter 5.3](https://r4ds.had.co.nz/transform.html#arrange-rows-with-arrange).
 
-In order to avoid unnecessary facet labels for the rows, it was easier to just make each column of the plot separately and then recombine them. Whereas in earlier editions of this project I relied on the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) and the `grid.arrange()` function from the [**gridExtra** package](https://cran.r-project.org/web/packages/gridExtra/index.html) to combine ggplots, we will put them aside for the elegant and powerful syntax from [Thomas Lin Pedersen](https://twitter.com/thomasp85)'s [**patchwork** package](https://cran.r-project.org/web/packages/gridExtra/index.html).
+In order to avoid unnecessary facet labels for the rows, it was easier to just make each column of the plot separately and then recombine them. Whereas in earlier editions of this project I relied on the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) and the `grid.arrange()` function from the [gridExtra package](https://cran.r-project.org/web/packages/gridExtra/index.html) to combine ggplots, we will put them aside for the elegant and powerful syntax from [Thomas Lin Pedersen](https://twitter.com/thomasp85)'s [patchwork package](https://cran.r-project.org/web/packages/gridExtra/index.html).
 
 ```{r, fig.width = 6, fig.height = 5, warning = F, message = F}
 p1 <-
@@ -818,10 +816,11 @@ We just employed grid approximation over the last figure. In order to get nice s
 )
 ```
 
-Here's the right panel of Figure 2.7.
+Here's the code for the right panel of Figure 2.7.
 
-```{r, fig.width = 3, fig.height = 2.75}
-d %>% 
+```{r}
+p1 <-
+  d %>% 
   ggplot(aes(x = p_grid, y = posterior)) +
   geom_point() +
   geom_line() +
@@ -831,10 +830,11 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-Here it is with just 5 points, the left hand panel of Figure 2.7.
+Now here's the code for the left hand panel of Figure 2.7.
 
-```{r, fig.width = 3, fig.height = 2.75}
-tibble(p_grid            = seq(from = 0, to = 1, length.out = 5),
+```{r}
+p2 <-
+  tibble(p_grid            = seq(from = 0, to = 1, length.out = 5),
        prior             = 1) %>%
   mutate(likelihood      = dbinom(6, size = 9, prob = p_grid)) %>%
   mutate(unstd_posterior = likelihood * prior) %>%
@@ -847,6 +847,12 @@ tibble(p_grid            = seq(from = 0, to = 1, length.out = 5),
        x = "probability of water",
        y = "posterior probability") +
   theme(panel.grid = element_blank())
+```
+
+Here we combine them and plot!
+
+```{r, fig.width = 6, fig.height = 3}
+p1 + p2 + plot_annotation(title = "More grid points make for smoother approximations")
 ```
 
 ### Quadratic approximation.
@@ -889,26 +895,29 @@ precis(globe_qa_18)
 precis(globe_qa_36)
 ```
 
-Here's the legwork for Figure 2.8.
+Now make Figure 2.8.
 
 ```{r, fig.width = 8, fig.height = 2.75}
 n_grid <- 100
 
-tibble(p_grid                  = seq(from = 0, to = 1, length.out = n_grid) %>% rep(., times = 3),
-       prior                   = 1,
-       w                       = rep(c(6, 12, 24), each = n_grid),
-       n                       = rep(c(9, 18, 36), each = n_grid),
-       m                       = .67,
-       s                       = rep(c(.16, .11, .08), each = n_grid)) %>%
-  mutate(likelihood            = dbinom(w, size = n, prob = p_grid)) %>%
-  mutate(unstd_grid_posterior  = likelihood * prior,
-         unstd_quad_posterior  = dnorm(p_grid, m, s)) %>%
+# wrangle
+tibble(w = c(6, 12, 24),
+       n = c(9, 18, 36),
+       s = c(.16, .11, .08)) %>% 
+  expand(nesting(w, n, s),
+         p_grid = seq(from = 0, to = 1, length.out = n_grid)) %>% 
+  mutate(prior = 1,
+         m     = .67)  %>%
+  mutate(likelihood           = dbinom(w, size = n, prob = p_grid)) %>%
+  mutate(unstd_grid_posterior = likelihood * prior,
+         unstd_quad_posterior = dnorm(p_grid, m, s)) %>%
   group_by(w) %>% 
-  mutate(grid_posterior        = unstd_grid_posterior / sum(unstd_grid_posterior),
-         quad_posterior        = unstd_quad_posterior / sum(unstd_quad_posterior),
+  mutate(grid_posterior       = unstd_grid_posterior / sum(unstd_grid_posterior),
+         quad_posterior       = unstd_quad_posterior / sum(unstd_quad_posterior),
          n = str_c("n = ", n)) %>% 
   mutate(n = factor(n, levels = c("n = 9", "n = 18", "n = 36"))) %>% 
   
+  # plot
   ggplot(aes(x = p_grid)) +
   geom_line(aes(y = grid_posterior)) +
   geom_line(aes(y = quad_posterior),
@@ -946,7 +955,7 @@ The model output looks like so.
 print(globe_qa_brms)
 ```
 
-There’s a lot going on in that output, which we’ll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll also learn in Chapter 4, the intercept of a regression model with no predictors is the same as its mean. In the special case of a model using the binomial likelihood, the mean is the probability of a 1 in a given trial, $\theta$. 
+There's a lot going on in that output, which we'll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll also learn in Chapter 4, the intercept of a regression model with no predictors is the same as its mean. In the special case of a model using the binomial likelihood, the mean is the probability of a 1 in a given trial, $\theta$. 
 
 Let's plot the results of our model and compare them with those from `rethinking::map()`, above.
 
@@ -962,7 +971,7 @@ posterior_samples(globe_qa_brms) %>%
   facet_wrap(~n)
 ```
 
-If you’re still confused. Cool. This is just a preview. We’ll start walking through fitting models in brms in Chapter 4 and we'll learn a lot about regression with the binomial likelihood in Chapter 10.
+If you're still confused. Cool. This is just a preview. We'll start walking through fitting models in brms in Chapter 4 and we'll learn a lot about regression with the binomial likelihood in Chapter 10.
 
 ## Reference {-}
 
@@ -985,5 +994,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
-
 
