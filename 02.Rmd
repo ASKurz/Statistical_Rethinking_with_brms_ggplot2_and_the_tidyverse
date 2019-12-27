@@ -930,16 +930,22 @@ tibble(w = c(6, 12, 24),
 
 ### Markov chain Monte Carlo.
 
-Since the main goal of this project is to highlight brms, we may as fit a model. This seems like an appropriately named subsection to do so. First we’ll have to load the package.
+Since the main goal of this project is to highlight brms, we may as fit a model. This seems like an appropriately named subsection to do so. First we'll have to load the package.
 
 ```{r, warning = F, message = F}
 library(brms)
 ```
 
-Here we'll re-fit the last model from above wherein $w = 24$ and $n = 36$. 
+Here re-fit the last model from above, the one for which $w = 24$ and $n = 36$. 
 
-```{r globe_qa_brms, cache = T, message = F, results = 'hide'}
-globe_qa_brms <-
+```{r b2.1, echo = F}
+# save(b2.1, file = "fits/b02.01.rda")
+# rm(b2.1)
+load("fits/b02.01.rda")
+```
+
+```{r, eval = F}
+b2.1 <-
   brm(data = list(w = 24), 
       family = binomial(link = "identity"),
       w | trials(36) ~ 1,
@@ -949,10 +955,10 @@ globe_qa_brms <-
       seed = 4)
 ```
 
-The model output looks like so.
+The model output from brms looks like so.
 
 ```{r}
-print(globe_qa_brms)
+print(b2.1)
 ```
 
 There's a lot going on in that output, which we'll start to clarify in Chapter 4. For now, focus on the 'Intercept' line. As we'll also learn in Chapter 4, the intercept of a regression model with no predictors is the same as its mean. In the special case of a model using the binomial likelihood, the mean is the probability of a 1 in a given trial, $\theta$. 
@@ -960,13 +966,12 @@ There's a lot going on in that output, which we'll start to clarify in Chapter 4
 Let's plot the results of our model and compare them with those from `rethinking::map()`, above.
 
 ```{r, fig.width = 3, fig.height = 2.75}
-posterior_samples(globe_qa_brms) %>% 
+posterior_samples(b2.1) %>% 
   mutate(n = "n = 36") %>%
 
   ggplot(aes(x = b_Intercept)) +
   geom_density(fill = "black") +
-  labs(x = "proportion water") +
-  xlim(0, 1) +
+  scale_x_continuous("proportion water", limits = c(0, 1)) +
   theme(panel.grid = element_blank()) +
   facet_wrap(~n)
 ```
