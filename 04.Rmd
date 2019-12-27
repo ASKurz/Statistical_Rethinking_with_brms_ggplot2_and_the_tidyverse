@@ -1025,52 +1025,12 @@ p352 <-
 
 Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our `d2` data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
 
-Anyway, we saved each of these plots as objects. With a little help of the [`multiplot()` function](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) we are going to arrange those plot objects into a grid in order to reproduce Figure 4.5. 
-
-Behold the code for the `multiplot()` function:
-
-```{r}
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-  library(grid)
-  
-  # Make a list from the ... arguments and plotlist
-  plots <- c(list(...), plotlist)
-  
-  numPlots = length(plots)
-  
-  # If layout is NULL, then use 'cols' to determine layout
-  if (is.null(layout)) {
-    # Make the panel
-    # ncol: Number of columns of plots
-    # nrow: Number of rows needed, calculated from # of cols
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                     ncol = cols, nrow = ceiling(numPlots/cols))
-  }
-  
-  if (numPlots==1) {
-    print(plots[[1]])
-    
-  } else {
-    # Set up the page
-    grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    
-    # Make each plot, in the correct location
-    for (i in 1:numPlots) {
-      # Get the i,j matrix positions of the regions that contain this subplot
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-      
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-                                      layout.pos.col = matchidx$col))
-    }
-  }
-}
-```
-
-We're finally ready to use `multiplot()` to make Figure 4.5. 
+Now we can combine the ggplots with patchwork to make the full version of Figure 4.5.
 
 ```{r, fig.width = 5, fig.height = 5}
-multiplot(p10, p150, p50, p352, cols = 2)
+library(patchwork)
+
+p10 + p50 + p150 + p352
 ```
 
 #### Plotting regression intervals and contours.
@@ -1459,7 +1419,7 @@ sessionInfo()
 ```
 
 ```{r, warning = F, echo = F}
-rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b.10, b.50, b.150, b.352, post10, post50, post150, post352, p10, p150, p50, p352, multiplot, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f_quad, p_quad, b4.6, b4.7, f_cub, p_cub, f_line, p_line, at)
+rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b.10, b.50, b.150, b.352, post10, post50, post150, post352, p10, p150, p50, p352, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f_quad, p_quad, b4.6, b4.7, f_cub, p_cub, f_line, p_line, at)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
