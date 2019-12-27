@@ -395,7 +395,9 @@ inits <- list(`Intercept[1]`      = -1.9,
 b11.3 <- 
   update(b11.2,
          formula = response ~ 1 + action + intention + contact + action:intention + contact:intention,
-         inits = list(inits, inits))
+         iter = 2000, warmup = 1000, cores = 2, chains = 2,
+         inits = list(inits, inits),
+         seed = 11)
 ```
 
 We don't have a `coeftab()` function in brms like for rethinking. But as we did for Chapter 6, we can reproduce it with help from the [broom package](https://cran.r-project.org/package=broom) and a bit of data wrangling.
@@ -528,7 +530,7 @@ fitted(b11.3,
 
 Boom!
 
-Okay, that pile of code is a bit of a mess and you’re not going to want to repeatedly cut and paste all that. Let’s condense it into a homemade function, `make_Figure_11.3_data()`. 
+Okay, that pile of code is a bit of a mess and you're not going to want to repeatedly cut and paste all that. Let's condense it into a homemade function, `make_Figure_11.3_data()`. 
 
 ```{r}
 make_Figure_11.3_data <- function(action, contact, max_iter) {
@@ -563,7 +565,7 @@ make_Figure_11.3_data <- function(action, contact, max_iter) {
 
 Now we'll use our sweet homemade function to make our plots.
 
-```{r, fig.width = 7, fig.height = 3.5, warning = F, message = F}
+```{r, fig.width = 7, fig.height = 4, warning = F, message = F}
 # Figure 11.3.a
 p1 <-
   make_Figure_11.3_data(action   = 0, 
@@ -645,10 +647,9 @@ p3 <-
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
 
-# here we stitch them together with `grid.arrange()`
-library(gridExtra)
-
-grid.arrange(p1, p2, p3, ncol = 3)
+# here we combine them with patchwork
+p1 + p2 + p3 + plot_annotation(title    = "Posterior predictions of the interaction model:",
+                               subtitle = "Here we're focusing on the parameters.")
 ```
 
 If you’d like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the open science framework.
@@ -691,7 +692,7 @@ make_data_for_an_alternative_fiture <- function(action, contact, max_iter) {
 
 Our handy homemade but monstrously-named `make_data_for_an_alternative_fiture()` function works very much like its predecessor. You’ll see.
 
-```{r, fig.width = 7, fig.height = 3.5}
+```{r, fig.width = 7, fig.height = 4}
 # alternative to Figure 11.3.a
 p1 <-
   make_data_for_an_alternative_fiture(action   = 0, 
@@ -740,7 +741,9 @@ p3 <-
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none")
 
-grid.arrange(p1, p2, p3, ncol = 3)
+# here we combine them with patchwork
+p1 + p2 + p3 + plot_annotation(title    = "Posterior predictions of the interaction model:",
+                               subtitle = "This time we'll focus on the means.")
 ```
 
 Finally; now those are plots I can sell in a clinical psychology journal!
