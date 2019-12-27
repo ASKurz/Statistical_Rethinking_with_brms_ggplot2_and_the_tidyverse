@@ -631,9 +631,9 @@ p2 <-
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[7]))
 
 # finally, we're ready to mash the plots together and behold their nerdy glory
-library(gridExtra)
+library(patchwork)
 
-grid.arrange(p1, p2, ncol = 2)
+p1 | p2
 ```
 
 > The key lesson for now is just that no regression coefficient, such as $\beta$, from a GLM ever produces a constant change on the outcome scale. Recall that we defined interaction (Chapter 7) as a situation in which the effect of a predictor depends upon the value of another predictor. Well now every predictor essentially interacts with itself, because the impact of a change in a predictor depends upon the value of the predictor before the change... 
@@ -790,8 +790,8 @@ p2 <-
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[7]))
 
-# finally, we're ready to mash the plots together and behold their nerdy glory
-grid.arrange(p1, p2, ncol = 2)
+# combine the ggplots
+p1 | p2
 ```
 
 ## Reference {-}
