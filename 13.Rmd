@@ -91,7 +91,7 @@ theme_pearl_earring <-
         axis.text  = element_text(color = "#E8DCCF"),
         axis.ticks = element_line(color = "#E8DCCF"),
         line       = element_line(color = "#E8DCCF"),
-        plot.background   = element_rect(fill = "#100F14", color = "transparent"),
+        plot.background   = element_rect(fill = "#100F14", color = "#100F14"),
         panel.background  = element_rect(fill = "#100F14", color = "#E8DCCF"),
         strip.background  = element_rect(fill = "#100F14", color = "transparent"),
         panel.grid = element_blank(),
@@ -318,7 +318,8 @@ params %>%
 Finally, here's our code for Figure 13.5.a, showing shrinkage in two dimensions.
 
 ```{r, fig.width = 5, fig.height = 3}
-ggplot(data = params, aes(x = Intercept, y = Slope)) +
+p1 <-
+  ggplot(data = params, aes(x = Intercept, y = Slope)) +
   stat_ellipse(geom = "polygon", type = "norm", level = 1/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
   stat_ellipse(geom = "polygon", type = "norm", level = 2/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
   stat_ellipse(geom = "polygon", type = "norm", level = 3/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
@@ -336,6 +337,8 @@ ggplot(data = params, aes(x = Intercept, y = Slope)) +
   coord_cartesian(xlim = range(params$Intercept),
                   ylim = range(params$Slope)) +
   theme_pearl_earring
+
+p1
 ```
 
 Learn more about `stat_ellipse()`, [here](https://ggplot2.tidyverse.org/reference/stat_ellipse.html). Let's prep for Figure 13.5.b.
@@ -373,7 +376,8 @@ estimates <-
 The code for Figure 13.5.b.
 
 ```{r, fig.width = 4.7, fig.height = 3}
-ggplot(data = estimates, aes(x = morning, y = afternoon)) +
+p2 <-
+  ggplot(data = estimates, aes(x = morning, y = afternoon)) +
   # nesting `stat_ellipse()` within `mapply()` is a less redundant way to produce the 
   # ten-layered semitransparent ellipses we did with ten lines of `stat_ellipse()` 
   # functions in the previous plot
@@ -393,6 +397,16 @@ ggplot(data = estimates, aes(x = morning, y = afternoon)) +
   labs(x = "morning wait (mins)",
        y = "afternoon wait (mins)") +
   theme_pearl_earring
+```
+
+Here we bind the two subplots together with patchwork syntax.
+
+```{r, fig.width = 8, fig.height = 3.5}
+library(patchwork)
+
+(p1 + theme(legend.position = "none")) + 
+  p2 + 
+  plot_annotation(title = "Shrinkage in two dimensions")
 ```
 
 ## Example: Admission decisions and gender
@@ -1249,10 +1263,11 @@ tidy_rho <-
 head(tidy_rho)
 ```
 
-Okay, here's our version of Figure 13.10.a.
+Okay, here's the code for our version of Figure 13.10.a.
 
 ```{r, fig.width = 4, fig.height = 3.5}
-tidy_rho %>%       
+p1 <-
+  tidy_rho %>%       
   ggplot(aes(x = lon2, y = lat)) +
   geom_line(aes(group = group, alpha = correlation^2),
             color = "#80A0C7") +
@@ -1260,15 +1275,17 @@ tidy_rho %>%
   geom_text_repel(data = d, aes(label = culture), 
                   seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
   scale_alpha_continuous(range = c(0, 1)) +
-  labs(x = "longitude",
+  labs(title = "Posterior median correlations",
+       subtitle = "Among societies in geographic space\n",
+       x = "longitude",
        y = "latitude") +
   coord_cartesian(xlim = range(d$lon2),
                   ylim = range(d$lat)) +
   theme(legend.position = "none") +
-  theme_pearl_earring 
+  theme_pearl_earring
 ```
 
-Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Here's our version of Figure 13.10.b.
+Here's our the code for our version of Figure 13.10.b.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 # new data for `fitted()`
@@ -1284,7 +1301,8 @@ f <-
   bind_cols(nd)
   
 # plot
-tidy_rho %>% 
+p2 <-
+  tidy_rho %>% 
   ggplot(aes(x = logpop)) +
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
@@ -1298,7 +1316,8 @@ tidy_rho %>%
                   aes(y = total_tools, label = culture), 
                   seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
   scale_alpha_continuous(range = c(0, 1)) +
-  labs(x = "log population",
+  labs(subtitle = "Shown against the relation between\ntotal tools and log pop",
+       x = "log population",
        y = "total tools") +
   coord_cartesian(xlim = range(d$logpop),
                   ylim = range(d$total_tools)) +
@@ -1306,7 +1325,13 @@ tidy_rho %>%
   theme_pearl_earring
 ```
 
-Same deal. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner's thoughts on this model in brms, check out the [thread on this GitHub issue](https://github.com/paul-buerkner/brms/issues/300).
+Now we combine them.
+
+```{r, fig.width = 8, fig.height = 4.25}
+p1 + p2
+```
+
+Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner's thoughts on this model in brms, check out the [thread on this GitHub issue](https://github.com/paul-buerkner/brms/issues/300).
 
 ## ~~Summary~~ Bonus: Another Berkley-admissions-data-like example. 
 
@@ -1453,7 +1478,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, results = "hide", warning = F, message = F}
-rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, n_sim, r_1, r_2, r_4, sigma_a, sigma_b, sigmas, post, b13.1, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, i, j, nd, f, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2, tidy_rho)
+rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, n_sim, r_1, r_2, r_4, sigma_a, sigma_b, sigmas, post, b13.1, p1, p2, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, i, j, nd, f, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2, tidy_rho)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
