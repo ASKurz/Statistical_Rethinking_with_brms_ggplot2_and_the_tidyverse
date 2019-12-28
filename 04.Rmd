@@ -602,7 +602,13 @@ This is the point in the project where we hop off the grid-approximation train. 
 
 We won't actually use `rethinking::map()`--which you should not conflate with `purrr::map()`--, but will jumpt straight to the primary brms modeling function, `brm()`. In the text, McElreath indexed his models with names like `m4.1`. I will largely follow that convention, but will replace the *m* with a *b* to stand for the brms package. Plus, once in a blue moon we will actually use the rethinking package to fit a model in order to contrast it to one fit with brms. On those occasions, we will index them using the *m* prefix. Here's the first model with `brm()`.
 
-```{r b4.1., cache = T, message = F}
+```{r b4.1, echo = F}
+# save(b4.1, file = "fits/b04.01.rda")
+# rm(b4.1)
+load("fits/b04.01.rda")
+```
+
+```{r, eval = F}
 b4.1 <- 
   brm(data = d2, 
       family = gaussian,
@@ -615,7 +621,13 @@ b4.1 <-
 
 McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in Chapter 8, Hamiltonian Monte Carlo (HMC) tends to work better when you default to a half Cauchy for $\sigma$. We can do that like this.
 
-```{r b4.1_hc, cache = T, message = F, warning = F}
+```{r b4.1_hc, echo = F}
+# save(b4.1_hc, file = "fits/b04.01_hc.rda")
+# rm(b4.1_hc)
+load("fits/b04.01_hc.rda")
+```
+
+```{r, eval = F}
 b4.1_hc <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
@@ -656,7 +668,13 @@ summary(b4.1_hc, prob = .89)
 
 Anyways, here's how to fit the model with the shockingly-narrow prior on $\mu$.
 
-```{r b4.2., cache = T, message = F, warning = F}
+```{r b4.2, echo = F}
+# save(b4.2, file = "fits/b04.02.rda")
+# rm(b4.2)
+load("fits/b04.02.rda")
+```
+
+```{r, eval = F}
 b4.2 <- 
   brm(data = d2, family = gaussian,
       height ~ 1,
@@ -845,13 +863,11 @@ Our linear model is $\mu_i = \alpha + \beta x_i$. The thing we're modeling is $\
 
 Our univariable model has three priors:
 
-$$
 \begin{align*}
 \alpha & \sim \text{Normal}(178, 100), \\
 \beta & \sim \text{Normal}(0, 10), \; \text{and} \\
 \sigma & \sim \text{Uniform}(0, 50).
 \end{align*}
-$$
 
 McElreath recommended we plot them. If you recall, we've already plotted $\text{Normal}(178, 100)$ and $\text{Uniform}(0, 50)$. Here's what the prior for our new $\beta$ parameter looks like.
 
@@ -880,7 +896,13 @@ Unlike with the rethinking package, our `brms::brm()` syntax won't perfectly mir
 
 Thus, to add a predictor you just the `+` operator in the model `formula`.
 
-```{r b4.3., cache = T, message = F, warning = F}
+```{r b4.3, echo = F}
+# save(b4.3, file = "fits/b04.03.rda")
+# rm(b4.3)
+load("fits/b04.03.rda")
+```
+
+```{r, eval = F}
 b4.3 <- 
   brm(data = d2, 
       family = gaussian,
@@ -944,7 +966,13 @@ d2 <-
 
 Fit the `weight_c` model, `b4.4`.
 
-```{r b4.4., cache = T, message = F, warning = F}
+```{r b4.4, echo = F}
+# save(b4.4, file = "fits/b04.04.rda")
+# rm(b4.4)
+load("fits/b04.04.rda")
+```
+
+```{r, eval = F}
 b4.4 <- 
   brm(data = d2, family = gaussian,
       height ~ 1 + weight_c,
@@ -1020,7 +1048,23 @@ post %>%
 
 Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a `cauchy(0, 1)` prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well. With the exception of that $\sigma$ prior, these models are all variations on `b4.3` from above, which we'll reflect in our naming convention.
 
-```{r b.10_through_b.352, cache = T, message = F, warning = F}
+```{r b4.3_010, echo = F}
+# save(b4.3_010, file = "fits/b04.03_010.rda")
+# save(b4.3_050, file = "fits/b04.03_050.rda")
+# save(b4.3_150, file = "fits/b04.03_150.rda")
+# save(b4.3_352, file = "fits/b04.03_352.rda")
+# rm(b4.3_010)
+# rm(b4.3_050)
+# rm(b4.3_150)
+# rm(b4.3_352)
+
+load("fits/b04.03_010.rda")
+load("fits/b04.03_050.rda")
+load("fits/b04.03_150.rda")
+load("fits/b04.03_352.rda")
+```
+
+```{r, eval = F}
 n <- 10
 
 b4.3_010 <- 
@@ -1366,7 +1410,13 @@ d <-
 
 Here's the quadratic model in brms.
 
-```{r b4.5., cache = T, message = F, warning = F}
+```{r b4.5, echo = F}
+# save(b4.5, file = "fits/b04.05.rda")
+# rm(b4.5)
+load("fits/b04.05.rda")
+```
+
+```{r, eval = F}
 b4.5 <- 
   brm(data = d, 
       family = gaussian,
@@ -1426,7 +1476,13 @@ $$\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3$$
 
 Fit it like so.
 
-```{r b4.6., cache = T, message = F, warning = F}
+```{r b4.6, echo = F}
+# save(b4.6, file = "fits/b04.06.rda")
+# rm(b4.6)
+load("fits/b04.06.rda")
+```
+
+```{r, eval = F}
 b4.6 <- 
   brm(data = d, 
       family = gaussian,
@@ -1440,7 +1496,13 @@ b4.6 <-
 
 And now we'll fit the good old linear model.
 
-```{r b4.7_linear, cache = T, message = F, warning = F}
+```{r b4.7, echo = F}
+# save(b4.7, file = "fits/b04.07.rda")
+# rm(b4.7)
+load("fits/b04.07.rda")
+```
+
+```{r, eval = F}
 b4.7 <- 
   brm(data = d, family = gaussian,
       height ~ 1 + weight_s,
@@ -1552,7 +1614,7 @@ sessionInfo()
 ```
 
 ```{r, warning = F, echo = F}
-rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_half_cauchy, b4.2, post, b4.3, b4.4, b4.3_010, b4.3_050, b4.3_150, b4.3_352, post010, post050, post150, post352, p1, p2, p3, p4, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f, p, b4.6, b4.7, at)
+rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_hc, b4.2, post, b4.3, b4.4, b4.3_010, b4.3_050, b4.3_150, b4.3_352, post010, post050, post150, post352, p1, p2, p3, p4, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f, p, b4.6, b4.7, at)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
