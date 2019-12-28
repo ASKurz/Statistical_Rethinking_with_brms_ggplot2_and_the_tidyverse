@@ -8,17 +8,23 @@ output:
 
 # Multivariate Linear Models
 
-McElreath's listed reasons for multivariable regression include:
+McElreath's listed reasons for multivariable regression include
 
-* statistical control for confounds
-* multiple causation
-* interactions
+* statistical control for confounds,
+* multiple causation, and
+* interactions.
 
 We'll approach the first two in this chapter. Interactions are reserved for Chapter 6.
 
+#### Rethinking: Causal inference.
+
+"Despite its central importance, there is no unified approach to causal inference yet in the sciences or in statistics" (p. 120). 
+
+McElreath didn't cover this much in this edition of the text. However, it appears his second edition will cover it more extensively. He announced as much in [this blog post](https://elevanth.org/blog/2018/07/14/statistical-rethinking-edition-2-eta-2020/) and experimented in mixing it in with the material in during his [Statistical Rethinking Winter 2019](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) lecture series. 
+
 ## Spurious associations
 
-Load the Waffle House data.
+Load the [Waffle House](https://www.snopes.com/fact-check/fema-waffle-house-index/) data.
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -42,7 +48,7 @@ head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/package=ggrepel). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we’ll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/package=ggrepel). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we'll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
 ```{r, fig.width = 3, fig.height = 3}
 # install.packages("ggrepel", depencencies = T)
@@ -63,7 +69,7 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-We might plot our three major variables in a map format. The [urbnmapr package](https://github.com/UrbanInstitute/urbnmapr) provides latitude and longitude data for the 50 states and the `geom_sf()` function for plotting them. We'll use the `left_join()` function to combine those data with our primary data `d`.
+Since these are geographically-based data, we might plot our three major variables in a map format. The [urbnmapr package](https://github.com/UrbanInstitute/urbnmapr) provides latitude and longitude data for the 50 states and the `geom_sf()` function for plotting them. We'll use the `left_join()` function to combine those data with our primary data `d`.
 
 ```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
 # devtools::install_github("UrbanInstitute/urbnmapr")
@@ -112,7 +118,8 @@ Now we're ready to fit the first univariable model.
 
 ```{r b5.1_, cache = T, message = F, warning = F}
 b5.1 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       Divorce ~ 1 + MedianAgeMarriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -164,11 +171,12 @@ d <-
   mutate(Marriage_s = (Marriage - mean(Marriage)) / sd(Marriage))
 ```
 
-We're ready to fit our second univariable model.
+We're ready to fit our second univariable model, this time with `Marriage_s` as the predictor.
 
 ```{r b5.2_, cache = T, message = F, warning = F}
 b5.2 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       Divorce ~ 1 + Marriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -206,7 +214,7 @@ ggplot(data = f,
   theme(panel.grid = element_blank())                   
 ```
 
-> But merely comparing parameter means between different bivariate regressions is no way to decide which predictor is better Both of these predictors could provide independent value, or they could be redundant, or one could eliminate the value of the other. So we’ll build a multivariate model with the goal of measuring the partial value of each predictor. The question we want answered is:
+> But merely comparing parameter means between different bivariate regressions is no way to decide which predictor is better Both of these predictors could provide independent value, or they could be redundant, or one could eliminate the value of the other. So we'll build a multivariate model with the goal of measuring the partial value of each predictor. The question we want answered is:
 >
 >> *What is the predictive value of a variable, once I already know all of the other predictor variables?* (p. 123, *emphasis* in the original)
 
@@ -231,7 +239,8 @@ Much like we used the `+` operator to add single predictors to the intercept, we
 
 ```{r b5.3_, cache = T, message = F, warning = F}
 b5.3 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       Divorce ~ 1 + Marriage_s + MedianAgeMarriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -239,6 +248,8 @@ b5.3 <-
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5)
 ```
+
+Our multivariable summary will have multiple rows below the 'Intercept' row.
 
 ```{r}
 print(b5.3)
@@ -263,9 +274,9 @@ mcmc_intervals(post[, 1:4],
                prob = .5,
                point_est = "median") +
   labs(title = "My fancy bayesplot-based coefficient plot") +
-  theme(axis.text.y  = element_text(hjust = 0),
-        axis.line.x  = element_line(size = 1/4),
-        axis.line.y  = element_blank(),
+  theme_bw() +
+  theme(panel.grid   = element_blank(),
+        axis.text.y  = element_text(hjust = 0),
         axis.ticks.y = element_blank())
 ```
 
@@ -297,7 +308,7 @@ The substantive interpretation of all those coefficient plots is: "*Once we know
 
 ### Plotting multivariate posteriors.
 
-McElreath’s prose is delightfully deflationary. "There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression" (p. 126). Now you’re inspired, let’s learn three:
+McElreath's prose is delightfully deflationary. "There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression" (p. 126). Now you're inspired, let's learn three:
 
 * Predictor residual plots
 * Counterfactual plots
@@ -309,7 +320,8 @@ To get ready to make our residual plots, we'll predict `Marriage_s` with `Median
 
 ```{r b5.4_, cache = T, message = F, warning = F}
 b5.4 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d,
+      family = gaussian,
       Marriage_s ~ 1 + MedianAgeMarriage_s,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -387,7 +399,8 @@ To get the `MedianAgeMarriage_s` residuals, we have to fit the corresponding mod
 
 ```{r b5.4b., cache = T, message = F, warning = F}
 b5.4b <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       MedianAgeMarriage_s ~ 1 + Marriage_s,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -399,15 +412,18 @@ b5.4b <-
 And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
 
 ```{r, fig.width = 3, fig.height = 3}
+# redefine the annotation data
 text <-
   tibble(Estimate = c(- 0.7, 0.5),
          Divorce  = 14.1,
          label    = c("younger", "older"))
 
+# extract the residuals
 residuals(b5.4b) %>%
   as_tibble() %>%
   bind_cols(d) %>% 
   
+  # plot
   ggplot(aes(x = Estimate, y = Divorce)) +
   stat_smooth(method = "lm", fullrange = T,
               color = "firebrick4", fill = "firebrick4", 
@@ -422,6 +438,8 @@ residuals(b5.4b) %>%
   theme_bw() +
   theme(panel.grid = element_blank())  
 ```
+
+> So what's the point of all this? There’s direct value in seeing the model-based predictions displayed against the outcome, after subtracting out the influence of other predictors. The plots in Figure 5.4 do this. But this procedure also brings home the message that regression models answer with the remaining association of each predictor with the outcome, after already knowing the other predictors. In computing the predictor residual plots, you had to perform those calculations yourself. In the unified [multivariable] model, it all happens automatically. (p. 129)
 
 #### Counterfactual plots.
 
@@ -508,12 +526,13 @@ fitted(b5.3, newdata = nd) %>%
 
 #### Posterior prediction plots.
 
-"In addition to understanding the estimates, it’s important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
+"In addition to understanding the estimates, it's important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
 
-In this version of Figure 5.6.a, the thin lines are the 95% intervals and the thicker lines are +/- the posterior $SD$, both of which are returned when you use `fitted()`.
+In this version of Figure 5.6.a, the thin lines are the 95% intervals and the thicker lines are $\pm$ the posterior $SD$, both of which are returned when you use `fitted()`.
 
 ```{r, fig.width = 3, fig.height = 3}
-fitted(b5.3) %>%
+p1 <-
+  fitted(b5.3) %>%
   as_tibble() %>%
   bind_cols(d) %>%
   
@@ -533,6 +552,8 @@ fitted(b5.3) %>%
        y = "Predicted divorce") +
   theme_bw() +
   theme(panel.grid = element_blank())
+
+p1
 ```
 
 In order to make Figure 5.6.b, we need to clarify the relationships among `fitted()`, `predict()`, and `residuals()`. Here's my attempt in a table.
@@ -544,10 +565,11 @@ tibble(`brms function` = c("fitted", "predict", "residual"),
   knitr::kable()
 ```
 
-Hopefully this clarifies that if we want to incorporate the prediction interval in a deviance metric, we'll need to first use `predict()` and then subtract the intervals from their corresponding `Divorce` values in the data.
+Hopefully that clarified that if we want to incorporate the prediction interval in a deviance metric, we'll need to first use `predict()` and then subtract the intervals from their corresponding `Divorce` values in the data.
 
 ```{r, fig.width = 2.25, fig.height = 5.5}
-residuals(b5.3) %>% 
+p2 <-
+  residuals(b5.3) %>% 
   as_tibble() %>% 
   rename(f_ll = Q2.5,
          f_ul = Q97.5) %>% 
@@ -584,12 +606,15 @@ residuals(b5.3) %>%
   theme(panel.grid   = element_blank(),
         axis.ticks.y = element_blank(),
         axis.text.y  = element_text(hjust = 0))
+
+p2
 ```
 
 Compared to the last couple plots, Figure 5.6.c is pretty simple.
 
 ```{r, warning = F, message = F, fig.width = 3, fig.height = 3}
-residuals(b5.3) %>% 
+p3 <-
+  residuals(b5.3) %>% 
   as_tibble() %>% 
   bind_cols(d) %>% 
   mutate(wpc = WaffleHouses / Population) %>% 
@@ -607,13 +632,27 @@ residuals(b5.3) %>%
   ylab("Divorce error") +
   theme_bw() +
   theme(panel.grid = element_blank())
+
+p3
 ```  
 
-More McElreath inspiration: "No matter how many predictors you’ve already included in a regression, it’s still possible to find spurious correlations with the remaining variation" (p. 134). To keep our deflation train going, it’s worthwhile to repeat the message in McElreath’s **Rethinking: Stats, huh, yeah what is it good for?** box.
+For the sake of good practice, let’s use patchwork syntax to combine those three subplots like they appear in the text.
 
-> Often people want statistical modeling to do things that statistical modeling cannot do. For example, we’d like to know whether an effect is real or rather spurious. Unfortunately, modeling merely quantifies uncertainty in the precise way that the model understands the problem. Usually answers to large world questions about truth and causation depend upon information not included in the model. For example, any observed correlation between an outcome and predictor could be eliminated or reversed once another predictor is added to the model. But if we cannot think of another predictor, we might never notice this. Therefore all statistical models are vulnerable to and demand critique, regardless of the precision of their estimates and apparent accuracy of their predictions. (p. 134)
+```{r, fig.width = 6, fig.height = 6}
+library(patchwork)
+
+((p1 / p3) | p2) + plot_annotation(tag_levels = "a",
+                                   tag_prefix = "(",
+                                   tag_suffix = ")")
+```
+
+More McElreath inspiration: "No matter how many predictors you've already included in a regression, it's still possible to find spurious correlations with the remaining variation" (p. 134). To keep our deflation train going, it's worthwhile to repeat the message in McElreath’s **Rethinking: Stats, huh, yeah what is it good for?** box.
+
+> Often people want statistical modeling to do things that statistical modeling cannot do. For example, we'd like to know whether an effect is real or rather spurious. Unfortunately, modeling merely quantifies uncertainty in the precise way that the model understands the problem. Usually answers to large world questions about truth and causation depend upon information not included in the model. For example, any observed correlation between an outcome and predictor could be eliminated or reversed once another predictor is added to the model. But if we cannot think of another predictor, we might never notice this. Therefore all statistical models are vulnerable to and demand critique, regardless of the precision of their estimates and apparent accuracy of their predictions. (p. 134)
 
 #### Overthinking: Simulating spurious association.
+
+Simulate the spurious predictor data.
 
 ```{r}
 n <- 100                             # number of cases
@@ -633,8 +672,9 @@ pairs(d, col = "firebrick4")
 
 We may as well fit a model.
 
-```{r spurious_fit_, cache = T, message = F, warning = F}
-brm(data = d, family = gaussian,
+```{r b5.4_supr, cache = T, message = F, warning = F}
+brm(data = d, 
+    family = gaussian,
     y ~ 1 + x_real + x_spur,
     prior = c(prior(normal(0, 10), class = Intercept),
               prior(normal(0, 1), class = b),
@@ -647,6 +687,8 @@ brm(data = d, family = gaussian,
 ```
 
 ## Masked relationship
+
+> A second reason to use more than one predictor variable is to measure the direct influences of multiple factors on an outcome, when none of those influences is apparent from bivariate relationships. This kind of problem tends to arise when there are two predictor variables that are correlated with one another. However, one of these is positively correlated with the outcome and the other is negatively correlated with it. (p. 134)
 
 Let's load those tasty `milk` data.
 
@@ -678,7 +720,8 @@ McElreath has us start of with a simple univariable `milk` model.
 
 ```{r b5.5_, cache = T, message = F, warning = F}
 b5.5 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 1 + neocortex.perc,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -689,7 +732,7 @@ b5.5 <-
 
 The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to Chapter 14 where we'll learn how to do better. 
 
-To compliment how McElreath removed cases with missing values on our variables of interest with Base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
+To compliment how McElreath removed cases with missing values on our variables of interest with base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
 
 ```{r}
 dcc <- 
@@ -705,7 +748,7 @@ print(b5.5, digits = 3)
 
 Did you notice now we set `digits = 3` within `print()` much the way McElreath set `digits=3` within `precis()`?
 
-To get the brms answer to what McElreath did with `coef()`, we'll use the `fixef()` function.
+To get the brms answer to what McElreath did with `coef()`, we can use the `fixef()` function.
 
 ```{r, warning = F, message = F}
 fixef(b5.5)[2] * (76 - 55)
@@ -715,7 +758,7 @@ Yes, indeed, "that's less than 0.1 kilocalories" (p. 137).
 
 Just for kicks, we'll superimpose 50% intervals atop 95% intervals for the next few plots. Here's Figure 5.7, top left.
 
-```{r, fig.width = 3, fig.height = 2.5, message = F}
+```{r, fig.width = 3, fig.height = 2.75, message = F}
 nd <- tibble(neocortex.perc = 54:80)
 
 fitted(b5.5, 
@@ -752,7 +795,8 @@ Now we use `log_mass` as the new sole predictor.
 
 ```{r b5.6_, cache = T, message = F, warning = F}
 b5.6 <- 
-  brm(data = dcc, family = gaussian,
+  brm(data = dcc, 
+      family = gaussian,
       kcal.per.g ~ 1 + log_mass,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -768,7 +812,7 @@ print(b5.6, digits = 3)
 
 Make Figure 5.7, top right.
 
-```{r, fig.width = 3, fig.height = 2.5, warning = F, message = F}
+```{r, fig.width = 3, fig.height = 2.75, warning = F, message = F}
 nd <- tibble(log_mass = seq(from = -2.5, to = 5, length.out = 30))
 
 fitted(b5.6, 
@@ -797,7 +841,7 @@ Finally, we're ready to fit with both predictors included in the "joint model." 
 
 \begin{align*}
 \text{kcal.per.g}_i & \sim \text{Normal}(\mu_i, \sigma) \\
-\mu_i   & = \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \text{log}(\text{mass}_i) \\
+\mu_i   & = \alpha + \beta_1 \text{neocortex.perc}_i + \beta_2 \log (\text{mass}_i) \\
 \alpha  & \sim \text{Normal}(0, 100) \\
 \beta_1 & \sim \text{Normal}(0, 1) \\
 \beta_2 & \sim \text{Normal}(0, 1) \\
@@ -808,7 +852,8 @@ Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta
 
 ```{r b5.7_, cache = T, message = F, warning = F}
 b5.7 <- 
-  brm(data = dcc, family = gaussian,
+  brm(data = dcc, 
+      family = gaussian,
       kcal.per.g ~ 1 + neocortex.perc + log_mass,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -829,7 +874,8 @@ nd <-
   tibble(neocortex.perc = 54:80 %>% as.double(),
          log_mass       = mean(dcc$log_mass))
 
-b5.7 %>%
+p1 <-
+  b5.7 %>%
   fitted(newdata = nd, 
          probs = c(.025, .975, .25, .75)) %>%
   as_tibble() %>%
@@ -851,14 +897,15 @@ b5.7 %>%
   theme(panel.grid = element_blank())
 ```
 
-And make Figure 5.7, bottom right.
+Now make Figure 5.7, bottom right, and combine.
 
-```{r, fig.width = 3, fig.height = 2.5, warning = F, message = F}
+```{r, fig.width = 6, fig.height = 2.75, warning = F, message = F}
 nd <- 
   tibble(log_mass       = seq(from = -2.5, to = 5, length.out = 30),
          neocortex.perc = mean(dcc$neocortex.perc))
 
-b5.7 %>%
+p2 <-
+  b5.7 %>%
   fitted(newdata = nd,
          probs = c(.025, .975, .25, .75)) %>%
   as_tibble() %>%
@@ -878,11 +925,15 @@ b5.7 %>%
   ylab("kcal.per.g") +
   theme_bw() +
   theme(panel.grid = element_blank())
+
+p1 | p2
 ```
 
 > What [this regression model did was] ask if species that have high neocortex percent *for their body mass* have higher milk energy. Likewise, the model [asked] if species with high body mass *for their neocortex percent* have higher milk energy. Bigger species, like apes, have milk with less energy. But species with more neocortex tend to have richer milk. The fact that these two variables, body size and neocortex, are correlated across species makes it hard to see these relationships, unless we statistically account for both. (pp. 140--141, *emphasis* in the original)
 
 #### Overthinking: Simulating a masking relationship.
+
+Simulate the data.
 
 ```{r}
 n   <- 100   # number of cases
@@ -903,8 +954,8 @@ pairs(d, col = "firebrick4")
 
 Here we fit the models with a little help from the `update()` function.
 
-```{r b5.O.both, cache = T, message = F, warning = F, results = 'hide'}
-b5.O.both <- 
+```{r b5.0_both, cache = T, message = F, warning = F, results = 'hide'}
+b5.0_both <- 
   brm(data = d, family = gaussian,
       y ~ 1 + x_pos + x_neg,
       prior = c(prior(normal(0, 100), class = Intercept),
@@ -912,22 +963,24 @@ b5.O.both <-
                 prior(cauchy(0, 1), class = sigma)),
       seed = 5)
 
-b5.O.pos <-
-  update(b5.O.both, 
+b5.0_pos <-
+  update(b5.0_both, 
          formula = y ~ 1 + x_pos)
 
-b5.O.neg <-
-  update(b5.O.both, 
+b5.0_neg <-
+  update(b5.0_both, 
          formula = y ~ 1 + x_neg)
 ```
 
 Compare the coefficients.
 
 ```{r}
-fixef(b5.O.pos)  %>% round(digits = 2)
-fixef(b5.O.neg)  %>% round(digits = 2)
-fixef(b5.O.both) %>% round(digits = 2)
+fixef(b5.0_pos)  %>% round(digits = 2)
+fixef(b5.0_neg)  %>% round(digits = 2)
+fixef(b5.0_both) %>% round(digits = 2)
 ```
+
+> If you move the value of `rho` closer to zero, this masking phenomenon will diminish. I you make `rho` closer to 1 or -1, it will magnify. But if `rho` gets very close to 1 or -1, then the two predictors contain exactly the same information, and there's no hope for any statistical model to tease out the true underlying association used in the simulation. (p. 141)
 
 ## Multicollinearity
 
@@ -967,11 +1020,12 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-Here's our attempt to predict `height` with both legs.
+Here's our attempt to predict `height` with both legs in the model.
 
 ```{r b5.8_, cache = T, message = F, warning = F}
 b5.8 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       height ~ 1 + leg_left + leg_right,
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
@@ -1073,7 +1127,8 @@ Now we fit the model after ditching one of the leg lengths.
 
 ```{r b5.9, cache = T, message = F, warning = F}
 b5.9 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       height ~ 1 + leg_left,
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
@@ -1103,7 +1158,29 @@ posterior_samples(b5.9) %>%
   theme(panel.grid = element_blank())
 ```
 
-> *When two predictor variables are very strongly correlated, including both in a model may lead to confusion.* The posterior distribution isn’t wrong, in such a case. It’s telling you that the question you asked cannot be answered with these data. And that’s a great thing for a model to say, that it cannot answer your question. (p. 145, *emphasis* in the original)
+We might also use `tidybayes::stat_pointintervalh()` to compare the posterior of `b_leg_left` from `b5.9` to the joint posterior `b_leg_left + b_leg_right` from `b5.8`. For kicks, we'll use three levels of posterior intervals.
+
+```{r, fig.width = 6, fig.height = 1, warning = F, message = F}
+bind_cols(
+  post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_right),
+  posterior_samples(b5.9) %>% transmute(`only b_leg_left` = b_leg_left)
+) %>% 
+  gather() %>% 
+
+  ggplot(aes(x = value, y = key)) +
+  stat_pointintervalh(.width = c(.5, .8, .95),
+                      color = "firebrick") +
+  labs(x = NULL,
+       y = NULL) +
+  theme_bw() +
+  theme(panel.grid   = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y  = element_text(hjust = 0))
+```
+
+The results are within simulation variance of one another.
+
+> *When two predictor variables are very strongly correlated, including both in a model may lead to confusion.* The posterior distribution isn't wrong, in such a case. It's telling you that the question you asked cannot be answered with these data. And that's a great thing for a model to say, that it cannot answer your question. (p. 145, *emphasis* in the original)
 
 ### Multicollinear `milk`.
 
@@ -1128,7 +1205,8 @@ We'll follow the text and fit the two univariable models, first. Note our use of
 ```{r b5.10_b5.11, cache = T, message = F, warning = F, results = 'hide'}
 # `kcal.per.g` regressed on `perc.fat`
 b5.10 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 1 + perc.fat,
       prior = c(prior(normal(.6, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -1140,10 +1218,12 @@ b5.10 <-
 b5.11 <- 
   update(b5.10,
          newdata = d,
-         formula = kcal.per.g ~ 1 + perc.lactose)
+         formula = kcal.per.g ~ 1 + perc.lactose,
+         iter = 2000, warmup = 500, chains = 4, cores = 4,
+         seed = 5)
 ```
 
-Compare the coefficients.
+Compare the coefficient summaries.
 
 ```{r}
 posterior_summary(b5.10) %>% round(digits = 3)
@@ -1163,8 +1243,12 @@ Now "watch what happens when we place both predictor variables in the same regre
 b5.12 <- 
   update(b5.11,
          newdata = d,
-         formula = kcal.per.g ~ 1 + perc.fat + perc.lactose)
+         formula = kcal.per.g ~ 1 + perc.fat + perc.lactose,
+         iter = 2000, warmup = 500, chains = 4, cores = 4,
+         seed = 5)
 ```
+
+The posteriors for coefficients, especially for `perc.fat`, shrank to zero.
 
 ```{r}
 posterior_summary(b5.12) %>% round(digits = 3)
@@ -1259,7 +1343,7 @@ d %>%
   theme(panel.grid = element_blank())
 ```
 
-Did you notice we used the base R `lm()` function to fit the models? As McElreath rightly pointed out, `lm()` presumes flat priors. Proper Bayesian modeling could improve on that. But then we’d have to wait for a whole lot of HMC chains to run and until our personal computers or the algorithms we use to fit our Bayesian models become orders of magnitude faster, we just don’t have time for that.
+Did you notice we used the base R `lm()` function to fit the models? As McElreath rightly pointed out, `lm()` presumes flat priors. Proper Bayesian modeling could improve on that. But then we'd have to wait for a whole lot of HMC chains to run and until our personal computers or the algorithms we use to fit our Bayesian models become orders of magnitude faster, we just don’t have time for that.
 
 ### Post-treatment bias.
 
@@ -1294,7 +1378,8 @@ These data + the model were rough on Stan, at first, which spat out warnings abo
 
 ```{r b5.13_, cache = T, message = F, warning = F}
 b5.13 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       h1 ~ 1 + h0 + treatment + fungus,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
@@ -1313,7 +1398,9 @@ Now fit the model after excluding `fungus`, our post-treatment variable.
 ```{r b5.14_u, cache = T, message = F, warning = F, results = 'hide'}
 b5.14 <- 
   update(b5.13, 
-         formula = h1 ~ 1 + h0 + treatment)
+         formula = h1 ~ 1 + h0 + treatment,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 5)
 ```
 
 ```{r}
@@ -1357,7 +1444,8 @@ Note. The uniform prior McElreath used in the text in conjunction with the `brms
 
 ```{r b5.15_, cache = T, message = F, warning = F}
 b5.15 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       height ~ 1 + male,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
@@ -1366,15 +1454,15 @@ b5.15 <-
       seed = 5)
 ```
 
-Check the summary.
+"To interpret these estimates, you have to note that the parameter $\alpha$ ([`Intercept`]) is now the average height *among females*" (p. 154).
 
 ```{r}
 print(b5.15)
 ```
 
-Our samples from the posterior are already in the HMC iterations. All we need to do is put them in a data frame and then put them to work.
+Our samples from the posterior are already in the HMC iterations. All we need to do is put them in a data frame and we'll be well-positioned to compute the intervals for the average height among men.
 
-```{r}
+```{r, warning = F}
 post <- posterior_samples(b5.15)
 
 post %>%
@@ -1426,11 +1514,12 @@ d <-
   mutate(female = 1 - male)
 ```
 
-Everyone has their own idiosyncratic way of coding. One of my quirks is I always explicitly specify a model’s intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don’t have to do this, of course. You could just code `y ~ x` to get the same results. The `brm()` function assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: ` height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
+Everyone has their own idiosyncratic way of coding. One of my quirks is I always explicitly specify a model's intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don't have to do this, of course. You could just code `y ~ x` to get the same results. The `brm()` function assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: ` height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
 
 ```{r b5.15_b, cache = T, message = F, warning = F}
 b5.15b <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       height ~ 0 + male + female,
       prior = c(prior(normal(178, 100), class = b),
                 prior(cauchy(0, 2), class = sigma)),
@@ -1485,22 +1574,23 @@ d %>%
   distinct(clade)
 ```
 
-As `clade` has 4 categories, let's use `ifelse()` to convert these to 4 dummy variables.
+As `clade` has 4 categories, let's use `if_else()` to convert these to 4 dummy variables.
 
 ```{r}
 d <- 
   d %>%
-  mutate(clade_nwm = ifelse(clade == "New World Monkey", 1, 0),
-         clade_owm = ifelse(clade == "Old World Monkey", 1, 0),
-         clade_s   = ifelse(clade == "Strepsirrhine", 1, 0),
-         clade_ape = ifelse(clade == "Ape", 1, 0))
+  mutate(clade_nwm = if_else(clade == "New World Monkey", 1, 0),
+         clade_owm = if_else(clade == "Old World Monkey", 1, 0),
+         clade_s   = if_else(clade == "Strepsirrhine", 1, 0),
+         clade_ape = if_else(clade == "Ape", 1, 0))
 ```
 
 Now we'll fit the model with three of the four dummies. In this model, `clade_ape` is the reference category captured by the intercept.
 
 ```{r b5.16, cache = T, message = F, warning = F}
 b5.16 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s,
       prior = c(prior(normal(.6, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -1536,7 +1626,7 @@ round(t(apply(post[ ,7:10], 2, quantile, c(.5, .025, .975))), digits = 2)
 
 Here's a more tidyverse sort of way to get the same thing, but this time with means and HPDIs via the `tidybayes::mean_hdi()` function.
 
-```{r}
+```{r, warning = F}
 post %>%
   transmute(mu_ape = b_Intercept,
             mu_nwm = b_Intercept + b_clade_nwm,
@@ -1577,7 +1667,7 @@ fitted(b5.16,
 
 And there are multiple ways to compute summary statistics for the difference between `NWM` and `OWM`, too.
 
-```{r}
+```{r, warning = F}
 # base R
 quantile(post$mu_nwm - post$mu_owm, probs = c(.5, .025, .975))
 
@@ -1599,11 +1689,12 @@ The corresponding `formula` argument within `brm()` would be `kcal.per.g ~ 1 + c
 
 ### Another approach: Unique intercepts.
 
-Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
+"Another way to conceptualize categorical variables is to construct a vector of intercept parameters, one parameter for each category" (p. 158). Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
 
 ```{r b5.16_alt_, cache = T, message = F, warning = F}
 b5.16_alt <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 0 + clade,
       prior = c(prior(normal(.6, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
@@ -1621,7 +1712,7 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) syntax for multilevel models.
 
-Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We’ve already made use of it in the "Polynomial regression" section of Chapter 4.
+Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We've already made use of it in the "Polynomial regression" section of Chapter 4.
 
 ## Reference {-}
 
@@ -1634,7 +1725,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, b5.5, dcc, b5.6, b5.7, rho, b5.O.both, b5.O.pos, b5.O.neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
+rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, p1, p2, p3, b5.5, dcc, b5.6, b5.7, rho, b5.0_both, b5.0_pos, b5.0_neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
