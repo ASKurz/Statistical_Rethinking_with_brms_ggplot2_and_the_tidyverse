@@ -12,7 +12,7 @@ options(width = 100)
 
 # Interactions
 
-> Every model so far in [McElreath’s text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?... To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. (p. 210)
+> Every model so far in [McElreath's text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?... To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. (p. 210)
 
 ## Building an interaction.
 
@@ -61,7 +61,8 @@ The first two models predicting `log_gdp` are univariable.
 
 ```{r b7.1_b7.2, cache = T, warning = F, message = F, results = "hide"}
 b7.1 <-
-  brm(data = d.A1, family = gaussian,
+  brm(data = d.A1, 
+      family = gaussian,
       log_gdp ~ 1 + rugged,
       prior = c(prior(normal(8, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -71,7 +72,9 @@ b7.1 <-
 
 b7.2 <-
   update(b7.1, 
-         newdata = d.A0)
+         newdata = d.A0,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7)
 ```
 
 In the text, McElreath more or less dared us to figure out how to make Figure 7.2. Here's the brms-relevant data wrangling.
@@ -80,19 +83,15 @@ In the text, McElreath more or less dared us to figure out how to make Figure 7.
 nd <- 
   tibble(rugged = seq(from = 0, to = 6.3, length.out = 30))
 
-f_b7.1 <-
-  fitted(b7.1, newdata = nd) %>%
-  as_tibble() %>%
-  bind_cols(nd)
-
-f_b7.2 <-
-  fitted(b7.2, newdata = nd) %>%
-  as_tibble() %>%
-  bind_cols(nd)
-
-# here we'll put both in a single data object, with `f_b7.1` stacked atop `f_b7.2`
 f <-
-  full_join(f_b7.1, f_b7.2) %>%
+  # bind the two `fitted()` summaries together
+  rbind(fitted(b7.1, newdata = nd),
+        fitted(b7.2, newdata = nd)) %>% 
+  as_tibble() %>% 
+  # add the `nd` data, one copy stacked atop another
+  bind_cols(
+    bind_rows(nd, nd)
+  ) %>%
   mutate(cont_africa = rep(c("Africa", "not Africa"), each = 30))
 ```
 
@@ -109,13 +108,12 @@ Here's the plot code for our version of Figure 7.2.
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
-  ggplot(aes(x = rugged)) +
+  ggplot(aes(x = rugged, color = cont_africa, fill = cont_africa)) +
   geom_smooth(data = f,
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = cont_africa, color = cont_africa),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity", 
               alpha = 1/4, size = 1/2) +
-  geom_point(aes(y = log_gdp, color = cont_africa),
+  geom_point(aes(y = log_gdp),
              size = 2/3) +
   scale_colour_pander() +
   scale_fill_pander() +
@@ -127,6 +125,13 @@ dd %>%
   facet_wrap(~cont_africa)
 ```
 
+It's generally not a good idea to split up your data and run separate analyses, like this. McElreath listed four reasons why:
+
+1. "There are usually some parameters, such as $\sigma$, that the model says do not depend in any way upon an African identity for each nation. By splitting the data table, you are hurting the accuracy f the estimates for these parameters" (p. 213).
+2. "In order to acquire probability statements about the variable you used to split the data, `cont_africa`, in this case, you need to include it in the model" (p. 213).
+3. "We many want to use information criteria or another method to compare models" (p. 214).
+4. "Once you begin using multilevel models (Chapter 12), you’ll see that there are advantages to borrowing information across categories like 'Africa' and 'not Africa'" (p. 214). 
+
 ### Adding a dummy variable doesn't work.
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
@@ -134,7 +139,9 @@ Here's our model with all the countries, but without the `cont_africa` dummy.
 ```{r b7.3_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.3 <-
   update(b7.1,
-         newdata = dd)
+         newdata = dd,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7)
 ```
 
 Now we'll add the dummy.
@@ -143,12 +150,14 @@ Now we'll add the dummy.
 b7.4 <-
   update(b7.3,
          newdata = dd,
-         formula = log_gdp ~ 1 + rugged + cont_africa) 
+         formula = log_gdp ~ 1 + rugged + cont_africa,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7) 
 ```
 
 Using the skills from Chapter 6, let's compute the information criteria for the two models. Note how with the `add_criterion()` function, you can compute both the LOO and the WAIC at once.
 
-```{r ic_b7.3_b7.4, cache = T}
+```{r}
 b7.3 <- add_criterion(b7.3, c("loo", "waic"))
 b7.4 <- add_criterion(b7.4, c("loo", "waic"))
 ```
@@ -175,9 +184,8 @@ As in the text, almost all the weight went to the multivariable model, `b7.4`. B
 
 ```{r}
 nd <- 
-  tibble(rugged      = seq(from = 0, to = 6.3, length.out = 30) %>% 
-           rep(., times = 2),
-         cont_africa = rep(0:1, each = 30))
+  crossing(cont_africa = 0:1,
+           rugged      = seq(from = 0, to = 6.3, length.out = 30))
 
 f <-
   fitted(b7.4, newdata = nd) %>%
@@ -192,13 +200,12 @@ Behold our Figure 7.3.
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
-ggplot(aes(x = rugged)) +
+ggplot(aes(x = rugged, fill = cont_africa, color = cont_africa)) +
   geom_smooth(data = f,
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = cont_africa, color = cont_africa),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity", 
               alpha = 1/4, size = 1/2) +
-  geom_point(aes(y = log_gdp, color = cont_africa),
+  geom_point(aes(y = log_gdp),
              size = 2/3) +
   scale_colour_pander() +
   scale_fill_pander() +
@@ -218,20 +225,29 @@ Yes, it sure does. But before we fit, here's the equation:
 \begin{align*}
 \text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
 \mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i
+\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i \\
+\alpha & \sim \text{Normal}(8, 100) \\
+\beta_1, \beta_2, \text{ and } \beta_3 & \sim \text{Normal}(0, 1) \\
+\sigma & \sim \text{Uniform}(0, 10)
 \end{align*}
+
+Because $\gamma_i$ is just a placeholder for a second linear model, we can just substitute that second linear model in for $\gamma_i$. If we did, here's what the composite linear model would look like:
+
+$$\mu_i = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \text{rugged}_i + \beta_2 \text{cont_africa}_i$$
 
 Fit the model.
 
 ```{r b7.5_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5 <-
   update(b7.4,
-         formula = log_gdp ~ 1 + rugged*cont_africa) 
+         formula = log_gdp ~ 1 + rugged*cont_africa,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7) 
 ```
 
 For kicks, we'll just use the LOO to compare the last three models.
 
-```{r ic_b7.5, cache = T}
+```{r}
 b7.5 <- add_criterion(b7.5, c("loo", "waic"))
 
 l <- loo_compare(b7.3, b7.4, b7.5,
@@ -269,18 +285,26 @@ Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you 
 ```{r b7.5b_seed7, cache = T, message = F, warning = F, results = 'hide'}
 b7.5b <-
   update(b7.5,
-         formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa) 
+         formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7) 
 ```
 
 From here on, I will default to this style of syntax for interactions.
 
-Since this is the same model, it yields the same information criteria estimates within simulation error. Here we'll confirm that with the LOO.
+Since this is the same model, it yields the same information criteria estimates. Here we'll confirm that with the LOO.
 
 ```{r ics_b7.5_and_b7.5b, cache = T}
 b7.5b <- add_criterion(b7.5b, c("loo", "waic"))
 
 b7.5$loo
 b7.5b$loo
+```
+
+When compared, they have the exact same LOO weights, too.
+
+```{r}
+model_weights(b7.5, b7.5b, weights = "loo")
 ```
 
 ### Plotting the interaction.
@@ -301,10 +325,9 @@ And here's the code for our version of Figure 7.4.
 dd %>%
   mutate(cont_africa = ifelse(cont_africa == 1, "Africa", "not Africa")) %>%
   
-  ggplot(aes(x = rugged, color = cont_africa)) +
+  ggplot(aes(x = rugged, fill = cont_africa, color = cont_africa)) +
   geom_smooth(data = f,
-              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = cont_africa),
+              aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity", 
               alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp),
@@ -321,11 +344,11 @@ dd %>%
 
 ### Interpreting an interaction estimate.
 
-> Interpreting interaction estimates is tricky. It’s trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers along. Plotting implied predictions does far more for both our own understanding and for our audience’s. (p. 219)
+> Interpreting interaction estimates is tricky. It's trickier than interpreting ordinary estimates. And for this reason, I usually advise against trying to understand an interaction from tables of numbers alone. Plotting implied predictions does far more for both our own understanding and for our audience's. (p. 219)
 
 #### Parameters change meaning.
 
-> In a simple linear regression with no interactions, each coefficient says how much the average outcome, $\mu$, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there’s no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable’s influence. 
+> In a simple linear regression with no interactions, each coefficient says how much the average outcome, $\mu$, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there's no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable's influence. 
 >
 > Interaction models ruin this paradise. (p. 220)
 
@@ -335,19 +358,19 @@ Return the parameter estimates.
 posterior_summary(b7.5)
 ```
 
-"Since $\gamma$ (gamma) doesn’t appear in this table—it wasn’t estimated—we have to compute it ourselves" (p. 221). Like in the text, we'll do so first by working with the point estimates.
+"Since $\gamma$ (gamma) doesn't appear in this table--it wasn't estimated--we have to compute it ourselves" (p. 221). Like in the text, we'll do so first by working with the point estimates.
 
 ```{r}
-# within Africa
+# slope relating `rugged` to `log_gdp` within Africa
 fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 1
 
-# outside Africa
+# slope relating `rugged` to `log_gdp` outside of Africa
 fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 0
 ```
 
 #### Incorporating uncertainty.
 
-> To get some idea of the uncertainty around those $\gamma$ values, we’ll need to use the whole posterior. Since $\gamma$ depends upon parameters, and those parameters have a posterior distribution, $\gamma$ must also have a posterior distribution. Read the previous sentence again a few times. It’s one of the most important concepts in processing Bayesian model fits. Anything calculated using parameters has a distribution. (p. 212)
+> To get some idea of the uncertainty around those $\gamma$ values, we'll need to use the whole posterior. Since $\gamma$ depends upon parameters, and those parameters have a posterior distribution, $\gamma$ must also have a posterior distribution. Read the previous sentence again a few times. It's one of the most important concepts in processing Bayesian model fits. *Anything calculated using parameters has a distribution*. (p. 212, *emphasis* added)
 
 Like McElreath, we'll avoid integral calcus in favor of working with the `posterior_samples()`.
 
@@ -355,8 +378,8 @@ Like McElreath, we'll avoid integral calcus in favor of working with the `poster
 post <- posterior_samples(b7.5) 
 
 post %>%
-  transmute(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
-            gamma_notAfrica = b_rugged) %>%
+  transmute(gamma_Africa    = b_rugged + `b_rugged:cont_africa` * 1,
+            gamma_notAfrica = b_rugged + `b_rugged:cont_africa` * 0) %>%
   gather(key, value) %>%
   group_by(key) %>%
   summarise(mean = mean(value))
@@ -366,6 +389,7 @@ And here is our version of Figure 7.5.
 
 ```{r, fig.height = 2.5, fig.width = 3}
 post %>%
+  # this `transmute()` code returns the same thing as the one in the block above
   transmute(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
             gamma_notAfrica = b_rugged) %>%
   gather(key, value) %>%
@@ -391,6 +415,28 @@ post %>%
          gamma_notAfrica = b_rugged) %>% 
   mutate(diff            = gamma_Africa -gamma_notAfrica) %>%
   summarise(Proportion_of_the_difference_below_0 = sum(diff < 0) / length(diff))
+```
+
+> The distributions in the figure are *marginal*, like silhouettes of each distribution, ignoring all of the other dimensions in the posterior. The calculation above is the distribution of the *difference* between the two. The distribution of their difference is not the same as the visual overlap of their marginal distributions. This is also the reason we can’t use overlap in confidence intervals of different parameters as an informal test of "significance" of the difference. If you care about the difference, you must compute the distribution of the difference directly. (p. 222, *emphasis* in the original)
+
+Why stop with computation when you can plot?
+
+```{r, fig.height = 2.5, fig.width = 3}
+post %>%
+  mutate(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
+         gamma_notAfrica = b_rugged) %>% 
+  mutate(diff            = gamma_Africa -gamma_notAfrica) %>% 
+  
+  ggplot(aes(x = diff)) +
+  geom_density(alpha = 1/4,
+               color = palette_pander(n = 5)[5], 
+               fill  = palette_pander(n = 5)[5]) +
+  scale_x_continuous(expression(gamma[1]-gamma[0]), expand = c(0, 0)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  ggtitle("Distribution of the difference") +
+  theme_pander() + 
+  theme(text = element_text(family = "Times"),
+        legend.position = "none")
 ```
 
 ## Symmetry of the linear interaction.
@@ -434,8 +480,8 @@ Here is our version of McElreath's Figure 7.6.
 ```{r, fig.height = 2.75, fig.width = 3}
 # new predictor data for `fitted()`
 nd <- 
-  tibble(rugged      = rep(range(dd$rugged), times = 2),
-         cont_africa = rep(0:1,              each = 2))
+  crossing(cont_africa = 0:1,
+           rugged      = range(dd$rugged))
 
 # `fitted()`
 f <-
@@ -448,14 +494,15 @@ f <-
 dd %>% 
   mutate(ox          = ifelse(rugged > median(rugged), 0.05, -0.05),
          cont_africa = cont_africa + ox) %>%
+  mutate(ox          = factor(ox)) %>% 
   select(cont_africa, everything()) %>%
   
   # plot
-  ggplot(aes(x = cont_africa, color = factor(ox))) +
-  geom_smooth(data = f,
+  ggplot(aes(x = cont_africa, color = ox, fill = ox)) +
+  geom_smooth(data = f %>% mutate(ox = factor(ox)),
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = factor(ox), linetype = factor(ox)),
-              stat = "identity", 
+                  linetype = ox),
+              stat = "identity",
               alpha = 1/4, size = 1/2) +
   geom_point(aes(y = log_gdp),
              alpha = 1/2, shape = 1) +
@@ -472,7 +519,7 @@ dd %>%
 
 ## Continuous interactions
 
-Though continuous interactions can be more challenging to interpret, they’re just as easy to fit as interactions including dummies. 
+Though continuous interactions can be more challenging to interpret, they're just as easy to fit as interactions including dummies. 
 
 ### The data.
 
@@ -520,7 +567,7 @@ rm(tulips)
 
 Here we continue with McElreath's very-flat priors for the multivariable and interaction models.
 
-```{r b7.6_and_b7.7, cache = T, message = F, results = 'hide'}
+```{r, eval = F}
 b7.6 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water + shade,
@@ -532,23 +579,28 @@ b7.6 <-
 
 b7.7 <- 
   update(b7.6, 
-         formula = blooms ~ 1 + water + shade + water:shade)
+         formula = blooms ~ 1 + water + shade + water:shade,
+         iter = 2000, warmup = 1000, cores = 4, chains = 4,
+         seed = 7)
 ```
 
 Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "[increase] adapt_delta above 0.8." While we're at it, we'll put better priors on $\sigma$.
 
-```{r, message = F, results = 'hide'}
+```{r, eval = F}
 b7.6 <-
   update(b7.6,
          prior = c(prior(normal(0, 100), class = Intercept),
                    prior(normal(0, 100), class = b),
                    prior(cauchy(0, 10), class = sigma)),
          control = list(adapt_delta = 0.9),
+         iter = 2000, warmup = 1000, cores = 4, chains = 4,
          seed = 7)
 
 b7.7 <- 
   update(b7.6, 
-         formula = blooms ~ 1 + water + shade + water:shade)
+         formula = blooms ~ 1 + water + shade + water:shade,
+         iter = 2000, warmup = 1000, cores = 4, chains = 4,
+         seed = 7)
 ```
 
 Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use `posterior_summary()`, which gets us most of the way there.
@@ -560,7 +612,7 @@ posterior_summary(b7.7) %>% round(digits = 2)
 
 This is an example where HMC yielded point estimates notably different from MAP. However, look at the size of those posterior standard deviations (i.e., 'Est.Error' column)! The MAP estimates are well within a fraction of those $SD$s.
 
-Anyway, let's look at WAIC.
+Let's look at WAIC.
 
 ```{r waic_b7.6_and_b7.7, cache = T}
 b7.6 <- add_criterion(b7.6, "waic")
@@ -585,6 +637,10 @@ model_weights(b7.6, b7.7, weights = "waic")
 ```
 
 As in the text, almost all the weight went to the interaction model, `b7.7`.
+
+#### Rethinking: Fighting with your robot.
+
+> The trouble-shooting in the preceding section is annoying, but it's realistic. These kinds of issues routinely arise in model fitting. With linear models like these, there are ways to compute the posterior distribution that avoid many of these complications. But with non-linear models to come, there is really no way to dodge the issue. In general, *how you fit the model is part of the model*. (pp. 229--230, *emphasis* added)
 
 ### Center and re-estimate.
 
@@ -614,7 +670,9 @@ b7.8 <-
 
 b7.9 <- 
   update(b7.8, 
-         formula = blooms ~ 1 + water_c + shade_c + water_c:shade_c)
+         formula = blooms ~ 1 + water_c + shade_c + water_c:shade_c,
+         iter = 2000, warmup = 1000, chains = 4, cores = 4,
+         seed = 7)
 ```
 
 Check out the results.
@@ -653,7 +711,7 @@ $$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = \alpha + \beta_\text{wate
 
 > So to figure out the effect of increasing water by 1 unit, you have to use all of the $\beta$ parameters. Plugging in the [HMC] values for the un-centered interaction model, [`b7.7`], we get:
 
-$$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = -107.1 + 159.9 (2) + 44.0 (2) -43.2 (2 \times 2)$$
+$$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = -106.2 + 159.3 (2) + 43.4 (2) -42.9 (2 \times 2)$$
 
 With our brms workflow, we use `fixef()` to compute the predictions.
 
@@ -662,7 +720,7 @@ k <- fixef(b7.7)
 k[1] + k[2] * 2 + k[3] * 2 + k[4] * 2 * 2
 ```
 
-Even though or HMC parameters differ a bit from the MAP estimates McElreath reported in the text, the value they predicted matches quite closely with the one in the text. Same thing for the next one.
+Even though or HMC parameters differ a bit from the MAP estimates McElreath reported in the text, the value they predicted matches quite closely with the one in the text. Same thing for the next example.
 
 ```{r}
 k <- fixef(b7.9)
@@ -733,8 +791,8 @@ fitted(b7.8) %>%
   # here we add the data, `d`
   bind_cols(bind_rows(d, d)) %>% 
   # these will come in handy for `ggplot2::facet_grid()`
-  mutate(x_grid = paste("water_c =", water_c),
-         y_grid = paste("model: ", fit)) %>% 
+  mutate(x_grid = str_c("water_c = ", water_c),
+         y_grid = str_c("model: ", fit)) %>% 
   
   # plot!
   ggplot(aes(x = shade_c)) +
@@ -792,7 +850,6 @@ With multiple predictors, things get more complicated. Consider our multivariabl
 b7.4$formula
 
 conditional_effects(b7.4)
-
 ```
 
 We got one plot for each predictor, controlling the other predictor at zero. Note how the plot for `cont_africa` treated it as a continuous variable. This is because the variable was saved as an integer in the original data set:
@@ -896,7 +953,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f_b7.1, f_b7.2, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6, b7.7, w, b7.8, b7.9, k, shade_seq, fig, d_factor, b7.4_factor, b7.5_factor, dt, ic)
+rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6, b7.7, w, b7.8, b7.9, k, shade_seq, fig, d_factor, b7.4_factor, b7.5_factor, dt, ic)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
