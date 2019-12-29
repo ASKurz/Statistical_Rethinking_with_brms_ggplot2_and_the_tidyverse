@@ -148,7 +148,13 @@ str(dd.trim)
 
 Finally, we get to work that sweet HMC via `brms::brm()`.
 
-```{r b8.1_, cache = T, message = F, warning = F, results = "hide"}
+```{r b8.1, echo = F}
+# save(b8.1, file = "fits/b08.01.rda")
+# rm(b8.1)
+load("fits/b08.01.rda")
+```
+
+```{r, eval = F}
 b8.1 <-
   brm(data = dd, 
       family = gaussian,
@@ -188,7 +194,13 @@ For more technical details, see the paper. In short, `Bulk_ESS` in the output fr
 
 Here we sample in parallel by adding `cores = 4`.
 
-```{r b8.1b, cache = T, message = F, results = "hide"}
+```{r b8.1b, echo = F}
+# save(b8.1b, file = "fits/b08.01b.rda")
+# rm(b8.1b)
+load("fits/b08.01b.rda")
+```
+
+```{r, eval = F}
 b8.1b <- 
   update(b8.1, 
          cores = 4,
@@ -438,7 +450,13 @@ For more on these topics, you might also check out Gabry and Modrák's vignette,
 
 As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an `inits` argument rather than with `start`.
 
-```{r b8.2_, cache = T, message = F, warning = F, results = "hide"}
+```{r b8.2, echo = F}
+# save(b8.2, file = "fits/b08.02.rda")
+# rm(b8.2)
+load("fits/b08.02.rda")
+```
+
+```{r, eval = F}
 b8.2 <-
   brm(data = list(y = c(-1, 1)), 
       family = gaussian,
@@ -474,7 +492,13 @@ print(b8.2)
 
 Holy smokes, those parameters are a mess! Plus we got a nasty warning message, too. Watch our reasonable priors save the day.
 
-```{r b8.3_, cache = T, message = F, warning = F, results = "hide"}
+```{r b8.3, echo = F}
+# save(b8.3, file = "fits/b08.03.rda")
+# rm(b8.3)
+load("fits/b08.03.rda")
+```
+
+```{r, eval = F}
 b8.3 <-
   brm(data = list(y = c(-1, 1)), 
       family = gaussian,
@@ -605,7 +629,13 @@ set.seed(8)
 y <- rnorm(100, mean = 0, sd = 1)
 ```
 
-```{r b8.4_, cache = T, message = F, warning = F, results = "hide"}
+```{r b8.4, echo = F}
+# save(b8.4, file = "fits/b08.04.rda")
+# rm(b8.4)
+load("fits/b08.04.rda")
+```
+
+```{r, eval = F}
 b8.4 <-
   brm(data = list(y           = y,
                   intercept_1 = 1,
@@ -628,7 +658,13 @@ print(b8.4)
 
 Note the frightening warning message. Those results are a mess! Let's try again.
 
-```{r b8.5_, cache = T, message = F, warning = F, results = "hide"}
+```{r b8.5, echo = F}
+# save(b8.5, file = "fits/b08.05.rda")
+# rm(b8.5)
+load("fits/b08.05.rda")
+```
+
+```{r, eval = F}
 b8.5 <-
   brm(data = list(y           = y,
                   intercept_1 = 1,
