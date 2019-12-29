@@ -17,6 +17,18 @@ In this chapter we contend with two contrasting kinds of statistical error:
 * overfitting, "which leads to poor prediction by learning too *much* from the data"
 * underfitting, "which leads to poor prediction by learning too *little* from the data" (p. 166, *emphasis* added) 
 
+Toward that end, we will employ 
+
+> two common families of approaches. The first approach is to use a **regularizing prior** to tell the model not to get too excited by the data. This is the same device that non-Bayesian methods refer to as "penalized likelihood." The second approach is to use some scoring device, like **information criteria**, to model the prediction risk and estimate predictive accuracy for some purpose. Both families of approaches are routinely used in the natural and social sciences Furthermore, they can be--maybe should be--used in combination. (p. 167, **emphasis** in the original)
+
+#### Rethinking: Stargazing.
+
+> The most common form of model selection among practicing scientists is a search for a model in which every coefficient is statistically significant. Statisticians sometimes call this **stargazing**, as it is embodied by scanning for asterisks (**) trailing after estimates...
+>
+> ...Whatever you thing about null hypothesis significance testing in general, using it to select among structurally different models is a mistake--$p$-values are not designed to help you navigate between undercutting and overfitting. (p. 167, **emphasis** in the original)
+
+McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in [Kruschke's (2014) text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [project translating it to brms and the tidyverse](https://bookdown.org/ajkurz/DBDA_recoded/).
+
 ## The problem with parameters
 
 The $R^2$ is a popular way to measure how well you can retrodict the data. It traditionally follows the form
@@ -28,6 +40,12 @@ By $\text{var()}$, of course, we meant variance (i.e., the `var()` function in R
 McElreath's not a fan of the $R^2$. But it's important in my field, so instead of a summary at the end of the chapter, we will cover the Bayesian version of $R^2$ and how to use it in brms.
 
 ### More parameters always improve fit.
+
+> **Overfitting** occurs when a model learns too much from the sample. What this means is that there are both *regular* and *irregular* features in every sample. The regular features are the targets of our learning, because they generalize well or answer a question of interest. Regular features are useful, given an objective of our choice. The irregular features are instead aspects of the data that do not generalize and so may mislead us. (p. 169, *emphasis* in the original)
+
+There's a lot to like about this section, but my experience as a clinical psychologists inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individuals. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we’re about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/). Though not covered in this edition of the text, McElreath [plans on covering Student-$t$ regression](https://twitter.com/SolomonKurz/status/1207328933164830721) in his upcoming second edition. 
+
+In other words, the topics McElreath grappled with in this chapter are difficult and ones I hope you return to again and again during your data analysis career. Back to the text!
 
 We'll start off by making the data with brain size and body size for seven `species`.
 
@@ -74,7 +92,21 @@ d %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-Let's fit the first six models in bulk. First we'll make a custom function, `fit_lm()`, into which we'll feed the desired names and formulas of our models. We'll make a tibble initially composed of those names (i.e., `model`) and formulas (i.e., `formula`). Via `purrr::map2()` within `mutate()`, we'll then fit the models and save the model objects within the tibble. The [broom package](https://cran.r-project.org/package=broom) provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We'll employ `broom::tidy()` and `broom::glance()` to extract information from the model fits.
+The first six models, which we'll be fitting using OLS regression via the `lm()` function, range in complexity from the simple univariable model
+
+\begin{align*}
+\text{brain}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = \beta_0 + \beta_1 \text{mass}_i,
+\end{align*}
+
+to the dizzying sixth-degree polynomial model
+
+\begin{align*}
+\text{brain}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\mu_i & = \beta_0 + \beta_1 \text{mass}_i + \beta_2 \text{mass}_i^2 + \beta_3 \text{mass}_i^3 + \beta_4 \text{mass}_i^4 + \beta_5 \text{mass}_i^5 + \beta_6 \text{mass}_i^6.
+\end{align*}
+
+Let's fit them in bulk. First we'll make a custom function, `fit_lm()`, into which we'll feed the desired names and formulas of our models. We'll make a tibble initially composed of those names (i.e., `model`) and formulas (i.e., `formula`). Via `purrr::map2()` within `mutate()`, we'll then fit the models and save the model objects within the tibble. The [broom package](https://cran.r-project.org/package=broom) provides an array of convenience functions to convert statistical analysis summaries into tidy data objects. We'll employ `broom::tidy()` and `broom::glance()` to extract information from the model fits.
 
 ```{r, message = F, warning = F}
 library(broom)
@@ -126,12 +158,13 @@ fits %>%
   unnest(tidy) %>% 
   select(model, term:estimate) %>% 
   mutate_if(is.double, round, digits = 1) %>% 
-  complete(term = distinct(., term), model) %>% 
+  complete(model, term) %>% 
   spread(key = term, value = estimate) %>% 
-  select(model, `(Intercept)`, mass, everything())
+  select(model, `(Intercept)`, mass, everything()) %>% 
+  knitr::kable()
 ```
 
-For Figure 6.3, we’ll make each plot individually and them glue them together with the patchwork package. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
+For Figure 6.3, we'll make each plot individually and them glue them together with the patchwork package. Since they all share a common stucture, we'll start by specifying a base plot which we'll save as `p`.
 
 ```{r}
 p <-
@@ -217,9 +250,13 @@ library(patchwork)
 (p1 + p2) / (p3 + p4) / (p5 + p6)
 ```
 
+"If you adopt a model family with enough parameters, you can fit the data exactly. But such a model will make rather absurd predictions for yet-to-be observed cases" (p. 172)
+
 ### Too few parameters hurts, too.
 
-Fit the intercept only model, `b6.7`.
+> The overfit polynomial models manage to fit the data extremely well, bu they suffer for this within-sample accuracy by making nonsensical out-of-sample predictions. In contract, **underfitting** produces models that are inaccurate both within and out of sample. They have learned too little, failing to recover regular features of the sample. (p. 172, **emphasis** in the original)
+
+Fit the underfit intercept-only model, `b6.7`.
 
 ```{r}
 b6.7 <- lm(data = d, 
@@ -228,7 +265,7 @@ b6.7 <- lm(data = d,
 summary(b6.7)
 ```
 
-With the intercept-only model, we didn't even get an $R^2$ value in the summary.`broom::glance()` offers a quick way to get one.
+With the intercept-only model, we didn't even get an $R^2$ value in the summary. The `broom::glance()` function offers a quick way to get one.
 
 ```{r}
 glance(b6.7)
@@ -244,6 +281,8 @@ p +
               formula = y ~ 1) +
   ggtitle(NULL, subtitle = expression(paste(italic(R)^2, " = 0")))
 ```
+
+Our underfit model `b6.7` didn't learn anything about the relation between `mass` and `brain`. "Such a model not only fails to describe the sample. It would also do a poor job for new data" (p. 173).
 
 #### Overthinking: Dropping rows.
 
@@ -261,19 +300,23 @@ We can then extend that logic into a custom function, `make_lines()`, that will 
 nd <- tibble(mass = c(30, 70))
 
 make_lines <- function(row) {
+ 
+   # fit the model
   my_fit <-
     d %>%
     filter(row_number() != row) %>% 
     lm(formula = brain ~ mass)
 
+  # compute fitted lines
   predict(my_fit, nd) %>% 
     as_tibble() %>% 
     rename(brain = value) %>% 
     bind_cols(nd)
+  
 }
 ```
 
-Here we’ll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We’ll then feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
+Here we'll make a tibble, `lines`, which will specify rows 1 through 7 in the `row` column. We'll then feed those `row` numbers into our custom `make_lines()` function, which will return the predicted values and their corresponding `mass` values, per model.
 
 ```{r, warning = F, message = F}
 (
@@ -294,7 +337,7 @@ p +
             color = carto_pal(7, "BurgYl")[6], alpha = 1/2, size = 1/2)
 ```
 
-To make the right panel for Figure 6.5, we’ll need to increase the number of `mass` points in our `nd` data and redefine the `make_lines()` function to fit the sixth-order-polynomial model.
+To make the right panel for Figure 6.5, we'll need to increase the number of `mass` points in our `nd` data and redefine the `make_lines()` function to fit the sixth-order-polynomial model.
 
 ```{r, fig.width = 3.5, fig.height = 2.75, message = F, warning = F}
 # because these lines will be very curvy, we'll need new data over many points of `mass`
@@ -302,6 +345,7 @@ nd <- tibble(mass = seq(from = 30, to = 65, length.out = 200))
 
 # redifine the function
 make_lines <- function(row) {
+  
   my_fit <-
     d %>%
     filter(row_number() != row) %>% 
@@ -311,6 +355,7 @@ make_lines <- function(row) {
     as_tibble() %>% 
     rename(brain = value) %>% 
     bind_cols(nd)
+  
 }
 
 # make our new tibble
@@ -329,7 +374,7 @@ p +
 
 ## Information theory and model performance
 
-> Whether you end up using regularization or information criteria or both, the first thing you must do is pick a criterion of model performance. What do you want the model to do well at? We’ll call this criterion the *target*, and in this section you’ll see how information theory provides a common and useful target, the out-of-sample *deviance*. (p. 174, *emphasis* in the original)
+> Whether you end up using regularization or information criteria or both, the first thing you must do is pick a criterion of model performance. What do you want the model to do well at? We'll call this criterion the *target*, and in this section you'll see how information theory provides a common and useful target, the out-of-sample *deviance*. (p. 174, *emphasis* in the original)
 
 ### Firing the weatherperson.
 
@@ -347,16 +392,16 @@ weatherperson %>%
   ggplot(aes(x = day, y = key, fill = value)) +
   geom_tile(color = "white") +
   geom_text(aes(label = value, color = value == 0)) +
-  scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
-  scale_y_discrete(NULL, expand = c(0, 0)) +
   scale_fill_viridis_c(direction = -1) +
   scale_color_manual(values = c("white", "black")) +
+  scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
+  scale_y_discrete(NULL, expand = c(0, 0)) +
   theme(legend.position = "none",
         axis.ticks.y = element_blank(),
         text = element_text(family = "Courier"))
 ```
 
-Here's how the newcomer fared:
+Here's how the newcomer fared.
 
 ```{r, fig.width = 6, fig.height = 1.5}
 newcomer <-
@@ -370,10 +415,10 @@ newcomer %>%
   ggplot(aes(x = day, y = key, fill = value)) +
   geom_tile(color = "white") +
   geom_text(aes(label = value, color = value == 0)) +
-  scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
-  scale_y_discrete(NULL, expand = c(0, 0)) +
   scale_fill_viridis_c(direction = -1) +
   scale_color_manual(values = c("white", "black")) +
+  scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
+  scale_y_discrete(NULL, expand = c(0, 0)) +
   theme(legend.position = "none",
         axis.ticks.y = element_blank(),
         text = element_text(family = "Courier"))
@@ -384,10 +429,12 @@ If we do the math entailed in the tibbles, we'll see why the newcomer could boas
 ```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
-  mutate(person = rep(c("weatherperson", "newcomer"), each = n()/2),
+  mutate(person = rep(c("weatherperson", "newcomer"), each = n() / 2),
          hit    = ifelse(prediction == observed, 1, 1 - prediction - observed)) %>% 
   group_by(person) %>% 
-  summarise(hit_rate = mean(hit))
+  summarise(n_days   = n(),
+            n_hits   = sum(hit),
+            hit_rate = mean(hit))
 ```
 
 #### Costs and benefits.
@@ -407,6 +454,10 @@ weatherperson %>%
 
 #### Measuring accuracy.
 
+> Consider for example computing the probability of predicting the exact sequence of days. This means computing the probability of a correct prediction for each day. Then multiply all of these probabilities together to get the joint probability of correctly predicting the observed sequence. This is the same thing as the joint likelihood, which you've been using up to this point to fit models with Bayes' theorem. 
+>
+> In this light, the newcomer looks even worse. (p. 176)
+
 ```{r}
 weatherperson %>% 
   bind_rows(newcomer) %>% 
@@ -415,7 +466,8 @@ weatherperson %>%
   group_by(person, hit) %>% 
   count() %>% 
   ungroup() %>% 
-  mutate(power = hit ^ n,
+  mutate(power_character = str_c(hit, "^", n),  # this line is just for pedagogy
+         power = hit ^ n,
          term  = rep(letters[1:2], times = 2)) %>% 
   select(person, term, power) %>% 
   spread(key = term, value = power) %>% 
@@ -424,9 +476,9 @@ weatherperson %>%
 
 ### Information and uncertainty.
 
-The formula for information entropy is:
+Within the context of information theory, *information* is "the reduction of uncertainty derived from learning an outcome" (p. 177). *Information entropy* is a way of measuring that uncertainty in a way that is (a) continuous, (b) increases as the number of possible events increases, and (c) is additive. The formula for information entropy is:
 
-$$H(p) = - \text{E log} (p_i) = - \sum_{i = 1}^n p_i \text{log} (p_i)$$
+$$H(p) = - \text E \log (p_i) = - \sum_{i = 1}^n p_i \log (p_i)$$
 
 McElreath put it in words as "the uncertainty contained in a probability distribution is the average log-probability of the event" (p. 178). We'll compute the information entropy for weather at the first unnamed location, which we'll call `McElreath's house`, and `Abu Dhabi` at once.
 
@@ -438,29 +490,37 @@ tibble(place  = c("McElreath's house", "Abu Dhabi"),
   mutate(H_p = (p_rain * log(p_rain) + p_shine * log(p_shine)) %>% mean() * -1)
 ```
 
-The uncertainty is less in Abu Dhabi because it rarely rains, there. If you have sun, rain and snow, the entropy for weather is:
+Did you catch how we used the equation $H(p) = - \sum_{i = 1}^n p_i \log (p_i)$ in our `mutate()` code, there? Our computation indicated the uncertainty is less in Abu Dhabi because it rarely rains, there. If you have sun, rain and snow, the entropy for weather is:
 
 ```{r}
 p <- c(.7, .15, .15)
 -sum(p * log(p))
 ```
 
+"These entropy values by themselves don’t mean much to us, though. Instead we can use them to build a measure of accuracy. That comes next" (p. 178).
+
 ### From entropy to accuracy.
 
-The formula for the Kullback-Leibler divergence (i.e., K-L divergence) is
+> How can we use information entropy to say how far a model is from the target? The key lies in **divergence**:
+>
+>> **Divergence**: The additional uncertainty induced by using probabilities from one distribution to describe another distribution.
+>
+> This is often known as *Kullback-Leibler divergence* or simply K-L divergence. (p. 179, **emphasis** in the original; see [Kullback & Leibler, 1951](https://projecteuclid.org/download/pdf_1/euclid.aoms/1177729694))
 
-$$D_{\text{KL}} (p, q) = \sum_i p_i \big ( \text{log} (p_i) - \text{log} (q_i) \big ) = \sum_i p_i \text{log} \Bigg ( \frac{p_i}{q_i} \Bigg )$$
+The formula for K-L divergence is
 
-which, in plainer language, is what McElreath described as "the average difference in log probability between the target (p) and model (q)" (p. 179).
+$$D_\text{KL} (p, q) = \sum_i p_i \big ( \log (p_i) - \log (q_i) \big ) = \sum_i p_i \log \Bigg ( \frac{p_i}{q_i} \Bigg )$$
+
+which, in plainer language, is what McElreath described as "the average difference in log probability between the target ($p$) and model ($q$)" (p. 179).
 
 In McElreath's example
 
-* $p_1 = .3$
-* $p_2 = .7$
-* $q_1 = .25$
-* $q_2 = .75$
+* $p_1 = .3$,
+* $p_2 = .7$,
+* $q_1 = .25$, and
+* $q_2 = .75$.
 
-With those values, we can compute $D_{\text{KL}} (p, q)$ within a tibble like so:
+With those values, we can compute $D_\text{KL} (p, q)$ within a tibble like so.
 
 ```{r}
 tibble(p_1    = .3,
@@ -470,7 +530,9 @@ tibble(p_1    = .3,
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity $q_2 = 1 - q_1$. Therefore we can code the tibble for the next example of when $p = q$ like this:
+Did you notice how we used the formula $D_\text{KL} (p, q) = \sum_i p_i \log \Bigg ( \frac{p_i}{q_i} \Bigg )$ within `mutate()`? 
+
+Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity $q_2 = 1 - q_1$. Therefore we can code the tibble for the next example of when $p = q$ like this.
 
 ```{r}
 tibble(p_1    = .3) %>% 
@@ -493,7 +555,7 @@ t <-
 head(t)
 ```
 
-Now we have the data, plotting Figure 6.6 is a just `geom_line()` with stylistic flourishes.
+Now we have the data, plotting Figure 6.6 is little more than `geom_line()` with stylistic flourishes.
 
 ```{r, fig.width = 3, fig.height = 2.75}
 t %>% 
@@ -502,12 +564,14 @@ t %>%
   geom_line(color = carto_pal(7, "BurgYl")[7], size = 1.5) +
   annotate(geom = "text", x = .4, y = 1.5, label = "q = p",
            color = carto_pal(7, "BurgYl")[5], family = "Courier", size = 3.5) +
-  labs(x = "q[1]",
+  labs(x = expression(paste(italic(q)[1])),
        y = "Divergence of q from p") +
   theme_classic() +
   theme(text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
+
+> What divergence can do for us now is help us contrast different approximations to $p$. As an approximating function $q$ becomes more accurate, $D_\text{KL} (p, q)$ will shrink. So if we have a pair of candidate distributions, then the candidate that minimizes the divergence will be closest to the target. Since predictive models specify probabilities of events (observations), we can use divergence to compare the accuracy of models. (p. 180)
 
 #### Rethinking: Divergence depends upon direction.
 
@@ -522,7 +586,7 @@ tibble(direction = c("Earth to Mars", "Mars to Earth"),
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-The $D_{\text{KL}}$ was double when applying Martian estimates to Terran estimates.
+The $D_\text{KL}$ was double when applying Martian estimates to Terran estimates.
 
 ### From divergence to deviance.
 
@@ -532,13 +596,17 @@ The $D_{\text{KL}}$ was double when applying Martian estimates to Terran estimat
 >
 > 2. How to estimate the divergence. Having identified the right measure of distance, we now need a way to estimate it in real statistical modeling tasks. (p. 181)
 
-Now we'll start working on item #2.
+Now we'll start working on item #2. 
 
-We define deviance as:
+Within the context of science, say we've labeled the true model for our topic of interest as $p$. We don't actually know what $p$ is--we wouldn't need the scientific method if we did. But say what we do have are two candidate models $q$ and $r$. We would at least like to know which is closer to $p$. It turns out we don't even need to know the absolute value of $p$ to achieve this. Just the relative values of $q$ and $r$ will suffice. We express model $q$'s average log-probability as $\text E \log (q_i)$. Extrapolating, the difference $\text E \log (q_i) - \text E \log (r_i)$ gives us a sense about the divergence of both $q$ and $r$ from the target $p$. That is,
 
-$$D(q) = -2 \sum_i \text{log}(p_i)$$
+> we can compare the average log-probability from each model to get an estimate of the relative distance of each model from the target..., [which] delivers us to a very common measure of *relative* model fit, one that also turns out to be an approximation of K-L divergence. To approximate the relative value of we can use a model's **deviance**, which is defined as:
+>
+> $$D(q) = -2 \sum_i \log (q_i)$$
+>
+>where $i$ indexes each observation (case), and each $q_i$ is just the likelihood of case $i$. (p. 182, **emphasis** in the original)
 
-In the formula, $i$ indexes each case and $q_i$ is the likelihood for each case. Here's the deviance from model `b6.1`.
+Here's the deviance from model `b6.1`.
 
 ```{r}
 lm(data = d,
@@ -546,9 +614,11 @@ lm(data = d,
   logLik() * -2
 ```
 
+Next we learn how do this by hand.
+
 #### Overthinking: Computing deviance.
 
-To follow along with the text, we’ll need to standardize `mass` before we compute deviance.
+To follow along with the text, we'll need to standardize `mass` before we fit our model.
 
 ```{r}
 d <-
@@ -562,10 +632,10 @@ Open brms.
 library(brms)
 ```
 
-Now we’ll specify the initial values and fit the model.
+Now we'll specify the initial values and fit the model.
 
 ```{r b6.8_, cache = T, message = F, warning = F}
-# Here we specify our starting values
+# define the starting values
 inits <- list(Intercept = mean(d$brain),
               mass_s    = 0,
               sigma     = sd(d$brain))
@@ -588,9 +658,9 @@ b6.8 <-
 print(b6.8)
 ```
 
-**Details about `inits`**: You don’t have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. Lists within lists. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
+**Details about `inits`**: You don't have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. You need lists within lists. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
 
-Anyway, the brms function `log_lik()` returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/name-repair.html) within the `as_tibble()` function. 
+Anyway, the brms `log_lik()` function returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/name-repair.html) within the `as_tibble()` function. 
 
 ```{r}
 ll <-
@@ -602,16 +672,18 @@ ll %>%
   glimpse()
 ```
 
-Deviance is the sum of the occasion-level LLs multiplied by -2. Why by -2? "The -2 in front doesn't do anything important. It's there for historical reasons" (p. 182). If you follow footnote 93 at the end of that sentence in the text, you'll learn "under somewhat general conditions, for many common model types, a difference between two deviances has a chi-squared distribution. The factor of 2 is there to scale it that way" (p. 451).
+Deviance, recall, is the sum of the occasion-level LLs multiplied by -2: $D(q) = -2 \sum_i \log (q_i)$. Why by -2? "The -2 in front doesn't do anything important. It's there for historical reasons" (p. 182). If you follow footnote 93 at the end of that sentence in the text, you'll learn "under somewhat general conditions, for many common model types, a difference between two deviances has a chi-squared distribution. The factor of 2 is there to scale it that way" (p. 451).
 
 ```{r}
 ll <-
   ll %>%
   mutate(sums     = rowSums(.),
          deviance = -2 * sums)
+
+glimpse(ll)
 ```
 
-Because we used HMC, deviance is a distribution rather than a single number.
+Because we used HMC, deviance is a distribution rather than a single number. That is, we have a deviance $D(q)$ value for each row, for each HMC iteration.
 
 ```{r, fig.width = 3.75, fig.height = 2.5, warning = F, message = F}
 library(tidybayes)
@@ -635,7 +707,7 @@ But notice our deviance distribution was centered right around the sole value Mc
 
 > Deviance is a principled way to measure distance from the target. But deviance as computed in the previous section has the same flaw as $R^2$: It always improves as the model gets more complex, at least for the types of models we have considered so far. Just like $R^2$, deviance in-sample is a measure of retrodictive accuracy, not predictive accuracy.
 
-In the next subsection, we'll see this in a simulation.
+In the next subsection, we'll see this in a simulation which will produce the data necessary to make Figure 6.7.
 
 #### Overthinking: Simulated training and testing.
 
@@ -672,7 +744,7 @@ dev_100 <-
 
 ```{r, echo = F}
 # Even after reducing `n_sim` by an order of magnitude, that simulation takes a long time to
-# complete. So instead of completing it on the fly for each new version of this project, I’ve
+# complete. So instead of completing it on the fly for each new version of this project, I've
 # saved the results in an external file. 
 
 # save(list = c("dev_100", "dev_20", "kseq", "n_sim", "n_cores"), file = "06_sims/sim_1.rda")
@@ -735,6 +807,10 @@ dev_tibble %>%
 ```
 
 Even with a substantially smaller $N$, our simulation results matched up well with those in the text.
+
+> Deviance is an assessment of predictive accuracy, not of truth. The true model, in terms of which predictors are included, is not guaranteed to produce the best predictions. Likewise a false model, in terms of which predictors are included, is not guaranteed to produce poor predictions.
+>
+> The point of this thought experiment is to demonstrate how deviance behaves, in theory. While deviance on training data always improves with additional predictor variables, deviance on future data may or may not, depending upon both the true data-generating processes and how much data is available to precisely estimate the parameters. These facts form the basis for understanding both regularizing priors and information criteria. (p. 185)
 
 ## Regularization
 
@@ -837,11 +913,17 @@ s %>%
   facet_wrap(~n, scale = "free_y")
 ```
 
-Our results don’t perfectly align with those in the text. I suspect his is because we used `1e3` iterations, rather than the `1e4` of the text. If you’d like to wait all night long for the simulation to yield more stable results, be my guest.
+Our results don't perfectly align with those in the text. I suspect his is because we used `1e3` iterations, rather than the `1e4` of the text. If you'd like to wait all night long for the simulation to yield more stable results, be my guest.
 
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
-For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you’re feeling feisty, also check out Simpson’s related blog post [*(It’s never a) Total Eclipse of the Prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
+For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you're feeling feisty, also check out Simpson's related blog post [*(It’s never a) Total Eclipse of the Prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
+
+#### Rethinking: Multilevel models as adaptive regularization.
+
+> When you encounter multilevel models in Chapter 12, you'll see that their central device is to learn the strength of the prior form the data itself. So you can think of multilevel models as adaptive regularization, where the model itself tries to learn how skeptical it should be. (p. 188)
+
+I found this connection difficult to grasp for a long time. Practice now and hopefully it'll sink in for you faster than it did me.
 
 #### Rethinking: Ridge regression.
 
@@ -900,21 +982,47 @@ Again, our numbers aren't the exact same as McElreath's because a) this is a sim
 >
 > This is the phenomenon behind information criteria. (p. 189)
 
-In the text, McElreach focused on the DIC and WAIC. As you'll see, the LOO has increased in popularity since he published the text. Going forward, we’ll juggle the WAIC and the LOO in this project. But we will respect the text and work in a little DIC talk.
+*Information criteria estimate out-of-sample deviance*. The frequentist AIC is the oldest and most restrictive. In the text, McElreach focused on the DIC and WAIC. As you'll see, the LOO has increased in popularity since he published the text. Going forward, we'll juggle the WAIC and the LOO in this project. But we will respect the text and work in a little DIC talk.
 
 ### DIC.
 
-The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://www.youtube.com/watch?v=H-59eqmHuuQ&frags=pl%2Cwn). If we define $D$ as the deviance's posterior distribution, $\bar{D}$ as its mean and $\hat{D}$ as the deviance when computed at the posterior mean, then we define the DIC as
+The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://www.youtube.com/watch?v=H-59eqmHuuQ&frags=pl%2Cwn). If we define $D$ as the deviance's posterior distribution, $\bar D$ as its mean and $\hat D$ as the deviance when computed at the posterior mean, then we define the DIC as
 
-$$\text{DIC} = \bar{D} + (\bar{D} + \hat{D}) + \bar{D} + p_D$$
+$$\text{DIC} = \bar D + (\bar D - \hat D) = \bar D + p_D$$
 
 And $p_D$ is the number of effective parameters in the model, which is also sometimes referred to as the penalty term. As you'll see, you can get the $p_D$ for `brms::brm()` models. However, I'm not aware of a way to that brms or the loo package--to be introduced shortly--offer convenience functions that yield the DIC.
 
+
+I'm also not aware of an easy to compute the DIC by hand the way we've been doing, so far. I'll walk it out with our model `b6.8`. Remember how we had an entire posterior distribution for the deviance?
+
+```{r}
+ll %>% 
+  select(deviance) %>% 
+  glimpse()
+```
+
+If we call that deviance distribution $D$, we might refer to it's mean as $\bar D$. Here's $\bar D$ for `b6.8`.
+
+```{r}
+ll %>% 
+  summarise(d_bar = mean(deviance))
+```
+
+No problem. The tricky part is $\hat D$, which "is the deviance calculated at the posterior mean. This means we compute the average of each parameter in the posterior distribution. Then we plug those averages into the deviance formula to get $\hat D$ out" (p. 190). It's no problem to get the posterior means for each of the parameters in a model. For example, here they are for `b6.8`.
+
+```{r}
+posterior_summary(b6.8)[1:3, 1]
+```
+
+This is just standard brms summary stuff. The problem is plugging those into the deviance formula, $D(q) = -2 \sum_i \log (q_i)$, where $i$ in this case is just our single vector of means (i.e., the ones we just computed). The challenge is with $q$, which is the joint likelihood for those values. I am not aware of a way to compute the likelihood of a given vector of parameter values for a brms model. Without that capability, we have no good way to compute $\hat D$ and without $\hat D$ we can't compute the DIC. We're no better off using the second version of the formula, $\text{DIC} = \bar D + p_D$, because I have no reliable way to compute $p_D$.
+
+This largely doesn't matter. As we'll see in just a moment, brms offers the WAIC and LOO, which are better estimates of out-of-sample deviance. If you take a look on the [Stan Forums](https://discourse.mc-stan.org/), you'll see the members of the Stan team are adamant on this topic (see [here](https://discourse.mc-stan.org/t/deviance-information-criterion-dic-with-stan/8499) or [here](https://discourse.mc-stan.org/t/is-there-any-existing-function-in-rstan-to-compute-dic-aic-or-bic/4182) or [here](https://discourse.mc-stan.org/t/advantages-of-loo-over-dic/5319)). But if you ever find yourself emerging triumphant from a deep computational rabbit hole with a robust method for computing $\hat D$ or $p_D$ from a brms model, [please share your code](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues). It'd be fun to flesh out this section of the book.
+
 ### WAIC.
 
-It's okay that the brms and loo packages don't yield the DIC because 
+It's okay that the brms and loo packages don't yield the DIC because
 
-> even better than the DIC is the Widely Applicable Information Criterion (WAIC)...
+> even better than the DIC is the Widely Applicable Information Criterion (WAIC[; [Wanatabe, 2010](https://arxiv.org/abs/1004.2316))...
 >
 > Define $\text{Pr} (y_i)$ as the average likelihood of observation $i$ in the training sample. This means we compute the likelihood of $y_i$ for each set of parameters sampled from the posterior distribution. Then we average the likelihoods for each observation $i$ and finally sum over all observations. This produces the first part of WAIC, the log-pointwise-predictive-density, lppd:
 >
@@ -924,13 +1032,13 @@ It's okay that the brms and loo packages don't yield the DIC because
 >
 >> *The log-pointwise-predictive-density is the total across observations of the logarithm of the average likelihood of each observation.*
 >
->... The second piece of WAIC is the effect number of parameters $p_{\text{WAIC}}$. Define $V(y_i)$ as the variance in log-likelihood for observation $i$ in the training sample. This means we compute the log-likelihood for observation $y_i$ for each sample from the posterior distribution. Then we take the variance of those values. This is $V(y_i)$. Now $p_{\text{WAIC}}$ is defined as:
+>... The second piece of WAIC is the effect number of parameters $p_\text{WAIC}$. Define $V(y_i)$ as the variance in log-likelihood for observation $i$ in the training sample. This means we compute the log-likelihood for observation $y_i$ for each sample from the posterior distribution. Then we take the variance of those values. This is $V(y_i)$. Now $p_\text{WAIC}$ is defined as:
 > 
-> $$p_{\text{WAIC}} = \sum_{i=1}^N V (y_i)$$
+> $$p_\text{WAIC} = \sum_{i=1}^N V (y_i)$$
 >
 > Now WAIC is defined as:
 >
-> $$\text{WAIC} = -2 (\text{lppd} - p_{\text{WAIC}})$$
+> $$\text{WAIC} = -2 (\text{lppd} - p_\text{WAIC})$$
 >
 > And this value is yet another estimate of out-of-sample deviance. (pp. 191--192)
 
@@ -940,10 +1048,10 @@ You'll see how to compute the WAIC in brms in just a bit.
 
 Here is how to fit the pre-WAIC model in brms.
 
-```{r fit_b, cache = T, message = F, warning = F}
+```{r b6.0_waic, cache = T, message = F, warning = F}
 data(cars)
 
-b <- 
+b6.0_waic <- 
   brm(data = cars, family = gaussian,
       dist ~ 1 + speed,
       prior = c(prior(normal(0, 100), class = Intercept),
@@ -956,61 +1064,67 @@ b <-
 Here's the summary.
 
 ```{r}
-print(b)
+print(b6.0_waic)
 ```
 
-In brms, you return the loglikelihood with `log_lik()`.
+To refresh, you return the log-likelihood values for a brms model with `log_lik()`.
 
 ```{r, results = "hide", message = F}
 ll <-
-  b %>%
+  b6.0_waic %>%
   log_lik() %>%
   as_tibble()
 ```
 
-Computing the lppd, the "Bayesian deviance", takes a bit of leg work.
+Now we compute the "Bayesian deviance" (i.e., $\text{lppd}$), which follow the form
+
+$$\text{lppd} = \sum_{i = 1}^N \log \text{Pr} (y_i)$$
+
+We'll do it in two steps, saving the $\log \text{Pr} (y_i)$ and the $\text{lppd}$ as two objects.
 
 ```{r}
-dfmean <-
+log_p_y <-
   ll %>%
-  exp() %>%
-  summarise_all(mean) %>%
-  gather(key, means) %>%
-  select(means) %>%
-  log()
+  gather(case, loglikelihood) %>% 
+  mutate(likelihood = exp(loglikelihood)) %>% 
+  group_by(case) %>% 
+  summarise(log_mean_likelihood = mean(likelihood) %>% log())
 
 (
   lppd <-
-  dfmean %>%
+  log_p_y %>% 
+  pull(log_mean_likelihood) %>%
+  # sum the logarighms of the casewise mean likelihoods
   sum()
 )
 ```
 
-Comupting the effective number of parameters, $p_{\text{WAIC}}$, isn't much better.
+We'll follow a similar process for computing the $p_\text{WAIC}$. We'll save the casewise variance in log-likelihood values, $V (y_i)$, separately from their sum, the $p_\text{WAIC}$.
 
 ```{r}
-dfvar <-
+v_i <-
   ll %>%
-  summarise_all(var) %>%
-  gather(key, vars) %>%
-  select(vars) 
+  gather(case, loglikelihood) %>% 
+  group_by(case) %>% 
+  summarise(var_loglikelihood = var(loglikelihood))
 
 pwaic <-
-  dfvar %>%
+  v_i %>%
+  pull(var_loglikelihood) %>% 
   sum()
 
 pwaic
 ```
 
-Finally, here's what we've been working so hard for: our hand calculated WAIC value. Compare it to the value returned by the brms `waic()` function.
+Now we can finally plug our hand-made `lppd` and `pwaic` values into the formula $-2 (\text{lppd} - p_\text{WAIC})$ to compute the WAIC. Compare it to the value returned by the brms `waic()` function.
 
 ```{r, message = F, warning = F}
 -2 * (lppd - pwaic)
 
-waic(b)
+waic(b6.0_waic)
 ```
 
-Before we move on, did you notice the `elpd_waic` row in the tibble `waic()` returned? That value is the `lppd` minus the `pwaic`, but without multiplying the result by -2. E.g., 
+Before we move on, did you notice the `elpd_waic` row in the tibble returned by the`waic()` function? That value is the `lppd` minus the `pwaic`, but without multiplying the result by -2. E.g., 
 
 ```{r}
 lppd - pwaic
@@ -1019,9 +1133,10 @@ lppd - pwaic
 That tidbit will come in handy a little bit later. But for now, here's how we compute the WAIC standard error.
 
 ```{r}
-dfmean %>%
-  mutate(waic_vec   = -2 * (means - dfvar$vars)) %>%
-  summarise(waic_se = (var(waic_vec) * nrow(dfmean)) %>% sqrt())
+bind_cols(log_p_y %>% select(log_mean_likelihood),
+          v_i     %>% select(var_loglikelihood)) %>% 
+  mutate(waic_vec = -2 * (log_mean_likelihood - var_loglikelihood)) %>% 
+  summarise(waic_se = (var(waic_vec) * nrow(log_p_y)) %>% sqrt())
 ```
 
 ### DIC and WAIC as estimates of deviance.
@@ -1103,7 +1218,15 @@ s %>%
   facet_wrap(~ic, ncol = 1)
 ```
 
-And again, our results don’t perfectly match those in the text because a) we’re simulating and b) we used fewer iterations than McElreath did. But the overall pattern remains.
+And again, our results don't perfectly match those in the text because a) we're simulating and b) we used fewer iterations than McElreath did. But the overall pattern remains. "Both [DIC and WAIC] are accurate on average, being within 1 point of deviance of the actual average in most cases. Both DIC and WAIC are useful estimates of the deviance, but WAIC is more accurate in this context" (p. 194).
+
+#### Rethinking: Diverse prediction frameworks.
+
+> AIC orders models in a way that approximates some forms of cross-validation, and WAIC is explicitly derived as an approximate Bayesian cross-validation...
+>
+> Perhaps a larger concern is that our train-test thought experiment pulls the test sample from exactly the same process as the training sample. This is a kind of *uniformitarian* assumption, in which future data are expected to come from the same process as past data and have the same rough range of values. (pp. 194--195)
+
+This is one of those big-ticket issues that precisely-computed and neatly-presented statistics isn't so well suited to solve. If you're ready to ponder this further, Navarro's [*Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection*](https://link.springer.com/article/10.1007%2Fs42113-018-0019-z) is a fine place to start.
 
 ## Using information criteria
 
@@ -1149,7 +1272,8 @@ inits <- list(Intercept = mean(d$kcal.per.g),
 inits_list <-list(inits, inits, inits, inits)
 
 b6.11 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 1,
       prior = c(prior(uniform(-1000, 1000), class = Intercept),
                 prior(uniform(0, 100), class = sigma)),
@@ -1163,7 +1287,8 @@ inits <- list(Intercept = mean(d$kcal.per.g),
 inits_list <-list(inits, inits, inits, inits)
 
 b6.12 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       kcal.per.g ~ 1 + neocortex,
       prior = c(prior(uniform(-1000, 1000), class = Intercept),
                 prior(uniform(-1000, 1000), class = b),
@@ -1181,7 +1306,8 @@ b6.13 <-
   update(b6.12, 
          newdata = d,
          formula = kcal.per.g ~ 1 + log(mass),
-         inits   = inits_list)
+         inits = inits_list,
+         chains = 4, cores = 4)
 
 inits <- list(Intercept   = mean(d$kcal.per.g),
               neocortex   = 0,
@@ -1193,8 +1319,11 @@ b6.14 <-
   update(b6.13, 
          newdata = d,
          formula = kcal.per.g ~ 1 + neocortex + log(mass),
-         inits   = inits_list)
+         inits = inits_list,
+         chains = 4, cores = 4)
 ```
+
+> The priors are all flat above, which is clearly not the best idea. But his will let you get a sense of what the sample alone says, in the absence of regularization, and how WAIC measures overfitting. Then in the problems at the end of the chapter, you'll explore regularization. (p. 197)
 
 #### Comparing WAIC values.
 
@@ -1204,7 +1333,7 @@ In brms, you can get a model's WAIC value with the `waic()` function.
 waic(b6.14)
 ```
 
-Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won’t go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/package=loo). For now, back to the WAIC.
+Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won't go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/package=loo). For now, back to the WAIC.
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
@@ -1212,7 +1341,7 @@ There are a few ways to approach information criteria within the brms framework.
 waic(b6.11)
 ```
 
-The WAIC and its standard error are on the bottom row. The $p_\text{WAIC}$ and its SE are stacked atop that. And look there on the top row. Remember how we pointed out, above, that we get the WAIC by multiplying `(lppd - pwaic)` by -2? Well, if you just do the subtraction without multiplying the result by -2, you get the `elpd_waic`. File that away. It'll become important in a bit.
+The WAIC estimate and its standard error are on the bottom row. The $p_\text{WAIC}$ and its SE are stacked atop that. And look there on the top row. Remember how we pointed out, above, that we get the WAIC by multiplying `(lppd - pwaic)` by -2? Well, if you just do the subtraction without multiplying the result by -2, you get the `elpd_waic`. File that away. It'll become important in a bit.
 
 Following the version 2.8.0 update, part of the suggested workflow for using information criteria with brms (i.e., execute `?loo.brmsfit`) is to add the estimates to the `brm()` fit object itself. You do that with the `add_criterion()` function. Here's how we'd do so with `b6.11`.
 
@@ -1241,16 +1370,16 @@ w <- loo_compare(b6.11, b6.12, b6.13, b6.14,
 print(w)
 ```
 
-You don’t have to save those results as an object like we just did with `w`. But that’ll serve some pedagogical purposes in just a bit. So go with it. With respect to the output, notice the `elpd_diff` column and the adjacent `se_diff` column. Those are our WAIC differences. The models have been rank ordered from the lowest (i.e., `b6.14`) to the highest (i.e., `b6.12`). The scores listed are the differences of ` b6.14` minus the comparison model. Since `b6.14` is the comparison model in the top row, the values are naturally 0 (i.e., $x - x = 0$). But now here’s another critical thing to understand: Since the brms version 2.8.0 update, WAIC and LOO differences are no longer reported in the $-2 * x$ metric. Remember how we keep rehearsing that multiplying `(lppd - pwaic)` by -2 is a historic artifact associated with the frequentist chi-square test? We’ll, the makers of the loo package aren’t fans and they no longer support the conversion. 
+You don't have to save those results as an object like we just did with `w`. But that'll serve some pedagogical purposes in just a bit. With respect to the output, notice the `elpd_diff` column and the adjacent `se_diff` column. Those are our WAIC differences. The models have been rank ordered from the lowest (i.e., `b6.14`) to the highest (i.e., `b6.12`). The scores listed are the differences of ` b6.14` minus the comparison model. Since `b6.14` is the comparison model in the top row, the values are naturally 0 (i.e., $x - x = 0$). But now here's another critical thing to understand: Since the brms version 2.8.0 update, WAIC and LOO differences are no longer reported in the $-2 * x$ metric. Remember how we keep rehearsing that multiplying `(lppd - pwaic)` by -2 is a historic artifact associated with the frequentist chi-square test? We'll, the makers of the loo package aren't fans and they no longer support the conversion.
 
-So here’s the deal. The substantive interpretations of the differences presented in an `elpd_diff` metric will be the same as if presented in a WAIC metric. But if we want to compare our `elpd_diff` results to those in the text, we will have to multiply them by -2. And also, if we want the associated standard error in the proper metric, we'll need to multiply the `se_diff` column by 2. You wouldn't multiply by -2 because that would return a negative standard error, which would be silly. Here's a quick way to do so.
+So here's the deal. The substantive interpretations of the differences presented in an `elpd_diff` metric will be the same as if presented in a WAIC metric. But if we want to compare our `elpd_diff` results to those in the text, we will have to multiply them by -2. And also, if we want the associated standard error in the same metric, we'll need to multiply the `se_diff` column by 2. You wouldn't multiply by -2 because that would return a negative standard error, which would be silly. Here's a quick way to do those conversions.
 
 ```{r}
 cbind(waic_diff = w[, 1] * -2,
       se        = w[, 2] * 2)
 ```
 
-One more thing. On page 198, and on many other pages to follow in the text, McElreath used the `rethinking::compare()` function to return a rich table of information about the WAIC information for several models. If we’re tricky, we can do something similar with `loo_compare`. To learn how, let's peer further into the structure of our `w` object. 
+One more thing. On page 198, and on many other pages to follow in the text, McElreath used the `rethinking::compare()` function to return a rich table of information about the WAIC information for several models. If we're tricky, we can do something similar with `loo_compare`. To learn how, let's peer further into the structure of our `w` object. 
 
 ```{r}
 str(w)
@@ -1313,7 +1442,7 @@ We briefly discussed the alternative information criteria, the LOO, above. Here�
 loo(b6.11)
 ```
 
-The Pareto $k$ values are a useful model fit diagnostic tool, which we’ll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/package=loo) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we'll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/package=loo) to compute its WAIC and LOO values. In addition to the vignette, above, [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-weights.html) demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
 
 Let's get back on track with the text. To put all this model comparison in perspective, 
 
@@ -1374,6 +1503,7 @@ tibble(diff = -20:30) %>%
   geom_vline(xintercept = 0, linetype = 3,
              color = carto_pal(7, "BurgYl")[3]) +
   scale_y_continuous(NULL, breaks = NULL) +
+  xlab("WAIC difference distribution") +
   theme_classic() +
   theme(text             = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
@@ -1405,10 +1535,11 @@ Just a little more work and we'll have a table analogous to the one McElreath pr
 ```{r}
 my_coef_tab %>%
   # learn more about `dplyr::complete()` here: https://rdrr.io/cran/tidyr/man/expand.html
-  complete(term = distinct(., term), model) %>%
+  complete(model, term) %>% 
   select(model, term, estimate) %>%
   mutate(estimate = round(estimate, digits = 2)) %>%
-  spread(key = model, value = estimate)
+  spread(key = model, value = estimate) %>% 
+  knitr::kable()
 ```
 
 I'm also not aware of an efficient way in brms to reproduce Figure 6.12 for which McElreath nested his `coeftab()` argument in a `plot()` argument. However, one can build something similar by hand with a little data wrangling.
@@ -1417,17 +1548,18 @@ I'm also not aware of an efficient way in brms to reproduce Figure 6.12 for whic
 # data wrangling
 wrangled_my_coef_tab <-
   my_coef_tab %>%
-  complete(term = distinct(., term), model) %>%
-  rbind(
+  complete(model, term) %>% 
+  bind_rows(
      tibble(
        model     = NA,
        term      = c("b_logmass", "b_neocortex", "sigma", "b_Intercept"),
+       fit       = NA,
        estimate  = NA,
        std.error = NA,
        lower     = NA,
        upper     = NA)) %>%
   mutate(axis  = ifelse(is.na(model), term, model),
-         model = factor(model, levels = c("b6.11", "b6.12", "b6.13", "b6.14")),
+         model = factor(model, levels = str_c("b6.1", 1:4)),
          term  = factor(term, levels = c("b_logmass", "b_neocortex", "sigma", "b_Intercept", NA))) %>%
   arrange(term, model) %>%
   mutate(axis_order = letters[1:20],
@@ -1443,7 +1575,7 @@ ggplot(data = wrangled_my_coef_tab,
   geom_hline(yintercept = 0,  color = carto_pal(7, "BurgYl")[2]) +
   geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
   scale_x_discrete(NULL, labels = wrangled_my_coef_tab$axis) +
-  ggtitle("My other coeftab() plot") +
+  ggtitle("My coeftab() plot") +
   coord_flip() +
   theme(text         = element_text(family = "Courier"),
         panel.grid   = element_blank(),
@@ -1452,7 +1584,7 @@ ggplot(data = wrangled_my_coef_tab,
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
-However, if you’re willing to deviate just a bit from the format of McElreath’s `coeftab()` plot, here’s a more elegant way to work with our `my_coef_tab` tibble.
+However, if you’re willing to deviate just a bit from the format of McElreath's `coeftab()` plot, here's a more elegant way to work with our `my_coef_tab` tibble.
 
 ```{r, message = F, warning = F, fig.height = 3.5, fig.width = 4}
 my_coef_tab %>% 
@@ -1522,7 +1654,7 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
 
 ## ~~Summary~~ Bonus: $R^2$ talk
 
-At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model brm fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
+At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework, which will be a big deal for us starting in Chapter 10. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model `brm()` fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
 
 ```{r}
 bayes_R2(b6.14) %>% round(digits = 3)
@@ -1589,19 +1721,20 @@ r2_combined %>%
 
 If you do your work in a field where folks use $R^2$ change, you might do that with a simple difference score, which we computed above with `mutate(dif = R2.14 - R2.13)`. Here's the $\Delta R^2$ (i.e., `dif`) plot:
 
-```{r, fig.width = 3.5, fig.height = 3}
+```{r, fig.width = 3.5, fig.height = 2.75}
 r2_combined %>%
   ggplot(aes(x = dif, y = 0)) +
   geom_halfeyeh(fill  = carto_pal(7, "BurgYl")[5], 
                 color = carto_pal(7, "BurgYl")[7],
                 point_interval = median_qi, .width = .95) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x        = expression(paste(Delta, italic("R")^{2})),
-       subtitle = "This is how much more variance, in\nterms of %, model b6.14 explained\ncompared to model b6.13.") +
+  xlab(expression(paste(Delta, italic("R")^{2}))) +
   theme_classic() +
   theme(text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
+
+If you multiply those values by 100, they make a distribution for the greater percentage in `kcal.per.g` variance `b6.14` explained compared to `b6.13`. 
 
 The brms package did not get these $R^2$ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian $R^2$ sausage is made, check out the paper by [Gelman, Goodrich, Gabry, and Vehtari](https://www.tandfonline.com/doi/abs/10.1080/00031305.2018.1549100?journalCode=utas20).
 
@@ -1616,7 +1749,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b, dfmean, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b6.0_waic, log_p_y, lppd, dfvar, pwaic, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
