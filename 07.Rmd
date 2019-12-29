@@ -59,7 +59,16 @@ d.A0 <-
 
 The first two models predicting `log_gdp` are univariable.
 
-```{r b7.1_b7.2, cache = T, warning = F, message = F, results = "hide"}
+```{r b7.1, echo = F}
+# save(b7.1, file = "fits/b07.01.rda")
+# save(b7.2, file = "fits/b07.02.rda")
+# rm(b7.1)
+# rm(b7.2)
+load("fits/b07.01.rda")
+load("fits/b07.02.rda")
+```
+
+```{r, eval = F}
 b7.1 <-
   brm(data = d.A1, 
       family = gaussian,
@@ -136,7 +145,13 @@ It's generally not a good idea to split up your data and run separate analyses, 
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
 
-```{r b7.3_seed7, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.3, echo = F}
+# save(b7.3, file = "fits/b07.03.rda")
+# rm(b7.3)
+load("fits/b07.03.rda")
+```
+
+```{r, eval = F}
 b7.3 <-
   update(b7.1,
          newdata = dd,
@@ -146,7 +161,13 @@ b7.3 <-
 
 Now we'll add the dummy.
 
-```{r b7.4_seed7, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.4, echo = F}
+# save(b7.4, file = "fits/b07.04.rda")
+# rm(b7.4)
+load("fits/b07.04.rda")
+```
+
+```{r, eval = F}
 b7.4 <-
   update(b7.3,
          newdata = dd,
@@ -237,7 +258,13 @@ $$\mu_i = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \text{rugged}_i + \b
 
 Fit the model.
 
-```{r b7.5_seed7, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.5, echo = F}
+# save(b7.5, file = "fits/b07.05.rda")
+# rm(b7.5)
+load("fits/b07.05.rda")
+```
+
+```{r, eval = F}
 b7.5 <-
   update(b7.4,
          formula = log_gdp ~ 1 + rugged*cont_africa,
@@ -282,7 +309,13 @@ The conventional equation for the interaction model might look like:
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
-```{r b7.5b_seed7, cache = T, message = F, warning = F, results = 'hide'}
+```{r b7.5b, echo = F}
+# save(b7.5b, file = "fits/b07.05b.rda")
+# rm(b7.5b)
+load("fits/b07.05b.rda")
+```
+
+```{r, eval = F}
 b7.5b <-
   update(b7.5,
          formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
@@ -586,6 +619,15 @@ b7.7 <-
 
 Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "[increase] adapt_delta above 0.8." While we're at it, we'll put better priors on $\sigma$.
 
+```{r b7.6, echo = F}
+# save(b7.6, file = "fits/b07.06.rda")
+# save(b7.7, file = "fits/b07.07.rda")
+# rm(b7.6)
+# rm(b7.7)
+load("fits/b07.06.rda")
+load("fits/b07.07.rda")
+```
+
 ```{r, eval = F}
 b7.6 <-
   update(b7.6,
@@ -657,7 +699,16 @@ d <-
 
 Now refit the models with our shiny new centered predictors.
 
-```{r b7.8_and_b7.9, cache = T, message = F, results = 'hide'}
+```{r b7.8, echo = F}
+# save(b7.8, file = "fits/b07.08.rda")
+# save(b7.9, file = "fits/b07.09.rda")
+# rm(b7.8)
+# rm(b7.9)
+load("fits/b07.08.rda")
+load("fits/b07.09.rda")
+```
+
+```{r, eval = F}
 b7.8 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water_c + shade_c,
@@ -861,7 +912,13 @@ b7.4$data %>%
 
 One way to fix that is to adjust the data set and refit the model.
 
-```{r, message = F, warning = F, results = "hide"}
+```{r b7.4_factor, echo = F}
+# save(b7.4_factor, file = "fits/b07.04_factor.rda")
+# rm(b7.4_factor)
+load("fits/b07.04_factor.rda")
+```
+
+```{r, eval = F}
 d_factor <-
   b7.4$data %>% 
   mutate(cont_africa = factor(cont_africa))
@@ -887,7 +944,13 @@ conditional_effects(b7.5)
 
 The `conditional_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean $\pm$ one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
 
-```{r, message = F, warning = F, results = "hide"}
+```{r b7.5_factor, echo = F}
+# save(b7.5_factor, file = "fits/b07.05_factor.rda")
+# rm(b7.5_factor)
+load("fits/b07.05_factor.rda")
+```
+
+```{r, eval = F}
 d_factor <-
   b7.5$data %>% 
   mutate(cont_africa = factor(cont_africa))
