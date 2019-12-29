@@ -634,7 +634,13 @@ library(brms)
 
 Now we'll specify the initial values and fit the model.
 
-```{r b6.8_, cache = T, message = F, warning = F}
+```{r b6.8, echo = F}
+# save(b6.8, file = "fits/b06.08.rda")
+# rm(b6.8)
+load("fits/b06.08.rda")
+```
+
+```{r, eval = F}
 # define the starting values
 inits <- list(Intercept = mean(d$brain),
               mass_s    = 0,
@@ -1048,7 +1054,13 @@ You'll see how to compute the WAIC in brms in just a bit.
 
 Here is how to fit the pre-WAIC model in brms.
 
-```{r b6.0_waic, cache = T, message = F, warning = F}
+```{r b6.0_waic, echo = F}
+# save(b6.0_waic, file = "fits/b06.00_waic.rda")
+# rm(b6.0_waic)
+load("fits/b06.00_waic.rda")
+```
+
+```{r, eval = F}
 data(cars)
 
 b6.0_waic <- 
@@ -1265,7 +1277,22 @@ library(brms)
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-```{r b6.11__b6.14, message = F, warning = F, results = 'hide'}
+```{r b6.11, echo = F}
+# save(b6.11, file = "fits/b06.11.rda")
+# save(b6.12, file = "fits/b06.12.rda")
+# save(b6.13, file = "fits/b06.13.rda")
+# save(b6.14, file = "fits/b06.14.rda")
+# rm(b6.11)
+# rm(b6.12)
+# rm(b6.13)
+# rm(b6.14)
+load("fits/b06.11.rda")
+load("fits/b06.12.rda")
+load("fits/b06.13.rda")
+load("fits/b06.14.rda")
+```
+
+```{r, eval = F}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
@@ -1395,7 +1422,7 @@ The results are quite analogous to those from `rethinking::compare()`. Again, th
 
 If you want to get those WAIC weights, you can use the `brms::model_weights()` function like so:
 
-```{r waic_weights, cache = T}
+```{r}
 model_weights(b6.11, b6.12, b6.13, b6.14, 
               weights = "waic") %>% 
   round(digits = 2)
@@ -1403,7 +1430,7 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
 
 That last `round()` line was just to limit the decimal-place precision. If you really wanted to go through the trouble, you could make yourself a little table like this:
 
-```{r waic_weights_tibble, cache = T}
+```{r}
 model_weights(b6.11, b6.12, b6.13, b6.14, 
               weights = "waic") %>%
   as_tibble() %>% 
@@ -1417,7 +1444,7 @@ model_weights(b6.11, b6.12, b6.13, b6.14,
 
 With a little `[]` subsetting and light wrangling, we can convert the contents of our `w` object to a format suitable for plotting the WAIC estimates.
 
-```{r w_plot, fig.width = 4.5, fig.height = 1.25}
+```{r, fig.width = 4.5, fig.height = 1.25}
 w[, 7:8] %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
@@ -1438,7 +1465,7 @@ w[, 7:8] %>%
 
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
 
-```{r loo_b6.11, message = F, warning = F}
+```{r}
 loo(b6.11)
 ```
 
@@ -1450,20 +1477,20 @@ Let's get back on track with the text. To put all this model comparison in persp
 
 Did you notice the "[17]" part of the quote? In his [Errata](https://github.com/rmcelreath/rethinking/blob/master/ERRATA.md), McElreath pointed out he accidentally referred to the number of cases as 12, though it was indeed 17 (execute `dim(d)`). The quotation here reflects that correction. Anyway, here are those two values in the $\text{elpd}$ metric.
 
-```{r elpd_diff}
+```{r}
 w[4, 1:2]
 ```
 
 And here we convert them to the WAIC metric.
 
-```{r round_waic_diff}
+```{r}
 round(w[4, 1] * -2, 2)
 round(w[4, 2] * 2, 2)
 ```
 
 If it's easier to see, here's the same information in a tibble.
 
-```{r elpd_to_waic_tibble}
+```{r}
 tibble(value             = c("difference", "se"),
        elpd              = w[4, 1:2],
        conversion_factor = c(-2, 2)) %>% 
@@ -1474,7 +1501,7 @@ Before we forget, McElreath gave some perspective difference between the models 
 
 But to the point, we can extract the two numerals and plug them into `rnorm()`.
 
-```{r plug_waic_diff_into_rnorm}
+```{r}
 # how many draws would you like?
 n <- 1e5
 
@@ -1492,7 +1519,7 @@ diff %>%
 
 In case you're curious, this is a graphic version of what we just did.
 
-```{r plot_WAIC_diff, fig.width = 3, fig.height = 2.25}
+```{r, fig.width = 3, fig.height = 2.25}
 tibble(diff = -20:30) %>% 
   ggplot(aes(x = diff, ymin = 0)) +
   geom_ribbon(aes(ymax = dnorm(diff, w[4, 1] * -2, w[4, 2] * 2)),
@@ -1513,7 +1540,7 @@ tibble(diff = -20:30) %>%
 
 The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `broom::tidy()` function, which will save the summary statistics for our model parameters. For example, this is what it will produce for the full model, `b6.14`.
 
-```{r tidy_b6.14}
+```{r}
 tidy(b6.14)
 ```
 
