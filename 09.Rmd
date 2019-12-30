@@ -16,9 +16,15 @@ output:
 
 > In Chapter 6, you met the basics of information theory. In brief, we seek a measure of uncertainty that satisfies three criteria: (1) the measure should be continuous; (2) it should increase as the number of possible events increases; and (3) it should be additive. The resulting unique measure of the uncertainty of a probability distribution $p$ with probabilities $p_i$ for each possible event $i$ turns out to be just the average log-probability:
 >
->$$H(p) = - \sum_i p_i \text{ log } p_i$$
+> $$H(p) = - \sum_i p_i \log p_i$$
 >
-> This function is known as *information entropy*. (p. 268, *emphasis* in the original)
+> This function is known as *information entropy*. 
+>
+> The principle of maximum entropy applies this measure of uncertainty to the problem of choosing among probability distributions. Perhaps the simplest way to sate the maximum entropy principle is:
+>
+>> The distribution that can happen the most ways is also the distribution with the biggest information entropy. The distribution with the biggest entropy is the most conservative distribution that obeys its constraints.
+>
+> There's nothing intuitive about this idea, so if it seems weird, you are normal. (pp. 268--269, *emphasis* in the original)
 
 Let's execute the code for the pebbles-in-buckets example.
 
@@ -43,7 +49,7 @@ d %>%
 
 For more on the formula syntax we used within `mutate_all()`, you might check out [this](https://dplyr.tidyverse.org/reference/mutate_all.html) or [this](https://purrr.tidyverse.org/reference/map.html).
 
-Anyway, we're almost ready to plot. Which brings us to color. For the plots in this chapter, we'll be taking our color palettes from the [ghibli package](https://github.com/ewenme/ghibli), which provides palettes based on scenes from anime films by the Studio Ghibli.
+Anyway, we're almost ready to plot, which brings us to color. For the plots in this chapter, we'll be taking our color palettes from the [ghibli package](https://github.com/ewenme/ghibli), which provides palettes based on scenes from anime films by the Studio Ghibli.
 
 ```{r, message = F, warning = F}
 # install.packages("ghibli", dependencies = T)
@@ -71,18 +77,18 @@ d %>%
   geom_text(data = tibble(
     letter  = letters[1:5],
     bucket  = 5.5,
-    pebbles = 10,
+    pebbles = 10.5,
     label   = str_c(c(1, 90, 1260, 37800, 113400), 
                     rep(c(" way", " ways"), times = c(1, 4)))),
     aes(label = label), hjust = 1) +
-  scale_y_continuous(breaks = c(0, 5, 10)) +
+  scale_y_continuous(breaks = c(0, 5, 10), limits = c(0, 12)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium1")[6]),
-        strip.background = element_rect(fill = ghibli_palette("MarnieMedium1")[1])) +
+        strip.background = element_rect(fill = ghibli_palette("MarnieMedium1")[7])) +
   facet_wrap(~letter, ncol = 2)
 ```
 
-We might plot the final panel like so.
+We might plot our version of the final panel like so.
 
 ```{r, fig.width = 3, fig.height = 2.75}
 d %>% 
@@ -111,9 +117,13 @@ d %>%
 
 "The distribution that can happen the greatest number of ways is the most plausible distribution. Call this distribution the maximum entropy distribution" (p. 271). Among the pebbles, the maximum entropy distribution was `e` (i.e., the uniform).
 
+#### Rethinking: What good is intuition? 
+
+"Like many aspects of information theory, maximum entropy is not very intuitive. But note that intuition is just a guide to developing methods. When a method works, it hardly matters whether our intuition agrees" (p. 271).
+
 ### Gaussian.
 
-Behold the probability distribution for the generalized normal distribution:
+Behold the probability density for the generalized normal distribution:
 
 $$\text{Pr} (y | \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma \bigg (\frac{1}{\beta} \bigg )} e ^ {- \bigg (\frac{|y - \mu|}{\alpha} \bigg ) ^ {\beta}}$$
 
@@ -128,19 +138,17 @@ $$\alpha = \sqrt{ \frac{\sigma^2 \Gamma (1/\beta)}{\Gamma (3/\beta)} }$$
 I got the formula from [Wikipedia.com](https://en.wikipedia.org/wiki/Generalized_normal_distribution). Don't judge. We can wrap that formula in a custom function, `alpha_per_beta()`, use it to solve for the desired $\beta$ values, and plot. But one more thing: McElreath didn't tell us exactly which $\beta$ values the left panel of Figure 9.2 was based on. So the plot below is my best guess.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-alpha_per_beta <- function(variance, beta) {
+alpha_per_beta <- function(beta, variance = 1) {
   sqrt((variance * gamma(1 / beta)) / gamma(3 / beta))
 }
 
-tibble(mu       = 0,
-       variance = 1,
+tibble(mu      = 0,
        # I arrived at these values by trial and error
-       beta     = c(1, 1.5, 2, 4)) %>% 
-  mutate(alpha  = map2(variance, beta, alpha_per_beta)) %>% 
-  unnest() %>% 
+       beta    = c(1, 1.5, 2, 4)) %>% 
+  mutate(alpha = alpha_per_beta(beta)) %>% 
   expand(nesting(mu, beta, alpha), 
          value = seq(from = -5, to = 5, by = .1)) %>% 
-  # behold the formula for the generalized normal distribution in code
+  # behold the formula for the generalized normal distribution in code!
   mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
            exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   
@@ -149,10 +157,9 @@ tibble(mu       = 0,
              group = beta)) +
   geom_line(aes(color = beta == 2,
                 size  = beta == 2)) +
-  scale_color_manual(values = c(ghibli_palette("MarnieMedium2")[2],
-                                ghibli_palette("MarnieMedium2")[4])) +
+  scale_color_manual(values = c(ghibli_palette("MarnieMedium2")[c(2, 4)])) +
   scale_size_manual(values = c(1/4, 1.25)) +
-  ggtitle(NULL, subtitle = "Guess which color denotes the Gaussian.") +
+  labs(subtitle = "Guess which color denotes the Gaussian.") +
   coord_cartesian(xlim = -4:4) +
   theme(panel.grid       = element_blank(),
         legend.position  = "none",
@@ -161,13 +168,11 @@ tibble(mu       = 0,
 
 Here's Figure 9.2's right panel.
 
-```{r, fig.width = 3.5, fig.height = 3}
-tibble(mu       = 0,
-       variance = 1,
+```{r, fig.width = 3.5, fig.height = 3, warning = F}
+tibble(mu      = 0,
        # this time we need a more densely-packed sequence of `beta` values
-       beta     = seq(from = 1, to = 4, length.out = 100)) %>% 
-  mutate(alpha  = map2(variance, beta, alpha_per_beta)) %>%
-  unnest() %>%
+       beta    = seq(from = 1, to = 4, length.out = 100)) %>% 
+  mutate(alpha = alpha_per_beta(beta)) %>% 
   expand(nesting(mu, beta, alpha), 
          value = -8:8) %>% 
   mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
@@ -180,6 +185,7 @@ tibble(mu       = 0,
   geom_vline(xintercept = 2, color = "white") +
   geom_line(size = 2, color = ghibli_palette("MarnieMedium2")[6]) +
   coord_cartesian(ylim = c(1.34, 1.42)) +
+  xlab(expression(paste(beta, " (i.e., shape)"))) +
   theme(panel.grid       = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
@@ -222,8 +228,7 @@ We can organize that information in a little tibble and then demo our `count_way
 tibble(sequence = 1:3,
        n        = 4,
        y        = c(0, 1, 2)) %>% 
-  mutate(n_ways = map2(n, y, count_ways)) %>% 
-  unnest()
+  mutate(n_ways = count_ways(n = n, y = y))
 ```
 
 Here's the pre-Figure 9.3 data McElreath presented at the bottom of page 275.
@@ -239,7 +244,7 @@ Here's the pre-Figure 9.3 data McElreath presented at the bottom of page 275.
   )
 ```
 
-Those data take just a tiny bit of wrangling before they're ready to plot with.
+Those data take just a tiny bit of wrangling before they're ready to plot in our version of Figure 9.3.
 
 ```{r, fig.width = 4, fig.height = 3.5}
 d %>% 
@@ -325,15 +330,26 @@ sim_p(seed = 9.9, g = 1.4)
 
 So the next step is to determine how many replications we'd like, create a tibble with seed values ranging from 1 to that number, and then feed those `seed` values into `sim_p()` via `purrr::map2()`, which will return a nested tibble. We'll then `unnest()` and take a peek.
 
-```{r}
+```{r, echo = F}
+# the sim took the better part of 10 minutes to run
+# save("d", file = "sims/09.sim_1.rda")
+
+load("sims/09.sim_1.rda")
+```
+
+```{r, eval = F}
 # how many replications would you like?
 n_rep <- 1e5
 
 d <-
   tibble(seed = 1:n_rep) %>% 
   mutate(sim = map2(seed, 1.4, sim_p)) %>% 
-  unnest()
+  unnest(sim)
+```
 
+Take a look.
+
+```{r}
 head(d)
 ```
 
@@ -365,10 +381,11 @@ subset_d <-
 head(subset_d)
 ```
 
-We're finally ready to plot the left panel of Figure 9.4.
+We're finally ready to make our version of the left panel of Figure 9.4.
 
-```{r, fig.width = 4, fig.height = 3.5}
-d %>% 
+```{r}
+p1 <-
+  d %>% 
   ggplot(aes(x = h)) +
   geom_density(size = 0, fill = ghibli_palette("LaputaMedium")[3],
                adjust = 1/4) +
@@ -384,24 +401,29 @@ d %>%
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]))
 ```
 
-Did you notice how our `adjust = 1/4` with `geom_density()` served a similar function to the `adj=0.1` in McElreath's `dens()` code. Anyways, here's the right panel.
+Did you notice how our `adjust = 1/4` with `geom_density()` served a similar function to the `adj=0.1` in McElreath's `dens()` code. Anyways, here we make the right panel and combine the two with patchwork.
 
-```{r, fig.width = 4, fig.height = 3.5}
-ranked_d %>%
+```{r, fig.width = 7, fig.height = 3.5}
+p2 <-
+  ranked_d %>%
   filter(rank %in% c(1, 87373, n_rep - 1500, n_rep - 10)) %>% 
   mutate(distribution = rep(letters[1:4], each = 4)) %>% 
 
   ggplot(aes(x = key, y = p, group = 1)) +
   geom_line(color = ghibli_palette("LaputaMedium")[5]) +
   geom_point(size = 2, color = ghibli_palette("LaputaMedium")[4]) +
-  coord_cartesian(ylim = 0:1) +
-  labs(x = NULL,
-       y = NULL) +
+  scale_y_continuous(NULL, breaks = NULL, limits = c(0, .75)) +
+  xlab(NULL) +
   theme(panel.grid   = element_blank(),
         axis.ticks.x = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]),
         strip.background = element_rect(fill = ghibli_palette("LaputaMedium")[6])) +
   facet_wrap(~distribution)
+
+# combine and plot
+library(patchwork)
+
+p1 | p2
 ```
 
 Because we were simulating, our values won't match up identically with those in the text. But we're pretty close, eh?
@@ -420,9 +442,11 @@ That maximum `h` value matched up nicely with the one in the text. If you look a
 a
 ```
 
+"All four of these distributions really do have expected value 1.4. But among the infinite distributions that satisfy this constraint, it is only the most even distribution, the exact one nominated by the binomial distribution, that has greatest entropy" (p. 278).
+
 ## Generalized linear models
 
-> For an outcome variable that is continuous and far from any theoretical maximum or minimum, [a simple] Gaussian model has maximum entropy.  But when the outcome variable is either discrete or bounded, a Gaussian likelihood is not the most powerful choice. (p. 280)
+> For an outcome variable that is continuous and far from any theoretical maximum or minimum, [a simple] Gaussian model has maximum entropy. But when the outcome variable is either discrete or bounded, a Gaussian likelihood is not the most powerful choice. (p. 280)
 
 I winged the values for our Figure 9.5.
 
@@ -440,8 +464,7 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
   geom_segment(x = 1.3, xend = 3,
                y = 1, yend = 1,
                size = 2/3, color = ghibli_palette("MononokeMedium")[3]) +
-  scale_color_manual(values = c(ghibli_palette("MononokeMedium")[3],
-                                ghibli_palette("MononokeMedium")[7])) +
+  scale_color_manual(values = c(ghibli_palette("MononokeMedium")[c(3, 4)])) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(xlim = 0:2,
                   ylim = c(0, 1.2)) +
@@ -450,7 +473,7 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
         panel.background = element_rect(fill = ghibli_palette("MononokeMedium")[1]))
 ```
 
-> For a count outcome $y$ for which each observation arises from $n$ trials and with constant expected value $np$, the binomial distribution has maximum entropy. So it’s the least informative distribution that satisfies our prior knowledge of the outcomes $y$. (p. 281)
+> For a count outcome $y$ for which each observation arises from $n$ trials and with constant expected value $np$, the binomial distribution has maximum entropy. So it's the least informative distribution that satisfies our prior knowledge of the outcomes $y$. (p. 281)
 
 The binomial model follows the basic form
 
@@ -464,6 +487,8 @@ The $f()$ portion of the second line represents the link function. We need the l
 Let's get more general.
 
 ### Meet the family.
+
+> The most common distributions used in statistical modeling are members of a family known as the **exponential family**. Every member of this family is a maximum entropy distribution, for some set of constraints. And conveniently, just about every other statistical modeling tradition employs the exact same distributions, even though they arrive at them via justifications other than maximum entropy. (p. 282, **emphasis** in the original)
 
 Here are the Gamma and Exponential panels for Figure 9.6.
 
@@ -490,8 +515,6 @@ tibble(x = seq(from = 0, to = 5, length.out = length_out)) %>%
 The Gaussian:
 
 ```{r, fig.width = 3, fig.height = 2.25}
-length_out <- 100
-
 tibble(x = seq(from = -5, to = 5, length.out = length_out)) %>% 
   mutate(density = dnorm(x),
          strip   = "y %~% Normal(mu, sigma)") %>% 
@@ -510,8 +533,6 @@ tibble(x = seq(from = -5, to = 5, length.out = length_out)) %>%
 Here is the Poisson.
 
 ```{r, fig.width = 3, fig.height = 2.25}
-length_out <- 100
-
 tibble(x = 0:20) %>% 
   mutate(density = dpois(x, lambda = 2.5),
          strip   = "y %~% Poisson(lambda)") %>% 
@@ -530,8 +551,6 @@ tibble(x = 0:20) %>%
 Finally, the Binomial:
 
 ```{r, fig.width = 3, fig.height = 2.25}
-length_out <- 100
-
 tibble(x = 0:10) %>% 
   mutate(density = dbinom(x, size = 10, prob = .85),
          strip   = "y %~% Binomial(n, p)") %>% 
@@ -551,11 +570,11 @@ tibble(x = 0:10) %>%
 
 > In traditional statistics, likelihood functions are "objective" and prior distributions "subjective." However, likelihoods are themselves prior probability distributions: They are priors for the data, conditional on the parameters. And just like with other priors, there is no correct likelihood. But there are better and worse likelihoods, depending upon context. (p. 284)
 
-For a little more in this, check out McElreath’s great lecture, [Bayesian Statistics without Frequentist Language](https://www.youtube.com/watch?v=yakg94HyWdE&t=1s&frags=pl%2Cwn). This subsection also reminds me of the title of one of Gelman’s blog posts, [*"It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood"*](https://statmodeling.stat.columbia.edu/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/). The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It's taken some time for the weight of that quote to sink in with me, and indeed it’s still sinking. Perhaps you’ll benefit from it, too.
+For a little more in this, check out McElreath’s great lecture, [Bayesian Statistics without Frequentist Language](https://www.youtube.com/watch?v=yakg94HyWdE&t=1s&frags=pl%2Cwn). This subsection also reminds me of the title of one of Gelman's blog posts, [*"It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood"*](https://statmodeling.stat.columbia.edu/2015/01/27/perhaps-merely-accident-history-skeptics-subjectivists-alike-strain-gnat-prior-distribution-swallowing-camel-likelihood/). The title, which itself is a quote, comes from one of his papers, which he linked to in the blog, along with several related papers. It's taken some time for the weight of that quote to sink in with me, and indeed it's still sinking. Perhaps you'll benefit from it, too.
 
 ### Linking linear models to distributions.
 
-> To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution’s shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)
+> To build a regression model from any of the exponential family distributions is just a matter of attaching one or more linear models to one or more of the parameters that describe the distribution's shape. But as hinted at earlier, usually we require a link function to prevent mathematical accidents like negative distances or probability masses that exceed 1. (p. 284)
 
 These models generally follow the form
 
@@ -631,8 +650,6 @@ p2 <-
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[7]))
 
 # finally, we're ready to mash the plots together and behold their nerdy glory
-library(patchwork)
-
 p1 | p2
 ```
 
@@ -643,12 +660,12 @@ p1 | p2
 >
 > \begin{align*}
 > y_i                   & \sim \text{Normal} (\mu, \sigma_i) \\
-> \text{log} (\sigma_i) & = \alpha + \beta x_i
+> \log (\sigma_i) & = \alpha + \beta x_i
 > \end{align*}
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
 
-This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, let's simulate some continuous data `y` for which the $SD$ is affected by a dummy variable `x`.
+This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, we'll simulate some continuous data `y` for which the $SD$ is affected by a dummy variable `x`.
 
 ```{r}
 set.seed(9)
@@ -670,8 +687,7 @@ d %>%
   ggplot(aes(x = y, y = x, fill = x)) +
   geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
                 point_interval = mean_qi, .width = .68) +
-  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
-                                   ghibli_palette("KikiMedium")[6])) +
+  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[c(4, 6)])) +
   theme(panel.grid       = element_blank(),
         axis.ticks.y     = element_blank(),
         legend.position  = "none",
@@ -703,7 +719,7 @@ Do note our use of the `dpar` arguments in the `prior` statements. Here's the su
 print(b9.1)
 ```
 
-Now we get an intercept for both $\mu$ and $\sigma$, with the intercept for sigma identified as `sigma_Intercept`. And note the coefficient for $\sigma$ was named `sigma_x`. Also notice the scale the `sigma_` coefficients are on. These are not in the original metric, but rather based on `log()`. You can confirm that by the second line of the `print()` output: `Links: mu = identity; sigma = log`. So if you want to get a sense of the effects of `x` on the $\sigma$ for `y`, you have to exponentiate the formula. Here we'll do so with the `posterior_samples()`.
+Now we get an intercept for both $\mu$ and $\sigma$, with the intercept for sigma identified as `sigma_Intercept`. And note the coefficient for $\sigma$ was named `sigma_x`. Also notice the scale the `sigma_i` coefficients are on. These are not in the original metric, but rather based on a logarithmic transformation of $\sigma$. You can confirm that by the second line of the `print()` output: `Links: mu = identity; sigma = log`. So if you want to get a sense of the effects of `x` on the $\sigma$ for `y`, you have to exponentiate the formula. Here we'll do so with the `posterior_samples()`.
 
 ```{r}
 post <- posterior_samples(b9.1)
@@ -722,8 +738,7 @@ post %>%
   ggplot(aes(x = sd, y = key, fill = key)) +
   geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
                 point_interval = median_qi, .width = .95) +
-  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[4],
-                                   ghibli_palette("KikiMedium")[6])) +
+  scale_fill_manual(values = c(ghibli_palette("KikiMedium")[c(4, 6)])) +
   labs(x = expression(sigma[x]), y = NULL,
        subtitle = expression(paste("Model-implied ", italic(SD), "s by group x"))) +
   coord_cartesian(ylim = c(1.5, 2)) +
@@ -741,13 +756,13 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis's [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke also covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), my translation for which lives [here](https://bookdown.org/ajkurz/DBDA_recoded/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
+For more on models like this, check out Christakis's [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), my translation for which lives [here](https://bookdown.org/ajkurz/DBDA_recoded/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters 12 and 13), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
 
 But getting back to the text,
 
-> what the log link effectively assumes is that the parameter’s value is the exponentiation of the linear model. Solving $\text{log} (\sigma_i) = \alpha + \beta x_i$ for $\sigma_i$ yields the inverse link:
+> what the log link effectively assumes is that the parameter's value is the exponentiation of the linear model. Solving $\log (\sigma_i) = \alpha + \beta x_i$ for $\sigma_i$ yields the inverse link:
 >
-> $$\sigma_i = \text{exp} (\alpha + \beta x_i)$$
+> $$\sigma_i = \exp (\alpha + \beta x_i)$$
 >
 > The impact of this assumption can be seen in [our version of] Figure 9.8. (pp. 286—287)
 
@@ -785,8 +800,8 @@ p2 <-
              aes(yintercept = `original measurement`),
              color = ghibli_palette("YesterdayMedium")[6]) +
   geom_line(size = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
-  coord_cartesian(xlim = -1:1,
-                  ylim = 0:10) +
+  scale_y_continuous(position = "right", limits = c(0, 10)) +
+  coord_cartesian(xlim = -1:1) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[7]))
 
@@ -794,6 +809,16 @@ p2 <-
 p1 | p2
 ```
 
+> Using a log link for a linear model (left) implies an exponential scaling of the outcome with the predictor variable (right). Another way to think of this relationship is to remember that logarithms are *magnitudes*. An increase of one unit on the log scale means an increase of an order of magnitude on the untransformed scale. And this fact is reflected in the widening intervals between the horizontal lines in the right-hand plot of Figure 9.8. (p. 287, *emphasis* in the original)
+
+### Absolute and relative differences. 
+
+Within the context of GLMs with non-identity link functions,
+
+> parameter estimates do not by themselves tell you the importance of a predictor on the outcome. The reason is that each parameter represents a *relative* difference on the scale of the linear model, ignoring other parameters, while we are really interested in the *absolute* differences in the outcomes that must incorporate all parameters. (p. 288, *emphasis* in the original)
+
+This will make more sense after we start playing around with logistic regression, count regression, and so on. For now, just file it away.
+ 
 ## Reference {-}
 
 [McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
@@ -805,7 +830,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, warning = F, message = F}
-rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, ranked_d, subset_d, length_out, alpha, beta, lines, p1, p2, b9.1, post)
+rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, p1, p2, ranked_d, subset_d, length_out, alpha, beta, lines, b9.1, post)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
