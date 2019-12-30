@@ -753,9 +753,9 @@ dev_100 <-
 # complete. So instead of completing it on the fly for each new version of this project, I've
 # saved the results in an external file. 
 
-# save(list = c("dev_100", "dev_20", "kseq", "n_sim", "n_cores"), file = "06_sims/sim_1.rda")
+# save(list = c("dev_100", "dev_20", "kseq", "n_sim", "n_cores"), file = "sims/06.sim_1.rda")
 
-load("06_sims/sim_1.rda")
+load("sims/06.sim_1.rda")
 ```
 
 If you didn't quite catch it, the simulation yields `dev_20` and `dev_100`. We'll want to convert them to tibbles, bind them together, and wrangle extensively before we're ready to plot.
@@ -878,12 +878,9 @@ s <-
 # complete. So instead of completing it on the fly for each new version of this project, I’ve
 # saved the results in an external file. 
 
-# save("s", file = "06_sims/sim_2.rda")
+# save("s", file = "sims/06.sim_2.rda")
 
-load("06_sims/sim_2.rda")
-s <-
-  s %>% 
-  rename(n = N)
+load("sims/sim_2.rda")
 ```
 
 We'll follow the same principles for wrangling these data as we did those from the previous simulation, `dev_tibble`. And after wrangling, we'll feed the data directly into the code for our version of Figure 6.9.
@@ -1195,9 +1192,9 @@ s <-
 # complete. So instead of completing it on the fly for each new version of this project, I’ve
 # saved the results in an external file. 
 
-# save("s", file = "06_sims/sim_3.rda")
+# save("s", file = "sims/06.sim_3.rda")
 
-load("06_sims/sim_3.rda")
+load("sims/sim_3.rda")
 ```
 
 Here we wrangle and plot.
@@ -1218,7 +1215,7 @@ s %>%
              size = 2.5) +
   geom_line(aes(y = value, group = b_sigma, color = b_sigma)) +
   scale_color_manual(values = c(carto_pal(7, "BurgYl")[7], carto_pal(7, "BurgYl")[5])) +
-  # scale_color_manual(values = c("steelblue", "black")) +
+  scale_color_manual(values = c("steelblue", "black")) +
   labs(subtitle = "n = 20",
        x = "number of parameters",
        y = "deviance") +
