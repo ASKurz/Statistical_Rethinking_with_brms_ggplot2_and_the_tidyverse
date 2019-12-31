@@ -14,7 +14,7 @@ options(width = 110)
 
 > All over the world, every day, scientists throw away information. Sometimes this is through the removal of "outliers," cases in the data that offend the model and are exiled. More routinely, counted things are converted to proportions before analysis. Why does analysis of proportions throw away information? Because 10/20 and ½ are the same proportion, one-half, but have very different sample sizes. Once converted to proportions, and treated as outcomes in a linear regression, the information about sample size has been destroyed.
 >
-> It’s easy to retain the information about sample size. All that is needed is to model what has actually been observed, the counts instead of the proportions. (p. 291)
+> It's easy to retain the information about sample size. All that is needed is to model what has actually been observed, the counts instead of the proportions. (p. 291)
 
 In this chapter, we focus on the two most common types of count models: the binomial and the Poisson.
 
@@ -26,11 +26,11 @@ The basic binomial model follows the form
 
 $$y \sim \text{Binomial} (n, p)$$
 
-where $y$ is some count variable, $n$ is the number of trials, and $p$ it the probability a given trial was a 1, which is sometimes termed a *success*. When $n = 1$, then $y$ is a vector of 0s and 1s. Presuming the logit link, models of this type are commonly termed logistic regression. When $n > 1$, and still presuming the logit link, we might call our model an aggregated logistic regression model, or more generally an aggregated binomial regression model.
+where $y$ is some count variable, $n$ is the number of trials, and $p$ it the probability a given trial was a 1, which is sometimes termed a *success*. When $n = 1$, then $y$ is a vector of 0s and 1s. Presuming the logit link, which we just covered in Chapter 9, models of this type are commonly termed logistic regression. When $n > 1$, and still presuming the logit link, we might call our model an aggregated logistic regression model, or more generally an aggregated binomial regression model.
 
 ### Logistic regression: Prosocial chimpanzees.
 
-Load the `chimpanzees` data.
+Load the [Silk et al. (2005)](https://www2.psych.ubc.ca/~henrich/pdfs/silkbrosnan%20-%20Chimpanzees%20are%20indifferent%20to%20the%20welfare%20of.pdf)) `chimpanzees` data.
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -58,7 +58,8 @@ In the `brm()` `formula` syntax, including a `|` bar on the left side of a formu
 
 ```{r b10.1_, cache = T, warning = F, message = F, results = "hide"}
 b10.1 <-
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       pulled_left | trials(1) ~ 1,
       prior(normal(0, 10), class = Intercept),
       seed = 10)
@@ -73,12 +74,16 @@ fixef(b10.1) %>%
   round(digits = 2)
 ```
 
-The `brms::inv_logit_scaled()` function will be our alternative to the `logistic()` function in rethinking.
+The `brms::inv_logit_scaled()` function will be our alternative to the `logistic()` function in rethinking. Here we use it to convert the 89% interval estimates McElreath reported on page 294.
 
 ```{r}
 c(.18, .46) %>%
   inv_logit_scaled()
+```
 
+Here we use it to convert our `fixef()` output (which contains 95% intervals).
+
+```{r}
 fixef(b10.1) %>%
   inv_logit_scaled()
 ```
@@ -96,7 +101,8 @@ b10.2 <-
 b10.3 <-
   update(b10.2,
          newdata = d,
-         formula = pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left)
+         formula = pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left,
+         seed = 10)
 ```
 
 Compute the WAIC for each model and save the results within the brmfit objects.
@@ -138,7 +144,6 @@ We'll also take a few formatting cues from [Edward Tufte](https://www.edwardtuft
 
 ```{r, message = F, warning = F}
 library(ggthemes)
-library(bayesplot)
 
 theme_set(theme_default() + 
             theme_tufte() +
@@ -243,6 +248,8 @@ ppa %>%
 McElreath didn't show the actual pairs plot in the text. Here's ours using `mcmc_pairs()`.
 
 ```{r, message = F, warning = F, fig.height = 4, fig.width = 4.5}
+library(bayesplot)
+
 # this helps us set our custom color scheme
 color_scheme_set(wes_palette("Moonrise2")[c(3, 1, 2, 2, 1, 1)])
 
@@ -277,14 +284,14 @@ b10.4 <-
       seed = 10)
 ```
 
-Within the tidyverse, `distinct()` yields the information you'd otherwise get from `unique()`.
+Within the tidyverse, the `distinct()` function returns the information you'd otherwise get from `unique()`.
 
 ```{r}
 d %>%
   distinct(actor)
 ```
 
-We have no need to use something like `depth=2` for our posterior summary.
+With a single-level model like this, we have no need to use something like `depth=2` for our posterior summary.
 
 ```{r}
 print(b10.4)
@@ -299,7 +306,7 @@ post %>%
   glimpse()
 ```
 
-Our variant of Figure 10.3:
+Here's our variant of Figure 10.3, the $\alpha$ density for `actor == 2`.
 
 ```{r, fig.height = 2.75, fig.width = 3}
 post %>%
@@ -344,10 +351,9 @@ f %>%
               alpha = 1, size = 1/2) +
   geom_line(data = d_plot_4,
             color = wes_palette("Moonrise2")[1], size = 1.25) +
-  scale_x_discrete(expand = c(.03, .03)) +
-  coord_cartesian(ylim = 0:1) +
-  labs(x = "prosoc_left/condition",
-       y = "proportion pulled left") +
+  scale_x_discrete("prosoc_left/condition", expand = c(.03, .03)) +
+  scale_y_continuous("proportion pulled left",
+                     breaks = c(0, .5, 1), limits = c(0, 1)) +
   theme(axis.ticks.x     = element_blank(),
         # color came from: https://www.color-hex.com/color/ccc591
         panel.background = element_rect(fill = "#d1ca9c",
@@ -355,9 +361,27 @@ f %>%
   facet_wrap(~actor)
 ```
 
+McElreath mused: "There are a number of loose ends with this analysis. Does model [`b10.4`], with its 6 additional parameters, still look good after estimating overfitting with WAIC?" (p. 302). We won't be following along with the practice problems at the end of the chapter, but we may as well just check the WAIC real quick.
+
+```{r, warning = F, message = F}
+b10.4 <- add_criterion(b10.4, "waic")
+
+loo_compare(b10.1, b10.2, b10.3, b10.4, criterion = "waic") %>% 
+  print(simplify = F)
+```
+
+Here are the updated WAIC weights.
+
+```{r}
+model_weights(b10.1, b10.2, b10.3, b10.4, weights = "waic") %>% 
+  round(digits = 2)
+```
+
+Both the WAIC differences and the WAIC weights suggest out 9-parameter `b10.4` was substantially better than the previous models, even after correcting for overfitting. Some times group averages aren't good enough. When you have data with many occasions within cases, fitting models that allow for individual differences is generally the way to go.
+
 #### Overthinking: Using the ~~by~~ `group_by()` function.
 
-Let's work within the tidyverse, instead. If you wanted to compute the proportion of trials `pulled_left == 1` for each combination of `prosoc_left`, `condition`, and chimp `actor`, you'd put those last three variables within `group_by()` and then compute the `mean()` of `pulled_left` within `summarise()`.
+Instead of focusing on base R, let's work within the tidyverse. If you wanted to compute the proportion of trials `pulled_left == 1` for each combination of `prosoc_left`, `condition`, and chimp `actor`, you'd put those last three variables within `group_by()` and then compute the `mean()` of `pulled_left` within `summarise()`.
 
 ```{r}
 d %>% 
@@ -382,11 +406,12 @@ d_aggregated %>%
   filter(actor %in% c(1, 2))
 ```
 
-To fit an aggregated binomial model in brms, we augment the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$.
+To fit an aggregated binomial model in brms, we augment the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$. Here we'll use the hard-code method, just like McElreath did in the text.
 
 ```{r b10.5_, cache = T, message = F, results = "hide"}
 b10.5 <-
-  brm(data = d_aggregated, family = binomial,
+  brm(data = d_aggregated, 
+      family = binomial,
       x | trials(18) ~ 1 + prosoc_left + condition:prosoc_left,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
@@ -432,7 +457,7 @@ The two are close within simulation error.
 
 ### Aggregated binomial: Graduate school admissions.
 
-Load the infamous `UCBadmit` data.
+Load the infamous `UCBadmit` data (see [Bickel, Hammel, & O'Connell, 1975](https://pdfs.semanticscholar.org/b704/3d57d399bd28b2d3e84fb9d342a307472458.pdf)).
 
 ```{r, message = F, warning = F}
 # detach(package:brms)
@@ -502,7 +527,12 @@ w <- loo_compare(b10.6, b10.7, criterion = "waic")
 print(w, simplify = F)
 ```
 
-If you prefer the difference in the WAIC metric, use our `cbind()` conversion method from above.
+If you prefer the difference in the WAIC metric, use our `cbind()` conversion method from above. Here are the WAIC weights.
+
+```{r}
+model_weights(b10.6, b10.7, weights = "waic") %>% 
+  round(digits = 2)
+```
 
 **Bonus: Information criteria digression.**
 
@@ -515,7 +545,7 @@ b10.7 <- add_criterion(b10.7, "loo")
 
 If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo/loo.pdf). As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics). Each case in the data gets its own $k$ value and we like it when those $k$s are low. The makers of the loo package get worried when those $k$s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
 
-First things first, if you explicitly open the loo package, you’ll have access to some handy diagnostic functions.
+First things first, if you explicitly open the loo package, you'll have access to some handy diagnostic functions.
 
 ```{r, message = F, warning = F}
 library(loo)
@@ -540,15 +570,13 @@ You may have noticed that this same table pops out when you just do something li
 plot(l_b10.6)
 ```
 
-So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ values, ordered by observation number. Our plot indicates cases 1, 2, 3, 11, and 12 had "very bad" $k$ values for this model. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
+So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ values, ordered by observation number. Our plot indicates cases 1, 3, 11, and 12 had "very bad" $k$ values for this model. Case 2 was just below the "very bad" threshold. If we wanted to further verify to ourselves which observations those were, we'd use the `pareto_k_ids()` function.
 
 ```{r}
 pareto_k_ids(l_b10.6, threshold = 1)
 ```
 
-Note our use of the `threshold` argument. Play around with it to see how it works.
-
-If you want an explicit look at those $k$ values, you do:
+Note our use of the `threshold` argument. Play around with it to see how it works. If you want an explicit look at those $k$ values, you execute something like this:
 
 ```{r}
 l_b10.6$diagnostics
@@ -560,7 +588,7 @@ Anyway, the implication of all this is these values suggest model `b10.6` isn't 
 
 Part of the warning message for model `b10.6` read: 
 
-> It is recommended to set 'reloo = TRUE' in order to calculate the ELPD without the assumption that these observations are negligible. This will refit the model [$n$] times to compute the ELPDs for the problematic observations directly.
+> It is recommended to set 'reloo = TRUE' in order to calculate the ELPD without the assumption that these observations are negligible. This will refit the model 7 times to compute the ELPDs for the problematic observations directly.
 
 Let's do that.
 
@@ -580,14 +608,14 @@ Now that looks better. We'll do the same thing for model `b10.7`.
 l_b10.7_reloo <- loo(b10.7, reloo = T)
 ```
 
-Okay, let's compare models with formal $\text{elpd}_{\text{loo}}$ differences before and after adjusting with `reloo = T`.
+Okay, let's compare models with formal $\text{elpd}_\text{loo}$ differences before and after adjusting with `reloo = T`.
 
 ```{r}
 loo_compare(l_b10.6, l_b10.7)
 loo_compare(l_b10.6_reloo, l_b10.7_reloo)
 ```
 
-In this case, the results are kinda similar. The standard errors for the differences are huge compared to the point estimates, suggesting large uncertainty. Watch out for this in your real-world data.
+In this case, the results are kinda similar. The standard errors for the differences are huge compared to the point estimates, suggesting large uncertainty. Watch out for this in your real-world data, though.
 
 But this has all been a tangent from the central thrust of this section. 
 
@@ -621,7 +649,7 @@ post %>%
             `97.5%` = quantile(diff_admit, probs = .975))
 ```
 
-Instead of the `summarise()` code, we could have also used `tidybayes::median_qi(diff_admit)`. It’s good to have options. Here's our version of Figure 10.5.
+Instead of the `summarise()` code, we could have also used `tidybayes::median_qi(diff_admit)`. It's good to have options. Here's our version of Figure 10.5.
 
 ```{r, fig.height = 2.5, fig.width = 4}
 d <-
@@ -659,7 +687,7 @@ ggplot(data = d, aes(x = case, y = admit / applications)) +
   theme(axis.ticks.x = element_blank())
 ```
 
-As alluded to in all that LOO/`pareto_k` talk, above, this is not a great fit. So we’ll ditch the last model paradigm for one that answers the new question "*What is the average difference in probability of admission between females and males within departments?*" (p. 307). The statistical formula for the full model follows the form
+As alluded to in all that LOO/`pareto_k` talk, above, this is not a great fit. So we'll ditch the last model paradigm for one that answers the new question "*What is the average difference in probability of admission between females and males within departments?*" (p. 307). The statistical formula for the full model follows the form
 
 \begin{align*}
 n_{\text{admit}_i}   & \sim \text{Binomial} (n_i, p_i) \\
@@ -681,7 +709,8 @@ b10.8 <-
 b10.9 <-
   update(b10.8,
          newdata = d,
-         formula = admit | trials(applications) ~ 0 + dept + male)
+         formula = admit | trials(applications) ~ 0 + dept + male,
+         seed = 10)
 ```
 
 Let's make two more `loo()` objects using `reloo = T`.
@@ -756,17 +785,23 @@ pairs(b10.9,
       off_diag_args = list(size = 1/10, alpha = 1/6))
 ```
 
+#### Rethinking: Simpson's paradox is not a paradox. 
+
+> This empirical example is a famous one in statistical teaching. It is often used to illustrate a phenomenon known as **Simpson’s paradox**. Like most paradoxes, there is no violation of logic, just of intuition. And since different people have different intuition, Simpson's paradox means different things to different people. The poor intuition being violated in this case is that a positive association in the entire population should also hold within each department. (p. 309, **emphasis** in the original)
+
+In my field of clinical psychology, Simpson's paradox is an important, if under-appreciated, phenomenon. If you're in the social sciences as well, I highly recommend spending more time thinking about it. To get you started, I blogged about it [here](https://solomonkurz.netlify.com/post/individuals-are-not-small-groups-i-simpson-s-paradox/) and Kievit, Frankenhuis, Waldorp, and Borsboom (2013) wrote a great tutorial paper, [*Simpson's paradox in psychological science: a practical guide*](https://www.frontiersin.org/articles/10.3389/fpsyg.2013.00513/full).
+
 #### Overthinking: WAIC and aggregated binomial models.
 
 McElreath wrote:
 
-> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see Chapter 6). So what you define as a "point" affects WAIC’s value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation. (p. 309)
+> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see Chapter 6). So what you define as a "point" affects WAIC's value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation. (p. 309)
 
 To my knowledge, `brms::waic()` and `brms::loo()` do not do this, which might well be why some of our values didn't match up with those in the text. If you have additional insight on this, please [share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 ### Fitting binomial regressions with `glm()`.
 
-We're not here to learn frequentist code, so we're going to skip most of this section. But model `b.good` is worth fitting. Here are the data.
+We're not here to learn frequentist code, so we're going to skip most of this section. But model `m.good` is worth fitting. Here are the data.
 
 ```{r}
 # outcome and predictor almost perfectly associated
@@ -774,11 +809,12 @@ y <- c(rep(0, 10), rep(1, 10))
 x <- c(rep(-1, 9), rep(1, 11))
 ```
 
-Fit the `b.good` model.
+We are going to depart from McElreath's naming convention in the text and call this fit `b10.good`. It'll make it easier to find in this project's [`fits` folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits). 
 
 ```{r fit_b.good, cache = T, message = F, warning = F, results = "hide"}
-b.good <-
-  brm(data = list(y = y, x = x), family = binomial,
+b10.good <-
+  brm(data = list(y = y, x = x), 
+      family = binomial,
       y ~ 1 + x,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
@@ -788,23 +824,25 @@ b.good <-
 Our model summary will differ a bit from the one in the text. It seems this is because of the MAP/HMC contrast and our choice of priors.
 
 ```{r}
-print(b.good)
+print(b10.good)
 ```
 
 You might experiment with different prior $SD$s to see how they influence the posterior $SD$s. Anyways, here's the `pairs()` plot McElreath excluded from the text.
 
 ```{r, fig.width = 3.25, fig.height = 3}
-pairs(b.good,
+pairs(b10.good,
       off_diag_args = list(size = 1/10, alpha = 1/6))
 ```
 
-That posterior, my friends, is not multivariate Gaussian. The plot deserves and extensive quote from McElreath.
+That posterior, my friends, is not multivariate Gaussian. The plot deserves an extensive quote from McElreath.
 
-> Inspecting the pairs plot (~~not~~ shown) demonstrates just how subtle even simple models can be, once we start working with GLMs. I don't say this to scare the reader. But it's true that even simple models can behave in complicated ways. How you fit the model is part of the model, and in principle no GLM is safe for MAP estimation. (p. 311)
+> Inspecting the pairs plot (~~not~~ shown) demonstrates just how subtle even simple models can be, once we start working with GLMs. I don't say this to scare the reader. But it's true that even simple models can behave in complicated ways. *How you fit the model is part of the model, and in principle no GLM is safe for MAP estimation*. (p. 311, *emphasis* added)
 
 ## Poisson regression
 
-We'll simulate our sweet count data.
+> When a binomial distribution has a very small probability of an event $p$ and a very large number of trials $n$, then it takes on a special shape. The expected value of a binomial distribution is just $np$, and its variance is $np(1 - p)$. But when $n$ is very large and $p$ is very small, then these are approximately the same. (p. 311)
+
+Data of this kind are often called count data. Here we simulate some.
 
 ```{r}
 set.seed(10) # make the results reproducible
@@ -822,12 +860,33 @@ As $\lambda$ expresses both mean and variance because, within this model, the va
 
 \begin{align*}
 y_i                    & \sim \text{Poisson} (\lambda_i) \\
-\text{log} (\lambda_i) & = \alpha + \beta x_i
+\log (\lambda_i) & = \alpha + \beta x_i
 \end{align*}
+
+We read further:
+
+> The parameter $\lambda$ is the expected value, but it's also commonly thought of as a rate. Both interpretations are correct, and realizing this allows to make Poisson models for which the exposure varies across cases $i$...
+>
+> Implicitly, $\lambda$ is equal to an expected number of events, $\mu$, per unit of time or distance, $\tau$. This implies that $\lambda = \mu/\tau$, which lets us redefine the link:
+>
+> \begin{align*}
+> y_i                    & \sim \text{Poisson} (\lambda_i) \\
+> \log \lambda_i & = \log \frac{\mu_i}{\tau_i} = \alpha + \beta x_i
+> \end{align*}
+>
+> Since the logarithm of a ratio is the same as a difference of logarithms, we can also write:
+>
+> $$\log \lambda_i = \log \mu_i - \log \tau_i = \alpha + \beta x_i$$
+>
+> These $\tau$ values are the "exposures." So if different observations $i$ have different exposures, this implies that the expected value on row $i$ is given by:
+>
+> $$\log \mu_i = \log \tau_i + \alpha + \beta x_i$$
+>
+> When $\tau_i = 1$, then $\log \tau_i = 0$ and we're back where we started. But when the exposure varies across cases, then $\tau_i$ does the important work of correctly scaling the expected number of events for each case $i$. (pp. 312--313)
 
 ### Example: Oceanic tool complexity.
 
-Load the `Kline` data.
+Load the `Kline` data (see [Kline & Boyd, 2010](https://royalsocietypublishing.org/doi/full/10.1098/rspb.2010.0452)).
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -869,7 +928,8 @@ The only new thing in our model code is `family = poisson`. brms defaults to the
 
 ```{r b10.10, cache = T, message = F, warning = F, results = "hide"}
 b10.10 <-
-  brm(data = d, family = poisson,
+  brm(data = d, 
+      family = poisson,
       total_tools ~ 1 + log_pop + contact_high + contact_high:log_pop,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b)),
@@ -881,21 +941,18 @@ b10.10 <-
 print(b10.10)
 ```
 
-Here's the lower triangle of the correlation matrix for the parameters.
+We can use `vcov()` to extract the correlation matrix for the parameters.
 
 ```{r}
-post <-
-  posterior_samples(b10.10)
-
-post %>%
-  select(-lp__) %>% 
-  rename(b_interaction = `b_log_pop:contact_high`) %>%
-  psych::lowerCor()
+vcov(b10.10, cor = T) %>% 
+  round(digits = 2)
 ```
 
 And here's the coefficient plot via `bayesplot::mcmc_intervals()`.
 
 ```{r, fig.width = 8, fig.height = 1.25}
+post <- posterior_samples(b10.10)
+
 # we'll set a renewed color theme
 color_scheme_set(wes_palette("Moonrise2")[c(2, 1, 4, 2, 1, 1)])
 
@@ -990,15 +1047,18 @@ Here we deconstruct model `b10.10`, bit by bit.
 ```{r b10.11_through_b10.14_seed_10, cache = T, message = F, warning = F, results = "hide"}
 # no interaction
 b10.11 <- 
-  update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high)
+  update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high,
+         seed = 10)
 
 # no contact rate
 b10.12 <-
-  update(b10.10, formula = total_tools ~ 1 + log_pop)
+  update(b10.10, formula = total_tools ~ 1 + log_pop,
+         seed = 10)
 
 # no log-population
 b10.13 <-
-  update(b10.10, formula = total_tools ~ 1 + contact_high)
+  update(b10.10, formula = total_tools ~ 1 + contact_high,
+         seed = 10)
 
 # intercept only
 b10.14 <-
@@ -1089,7 +1149,7 @@ ppa %>%
         panel.border    = element_blank())
 ```
 
-In case you were curious, here are those LOO weights:
+In case you were curious, here are those LOO weights.
 
 ```{r loo_weights, cache = T}
 model_weights(b10.10, b10.11, b10.12, 
@@ -1128,43 +1188,83 @@ b10.10_c <-
 print(b10.10_c)
 ```
 
-We'll use `mcmc_pairs()`, again, for Figure 10.10.a.
+We've been using `bayesplot::mcmc_pairs()` a lot for our posterior pairs plots. Let's get in a little practice with `GGally::ggpairs()` for Figure 10.10. In Chapters 5 and 8, we used custom functions to augment the default `ggpairs()` output. We'll continue that trend, here. Here are the custom functions for the upper triangle, the diagonal, and the lower triangle.
 
-```{r, message = F, warning = F, fig.height = 3.5, fig.width = 3.75}
-# this helps us set our custom color scheme
-color_scheme_set(wes_palette("Moonrise2")[c(3, 1, 2, 2, 1, 1)])
+```{r}
+my_upper <- function(data, mapping, ...) {
+  
+  # get the x and y data to use the other code
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  r  <- unname(cor.test(x, y)$estimate)
+  rt <- format(r, digits = 2)[1]
+  tt <- as.character(rt)
+  
+  # plot the cor value
+  ggally_text(
+    label = tt, 
+    mapping = aes(),
+    size = 4,
+    color = wes_palette("Moonrise2")[4], 
+    family = "Times") +
+    theme_void()
+}
 
-# the actual plot
-mcmc_pairs(x = posterior_samples(b10.10),
-           pars = c("b_Intercept", "b_log_pop", "b_contact_high", "b_log_pop:contact_high"),
-           off_diag_args = list(size = 1/10, alpha = 1/10),
-           diag_fun = "dens")
+my_diag <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) + 
+    geom_density(fill = wes_palette("Moonrise2")[2], size = 0) +
+    theme_void()
+}
+
+my_lower <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) + 
+    geom_point(color = wes_palette("Moonrise2")[1], 
+               size = 1/10, alpha = 1/10) +
+    theme_void()
+}
 ```
 
-And now behold Figure 10.10.b. 
+To learn more about the nature of the code for the `my_upper()` function, check out [Issue #139](https://github.com/ggobi/ggally/issues/139) in the [GGally GitHub repository](https://github.com/ggobi/ggally). Here are our plots for the left and right panels of Figure 10.10.
 
-```{r, message = F, warning = F, fig.height = 3.5, fig.width = 3.75}
-mcmc_pairs(x = posterior_samples(b10.10_c),
-           pars = c("b_Intercept", "b_log_pop_c", "b_contact_high", "b_log_pop_c:contact_high"),
-           off_diag_args = list(size = 1/10, alpha = 1/10),
-           diag_fun = "dens")
+```{r, fig.height = 3.5, fig.width = 4, warning = F, message = F}
+library(GGally)
+
+# left panel for `b10.10`
+posterior_samples(b10.10) %>% 
+  select(-lp__) %>% 
+  set_names(c("alpha", "beta[log_pop]", "beta[contact_high]", "beta[interaction]")) %>%
+  ggpairs(upper = list(continuous = my_upper),
+          diag  = list(continuous = my_diag),
+          lower = list(continuous = my_lower),
+          labeller = "label_parsed") +
+  ggtitle("Model: b10.10") +
+  theme(strip.text = element_text(size = 11))
+
+# right panel for `b10.10_c`
+posterior_samples(b10.10_c) %>% 
+  select(-lp__) %>% 
+  set_names(c("alpha", "beta[log_pop_c]", "beta[contact_high]", "beta[interaction]")) %>%
+  ggpairs(upper = list(continuous = my_upper),
+          diag  = list(continuous = my_diag),
+          lower = list(continuous = my_lower),
+          labeller = "label_parsed") +
+  ggtitle("Model: b10.10_c") +
+  theme(strip.text = element_text(size = 11))
 ```
 
-If you really want the correlation point estimates, use `psych::lowerCorr()`.
-
-```{r, warning = F, message = F}
-psych::lowerCor(posterior_samples(b10.10)[, 1:4])
-psych::lowerCor(posterior_samples(b10.10_c)[, 1:4])
-```
+In case you were wondering, it turns out you cannot combine `GGally::ggpairs()` plots with syntax from the patchwork package. Go [here](https://github.com/thomasp85/patchwork/issues/52) to learn why.
 
 ### Example: Exposure and the offset.
 
-> For the last Poisson example, we’ll look at a case where the exposure varies across observations. When the length of observation, area of sampling, or intensity of sampling varies, the counts we observe also naturally vary. Since a Poisson distribution assumes that the rate of events is constant in time (or space), it’s easy to handle this. All we need to do, as explained on page 312 [of the text], is to add the logarithm of the exposure to the linear model. The term we add is typically called an *offset*. (p. 321, *emphasis* in the original)
+> For the last Poisson example, we'll look at a case where the exposure varies across observations. When the length of observation, area of sampling, or intensity of sampling varies, the counts we observe also naturally vary. Since a Poisson distribution assumes that the rate of events is constant in time (or space), it's easy to handle this. All we need to do, as explained on page 312 [of the text], is to add the logarithm of the exposure to the linear model. The term we add is typically called an *offset*. (p. 321, *emphasis* in the original)
 
 Here we simulate our data.
 
 ```{r}
 set.seed(10)
+
+
 
 num_days  <- 30
 y         <- rpois(num_days, 1.5)
@@ -1189,7 +1289,8 @@ With the brms package, you use the `offset()` syntax, in which you put a pre-pro
 
 ```{r b10.15, cache = T, message = F, warning = F, results = "hide"}
 b10.15 <-
-  brm(data = d, family = poisson,
+  brm(data = d, 
+      family = poisson,
       y ~ 1 + offset(log_days) + monastery,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b)),
@@ -1197,15 +1298,24 @@ b10.15 <-
       seed = 10)
 ```
 
-The model summary:
+As we look at the model summary, keep in mind that the parameters are on the per-one-unit-of-time scale. Since we simulated the data based on summary information from two units of time--one day and seven days--, this means the parameters are in the scale of $\log (\lambda)$ per one day.
 
 ```{r}
 print(b10.15)
 ```
 
-The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It’s a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
+The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It's a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
 
-Here we'll compute the posterior means and 89% HDIs with `tidybayes::mean_hdi()`.
+To get the posterior distributions for average daily outputs for the old and new monasteries, respectively, we'll use use the following formulas:
+
+$$
+\begin{align*}
+\lambda_\text{old} & = \exp (\alpha) \\
+\lambda_\text{new} & = \exp (\alpha + \beta_\text{monastery})
+\end{align*}
+$$
+
+Following those transformations, we'll summarize the $\lambda$ distributions with medians and 89% HDIs with help from the `tidybayes::mean_hdi()` function.
 
 ```{r, message = F, warning = F}
 library(tidybayes)
@@ -1220,11 +1330,11 @@ posterior_samples(b10.15) %>%
   mutate_if(is.double, round, digits = 2)
 ```
 
-As McElreath pointed out in the text, "Your estimates will be slightly different, because you got different randomly simulated data" (p. 322).
+As McElreath pointed out in the text, "Your estimates will be slightly different, because you got different randomly simulated data" (p. 322). However, if you look back up to our simulation code, those median values are pretty close to the `1.5` and `0.5` values we plugged into the `rpois()` functions.
 
 ## Other count regressions
 
-The next two of the remaining four models are maximum entropy distributions for certain problem types. The last two are mixtures, of which we’ll see more in the next chapter. 
+The next two of the remaining four models are maximum entropy distributions for certain problem types. The last two are mixtures, of which we'll see more in the next chapter. 
 
 ### Multinomial.
 
@@ -1374,7 +1484,7 @@ tibble(career) %>%
 
 We did it!
 
-"Be aware that the estimates you get from these models are extraordinarily difficult to interpret. You absolutely must convert them to a vector of probabilities, to make much sense of them" (p. 325). Indeed. We spent a lot of time fussing about *score* values. But at no time did we really ever care about those. We wanted probabilities. And somewhat maddeningly, the parameters of our `brm()` model were in the metric of $K - 1$ *scores*, not probabilities. Sigh.
+"Be aware that the estimates you get from these models are extraordinarily difficult to interpret. You absolutely must convert them to a vector of probabilities, to make much sense of them" (p. 325). Indeed. We spent a lot of time fussing about *score* values. But at no time did we really ever care about those. We wanted probabilities! And somewhat maddeningly, the parameters of our `brm()` model were in the metric of $K - 1$ *scores*, not probabilities. *Sigh*.
 
 At least we can get an intuitive diagnostic summary with `pp_check()`.
 
@@ -1389,9 +1499,9 @@ pp_check(b10.16, type = "hist", binwidth = 1) +
 
 Our posterior predictive check indicates the model produces synthetic data that resemble the original data.
 
-Before we move on, I have a confession to make. If you look closely at the code McElreath used fo fit his `m10.16`, you'll see it yields a single `b` parameter. But our `b10.16` model has two parameters. What gives? Whereas we estimates the score values for `career == 2` and `career == 3` separately, McElreath used an interesting nonlinear syntax to get them with one. I have not been able to reproduce his exact method with brms. Based on a [comment from Bürkner](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5#issuecomment-378760263), it appears McElreath's model requires the `custom_family` feature from brms. I'm not currenlty nimple enough with these models to impliment that. If you've got the chops, [please share your code](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5).
+Before we move on, I have a confession to make. If you look closely at the code McElreath used fo fit his `m10.16`, you'll see it yields a single `b` parameter. But our `b10.16` model has two parameters. *What gives?* Whereas we estimated the score values for `career == 2` and `career == 3` separately, McElreath used an interesting nonlinear syntax to get them with one. I have not been able to reproduce his exact method with brms. Based on a [comment from Bürkner](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5#issuecomment-378760263), it appears McElreath's model requires the `custom_family()` feature from brms. I'm not currenlty nimple enough with these models to impliment that. If you've got the chops, [please share your code](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5).
 
-Let's move forward. Here's the second data simulation, this time based on McElreath's R code 10.58.
+Let's move forward. Here is the second data simulation, this time based on McElreath's R code 10.58.
 
 ```{r, warning = F, message = F}
 library(rethinking)
@@ -1569,15 +1679,16 @@ Fit the models.
 
 ```{r b_binom_and_b_pois, cache = T, warning = F, message = F}
 # binomial model of overall admission probability
-b_binom <-
-  brm(data = d, family = binomial,
+b10.binom <-
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1,
       prior(normal(0, 100), class = Intercept),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
       seed = 10)
 
 # Poisson model of overall admission rate and rejection rate
-b_pois <-
+b10.pois <-
   brm(data = d %>%
         mutate(rej = reject),  # 'reject' is a reserved word
       family = poisson,
@@ -1587,11 +1698,11 @@ b_pois <-
       seed = 10)
 ```
 
-Note, the `mvbind()` syntax made `b_pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b_pois`.
+Note, the `mvbind()` syntax made `b10.pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b10.pois`.
 
 ```{r, fig.height = 2.5, fig.width = 6.5}
 # extract the samples
-post <- posterior_samples(b_pois)
+post <- posterior_samples(b10.pois)
 
 # wrangle
 post %>%
@@ -1615,22 +1726,22 @@ post %>%
 Compare the model summaries.
 
 ```{r}
-summary(b_binom)$fixed
-summary(b_pois)$fixed
+summary(b10.binom)$fixed
+summary(b10.pois)$fixed
 ```
 
-Here's the posterior mean for the probability of admission, based on `b_binom`.
+Here's the posterior mean for the probability of admission, based on `b10.binom`.
 
 ```{r}
-fixef(b_binom)[ ,"Estimate"] %>%
+fixef(b10.binom)[ ,"Estimate"] %>%
   inv_logit_scaled()
 ```
 
-Happily, we get the same value within simulation error from model `b_pois`.
+Happily, we get the same value within simulation error from model `b10.pois`.
 
 ```{r}
 k <- 
-  fixef(b_pois) %>%
+  fixef(b10.pois) %>%
   as.numeric()
 
 exp(k[1]) / (exp(k[1]) + exp(k[2]))
@@ -1645,9 +1756,9 @@ To get a better appreciation on how well the two model types converge on the sam
 ```{r, fig.width = 4.5, fig.height = 2.5}
 # wrangle
 bind_cols(
-  posterior_samples(b_pois) %>% 
+  posterior_samples(b10.pois) %>% 
     mutate(`the Poisson`  = exp(b_admit_Intercept) / (exp(b_admit_Intercept) + exp(b_rej_Intercept))),
-  posterior_samples(b_binom) %>% 
+  posterior_samples(b10.binom) %>% 
     mutate(`the binomial` = inv_logit_scaled(b_Intercept))
   ) %>% 
   pivot_longer(starts_with("the")) %>% 
@@ -1728,6 +1839,10 @@ plot(conditional_effects(b10.18),
                     fill  = wes_palette("Moonrise2")[1]))
 ```
 
+## Summary
+
+> This chapter described some of the most common generalized linear models, those used to model counts. It is important to never convert counts to proportions before analysis, because doing so destroys information about sample size. A fundamental difficulty with these models is that the parameters are on a different scale, typically log-odds (for binomial) or log-rate (for Poisson), than the outcome variable they describe. Therefore computing implied predictions is even more important than before. (pp. 328--329)
+
 ## Reference {-}
 
 [McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
@@ -1739,7 +1854,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, d_text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, b10.17, k, b_binom, b_pois, b10.18)
+rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, d_text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, my_upper, my_diag, my_lower, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, b10.17, k, b10.binom, b10.pois, b10.18)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
