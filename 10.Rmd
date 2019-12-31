@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_10, echo = FALSE, cache = FALSE}
+```{r, echo = FALSE, cache = FALSE}
 options(width = 110)
 ```
 
@@ -56,7 +56,13 @@ We start with the simple intercept-only logistic regression model, which follows
 
 In the `brm()` `formula` syntax, including a `|` bar on the left side of a formula indicates we have extra supplementary information about our criterion. In this case, that information is that each `pulled_left` value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
 
-```{r b10.1_, cache = T, warning = F, message = F, results = "hide"}
+```{r b10.1, echo = F}
+# save(b10.1, file = "fits/b10.01.rda")
+# rm(b10.1)
+load("fits/b10.01.rda")
+```
+
+```{r, eval = F}
 b10.1 <-
   brm(data = d, 
       family = binomial,
@@ -90,7 +96,16 @@ fixef(b10.1) %>%
 
 With the next two chimp models, we add predictors in the usual way.
 
-```{r b10.2_and_b10.3, cache = T, warning = F, message = F, results = "hide"}
+```{r b10.2, echo = F}
+# save(b10.2, file = "fits/b10.02.rda")
+# save(b10.3, file = "fits/b10.03.rda")
+# rm(b10.2)
+# rm(b10.3)
+load("fits/b10.02.rda")
+load("fits/b10.03.rda")
+```
+
+```{r, eval = F}
 b10.2 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 1 + prosoc_left,
@@ -274,7 +289,13 @@ In equations, the next model follows the form
 
 Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice we're using the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model will be of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
 
-```{r b10.4_, cache = T, message = F, warning = F}
+```{r b10.4, echo = F}
+# save(b10.4, file = "fits/b10.04.rda")
+# rm(b10.4)
+load("fits/b10.04.rda")
+```
+
+```{r, eval = F}
 b10.4 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left ,
@@ -408,7 +429,13 @@ d_aggregated %>%
 
 To fit an aggregated binomial model in brms, we augment the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$. Here we'll use the hard-code method, just like McElreath did in the text.
 
-```{r b10.5_, cache = T, message = F, results = "hide"}
+```{r b10.5, echo = F}
+# save(b10.5, file = "fits/b10.05.rda")
+# rm(b10.5)
+load("fits/b10.05.rda")
+```
+
+```{r, eval = F}
 b10.5 <-
   brm(data = d_aggregated, 
       family = binomial,
@@ -495,7 +522,16 @@ n_{\text{admit}_i} & \sim \text{Binomial} (n_i, p_i) \\
 
 The second model omits the `male` predictor.
 
-```{r b10.6_and_b10.7, cache = T, message = F, results = "hide"}
+```{r b10.6, echo = F}
+# save(b10.6, file = "fits/b10.06.rda")
+# save(b10.7, file = "fits/b10.07.rda")
+# rm(b10.6)
+# rm(b10.7)
+load("fits/b10.06.rda")
+load("fits/b10.07.rda")
+```
+
+```{r, eval = F}
 b10.6 <-
   brm(data = d, family = binomial,
       admit | trials(applications) ~ 1 + male ,
@@ -661,7 +697,7 @@ p <-
   as_tibble() %>% 
   bind_cols(d)
 
-d_text <-
+text <-
   d %>%
   group_by(dept) %>%
   summarise(case  = mean(as.numeric(case)),
@@ -677,7 +713,7 @@ ggplot(data = d, aes(x = case, y = admit / applications)) +
   geom_point(color = wes_palette("Moonrise2")[2]) +
   geom_line(aes(group = dept),
             color = wes_palette("Moonrise2")[2]) +
-  geom_text(data = d_text,
+  geom_text(data = text,
             aes(y = admit, label = dept),
             color = wes_palette("Moonrise2")[2],
             family = "serif") +
@@ -698,7 +734,16 @@ n_{\text{admit}_i}   & \sim \text{Binomial} (n_i, p_i) \\
 
 We don't need to coerce an index like McElreath did in the text. But here are the models.
 
-```{r b10.8_and_b10.9, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.8, echo = F}
+# save(b10.8, file = "fits/b10.08.rda")
+# save(b10.9, file = "fits/b10.09.rda")
+# rm(b10.8)
+# rm(b10.9)
+load("fits/b10.08.rda")
+load("fits/b10.09.rda")
+```
+
+```{r, eval = F}
 b10.8 <-
   brm(data = d, family = binomial,
       admit | trials(applications) ~ 0 + dept,
@@ -811,7 +856,13 @@ x <- c(rep(-1, 9), rep(1, 11))
 
 We are going to depart from McElreath's naming convention in the text and call this fit `b10.good`. It'll make it easier to find in this project's [`fits` folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits). 
 
-```{r fit_b.good, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.good, echo = F}
+# save(b10.good, file = "fits/b10.good.rda")
+# rm(b10.good)
+load("fits/b10.good.rda")
+```
+
+```{r, eval = F}
 b10.good <-
   brm(data = list(y = y, x = x), 
       family = binomial,
@@ -926,7 +977,13 @@ Our statistical model will follow the form
 
 The only new thing in our model code is `family = poisson`. brms defaults to the `log()` link.
 
-```{r b10.10, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.10, echo = F}
+# save(b10.10, file = "fits/b10.10.rda")
+# rm(b10.10)
+load("fits/b10.10.rda")
+```
+
+```{r, eval = F}
 b10.10 <-
   brm(data = d, 
       family = poisson,
@@ -1044,7 +1101,22 @@ To get a feel for what's possible with `ggMarginal()`, check out [Dean Attali](h
 
 Here we deconstruct model `b10.10`, bit by bit.
 
-```{r b10.11_through_b10.14_seed_10, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.11, echo = F}
+# save(b10.11, file = "fits/b10.11.rda")
+# save(b10.12, file = "fits/b10.12.rda")
+# save(b10.13, file = "fits/b10.13.rda")
+# save(b10.14, file = "fits/b10.14.rda")
+# rm(b10.11)
+# rm(b10.12)
+# rm(b10.13)
+# rm(b10.14)
+load("fits/b10.11.rda")
+load("fits/b10.12.rda")
+load("fits/b10.13.rda")
+load("fits/b10.14.rda")
+```
+
+```{r, eval = F}
 # no interaction
 b10.11 <- 
   update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high,
@@ -1151,7 +1223,7 @@ ppa %>%
 
 In case you were curious, here are those LOO weights.
 
-```{r loo_weights, cache = T}
+```{r}
 model_weights(b10.10, b10.11, b10.12, 
               weights = "loo")
 ```
@@ -1174,7 +1246,13 @@ d <-
 
 Now fit the `log_pop`-centered model.
 
-```{r b10.10_c, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.10_c, echo = F}
+# save(b10.10_c, file = "fits/b10.10_c.rda")
+# rm(b10.10_c)
+load("fits/b10.10_c.rda")
+```
+
+```{r, eval = F}
 b10.10_c <-
   brm(data = d, family = poisson,
       total_tools ~ 1 + log_pop_c + contact_high + contact_high:log_pop_c,
@@ -1264,8 +1342,6 @@ Here we simulate our data.
 ```{r}
 set.seed(10)
 
-
-
 num_days  <- 30
 y         <- rpois(num_days, 1.5)
 
@@ -1287,7 +1363,13 @@ Let's make them tidy and add `log_days`.
 
 With the brms package, you use the `offset()` syntax, in which you put a pre-processed variable like `log_days` or the log of a variable, such as `log(days)`.
 
-```{r b10.15, cache = T, message = F, warning = F, results = "hide"}
+```{r b10.15, echo = F}
+# save(b10.15, file = "fits/b10.15.rda")
+# rm(b10.15)
+load("fits/b10.15.rda")
+```
+
+```{r, eval = F}
 b10.15 <-
   brm(data = d, 
       family = poisson,
@@ -1308,12 +1390,10 @@ The model summary helps clarify that when you use `offset()`, `brm()` fixes the 
 
 To get the posterior distributions for average daily outputs for the old and new monasteries, respectively, we'll use use the following formulas:
 
-$$
 \begin{align*}
 \lambda_\text{old} & = \exp (\alpha) \\
 \lambda_\text{new} & = \exp (\alpha + \beta_\text{monastery})
 \end{align*}
-$$
 
 Following those transformations, we'll summarize the $\lambda$ distributions with medians and 89% HDIs with help from the `tidybayes::mean_hdi()` function.
 
@@ -1430,7 +1510,13 @@ library(brms)
 
 Here's our multinomial model in brms. Do note the specification `family = categorical(link = logit)`.
       
-```{r b10.16_seed_10, cache = T, message = F, warning = F}
+```{r b10.16, echo = F}
+# save(b10.16, file = "fits/b10.16.rda")
+# rm(b10.16)
+load("fits/b10.16.rda")
+```
+
+```{r, eval = F}
 b10.16 <-
   brm(data = list(career = career), 
       family = categorical(link = logit),
@@ -1564,7 +1650,13 @@ library(brms)
 
 Here's the brms version of McElreath's `m10.17`.
 
-```{r b10.17_seed_10, cache = T, message = F, warning = F}
+```{r b10.17, echo = F}
+# save(b10.17, file = "fits/b10.17.rda")
+# rm(b10.17)
+load("fits/b10.17.rda")
+```
+
+```{r, eval = F}
 b10.17 <-
   brm(data = list(career        = career,  # note how we used a list instead of a tibble
                   family_income = family_income), 
@@ -1677,7 +1769,16 @@ library(brms)
 
 Fit the models.
 
-```{r b_binom_and_b_pois, cache = T, warning = F, message = F}
+```{r b10.binom, echo = F}
+# save(b10.binom, file = "fits/b10.binom.rda")
+# save(b10.pois, file = "fits/b10.pois.rda")
+# rm(b10.binom)
+# rm(b10.pois)
+load("fits/b10.binom.rda")
+load("fits/b10.pois.rda")
+```
+
+```{r, eval = F}
 # binomial model of overall admission probability
 b10.binom <-
   brm(data = d, 
@@ -1723,7 +1824,7 @@ post %>%
         axis.ticks.y    = element_blank())
 ```
 
-Compare the model summaries.
+We might compare the model summaries.
 
 ```{r}
 summary(b10.binom)$fixed
@@ -1790,6 +1891,7 @@ Here we simulate exemplar data.
 ```{r}
 # simulate
 n <- 100
+
 set.seed(10)
 x <- runif(n)
 
@@ -1808,7 +1910,13 @@ list(x = x, y = y) %>%
 
 We fit the geometric model using `family = geometric(link = log)`.
 
-```{r b10.18_seed_10, cache = T, warning = F, message = F}
+```{r b10.18, echo = F}
+# save(b10.18, file = "fits/b10.18.rda")
+# rm(b10.18)
+load("fits/b10.18.rda")
+```
+
+```{r, eval = F}
 b10.18 <-
   brm(data = list(y = y, x = x), 
       family = geometric(link = log),
@@ -1854,7 +1962,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, d_text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, my_upper, my_diag, my_lower, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, b10.17, k, b10.binom, b10.pois, b10.18)
+rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_reloo, l_b10.7_reloo, p, text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b10.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, my_upper, my_diag, my_lower, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, p1, p2, b10.17, k, b10.binom, b10.pois, b10.18)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
