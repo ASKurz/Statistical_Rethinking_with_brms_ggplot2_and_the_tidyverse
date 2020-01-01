@@ -12,19 +12,21 @@ options(width = 100)
 
 # Adventures in Covariance
 
-> In this chapter, you’ll see how to… specify varying slopes in combination with the varying intercepts of the previous chapter. This will enable pooling that will improve estimates of how different units respond to or are influenced by predictor variables. It will also improve estimates of intercepts, by borrowing information across parameter types. Essentially, varying slopes models are massive interaction machines. They allow every unit in the data to have its own unique response to any treatment or exposure or event, while also improving estimates via pooling. When the variation in slopes is large, the average slope is of less interest. Sometimes, the pattern of variation in slopes provides hints about omitted variables that explain why some units respond more or less. We’ll see an example in this chapter.
+> In this chapter, you'll see how to... specify **varying slopes** in combination with the varying intercepts of the previous chapter. This will enable pooling that will improve estimates of how different units respond to or are influenced by predictor variables. It will also improve estimates of intercepts, by borrowing information across parameter types. Essentially, varying slopes models are massive interaction machines. They allow every unit in the data to have its own unique response to any treatment or exposure or event, while also improving estimates via pooling. When the variation in slopes is large, the average slope is of less interest. Sometimes, the pattern of variation in slopes provides hints about omitted variables that explain why some units respond more or less. We'll see an example in this chapter.
 >
-> The machinery that makes such complex varying effects possible will be used later in the chapter to extend the varying effects strategy to more subtle model types, including the use of continuous categories, using Gaussian process. (p. 388)
+> The machinery that makes such complex varying effects possible will be used later in the chapter to extend the varying effects strategy to more subtle model types, including the use of continuous categories, using **Gaussian process**. (p. 388, **emphasis** in the original)
 
 ## Varying slopes by construction
 
 > How should the robot pool information across intercepts and slopes? By modeling the joint population of intercepts and slopes, which means by modeling their covariance. In conventional multilevel models, the device that makes this possible is a joint multivariate Gaussian distribution for all of the varying effects, both intercepts and slopes. So instead of having two independent Gaussian distributions of intercepts and of slopes, the robot can do better by assigning a two-dimensional Gaussian distribution to both the intercepts (first dimension) and the slopes (second dimension). (p. 389)
 
-In the **Rethinking: Why Gaussian?** box, McElreath discussed how researchers might use other multivariate distributions to model multiple random effects. The only one he named as an alternative to the Gaussian was the multivariate Student's $t$. As it turns out, brms does currently allow users to use multivariate Student’s $t$ in this way. For details, check out [this discussion from the brms GitHub repository](https://github.com/paul-buerkner/brms/issues/231). Bürkner's exemplar syntax from his comment on May 13, 2018, was `y ~ x + (x | gr(g, dist = "student"))`. I haven't experimented with this, but if you do, do consider [commenting on how it went](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
+#### Rethinking: Why Gaussian?
+
+McElreath discussed how researchers might use other multivariate distributions to model multiple random effects. The only one he named as an alternative to the Gaussian was the multivariate Student's $t$. As it turns out, brms does currently allow users to use multivariate Student's $t$ in this way. For details, check out [this discussion from the brms GitHub repository](https://github.com/paul-buerkner/brms/issues/231). Bürkner's exemplar syntax from his comment on May 13, 2018, was `y ~ x + (x | gr(g, dist = "student"))`. I haven't experimented with this, but if you do, do consider [sharing how it went](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 ### Simulate the population.
 
-If you follow this section closely, it's a great template for simulating multilevel code for any of your future projects. You might think of this as an alternative to a frequentist power analysis. Vourre has done [some nice work along these lines](https://gitlab.com/vuorre/bayesplan) and I have a [blog series](https://solomonkurz.netlify.com/post/bayesian-power-analysis-part-i/) on Bayesian power analysis.
+If you follow this section closely, it's a great template for simulating multilevel code for any of your future projects. You might think of this as an alternative to a frequentist power analysis. Vourre has done [some nice work along these lines](https://gitlab.com/vuorre/bayesplan), I have a [blog series](https://solomonkurz.netlify.com/post/bayesian-power-analysis-part-i/) on Bayesian power analysis, and Kruschke covered the topic in [Chapter 13 of his text](https://sites.google.com/site/doingbayesiandataanalysis/).
 
 ```{r}
 a       <-  3.5  # average morning wait time
@@ -71,7 +73,7 @@ vary_effects <-
 head(vary_effects)
 ```
 
-Let's make sure we’re keeping this all straight. ` a_cafe ` = our café-specific intercepts; `b_cafe ` = our café-specific slopes. These aren’t the actual data, yet. But at this stage, it might make sense to ask *What's the distribution of `a_cafe` and `b_cafe`?* Our variant of Figure 13.2 contains the answer.
+Let's make sure we’re keeping this all straight. ` a_cafe ` = our café-specific intercepts; `b_cafe ` = our café-specific slopes. These aren't the actual data, yet. But at this stage, it might make sense to ask *What's the distribution of `a_cafe` and `b_cafe`?* Our variant of Figure 13.2 contains the answer.
 
 For our plots in this chapter, we'll use a custom theme. The color palette will come from the "pearl_earring" palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
 
@@ -110,11 +112,15 @@ vary_effects %>%
   theme_pearl_earring
 ```
 
-Again, these are not "data." Figure 13.2 shows a distribution of *parameters*.
+Again, these are not "data." Figure 13.2 shows a distribution of *parameters*. Here's their Pearson's correlation coefficient.
+
+```{r}
+cor(vary_effects$a_cafe, vary_effects$b_cafe)
+```
 
 ### Simulate observations.
 
-Here we put those simulated parameters to use.
+Here we put those simulated parameters to use and simulate actual data from them.
 
 ```{r}
 n_visits <- 10
@@ -234,7 +240,8 @@ As defined above, our first model has both varying intercepts and `afternoon` sl
 
 ```{r b13.1, cache = T, message = F, warning = F, results = "hide"}
  b13.1 <- 
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       wait ~ 1 + afternoon + (1 + afternoon | cafe),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b),
@@ -251,10 +258,11 @@ With Figure 13.4, we assess how the posterior for the correlation of the random 
 post <- posterior_samples(b13.1)
 
 post %>%
-  ggplot(aes(x = cor_cafe__Intercept__afternoon)) +
+  ggplot() +
   geom_density(data = r_2, aes(x = V2),
                color = "transparent", fill = "#EEDA9D", alpha = 3/4) +
-  geom_density(color = "transparent", fill = "#A65141", alpha = 9/10) +
+  geom_density(aes(x = cor_cafe__Intercept__afternoon),
+               color = "transparent", fill = "#A65141", alpha = 9/10) +
   annotate("text", label = "posterior", 
            x = -0.35, y = 2.2, 
            color = "#A65141", family = "Courier") +
@@ -449,7 +457,8 @@ Since there’s only one left-hand term in our `(1 | dept_id)` code, there’s o
 
 ```{r b13.2, cache = T, message = F, warning = F, results = "hide"}
 b13.2 <- 
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1 + male + (1 | dept_id),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -521,7 +530,7 @@ rbind(coef(b13.2)$dept_id[, , "Intercept"],
   mutate_if(is_double, round, digits = 2)
 ```
 
-I’m not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you’re fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
+I'm not aware of a slick and easy way to get the `n_eff` and `Rhat` summaries into the mix. But if you're fine with working with the brms-default **non-centered** parameterization, `b13.2$fit` gets you those just fine.
 
 One last thing. The [broom package](https://cran.r-project.org/package=broom) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
 
@@ -553,7 +562,8 @@ Fit the model.
 
 ```{r b13.3, cache = T, message = F, warning = F, results = "hide"}
 b13.3 <- 
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1 + male + (1 + male | dept_id),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -608,7 +618,7 @@ rhat(b13.3) %>%
         axis.text.y     = element_text(hjust = 0))
 ```
 
-Them are some respectable $\hat R$ values. The plot accentuates their differences, but they’re all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric:
+Them are some respectable $\hat R$ values. The plot accentuates their differences, but they're all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric:
 
 ```{r}
 coef(b13.3)
@@ -736,7 +746,8 @@ Fit the no-gender model.
 
 ```{r b13.4, cache = T, message = F, warning = F, results = "hide"}
 b13.4 <- 
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1 + (1 | dept_id),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(cauchy(0, 2), class = sd)),
@@ -764,7 +775,11 @@ model_weights(b13.2, b13.3, b13.4, weights = "waic") %>%
   round(digits = 3)
 ```
 
-> The varying slopes model, [`b13.3`], dominates [the other two]. This is despite the fact that the *average* slope in [`b13.3`] is nearly zero. The average isn’t what matters, however. It is the individual slopes, one for each department, that matter. If we wish to generalize to new departments, the variation in slopes suggest that it’ll be worth paying attention to gender, even if the average slope is nearly zero in the population. (pp. 402--403, *emphasis* in the original)
+> The varying slopes model, [`b13.3`], dominates [the other two]. This is despite the fact that the *average* slope in [`b13.3`] is nearly zero. The average isn't what matters, however. It is the individual slopes, one for each department, that matter. If we wish to generalize to new departments, the variation in slopes suggest that it'll be worth paying attention to gender, even if the average slope is nearly zero in the population. (pp. 402--403, *emphasis* in the original)
+
+### More slopes.
+
+> The varying slopes strategy generalizes to as many slopes as you like, within practical limits. All that happens is that each new predictor you want to construct varying slopes for adds one more dimension to the covariance matrix of the varying effects prior. So this means one more standard deviation parameter and one more dimension to the correlation matrix. (p. 403)
 
 ## Example: Cross-classified `chimpanzees` with varying slopes
 
@@ -787,7 +802,7 @@ d <-
   mutate(block_id = block)
 ```
 
-My math's aren't the best. But if I'm following along correctly, here's a fuller statistical expression of our cross-classified model.
+My maths aren't the best. But if I'm following along correctly, here's a fuller statistical expression of our cross-classified model.
 
 \begin{align*}
 \text{pulled_left}_i       & \sim \text{Binomial} (n = 1, p_i) \\
@@ -812,11 +827,12 @@ My math's aren't the best. But if I'm following along correctly, here's a fuller
 
 And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
-Let’s fit this beast.
+Let's fit this beast.
 
 ```{r b13.6, cache = T, message = F, warning = F, results = 'hide'}
 b13.6 <- 
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left +
         (1 + prosoc_left + condition:prosoc_left | actor) +
         (1 + prosoc_left + condition:prosoc_left | block_id),
@@ -830,7 +846,7 @@ b13.6 <-
 
 Even though it's not apparent in the syntax, our model `b13.6` was already fit using the [non-centered parameterization. Behind the scenes, Bürkner has brms do this automatically](https://github.com/paul-buerkner/brms/issues/211). It's been that way all along. 
 
-It's a little janky, but we can compute the number of effective samples for all our parameters like so.
+It's a little janky, but we can compute the number of effective samples (bulk NES, anyways) for all our parameters like so.
 
 ```{r, fig.width = 3.25, fig.height = 3}
 ratios_cp <- neff_ratio(b13.6)
@@ -863,7 +879,15 @@ neff %>%
   theme_pearl_earring
 ```
 
-Here are our standard deviation parameters.
+McElreath reported this model only has about 18 parameters. Let's compute the WAIC and check the `p_waic`.
+
+```{r}
+b13.6 <- add_criterion(b13.6, "waic")
+
+b13.6$waic
+```
+
+Yep, only about 18. Here are our standard deviation parameters.
 
 ```{r}
 tidy(b13.6) %>%
@@ -884,43 +908,52 @@ First off, recall that `fitted()` returns summary values, by default. If we want
 
 Moving forward, before we can follow along with McElreath's R code 13.27, we need to refit the simpler model from way back in Chapter 12.
 
-```{r b12.5_redo, cache = T, message = F, warning = F, results = "hide"}
+```{r b12.5, echo = F}
+# save(b12.5, file = "fits/b12.05.rda")
+# rm(b12.5)
+load("fits/b12.05.rda")
+```
+
+```{r, eval = F}
 b12.5 <- 
-  brm(data = d, family = binomial,
-      pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left + 
-        (1 | actor) + (1 | block_id),
+  brm(data = d, 
+      family = binomial,
+      pulled_left | trials(1) ~ 1 + prosoc_left + prosoc_left:condition + 
+           (1 | actor) + (1 | block),
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sd)),
-      iter = 5000, warmup = 1000, chains = 3, cores = 3,
-      seed = 13)
+      iter = 6000, warmup = 1000, cores = 4, chains = 4, 
+      control = list(adapt_delta = 0.99),
+      seed = 12)
 ```
 
 Now we can compare them by the WAIC.
 
 ```{r, message = F, warning = F}
-b13.6 <- add_criterion(b13.6, "waic")
 b12.5 <- add_criterion(b12.5, "waic")
 
 loo_compare(b13.6, b12.5, criterion = "waic") %>% 
   print(simplify = F)
 ```
 
-If you look at the `p_waic` column, you'll notice `b13.6` has about 18 effective parameters, much like McElreath reported on pages 406 and 407. Here are the WAIC weights.
+Here are the WAIC weights.
 
 ```{r, message = F}
 model_weights(b13.6, b12.5, weights = "waic")
 ```
 
-> In this example, no matter which varying effect structure you use, you’ll find that actors vary a lot in their baseline preference for the left-hand lever. Everything else is much less important. But using the most complex model, [`b13.6`], tells the correct story. Because the varying slopes are adaptively regularized, the model hasn’t overfit much, relative to the simpler model that contains only the important intercept variation. (p. 408)
+> In this example, no matter which varying effect structure you use, you'll find that actors vary a lot in their baseline preference for the left-hand lever. Everything else is much less important. But using the most complex model, [`b13.6`], tells the correct story. Because the varying slopes are adaptively regularized, the model hasn't overfit much, relative to the simpler model that contains only the important intercept variation. (p. 408)
 
 ## Continuous categories and the Gaussian process
 
-> There is a way to apply the varying effects approach to continuous categories… The general approach is known as Gaussian process regression. This name is unfortunately wholly uninformative about what it is for and how it works.
+> There is a way to apply the varying effects approach to continuous categories... The general approach is known as **Gaussian process regression**. This name is unfortunately wholly uninformative about what it is for and how it works.
 >
-We’ll proceed to work through a basic example that demonstrates both what it is for and how it works. The general purpose is to define some dimension along which cases differ. This might be individual differences in age. Or it could be differences in location. Then we measure the distance between each pair of cases. What the model then does is estimate a function for the covariance between pairs of cases at different distances. This covariance function provides one continuous category generalization of the varying effects approach. (p. 410)
+We'll proceed to work through a basic example that demonstrates both what it is for and how it works. The general purpose is to define some dimension along which cases differ. This might be individual differences in age. Or it could be differences in location. Then we measure the distance between each pair of cases. What the model then does is estimate a function for the covariance between pairs of cases at different distances. This covariance function provides one continuous category generalization of the varying effects approach. (p. 410, **emphasis** in the original)
 
 ### Example: Spatial autocorrelation in Oceanic tools.
+
+We start by loading the matrix of geographic distances.
 
 ```{r, warning = F, message = F}
 # load the distance matrix
@@ -938,16 +971,14 @@ If you wanted to use color to more effectively visualize the values in the matir
 
 ```{r, fig.height = 2.5, fig.width = 5.5}
 d_mat %>%
-  as_tibble() %>%
-  gather() %>%
-  rename(column = key,
-         distance = value) %>%
-  mutate(row          = rep(rownames(d_mat), times = 10),
-         row_order    = rep(9:0,            times = 10),
-         column_order = rep(0:9,            each  = 10)) %>%
-  
-  ggplot(aes(x = reorder(column, column_order), 
-             y = reorder(row,    row_order))) + 
+  data.frame() %>% 
+  rownames_to_column("row") %>% 
+  gather(column, distance, -row) %>% 
+  mutate(column = factor(column, levels = colnames(d_mat)),
+         row    = factor(row,    levels = rownames(d_mat)) %>% fct_rev()) %>%
+
+  ggplot(aes(x = column, 
+             y = row)) + 
   geom_raster(aes(fill = distance)) + 
   geom_text(aes(label = round(distance, digits = 1)),
             size = 3, family = "Courier", color = "#100F14") +
@@ -979,7 +1010,7 @@ tibble(
   theme_pearl_earring
 ```
 
-Load the data.
+Now load the primary data.
 
 ```{r}
 data(Kline2) # load the ordinary data, now with coordinates
@@ -1004,7 +1035,8 @@ Okay, it appears this is going to be a bit of a ride. It's not entirely clear to
 
 ```{r b13.7, cache = T, message = F, warning = F, results = "hide"}
 b13.7 <- 
-  brm(data = d, family = poisson,
+  brm(data = d, 
+      family = poisson,
       total_tools ~ 1 + gp(lat, lon2) + logpop,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
@@ -1325,7 +1357,7 @@ p2 <-
   theme_pearl_earring
 ```
 
-Now we combine them.
+Now we combine them to make the full version of Figure 13.10.
 
 ```{r, fig.width = 8, fig.height = 4.25}
 p1 + p2
@@ -1358,13 +1390,14 @@ funding <-
 funding
 ```
 
-Let’s fit a few models.
+Let's fit a few models.
 
 First, we'll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we'll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
-```{r b13.bonus_0, cache = T, message = F}
-b13.bonus_0 <- 
-  brm(data = funding, family = binomial,
+```{r b13.8, cache = T, message = F}
+b13.8 <- 
+  brm(data = funding, 
+      family = binomial,
       awards | trials(applications) ~ 1 + male,
       # note our continued use of weakly-regularizing priors
       prior = c(prior(normal(0, 4), class = Intercept),
@@ -1373,10 +1406,10 @@ b13.bonus_0 <-
       seed = 13)
 ```
 
-If you inspect them, the chains look great. Here are the posterior summaries:
+If you inspect them, the chains look great. We'll jump straight to the posterior summaries.
 
 ```{r}
-tidy(b13.bonus_0) %>%
+tidy(b13.8) %>%
   filter(term != "lp__") %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
@@ -1384,17 +1417,18 @@ tidy(b13.bonus_0) %>%
 Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like this.
 
 ```{r}
-posterior_samples(b13.bonus_0) %>%
+posterior_samples(b13.8) %>%
   summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
-Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications.
+Pretty small. But recall how Simpson's paradox helped us understand the Berkley data. [If you need a refresher on Simpson's paradox, [go here](https://solomonkurz.netlify.com/post/individuals-are-not-small-groups-i-simpson-s-paradox/).] Different departments in Berkley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications.
 
 Just like in section 13.2, let's fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the `male` dummy slopes to vary by discipline.
 
-```{r b13.bonus_1_and_b13.bonus_2, cache = T, message = F}
-b13.bonus_1 <- 
-  brm(data = funding, family = binomial,
+```{r b13.9, cache = T, message = F}
+b13.9 <- 
+  brm(data = funding, 
+      family = binomial,
       awards | trials(applications) ~ 1 + male + (1 | discipline),
       prior = c(prior(normal(0, 4), class = Intercept),
                 prior(normal(0, 4), class = b),
@@ -1403,8 +1437,9 @@ b13.bonus_1 <-
       control = list(adapt_delta = .99),
       seed = 13)
 
-b13.bonus_2 <- 
-  brm(data = funding, family = binomial,
+b13.10 <- 
+  brm(data = funding, 
+      family = binomial,
       awards | trials(applications) ~ 1 + male + (1 + male | discipline),
       prior = c(prior(normal(0, 4), class = Intercept),
                 prior(normal(0, 4), class = b),
@@ -1418,19 +1453,26 @@ b13.bonus_2 <-
 We'll compare the models with information criteria.
 
 ```{r}
-b13.bonus_0 <- add_criterion(b13.bonus_0, "waic")
-b13.bonus_1 <- add_criterion(b13.bonus_1, "waic")
-b13.bonus_2 <- add_criterion(b13.bonus_2, "waic")
+b13.8  <- add_criterion(b13.8,  "waic")
+b13.9  <- add_criterion(b13.9,  "waic")
+b13.10 <- add_criterion(b13.10, "waic")
 
-loo_compare(b13.bonus_0, b13.bonus_1, b13.bonus_2,
+loo_compare(b13.8, b13.9, b13.10,
             criterion = "waic") %>% 
   print(simplify = F)
 ```
 
-The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data. Here we'll practice our `tidybayes::spread_draws()` skills from the end of the last chapter to see what the random intercepts look like in a coefficient plot.
+The WAIC suggests the varying intercepts/varying slopes model made the best sense of the data.  The WAIC weights tell a similar story.
+
+```{r}
+model_weights(b13.8, b13.9, b13.10, weights = "waic") %>% 
+  round(digits = 2)
+```
+
+Here we'll practice our `tidybayes::spread_draws()` skills from the end of the last chapter to see what the random intercepts from the full model look like in a coefficient plot.
 
 ```{r, fig.height = 2.75, fig.width = 9}
-b13.bonus_2 %>% 
+b13.10 %>% 
   spread_draws(b_male, r_discipline[discipline,term]) %>% 
   filter(term == "male") %>% 
   ungroup() %>% 
@@ -1453,7 +1495,7 @@ b13.bonus_2 %>%
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
 
 ```{r}
-tidy(b13.bonus_2) %>%
+tidy(b13.10) %>%
   filter(str_detect(term , "b_")) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
@@ -1461,7 +1503,7 @@ tidy(b13.bonus_2) %>%
 And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model, you might execute this.
 
 ```{r}
-posterior_samples(b13.bonus_2) %>%
+posterior_samples(b13.10) %>%
   summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
@@ -1478,7 +1520,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, results = "hide", warning = F, message = F}
-rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, n_sim, r_1, r_2, r_4, sigma_a, sigma_b, sigmas, post, b13.1, p1, p2, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, i, j, nd, f, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.bonus_0, b13.bonus_1, b13.bonus_2, tidy_rho)
+rm(d, rho, sigma, theme_pearl_earring, vary_effects, a, b, cov_ab, islandsDistMatrix, mu, n_cafes, n_visits, neff, ratios_cp, n_sim, r_1, r_2, r_4, sigma_a, sigma_b, sigmas, post, b13.1, p1, p2, b13.2, b13.3, b13.4, b13.6, b12.5, partially_pooled_params, un_pooled_params, params, partially_pooled_estimates, un_pooled_estimates, estimates, d_mat, k, i, j, nd, f, b13.7, m13.7, post_b13.7, post_m13.7, prob_to_logit, funding, b13.8, b13.9, b13.10, tidy_rho)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
@@ -1488,3 +1530,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
+
