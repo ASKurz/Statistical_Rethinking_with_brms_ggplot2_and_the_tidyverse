@@ -238,7 +238,13 @@ library(brms)
 
 As defined above, our first model has both varying intercepts and `afternoon` slopes. I should point out that the `(1 + afternoon | cafe)` syntax specifies that we'd like `brm()` to fit the random effects for `1` (i.e., the intercept) and the `afternoon` slope as correlated. Had we wanted to fit a model in which they were orthogonal, we'd have coded `(1 + afternoon || cafe)`.
 
-```{r b13.1, cache = T, message = F, warning = F, results = "hide"}
+```{r b13.1, echo = F}
+# save(b13.1, file = "fits/b13.01.rda")
+# rm(b13.1)
+load("fits/b13.01.rda")
+```
+
+```{r, eval = F}
  b13.1 <- 
   brm(data = d, 
       family = gaussian,
@@ -455,7 +461,13 @@ The statistical formula for our varying-intercepts logistic regression model fol
 
 Since there’s only one left-hand term in our `(1 | dept_id)` code, there’s only one random effect.
 
-```{r b13.2, cache = T, message = F, warning = F, results = "hide"}
+```{r b13.2, echo = F}
+# save(b13.2, file = "fits/b13.02.rda")
+# rm(b13.2)
+load("fits/b13.02.rda")
+```
+
+```{r, eval = F}
 b13.2 <- 
   brm(data = d, 
       family = binomial,
@@ -560,7 +572,13 @@ Now we're ready to allow our `male` dummy to varies, too, the statistical model 
 
 Fit the model.
 
-```{r b13.3, cache = T, message = F, warning = F, results = "hide"}
+```{r b13.3, echo = F}
+# save(b13.3, file = "fits/b13.03.rda")
+# rm(b13.3)
+load("fits/b13.03.rda")
+```
+
+```{r, eval = F}
 b13.3 <- 
   brm(data = d, 
       family = binomial,
@@ -744,7 +762,13 @@ ggplot(data = params, aes(x = intercept, y = slope)) +
 
 Fit the no-gender model.
 
-```{r b13.4, cache = T, message = F, warning = F, results = "hide"}
+```{r b13.4, echo = F}
+# save(b13.4, file = "fits/b13.04.rda")
+# rm(b13.4)
+load("fits/b13.04.rda")
+```
+
+```{r, eval = F}
 b13.4 <- 
   brm(data = d, 
       family = binomial,
@@ -829,7 +853,13 @@ And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
 Let's fit this beast.
 
-```{r b13.6, cache = T, message = F, warning = F, results = 'hide'}
+```{r b13.6, echo = F}
+# save(b13.6, file = "fits/b13.06.rda")
+# rm(b13.6)
+load("fits/b13.06.rda")
+```
+
+```{r, eval = F}
 b13.6 <- 
   brm(data = d, 
       family = binomial,
@@ -1033,7 +1063,13 @@ library(brms)
 
 Okay, it appears this is going to be a bit of a ride. It's not entirely clear to me if we can fit a Gaussian process model in brms that's a direct equivalent to what McElreath did with rethinking. But we can try. First, note our use of the `gp()` syntax in the `brm()` function, below. We're attempting to tell brms that we would like to include latitude and longitude (i.e., `lat` and `long2`, respectively) in a Gaussian process. Also note how our priors are a little different than those in the text. I'll explain, below. Let's just move ahead and fit the model.
 
-```{r b13.7, cache = T, message = F, warning = F, results = "hide"}
+```{r b13.7, echo = F}
+# save(b13.7, file = "fits/b13.07.rda")
+# rm(b13.7)
+load("fits/b13.07.rda")
+```
+
+```{r, eval = F}
 b13.7 <- 
   brm(data = d, 
       family = poisson,
@@ -1103,7 +1139,13 @@ library(rethinking)
 
 Now fit the `rethinking::map2stan()` model.
 
-```{r m13.7, cache = T, message = F, warning = F, results = "hide"}
+```{r m13.7, echo = F}
+# save(m13.7, file = "fits/m13.07.rda")
+# rm(m13.7)
+load("fits/m13.07.rda")
+```
+
+```{r, eval = F}
 m13.7 <- map2stan(
     alist(
         total_tools ~ dpois(lambda),
@@ -1394,7 +1436,13 @@ Let's fit a few models.
 
 First, we'll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we'll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
-```{r b13.8, cache = T, message = F}
+```{r b13.8, echo = F}
+# save(b13.8, file = "fits/b13.08.rda")
+# rm(b13.8)
+load("fits/b13.08.rda")
+```
+
+```{r, eval = F}
 b13.8 <- 
   brm(data = funding, 
       family = binomial,
@@ -1425,7 +1473,16 @@ Pretty small. But recall how Simpson's paradox helped us understand the Berkley 
 
 Just like in section 13.2, let's fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the `male` dummy slopes to vary by discipline.
 
-```{r b13.9, cache = T, message = F}
+```{r b13.9, echo = F}
+# save(b13.9,  file = "fits/b13.09.rda")
+# save(b13.10, file = "fits/b13.10.rda")
+# rm(b13.9)
+# rm(b13.10)
+load("fits/b13.09.rda")
+load("fits/b13.10.rda")
+```
+
+```{r, eval = F}
 b13.9 <- 
   brm(data = funding, 
       family = binomial,
