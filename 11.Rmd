@@ -211,7 +211,13 @@ R_i & \sim \text{Ordered} (\mathbf p) \\
 
 Whereas in `rethinking::map()` you indicate the likelihood by `<criterion> ~ dordlogit(phi , c(<the thresholds>)`, in `brms::brm()` you code `family = cumulative`. Here's how to fit the intercepts-only model.
 
-```{r b11.1, cache = T, message = F, warning = F}
+```{r b11.1, echo = F}
+# save(b11.1, file = "fits/b11.01.rda")
+# rm(b11.1)
+load("fits/b11.01.rda")
+```
+
+```{r, eval = F}
 # define the start values
 inits <- list(`Intercept[1]` = -2,
               `Intercept[2]` = -1,
@@ -333,7 +339,13 @@ explicit_example %>%
 
 This made me wonder how this would compare if we were lazy and ignored the categorical nature of the `response`. Here we refit the model with the typical Gaussian likelihood.
 
-```{r lazy_model, cache = T, message = F, warning = F}
+```{r b11.1b, echo = F}
+# save(b11.1b, file = "fits/b11.01b.rda")
+# rm(b11.1b)
+load("fits/b11.01b.rda")
+```
+
+```{r, eval = F}
 b11.1b <-
   brm(data = d, family = gaussian,
       response ~ 1,
@@ -366,7 +378,16 @@ sum(pk * (1:7))
 
 So the rule is we *subtract the linear model from each interecept*. "This way, a positive $\beta$ value indicates that an increase in the predictor variable $x$ results in an increase in the average response" (p. 338). Let's fit our multivariable models.
 
-```{r b11.2_and_b11.3, cache = T, message = F, results = "hide"}
+```{r b11.2, echo = F}
+# save(b11.2, file = "fits/b11.02.rda")
+# save(b11.3, file = "fits/b11.03.rda")
+# rm(b11.2)
+# rm(b11.3)
+load("fits/b11.02.rda")
+load("fits/b11.03.rda")
+```
+
+```{r, eval = F}
 # start values for b11.2
 inits <- list(`Intercept[1]` = -1.9,
               `Intercept[2]` = -1.2,
@@ -846,7 +867,13 @@ y_i & \sim \text{ZIPoisson} (p_i, \lambda_i)\\
 
 One last thing to note is that in brms, $p_i$ is denoted `zi`. To fit a zero-inflated Poisson model with brms, make sure to specify the correct likelihood with `family = zero_inflated_poisson`. To use a non-default prior for `zi`, make sure to indicate `class = zi` within the `prior()` function.
 
-```{r b11.4, cache = T, warning = F, message = F}
+```{r b11.4, echo = F}
+# save(b11.4, file = "fits/b11.04.rda")
+# rm(b11.4)
+load("fits/b11.04.rda")
+```
+
+```{r, eval = F}
 b11.4 <- 
   brm(data = d, 
       family = zero_inflated_poisson,
@@ -1116,7 +1143,13 @@ stanvars <-
 
 With that out of the way, we're almost ready to test this baby out. Before we do, a point of clarification: What McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing: $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar p$, Bürkner simply called $\mu$.
   
-```{r b11.5, cache = T, warning = F, message = F}
+```{r b11.5, echo = F}
+# save(b11.5, file = "fits/b11.05.rda")
+# rm(b11.5)
+load("fits/b11.05.rda")
+```
+
+```{r, eval = F}
 b11.5 <-
   brm(data = d, 
       family = beta_binomial2,  # here's our custom likelihood
@@ -1293,7 +1326,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
 
 McElreath encouraged us to fool around with plotting gamma distributions with different combinations of $\mu$ and $\theta$. Here's a small attempt with different combinations of each taking on 1, 5, and 9.
 
-```{r, fig.width = 5, fig.height = 5}
+```{r, fig.width = 4.5, fig.height = 4.5}
 # data
 crossing(mu    = c(1, 5, 9),
          theta = c(1, 5, 9)) %>% 
@@ -1322,9 +1355,15 @@ crossing(mu    = c(1, 5, 9),
 
 #### Bonus: Let's fit a negative-binomial model.
 
-McElreath didn't give an example of negative-binomial regression in the text. This can be a useful but somewhat perplexing model type, so let’s take a detour for an extended example with the `UCBadmit` data. As in other examples, we will be modeling the `admit` rates.
+McElreath didn't give an example of negative-binomial regression in the text. This can be a useful but somewhat perplexing model type, so let's take a detour for an extended example with the `UCBadmit` data. As in other examples, we will be modeling the `admit` rates.
 
-```{r b11.6, cache = T, warning = F, message = F}
+```{r b11.6, echo = F}
+# save(b11.6, file = "fits/b11.06.rda")
+# rm(b11.6)
+load("fits/b11.06.rda")
+```
+
+```{r, eval = F}
 b11.6 <-
   brm(data = d, 
       family = negbinomial,
@@ -1560,7 +1599,7 @@ d %>%
             variance = var(admit))
 ```
 
-If you'e like more practice with the negative binomial model and some of the others models for categorical data we covered in this chapter and in Chapter 10, Alan Agresti covered them extensively in his (2015) text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
+If you'd like more practice with the negative binomial model and some of the others models for categorical data we covered in this chapter and in Chapter 10, Alan Agresti covered them extensively in his (2015) text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
 
 ### Over-dispersion, entropy, and information criteria.
 
@@ -1577,7 +1616,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu, b11.6, p, alpha)
+rm(d, logit, d_plot, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, predict_beta_binomial2, fitted_beta_binomial2, post, mu, b11.6, p, alpha)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
