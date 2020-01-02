@@ -61,7 +61,7 @@ tibble(seed = 2:11) %>%
   mutate(value_returned = map_dbl(seed, take_sample))
 ```
 
-Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like: 
+Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like.
 
 ```{r}
 matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)
@@ -81,58 +81,64 @@ matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, 2] %>% str()
 
 And that `1 0` corresponds to the pancake with one burnt (i.e., 1) and one unburnt (i.e., 0) side. So when McElreath then executed `sample(sides)`, he randomly sampled from one of those two values. In the case of `pancake == 2`, he randomly sampled one the pancake with one burnt and one unburnt side. Had he sampled from `pancake == 1`, he would have sampled from the pancake with both sides burnt.
 
-Going forward, let's amend McElreath's `sim_pancake()` function a bit. First, we'll add a `seed` argument, with will allow us to make the output reproducible. We'll be inserting `seed` into `set.seed()` in the two places preceding the `sample()` function. The second major change is that we're going to convert the output of the `sim_pancake()` function to a tibble and adding a `side` column, which will contain the values `c("up", "down")`. Just for pedagogical purposes, we’ll also add `pancake_n` and `pancake_chr` columns to help index which `pancake` the draws came from.
+Going forward, let's amend McElreath's `sim_pancake()` function so it will take a `seed` argument, which will allow us to make the output reproducible.
 
 ```{r}
 # simulate a `pancake` and return randomly ordered `sides`
 sim_pancake <- function(seed) {
-  set.seed(seed)
-  pancake <- sample(x = 1:3, size = 1)
-  sides   <- matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, pancake]
   
   set.seed(seed)
-  sample(sides) %>% 
-    as_tibble() %>% 
-    mutate(side        = c("up", "down"),
-           pancake_n   = pancake,
-           pancake_chr = ifelse(pancake == 1, "BB",
-                                ifelse(pancake == 2, "BU", "UU")))
+  
+  pancake <- sample(x = 1:3, size = 1)
+  sides   <- matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)[, pancake]
+  sample(sides)
+  
 }
 ```
 
-Let’s take this baby for a whirl.
+Let's take this baby for a whirl.
 
-```{r, warning = F}
+```{r, echo = F}
+# save(list = c("n_sim", "d"), file = "sims/14.sim_1.rda")
+load("sims/14.sim_1.rda")
+```
+
+```{r, eval = F}
 # how many simulations would you like?
 n_sim <- 1e4
 
-(
-  d <-
+d <-
   tibble(seed = 1:n_sim) %>% 
-  mutate(r = map(seed, sim_pancake)) %>% 
-  unnest()
-  )
+  mutate(burnt = map(seed, sim_pancake)) %>% 
+  unnest(burnt) %>% 
+  mutate(side = rep(c("up", "down"), times = n() / 2))
+```
+
+Take a look at what we've done.
+
+```{r}
+head(d, n = 10)
 ```
 
 And now we'll `spread()` and `summarise()` to get the value we've been working for.
 
 ```{r}
 d %>% 
-  spread(key = side, value = value) %>% 
-  summarise(`p (burnt_down | burnt_up)` = sum(up == 1 & down == 1) / ( sum(up == 1)))
+  spread(key = side, value = burnt) %>% 
+  summarise(`p (burnt_down | burnt_up)` = sum(up == 1 & down == 1) / (sum(up)))
 ```
 
 The results are within rounding error of the ideal 2/3.
 
-> Probability theory is not difficult mathematically. It’s just counting. But it is hard to interpret and apply. Doing so often seems to require some cleverness, and authors have an incentive to solve problems in clever ways, just to show off. But we don’t need that cleverness, if we ruthlessly apply conditional probability…
+> Probability theory is not difficult mathematically. It's just counting. But it is hard to interpret and apply. Doing so often seems to require some cleverness, and authors have an incentive to solve problems in clever ways, just to show off. But we don’t need that cleverness, if we ruthlessly apply conditional probability...
 >
-> In this chapter, [we’ll] meet two commonplace applications of this assume-and-deduce strategy. The first is the incorporation of measurement error into our models. The second is the estimation of missing data through Bayesian imputation…
+> In this chapter, [we'll] meet two commonplace applications of this assume-and-deduce strategy. The first is the incorporation of measurement error into our models. The second is the estimation of missing data through Bayesian imputation...
 >
 > In neither application do [we] have to intuit the consequences of measurement errors nor the implications of missing values in order to design the models. All [we] have to do is state [the] information about the error or about the variables with missing values. Logic does the rest. (p. 424)
 
 ## Measurement error
 
-First, let's grab our `WaffleDivorce` data.
+Let's grab those `WaffleDivorce` data from back in Chapter 5.
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -248,10 +254,11 @@ tibble(number       = 1:7,
 
 Now, let's make use of our custom theme and reproduce/reimagine Figure 14.1.a. 
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 3.5}
+```{r}
 color <- viridis_pal(option = "C")(7)[7]
 
-d %>%
+p1 <-
+  d %>%
   ggplot(aes(x = MedianAgeMarriage, 
              y = Divorce,
              ymin = Divorce - Divorce.SE, 
@@ -261,22 +268,27 @@ d %>%
        y = "Divorce rate")
 ```
 
-Notice how `viridis_pal(option = "C")(7)[7]` called the seventh color in the color scheme, `"#F0F921FF"`. For Figure 14.1.b, we'll select the sixth color in the palette by coding `viridis_pal(option = "C")(7)[6]`.
+Notice how `viridis_pal(option = "C")(7)[7]` called the seventh color in the color scheme, `"#F0F921FF"`. For Figure 14.1.b, we'll select the sixth color in the palette by coding `viridis_pal(option = "C")(7)[6]`. We'll then combine the two subplots with patchwork.
 
-```{r, fig.width = 4, fig.height = 3.5}
+```{r, fig.width = 7.25, fig.height = 3.5}
 color <- viridis_pal(option = "C")(7)[6]
 
-d %>%
+p2 <-
+  d %>%
   ggplot(aes(x = log(Population), 
              y = Divorce,
              ymin = Divorce - Divorce.SE, 
              ymax = Divorce + Divorce.SE)) +
   geom_pointrange(shape = 20, alpha = 2/3, color = color) +
-  labs(x = "log population", 
-       y = "Divorce rate")
+  scale_y_continuous(NULL, breaks = NULL) +
+  xlab("log population")
+
+library(patchwork)
+
+p1 | p2
 ```
 
-Just like in the text, our plot shows states with larger populations tend to have smaller measurement error.
+Just like in the text, our plot shows states with larger populations tend to have smaller measurement error. The relation between measurement error and `MedianAgeMarriage` is less apparent.
 
 ### Error on the outcome.
 
@@ -291,15 +303,15 @@ d %>%
 
 As in the text,
 
-> in [the following] example we’ll use a Gaussian distribution with mean equal to the observed value and standard deviation equal to the measurement’s standard error. This is the logical choice, because if all we know about the error is its standard deviation, then the maximum entropy distribution for it will be Gaussian…
+> in [the following] example we'll use a Gaussian distribution with mean equal to the observed value and standard deviation equal to the measurement's standard error. This is the logical choice, because if all we know about the error is its standard deviation, then the maximum entropy distribution for it will be Gaussian...
 > 
-> Here’s how to define the distribution for each divorce rate. For each observed value $D_{\text{OBS}i}$, there will be one parameter, $D_{\text{EST}i}$, defined by:
+> Here's how to define the distribution for each divorce rate. For each observed value $D_{\text{OBS},i}$, there will be one parameter, $D_{\text{EST},i}$, defined by:
 >
-> $$D_{\text{OBS}i} \sim \text{Normal} (D_{\text{EST}i}, D_{\text{SE}i})$$
+> $$D_{\text{OBS},i} \sim \text{Normal} (D_{\text{EST},i}, D_{\text{SE},i})$$
 >
-> All this does is define the measurement $D_{\text{OBS}i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST}i}$. So the above defines a probability for each State $i$’s observed divorce rate, given a known measurement error. (pp. 426--427)
+> All this does is define the measurement $D_{\text{OBS},i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST},i}$. So the above defines a probability for each State $i$'s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no estimate for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no posterior for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
@@ -319,7 +331,8 @@ inits_list <- list(inits, inits)
 
 # fit the models
 b14.1_se <- 
-  brm(data = dlist, family = gaussian,
+  brm(data = dlist, 
+      family = gaussian,
       div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + R + A,
       prior = c(prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2.5), class = sigma)),
@@ -330,7 +343,8 @@ b14.1_se <-
       inits = inits_list)
 
 b14.1_mi <- 
-  brm(data = dlist, family = gaussian,
+  brm(data = dlist, 
+      family = gaussian,
       div_obs | mi(div_sd) ~ 0 + intercept + R + A,
       prior = c(prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2.5), class = sigma)),
@@ -386,11 +400,11 @@ Again, from `b_intercept` to `sigma`, the output is about the same. But model `b
 > The formula for the original intercept is
 `b_intercept = temp_intercept - dot_product(means_X, b)`, where `means_X` is the vector of means of the predictor variables and b is the vector of regression coefficients (fixed effects). That is, when transforming a prior on the intercept to an "equivalent" prior on the temporary intercept, you have to take the means of the predictors and well as the priors on the other coefficients into account.
 
-If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. And since many of the models in *Statistical Rethinking* use only weakly-regularizing priors, this hasn't been much of an issue up to this point. But this model is quite sensitive to the intercept syntax. My general recommendation for applied data analysis is this: **If your predictors aren’t mean centered, default to the** `0 + intercept` **syntax for the** `formula` **argument when using** `brms::brm()`. Otherwise, your priors might not be doing what you think they’re doing.
+If this seems confusing, you have an alternative. The `0 + intercept` part of the brm formula kept the intercept in the metric of the untransformed data, leading to similar results to those from rethinking. When your priors are vague, this might not be much of an issue. And since many of the models in *Statistical Rethinking* use only weakly-regularizing priors, this hasn't been much of an issue up to this point. But this model is quite sensitive to the intercept syntax. My general recommendation for applied data analysis is this: **If your predictors aren't mean centered, default to the** `0 + intercept` **syntax for the** `formula` **argument when using** `brms::brm()`. Otherwise, your priors might not be doing what you think they're doing.
 
-Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to McElreath's `m14.1`, we'll use that one for our plots. Here's our Figure 14.2.a.
+Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to McElreath's `m14.1`, we'll use that one for our plots. Here's the code for our Figure 14.2.a.
 
-```{r, fig.width = 4, fig.height = 3.5}
+```{r, fig.width = 4, fig.height = 3.5, warning = F}
 data_error <- 
   fitted(b14.1_mi) %>%
   as_tibble() %>%
@@ -398,17 +412,21 @@ data_error <-
 
 color <- viridis_pal(option = "C")(7)[5]
 
-data_error %>%
+p1 <-
+  data_error %>%
   ggplot(aes(x = Divorce.SE, y = Estimate - Divorce)) +
   geom_hline(yintercept = 0, linetype = 2, color = "white") +
-  geom_point(alpha = 2/3, size = 2, color = color)
+  geom_point(alpha = 2/3, size = 2, color = color) +
+  labs(x = "Observed standard error for divorce",
+       y = "Divorce (estimate - observed)")
 ```
 
 Before we make Figure 14.2.b, we need to fit a model that ignores measurement error.
 
 ```{r b14.1b, cache = T, message = F, warning = F}
 b14.1b <- 
-  brm(data = dlist, family = gaussian,
+  brm(data = dlist, 
+      family = gaussian,
       div_obs ~ 0 + intercept + R + A,              
       prior = c(prior(normal(0, 50), class = b, coef = intercept),
                 prior(normal(0, 10), class = b),
@@ -424,7 +442,7 @@ print(b14.1b)
 
 With the ignore-measurement-error fit in hand, we're ready for Figure 14.2.b.
 
-```{r, fig.width = 4, fig.height = 3.5}
+```{r, fig.width = 7.5, fig.height = 3.5}
 nd <- 
   tibble(R      = mean(d$Marriage),
          A      = seq(from = 22, to = 30.2, length.out = 30),
@@ -452,7 +470,8 @@ color_y <- viridis_pal(option = "C")(7)[7]
 color_r <- viridis_pal(option = "C")(7)[4]
 
 # plot
-f_no_error %>% 
+p2 <-
+  f_no_error %>% 
   ggplot(aes(x = A, y = Estimate)) +
   # `f_no_error`
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
@@ -473,9 +492,11 @@ f_no_error %>%
   labs(x = "Median age marriage" , y = "Divorce rate (posterior)") +
   coord_cartesian(xlim = range(data_error$A), 
                   ylim = c(4, 15))
+
+p1 | p2
 ```
 
-In our plot, it’s the reddish regression line that accounts for measurement error.
+In our plot on the right, it's the reddish regression line that accounts for measurement error.
 
 ### Error on both outcome and predictor.
 
@@ -496,7 +517,8 @@ inits_list <- list(inits, inits)
 
 # the models
 b14.2_se <-
-  brm(data = dlist, family = gaussian,
+  brm(data = dlist, 
+      family = gaussian,
       div_obs | se(div_sd, sigma = TRUE) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
       prior = c(prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2.5), class = sigma)),
@@ -506,7 +528,8 @@ b14.2_se <-
       save_mevars = TRUE) # note the lack if `inits`
 
 b14.2_mi <- 
-  brm(data = dlist, family = gaussian,
+  brm(data = dlist, 
+      family = gaussian,
       div_obs | mi(div_sd) ~ 0 + intercept + me(mar_obs, mar_sd) + A,
       prior = c(prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2.5), class = sigma)),
@@ -518,7 +541,7 @@ b14.2_mi <-
       inits = inits_list)
 ```
 
-We already know including `inits` values for our `Yl[i]` estimates is a waste of time for our `se()` model. But note how we still defined our `inits` values as `inits <- list(Yl = dlist$div_obs)` for the `mi()` model. Although it’s easy in brms to set the starting values for our `Yl[i]` estimates, much the way McElreath did, that isn’t the case when you have measurement error on the predictors. The brms package uses a non-centered parameterization for these, which requires users to have a deeper understanding of the underlying Stan code. This is where I get off the train, but if you want to go further, execute `stancode(b14.2_mi)`.
+We already know including `inits` values for our `Yl[i]` estimates is a waste of time for our `se()` model. But note how we still defined our `inits` values as `inits <- list(Yl = dlist$div_obs)` for the `mi()` model. Although it's easy in brms to set the starting values for our `Yl[i]` estimates, much the way McElreath did, that is not the case when you have measurement error on the predictors. The brms package uses a non-centered parameterization for these, which requires users to have a deeper understanding of the underlying Stan code. This is where I get off the train, but if you want to go further, execute `stancode(b14.2_mi)`.
 
 Here are the two versions of the model.
 
@@ -543,7 +566,7 @@ Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function in
 
 Here is the code for Figure 14.3.a.
 
-```{r, fig.width = 4, fig.height = 3.5}
+```{r}
 data_error <-
   fitted(b14.2_mi) %>%
   as_tibble() %>%
@@ -551,19 +574,23 @@ data_error <-
 
 color <- viridis_pal(option = "C")(7)[3]
 
-data_error %>%
+p1 <-
+  data_error %>%
   ggplot(aes(x = Divorce.SE, y = Estimate - Divorce)) +
   geom_hline(yintercept = 0, linetype = 2, color = "white") +
-  geom_point(alpha = 2/3, size = 2, color = color)
+  geom_point(alpha = 2/3, size = 2, color = color) +
+  labs(x = "Observed standard error for marriage rate",
+       y = "Marriage rate (estimate - observed)")
 ```
 
 To get the posterior samples for error-adjusted `Marriage` rate, we'll use `posterior_samples`. If you examine the object with `glimpse()`, you'll notice 50 `Xme_memar_obsmar_sd[i]` vectors, with $i$ ranging from 1 to 50, each corresponding to one of the 50 states. With a little data wrangling, you can get the mean of each to put in a plot. Once we have those summaries, we can make our version of Figure 14.4.b.
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 3.5}
+```{r, message = F, warning = F, fig.width = 7.5, fig.height = 3.5}
 color_y <- viridis_pal(option = "C")(7)[7]
 color_p <- viridis_pal(option = "C")(7)[2]
 
-posterior_samples(b14.2_mi) %>%
+p2 <-
+  posterior_samples(b14.2_mi) %>%
   select(starts_with("Xme")) %>%
   gather() %>%
   # this extracts the numerals from the otherwise cumbersome names in `key` and saves them as integers
@@ -581,13 +608,15 @@ posterior_samples(b14.2_mi) %>%
   scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
   labs(x = "Marriage rate (posterior)" , y = "Divorce rate (posterior)") +
   coord_cartesian(ylim = c(4, 14.5))
+
+p1 | p2
 ```
 
-The yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath’s rethinking model. I'm unsure of why. If you understand the difference, [please share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
+In the right panel, the yellow points are model-implied; the purple ones are of the original data. It turns out our brms model regularized more aggressively than McElreath's rethinking model. I'm unsure of why. If you understand the difference, [please share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
 Anyway,
 
-> the big take home point for this section is that when you have a distribution of values, don’t reduce it down to a single value to use in a regression. Instead, use the entire distribution. Anytime we use an average value, discarding the uncertainty around that average, we risk overconfidence and spurious inference. This doesn’t only apply to measurement error, but also to cases which data are averaged before analysis.
+> the big take home point for this section is that when you have a distribution of values, don't reduce it down to a single value to use in a regression. Instead, use the entire distribution. Anytime we use an average value, discarding the uncertainty around that average, we risk overconfidence and spurious inference. This doesn’t only apply to measurement error, but also to cases which data are averaged before analysis.
 >
 > Do not average. Instead, model. (p. 431)
 
@@ -645,7 +674,7 @@ Our statistical model follows the form
 \sigma_\text{neocortex} & \sim \text{HalfCauchy} (0, 1)
 \end{align*}
 
-If you look closely, you’ll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \text{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter
+If you look closely, you’ll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \text{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter.
 
 When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the `brm()` function. Otherwise, things get cluttered in a hurry.
 
@@ -747,10 +776,11 @@ f_b14.3_mi %>% head()
 
 Data wrangling done--here's our code for Figure 14.4.a.
 
-```{r, fig.width = 4, fig.height = 3.75, warning = F}
+```{r}
 color <- viridis_pal(option = "D")(7)[4]
 
-f_b14.3 %>% 
+p1 <-
+  f_b14.3 %>% 
   ggplot(aes(x = neocortex)) +
   geom_smooth(aes(y = Estimate.kcal, ymin = Q2.5.kcal, ymax = Q97.5.kcal),
               stat = "identity",
@@ -767,17 +797,18 @@ f_b14.3 %>%
              color = color, size = 1/4) +
   coord_cartesian(xlim = c(.55, .8),
                   ylim = range(data_list$kcal, na.rm = T)) +
-  labs(subtitle = "Note: For the regression line in this plot, log(mass)\nhas been set to its median, 1.244.",
+  labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram")
 ```
 
-Figure 14.4.b.
+Here we make Figure 14.4.b, combine it with Figure 14.4.a, and plot.
 
-```{r, fig.width = 4, fig.height = 3.75, warning = F}
+```{r, fig.width = 7.5, fig.height = 3.75, warning = F}
 color <- viridis_pal(option = "D")(7)[4]
 
-data_list %>% 
+p2 <-
+  data_list %>% 
   as_tibble() %>% 
   
   ggplot(aes(x = logmass, y = neocortex)) +
@@ -790,6 +821,8 @@ data_list %>%
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
                   ylim = c(.55, .8))
+
+p1 | p2
 ```
 
 ### Improving the imputation model
@@ -805,7 +838,7 @@ which includes the updated priors
 
 \begin{align*}
 \alpha_\text{neocortex} & \sim \text{Normal} (0.5, 1) \\
-\gamma_1                & \sim \text{Normal} (0, 10)
+\gamma_1                & \sim \text{Normal} (0, 10).
 \end{align*}
 
 As far as the brms code goes, adding `logmass` as a predictor to the `neocortex` submodel is pretty simple.
@@ -861,12 +894,13 @@ f_b14.4_mi %>%
   glimpse()
 ```
 
-For our final plots, let's play around with colors from `viridis_pal(option = "D")`. Figure 14.5.a.
+For our final plots, let's play around with colors from `viridis_pal(option = "D")`. Here's the code for Figure 14.5.a.
 
 ```{r, fig.width = 4, fig.height = 3.75, warning = F}
 color <- viridis_pal(option = "D")(7)[3]
 
-f_b14.4 %>% 
+p1 <-
+  f_b14.4 %>% 
   ggplot(aes(x = neocortex)) +
   geom_smooth(aes(y = Estimate.kcal, ymin = Q2.5.kcal, ymax = Q97.5.kcal),
               stat = "identity",
@@ -883,17 +917,18 @@ f_b14.4 %>%
              color = color, size = 1/4) +
   coord_cartesian(xlim = c(.55, .8),
                   ylim = range(data_list$kcal, na.rm = T)) +
-  labs(subtitle = "Note: For the regression line in this plot, log(mass)\nhas been set to its median, 1.244.",
+  labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram")
 ```
 
-Figure 14.5.b.
+Make the code for Figure 14.5.b, combine it with Figure 14.5.a, and plot.
 
-```{r, fig.width = 4, fig.height = 3.75, warning = F}
+```{r, fig.width = 7.5, fig.height = 3.75, warning = F}
 color <- viridis_pal(option = "D")(7)[3]
 
-data_list %>% 
+p2 <-
+  data_list %>% 
   as_tibble() %>% 
   
   ggplot(aes(x = logmass, y = neocortex)) +
@@ -906,17 +941,19 @@ data_list %>%
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
                   ylim = c(.55, .8))
+
+p1 | p2
 ```
 
-If modern missing data methods are new to you, you might also check out van Burren's great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I’m also a fan of Enders's [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
+If modern missing data methods are new to you, you might also check out van Burren's great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I'm also a fan of Enders's [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
 
 ## ~~Summary~~ Bonus: Meta-analysis
 
-If your mind isn’t fully blown by those measurement-error and missing-data models, let’s keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use `brms::brm()` to fit Bayesian meta-analyses, too. 
+If your mind isn't fully blown by those measurement-error and missing-data models, let's keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use `brms::brm()` to fit Bayesian meta-analyses, too. 
 
-Before we proceed, I should acknowledge that this section is heavily influenced by Matti Vourre's great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). And since McElreath's text doesn’t directly address meta-analyses, we'll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin's [*Bayesian data analysis, Third edition*](https://stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
+Before we proceed, I should acknowledge that this section is heavily influenced by [Matti Vourre](https://mvuorre.github.io/#about)'s great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). And since McElreath's text doesn’t directly address meta-analyses, we'll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin's [*Bayesian data analysis, Third edition*](https://stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
 
-> Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected *a priori* to have predictable effects favoring one study over another.… this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…
+> Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected *a priori* to have predictable effects favoring one study over another.... this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…
 >
 > The first potential estimand of a meta-analysis, or a hierarchically structured problem in general, is the mean of the distribution of effect sizes, since this represents the overall 'average' effect across all studies that could be regarded as exchangeable with the observed studies. Other possible estimands are the effect size in any of the observed studies and the effect size in another, comparable (exchangeable) unobserved study. (pp. 125—126, *emphasis* in the original)
 
@@ -932,9 +969,9 @@ $$\theta_i \sim \text{Normal} (\mu, \tau)$$
 
 where $\mu$ is the meta-analytic effect (i.e., the population mean) and $\tau$ is the variation around that mean, what you might also think of as $\sigma_\tau$.
 
-Since there’s no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's (2016) paper, [*Spanking and Child Outcomes: Old Controversies and New Meta-Analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
+Since there's no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's (2016) paper, [*Spanking and Child Outcomes: Old Controversies and New Meta-Analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
 
-> Around the world, most children (80%) are spanked or otherwise physically punished by their parents ([UNICEF, 2014](https://www.unicef.org/publications/index_74865.html)). The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world ([Gershoff, 2013](https://onlinelibrary.wiley.com/doi/abs/10.1111/cdep.12038)). Several hundred studies have been conducted on the associations between parents' use of spanking or physical punishment and children’s behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
+> Around the world, most children (80%) are spanked or otherwise physically punished by their parents ([UNICEF, 2014](https://www.unicef.org/publications/index_74865.html)). The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world ([Gershoff, 2013](https://onlinelibrary.wiley.com/doi/abs/10.1111/cdep.12038)). Several hundred studies have been conducted on the associations between parents' use of spanking or physical punishment and children's behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
 
 Our goal will be to learn Bayesian meta-analysis by answering part of that question. I've transcribed the values directly from Gershoff and Grogan-Kaylor’s paper and saved them as a file called `spank.xlsx`.
 You can find the data in [this project's GitHub repository](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse). Let's load them and `glimpse()`.
@@ -988,7 +1025,8 @@ Here's the code for the first model.
 
 ```{r b14.5, cache = T, message = F, warning = F}
 b14.5 <- 
-  brm(data = spank, family = gaussian,
+  brm(data = spank, 
+      family = gaussian,
       d | se(se) ~ 1 + (1 | study),
       prior = c(prior(normal(0, 1), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
@@ -999,7 +1037,7 @@ b14.5 <-
 One thing you might notice is our `se(se)` function excluded the `sigma` argument. If you recall from section 14.1, we specified `sigma = T` in our measurement-error models. The brms default is that within `se()`, `sigma = FALSE`. As such, we have no estimate for sigma the way we would if we were doing this analysis with the raw data from the studies. Hopefully this makes sense. The uncertainty around the `d`-value for each study $i$ has already been encoded in the data as `se`.
 
 This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publically available. So effect size summaries were the best we typically had. However, times are changing (e.g., [here](https://www.apa.org/monitor/2017/11/trends-open-science.aspx), [here](https://www.blog.google/products/search/making-it-easier-discover-datasets/)). If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html#a-simple-distributional-model) and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
-But enough technical talk. Let’s look at the model results.
+But enough technical talk. Let's look at the model results.
 
 ```{r}
 print(b14.5)
@@ -1021,11 +1059,12 @@ spank %>%
   count()
 ```
 
-In other words, some studies have multiple outcomes. In order to better accommodate the `study`- and `outcome`-level variances, let’s fit a cross-classified Bayesian meta-analysis reminiscent of the cross-classified chimp model from Chapter 13.
+In other words, some studies have multiple outcomes. In order to better accommodate the `study`- and `outcome`-level variances, let's fit a cross-classified Bayesian meta-analysis reminiscent of the cross-classified chimp model from Chapter 13.
 
 ```{r b14.6, cache = T, message = F, warning = F}
 b14.6 <- 
-  brm(data = spank, family = gaussian,
+  brm(data = spank, 
+      family = gaussian,
       d | se(se) ~ 1 + (1 | study) + (1 | outcome),
       prior = c(prior(normal(0, 1), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
@@ -1106,7 +1145,8 @@ When I use dummies in my models, I prefer to have the majority group stand as th
 
 ```{r b14.7, cache = T, message = F, warning = F}
 b14.7 <- 
-  brm(data = spank, family = gaussian,
+  brm(data = spank, 
+      family = gaussian,
       d | se(se) ~ 0 + intercept + between + (1 | study) + (1 | outcome),
       prior = c(prior(normal(0, 1), class = b),
                 prior(cauchy(0, 1), class = sd)),
@@ -1120,7 +1160,7 @@ Behold the summary.
 print(b14.7)
 ```
 
-Let's take a closer look at `b_between`.
+Let's take a closer look at the `b_between` parameter.
 
 ```{r, fig.width = 4.5, fig.height = 2}
 color <- viridis_pal(option = "B")(7)[5]
@@ -1138,7 +1178,7 @@ That difference isn't as large I'd expect it to be. But then again, I'm no spank
 
 There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we've gone far enough to get you started.
 
-If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with Frequentist meta-analyses via the [metafor package](http://www.metafor-project.org/doku.php/metafor). You might also check out Williams, Rast, and Bürkner's manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
+If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with frequentist meta-analyses via the [metafor package](https://CRAN.R-project.org/package=metafor). You might also check out Williams, Rast, and Bürkner's manuscript, [*Bayesian Meta-Analysis with Weakly Informative Prior Distributions*](https://psyarxiv.com/7tbrm/) to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
 
 ## Reference {-}
 
