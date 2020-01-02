@@ -1470,7 +1470,7 @@ tibble(career) %>%
          probability =        n / sum(n))
 ```
 
-To help build an appreciation for how we simulated data with these proportions and how the process links in with the formulas, above, we'll retrace the first few simulation steps within a tidyverse-centric work flow. Recall those first few steps entailed defining values for `income`, `score`, and `p`. Here they are in a tibble.
+To help build an appreciation for how we simulated data with these proportions and how the process links in with the formulas, above, we'll retrace the first few simulation steps within a tidyverse-centric work flow. Recall how in those first few steps we defined values for `income`, `score`, and `p`. Here they are again in a tibble.
 
 ```{r}
 tibble(income  = 1:3) %>% 
@@ -1489,7 +1489,7 @@ tibble(score = 104 + c(0.5, 1, 1.5)) %>%
   mutate(p   = exp(score) / sum(exp(score)))
 ```
 
-Now keeping that in mind, recall how McElreath said that though we have $K$ categories--$K = 3$ in this case--, we only estimate $K - 1$ linear models. "In a multinomial (or categorical) GLM, you need $K - 1$ linear models for $K$ types of events" (pp. 323--324). Right before he showed the code for `m10.16`, he further wrote:
+Now keeping that in mind, recall how McElreath said that though we have $K$ categories, $K = 3$ in this case, we only estimate $K - 1$ linear models. "In a multinomial (or categorical) GLM, you need $K - 1$ linear models for $K$ types of events" (pp. 323--324). Right before he showed the code for `m10.16`, he further wrote:
 
 > We also have to pick one of the event types to be the reference type. We'll use the first one. Instead of getting a linear model, that type is assigned a constant value. Then the other types get linear models that contain parameters relative to the reference type. (p. 324)
 
