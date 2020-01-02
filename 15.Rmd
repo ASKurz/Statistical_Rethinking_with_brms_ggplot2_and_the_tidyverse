@@ -41,7 +41,13 @@ library(brms)
 data("BTdata", package = "MCMCglmm")
 ```
 
-```{r b15.1, cache = T, message = F, results = "hide"}
+```{r b15.1, echo = F}
+# save(b15.1, file = "fits/b15.01.rda")
+# rm(b15.1)
+load("fits/b15.01.rda")
+```
+
+```{r, eval = F}
 b15.1 <- 
   brm(data = BTdata,
       family = gaussian,
@@ -76,14 +82,14 @@ head(b15.1$data)
 
 As an alternative, Bürkner recently added a `file` argument in `brms:brm()` that will help you do this, too. The origins of the argument live [here](https://github.com/paul-buerkner/brms/issues/472). By default, `file` is set to `NULL`. To make use of the argument, specify a character string. `file` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
 
-```{r fit2, cache = T, message = F, results = "hide"}
+```{r, message = F, results = "hide"}
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
       mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
       chains = 2, cores = 2,
       seed = 15,
-      file = "fits/b15.2")
+      file = "fits/b15.02")
 ```
 
 Now `b15.2` is saved outside of R, I can safely remove it and then reload it.
@@ -95,7 +101,7 @@ rm(b15.2)
 We might load `b15.2` with the `readRDS()` function.
 
 ```{r}
-b15.2 <- readRDS("fits/b15.2.rds")
+b15.2 <- readRDS("fits/b15.02.rds")
 ```
 
 Now we can work with `b15.2` as desired.
@@ -119,7 +125,7 @@ b15.2 <-
       mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
       chains = 2, cores = 2,
       seed = 15,
-      file = "fits/b15.2")
+      file = "fits/b15.02")
 ```
 
 It takes just a fraction of a second. Once again, we're ready to work with the fit.
@@ -142,11 +148,11 @@ The model from Bürkner’s vignette, `b15.1`, was no joke. If you wanted to be 
 
 Even if that was the final model I was interested in as a scientist, I still wouldn't start with it. I'd build up incrementally, just to make sure nothing looked fishy. One place to start would be a simple intercepts-only model.
 
-```{r fit0, cache = T, message = F, results = "hide"}
+```{r, message = F, results = "hide"}
 b15.0 <- 
   brm(mvbind(tarsus, back) ~ 1, 
       data = BTdata, chains = 2, cores = 2,
-      file = "fits/b15.0")
+      file = "fits/b15.00")
 ```
 
 ```{r, message = F, fig.width = 6.5, fig.height = 5.5}
@@ -271,5 +277,13 @@ sessionInfo()
 
 ```{r, echo = F}
 rm(BTdata, b15.1, b15.2, b15.0)
+```
+
+```{r, echo = F, warning = F, message = F, results = "hide"}
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+
+ggplot2::theme_set(ggplot2::theme_grey())
+
+bayesplot::color_scheme_set("blue")
 ```
 
