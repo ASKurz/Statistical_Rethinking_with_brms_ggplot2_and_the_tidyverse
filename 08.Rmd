@@ -239,7 +239,7 @@ Another nice way to customize your pairs plot is with the [GGally package](https
 library(GGally)
 ```
 
-```{r, fig.width = 8, fig.height = 7, message = F, warning = F}
+```{r, fig.width = 7, fig.height = 6, message = F, warning = F}
 post %>%
   select(b_Intercept:sigma) %>%
   ggpairs()
@@ -247,7 +247,7 @@ post %>%
 
 Since `GGally::ggpairs()` returns a ggplot2 object, you can customize it as you please.
 
-```{r, fig.width = 8, fig.height = 7, message = F, warning = F}
+```{r, fig.width = 7, fig.height = 6, message = F, warning = F}
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
     geom_density(fill = "grey50")
@@ -264,7 +264,8 @@ post %>%
   ggpairs(diag  = list(continuous = my_diag),
           lower = list(continuous = my_lower)) +
   labs(subtitle = "My custom pairs plot") +
-  theme_ipsum()
+  theme_ipsum() +
+  theme(strip.text = element_text(size = 8))
 ```
 
 For more ideas on customizing a `ggpairs()` plot, go [here](https://ggobi.github.io/ggally/#columns_and_mapping).
@@ -536,7 +537,7 @@ mcmc_trace(post[, c(1:2, 4)],
 
 Now behold our version of Figure 8.6.
 
-```{r, fig.height = 3, fig.width = 6.5}
+```{r, fig.height = 4.5, fig.width = 7.25}
 # left
 p1 <-
   post %>%
@@ -570,7 +571,8 @@ p2 <-
 # combine the two
 library(patchwork)
 
-p1 + p2 + plot_annotation(title = "Prior (dashed) and posterior (solid) distributions for the model with\nweakly-informative priors, b8.3")
+p1 + p2 + plot_annotation(title = "Prior (dashed) and posterior (solid) distributions for the\nmodel with weakly-informative priors, b8.3",
+                          theme = theme_ipsum())
 ```  
 
 #### Overthinking: Cauchy distribution.
