@@ -317,7 +317,16 @@ The second way uses the `mi()` syntax, following the form `<response> | mi(<se_r
 
 We'll start off using both methods. Our first model, `b14.1_se`, will follow the `se()` syntax; the second model, `b14.1_mi`, will follow the `mi()` syntax.
 
-```{r b14.1_se_and_b14.1_mi, cache = T, message = F, warning = F}
+```{r b14.1_se, echo = F}
+# save(b14.1_se, file = "fits/b14.01_se.rda")
+# save(b14.1_mi, file = "fits/b14.01_mi.rda")
+# rm(b14.1_se)
+# rm(b14.1_mi)
+load("fits/b14.01_se.rda")
+load("fits/b14.01_mi.rda")
+```
+
+```{r, eval = F}
 # put the data into a `list()`
 dlist <- list(
     div_obs = d$Divorce,
@@ -423,7 +432,13 @@ p1 <-
 
 Before we make Figure 14.2.b, we need to fit a model that ignores measurement error.
 
-```{r b14.1b, cache = T, message = F, warning = F}
+```{r b14.1b, echo = F}
+# save(b14.1b, file = "fits/b14.01b.rda")
+# rm(b14.1b)
+load("fits/b14.01b.rda")
+```
+
+```{r, eval = F}
 b14.1b <- 
   brm(data = dlist, 
       family = gaussian,
@@ -502,7 +517,16 @@ In our plot on the right, it's the reddish regression line that accounts for mea
 
 In brms, you can specify error on predictors with an `me()` statement in the form of `me(predictor, sd_predictor)` where `sd_predictor` is a vector in the data denoting the size of the measurement error, presumed to be in a standard-deviation metric.
 
-```{r b14.2_se_and_b14.2_mi, cache = T, message = F, warning = F, results = 'hide'}
+```{r b14.2_se, echo = F}
+# save(b14.2_se, file = "fits/b14.02_se.rda")
+# save(b14.2_mi, file = "fits/b14.02_mi.rda")
+# rm(b14.2_se)
+# rm(b14.2_mi)
+load("fits/b14.02_se.rda")
+load("fits/b14.02_mi.rda")
+```
+
+```{r, eval = F}
 # the data
 dlist <- list(
   div_obs = d$Divorce,
@@ -702,7 +726,13 @@ With the one-step Bayesian imputation procedure in brms, you might need to use t
 
 Anyway, here we fit the model.
 
-```{r b14.3, cache = T, message = F, warning = F}
+```{r b14.3, echo = F}
+# save(b14.3, file = "fits/b14.03.rda")
+# rm(b14.3)
+load("fits/b14.03.rda")
+```
+
+```{r, eval = F}
 b14.3 <- 
   brm(data = data_list, 
       family = gaussian,
@@ -725,7 +755,13 @@ tidy(b14.3) %>%
 
 Here's the model that drops the cases with NAs on `neocortex`.
 
-```{r b14.3cc, cache = T, message = F, warning = F}
+```{r b14.3cc, echo = F}
+# save(b14.3cc, file = "fits/b14.03cc.rda")
+# rm(b14.3cc)
+load("fits/b14.03cc.rda")
+```
+
+```{r, eval = F}
 b14.3cc <- 
   brm(data = data_list, 
       family = gaussian,
@@ -843,7 +879,13 @@ which includes the updated priors
 
 As far as the brms code goes, adding `logmass` as a predictor to the `neocortex` submodel is pretty simple.
 
-```{r b14.4, cache = T, message = F, warning = F}
+```{r b14.4, echo = F}
+# save(b14.4, file = "fits/b14.04.rda")
+# rm(b14.4)
+load("fits/b14.04.rda")
+```
+
+```{r, eval = F}
 # define the model
 b_model <- 
   bf(kcal ~ 1 + mi(neocortex) + logmass) + 
@@ -1023,7 +1065,13 @@ The last two lines, of course, spell out our priors. In psychology, it's pretty 
 
 Here's the code for the first model.
 
-```{r b14.5, cache = T, message = F, warning = F}
+```{r b14.5, echo = F}
+# save(b14.5, file = "fits/b14.05.rda")
+# rm(b14.5)
+load("fits/b14.05.rda")
+```
+
+```{r, eval = F}
 b14.5 <- 
   brm(data = spank, 
       family = gaussian,
@@ -1061,7 +1109,13 @@ spank %>%
 
 In other words, some studies have multiple outcomes. In order to better accommodate the `study`- and `outcome`-level variances, let's fit a cross-classified Bayesian meta-analysis reminiscent of the cross-classified chimp model from Chapter 13.
 
-```{r b14.6, cache = T, message = F, warning = F}
+```{r b14.6, echo = F}
+# save(b14.6, file = "fits/b14.06.rda")
+# rm(b14.6)
+load("fits/b14.06.rda")
+```
+
+```{r, eval = F}
 b14.6 <- 
   brm(data = spank, 
       family = gaussian,
@@ -1143,7 +1197,13 @@ spank %>%
 
 When I use dummies in my models, I prefer to have the majority group stand as the reference category. As such, I typically name those variables by the minority group. In this case, most occasions are based on within-participant designs. Thus, we'll go ahead and add the `between` variable to the model. While we're at it, we'll practice using the `0 + intercept` syntax.
 
-```{r b14.7, cache = T, message = F, warning = F}
+```{r b14.7, echo = F}
+# save(b14.7, file = "fits/b14.07.rda")
+# rm(b14.7)
+load("fits/b14.07.rda")
+```
+
+```{r, eval = F}
 b14.7 <- 
   brm(data = spank, 
       family = gaussian,
@@ -1190,8 +1250,8 @@ If you'd like to learn more about these methods, do check out Vourre's [*Meta-an
 sessionInfo()
 ```
 
-```{r, echo = F, eval = F}
-rm(p_pancake, take_sample, sim_pancake, n_sim, d, theme_black, color, dlist, inits, inits_list, b14.1_se, b14.1_mi, data_error, b14.1b, nd, f_error, f_no_error, color_y, color_r, b14.2_se, b14.2_mi, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi, spank, b14.5, b14.6, label, b14.7)
+```{r, echo = F}
+rm(p_pancake, take_sample, sim_pancake, n_sim, d, theme_black, color, b14.1_se, b14.1_mi, data_error, p1, b14.1b, nd, f_error, f_no_error, color_y, color_r, p2, b14.2_se, b14.2_mi, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi, spank, b14.5, b14.6, label, b14.7)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
