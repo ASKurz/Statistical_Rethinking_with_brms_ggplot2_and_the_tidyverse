@@ -75,7 +75,7 @@ head(vary_effects)
 
 Let's make sure we’re keeping this all straight. ` a_cafe ` = our café-specific intercepts; `b_cafe ` = our café-specific slopes. These aren't the actual data, yet. But at this stage, it might make sense to ask *What's the distribution of `a_cafe` and `b_cafe`?* Our variant of Figure 13.2 contains the answer.
 
-For our plots in this chapter, we'll use a custom theme. The color palette will come from the "pearl_earring" palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
+For our plots in this chapter, we'll make our own custom ggplot2 theme. The color palette will come from the "pearl_earring" palette of the [dutchmasters package](https://github.com/EdwinTh/dutchmasters). You can learn more about the original painting, Vermeer's *Girl with a Pearl Earring*, [here](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring).
 
 ```{r, fig.width = 6.5, fig.height = 2}
 # devtools::install_github("EdwinTh/dutchmasters")
@@ -84,32 +84,39 @@ library(dutchmasters)
 dutchmasters$pearl_earring
 ```
 
-We'll name our custom theme `theme_pearl_earring`.
+We'll name our custom theme `theme_pearl_earring()`. I cobbled together this approach to defining a custom ggplot2 theme with help from [Chapter 16 of Wichkam's *ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/programming.html); [Chapter 4.6 of Peng, Kross, and Anderson's *Mastering Software Development in R*](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html); LEA WANIEK Lea Waniek's blog post, [*Custom themes in ggplot2*](https://www.statworx.com/de/blog/custom-themes-in-ggplot2/), and Joey Stanley's blog post [*Custom Themes in ggplot2*](https://joeystanley.com/blog/custom-themes-in-ggplot2).
 
 ```{r}
-theme_pearl_earring <-
-  theme(text       = element_text(color = "#E8DCCF", family = "Courier"),
-        strip.text = element_text(color = "#E8DCCF", family = "Courier"),
-        axis.text  = element_text(color = "#E8DCCF"),
-        axis.ticks = element_line(color = "#E8DCCF"),
-        line       = element_line(color = "#E8DCCF"),
-        plot.background   = element_rect(fill = "#100F14", color = "#100F14"),
-        panel.background  = element_rect(fill = "#100F14", color = "#E8DCCF"),
-        strip.background  = element_rect(fill = "#100F14", color = "transparent"),
+theme_pearl_earring <- function(light_color = "#E8DCCF", 
+                                dark_color = "#100F14", 
+                                my_family = "Courier",
+                                ...) {
+  
+  theme(text       = element_text(color = light_color, family = my_family),
+        strip.text = element_text(color = light_color, family = my_family),
+        axis.text  = element_text(color = light_color),
+        axis.ticks = element_line(color = light_color),
+        line       = element_line(color = light_color),
+        plot.background   = element_rect(fill = dark_color, color = dark_color),
+        panel.background  = element_rect(fill = dark_color, color = light_color),
+        strip.background  = element_rect(fill = dark_color, color = "transparent"),
         panel.grid = element_blank(),
-        legend.background = element_rect(fill = "#100F14", color = "transparent"),
-        legend.key        = element_rect(fill = "#100F14", color = "transparent"),
-        axis.line = element_blank())
+        legend.background = element_rect(fill = dark_color, color = "transparent"),
+        legend.key        = element_rect(fill = dark_color, color = "transparent"),
+        axis.line = element_blank(), 
+        ...)
+  
+}
 ```
 
-Now we're ready to plot Figure 13.2.
+Note how our custom `theme_pearl_earing()` function has a few adjustable parameters. Feel free to play around with alternative settings to see how they work. If we just use the defaults as we have defined them, here is our Figure 13.2.
 
 ```{r, fig.width = 3.25, fig.height = 3}
 vary_effects %>% 
   ggplot(aes(x = a_cafe, y = b_cafe)) +
   geom_point(color = "#80A0C7") +
-  geom_rug(color = "#8B9DAF", size = 1/7) +
-  theme_pearl_earring
+  geom_rug(color = "#8B9DAF", size = 1/7) + 
+  theme_pearl_earring()
 ```
 
 Again, these are not "data." Figure 13.2 shows a distribution of *parameters*. Here's their Pearson's correlation coefficient.
@@ -158,11 +165,9 @@ d %>%
   scale_color_manual(values = c("#80A0C7", "#EEDA9D")) +
   scale_x_continuous(NULL, breaks = 1:10,
                      labels = rep(c("M", "A"), times = 5)) +
-  coord_cartesian(ylim = 0:4) +
-  ylab("wait time in minutes") +
-  theme_pearl_earring +
-  theme(legend.position = "none",
-        axis.ticks.x    = element_blank()) +
+  scale_y_continuous("wait time in minutes", limits = c(0, 4)) +
+  theme_pearl_earring(legend.position = "none",
+                      axis.ticks.x    = element_blank()) +
   facet_wrap(~cafe, ncol = 1)
 ```
 
@@ -226,7 +231,7 @@ ggplot(data = r_1, aes(x = V2)) +
             color = "#A65141", family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab("correlation") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Okay, let's get ready to model and switch out rethinking for brms.
@@ -277,7 +282,7 @@ post %>%
            color = "#EEDA9D", alpha = 2/3, family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab("correlation") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 McElreath then depicted multidimensional shrinkage by plotting the posterior mean of the varying effects compared to their raw, unpooled estimated. With brms, we can get the `cafe`-specific intercepts and `afternoon` slopes with `coef()`, which returns a three-dimensional list.
@@ -350,7 +355,7 @@ p1 <-
                      values = c("#80A0C7", "#A65141")) +
   coord_cartesian(xlim = range(params$Intercept),
                   ylim = range(params$Slope)) +
-  theme_pearl_earring
+  theme_pearl_earring()
 
 p1
 ```
@@ -410,7 +415,7 @@ p2 <-
                   ylim = range(estimates$afternoon)) +
   labs(x = "morning wait (mins)",
        y = "afternoon wait (mins)") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Here we bind the two subplots together with patchwork syntax.
@@ -421,7 +426,7 @@ library(patchwork)
 (p1 + theme(legend.position = "none")) + 
   p2 + 
   plot_annotation(title = "Shrinkage in two dimensions",
-                  theme = theme_pearl_earring)
+                  theme = theme_pearl_earring())
 ```
 
 ## Example: Admission decisions and gender
@@ -530,7 +535,7 @@ rbind(coef(b13.2)$dept_id[, , "Intercept"],
       VarCorr(b13.2)$dept_id$sd)
 ```
 
-And a little more data wrangling will make the summaries easier to read:
+A little more data wrangling will make the summaries easier to read.
 
 ```{r} 
 rbind(coef(b13.2)$dept_id[, , "Intercept"],
@@ -609,9 +614,8 @@ post %>%
   scale_color_manual(values = c("#80A0C7", "#B1934A", "#A65141", "#EEDA9D")) +
   scale_x_continuous(NULL, breaks = c(1001, 5000)) +
   ylab(NULL) +
-  theme_pearl_earring +
-  theme(legend.position  = c(.825, .06),
-        legend.direction = "horizontal") +
+  theme_pearl_earring(legend.position  = c(.825, .06),
+                      legend.direction = "horizontal") +
   facet_wrap(~key, ncol = 3, scales = "free_y")
 ```
 
@@ -631,13 +635,12 @@ rhat(b13.3) %>%
              size = 2) +
   scale_color_manual(values = c("#80A0C7", "#A65141")) +
   labs(x = NULL, y = NULL) +
-  theme_pearl_earring +
-  theme(legend.position = "none",
-        axis.ticks.y    = element_blank(),
-        axis.text.y     = element_text(hjust = 0))
+  theme_pearl_earring(legend.position = "none",
+                      axis.ticks.y    = element_blank(),
+                      axis.text.y     = element_text(hjust = 0))
 ```
 
-Them are some respectable $\hat R$ values. The plot accentuates their differences, but they're all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric:
+Them are some respectable $\hat R$ values. The plot accentuates their differences, but they're all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric.
 
 ```{r}
 coef(b13.3)
@@ -662,10 +665,9 @@ rbind(coef(b13.3)$dept_id[, , 1],
   scale_color_manual(values = c("#394165", "#A65141")) +
   xlab(NULL) +
   coord_flip() +
-  theme_pearl_earring +
-  theme(legend.position = "none",
-        axis.ticks.y    = element_blank(),
-        axis.text.y     = element_text(hjust = 0))
+  theme_pearl_earring(legend.position = "none",
+                      axis.ticks.y    = element_blank(),
+                      axis.text.y     = element_text(hjust = 0))
 ```
 
 Just like in the text, our `male` slopes are much less dispersed than our intercepts.
@@ -689,7 +691,7 @@ post %>%
   coord_cartesian(xlim = -1:1) +
   labs(subtitle = "The dot is at the median; the\nhorizontal bar is the 95% CI.",
        x = "correlation") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Much like for Figure 13.5.b, above, it'll take a little data processing before we're ready to reproduce Figure 13.6.b. 
@@ -756,7 +758,7 @@ ggplot(data = params, aes(x = intercept, y = slope)) +
                   ylim = range(params$slope)) +
   labs(x = expression(paste("intercept (", alpha[dept_id], ")")),
        y = expression(paste("slope (", beta[dept_id], ")"))) +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 ### Model comparison.
@@ -907,7 +909,7 @@ neff %>%
   coord_cartesian(ylim = 0:12000) +
   labs(y = "effective samples",
        subtitle = "The non-centered\nparameterization is the\nbrms default. No fancy\ncoding required.") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 McElreath reported this model only has about 18 parameters. Let's compute the WAIC and check the `p_waic`.
@@ -1016,9 +1018,8 @@ d_mat %>%
   scale_fill_gradient(low = "#FCF9F0", high = "#A65141") +
   scale_x_discrete(NULL, position = "top", expand = c(0, 0)) +
   scale_y_discrete(NULL, expand = c(0, 0)) +
-  theme_pearl_earring +
-  theme(axis.ticks  = element_blank(),
-        axis.text.y = element_text(hjust = 0))
+  theme_pearl_earring(axis.text.y = element_text(hjust = 0)) +
+  theme(axis.ticks = element_blank())
 ```
 
 Figure 13.8 shows the "shape of the function relating distance to the covariance $\mathbf K_{ij}$."
@@ -1038,7 +1039,7 @@ tibble(
   scale_y_continuous("correlation", 
                      breaks = c(0, .5, 1),
                      labels = c(0, ".5", 1)) +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Now load the primary data.
@@ -1127,7 +1128,7 @@ get_prior(data = d, family = poisson,
           total_tools ~ 1 + gp(lat, lon2) + logpop)
 ```
 
-That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha) [of the Stan team]'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
+That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha)'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
 
 Now that we've hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath's model with rethinking. 
 
@@ -1192,7 +1193,7 @@ post_m13.7[, "a"] %>%
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Not identical, but pretty close",
        x     = "intercept") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Now check the slopes.
@@ -1210,7 +1211,7 @@ post_m13.7[, "bp"] %>%
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Again, pretty close",
        x     = "slope") +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 This one, $\eta^2$, required a little transformation.
@@ -1228,7 +1229,7 @@ post_m13.7[, "etasq"] %>%
   labs(title = "Still in the same ballpark",
        x     = expression(eta^2)) +
   coord_cartesian(xlim = 0:3) +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 $\rho^2$ required more extensive transformation of the brms posterior:
@@ -1247,8 +1248,7 @@ post_m13.7[, "rhosq"] %>%
        subtitle = "Notice how differently the y axes got scaled. Also, that brms density is\nright skewed for days.",
        x        = expression(rho^2)) +
   coord_cartesian(xlim = 0:50) +
-  theme_pearl_earring +
-  theme(legend.position = "none") +
+  theme_pearl_earring(legend.position = "none") +
   facet_wrap(~package, scales = "free_y")
 ```
 
@@ -1281,7 +1281,7 @@ post_b13.7 %>%
                      breaks = seq(from = 0, to = 50, by = 10)) +
   coord_cartesian(xlim = 0:50,
                   ylim = 0:1) +
-  theme_pearl_earring
+  theme_pearl_earring()
 ```
 
 Do note the scale on which we placed our x axis. Our brms parameterization resulted in a gentler decline in spatial covariance.
@@ -1350,14 +1350,12 @@ p1 <-
   geom_text_repel(data = d, aes(label = culture), 
                   seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
   scale_alpha_continuous(range = c(0, 1)) +
-  labs(title = "Posterior median correlations",
-       subtitle = "Among societies in geographic space\n",
+  labs(subtitle = "Among societies in geographic space\n",
        x = "longitude",
        y = "latitude") +
   coord_cartesian(xlim = range(d$lon2),
                   ylim = range(d$lat)) +
-  theme(legend.position = "none") +
-  theme_pearl_earring
+  theme_pearl_earring(legend.position = "none")
 ```
 
 Here's our the code for our version of Figure 13.10.b.
@@ -1396,14 +1394,15 @@ p2 <-
        y = "total tools") +
   coord_cartesian(xlim = range(d$logpop),
                   ylim = range(d$total_tools)) +
-  theme(legend.position = "none") +
-  theme_pearl_earring
+  theme_pearl_earring(legend.position = "none")
 ```
 
 Now we combine them to make the full version of Figure 13.10.
 
 ```{r, fig.width = 8, fig.height = 4.25}
-p1 + p2
+p1 + p2 + 
+  plot_annotation(title = "Posterior median correlations",
+                  theme = theme_pearl_earring())
 ```
 
 Yep, as expressed by the intensity of the colors of the connecting lines, those correlations are more pronounced than those in the text. Our higher correlations make for a more intensely-webbed plot. To learn more on Bürkner's thoughts on this model in brms, check out the [thread on this GitHub issue](https://github.com/paul-buerkner/brms/issues/300).
@@ -1545,9 +1544,8 @@ b13.10 %>%
        subtitle = "The dots and horizontal lines are the posterior means and percentile-based\n95% intervals, respectively. The values are on the log scale.",
        x        = NULL, y = NULL) +
   coord_cartesian(xlim = c(-1.5, 1.5)) +
-  theme_pearl_earring +
-  theme(axis.ticks.y = element_blank(),
-        axis.text.y  = element_text(hjust = 0))
+  theme_pearl_earring(axis.ticks.y = element_blank(),
+                      axis.text.y  = element_text(hjust = 0))
 ```
 
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
