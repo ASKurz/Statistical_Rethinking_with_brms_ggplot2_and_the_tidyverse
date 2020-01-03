@@ -107,7 +107,8 @@ load("fits/b10.03.rda")
 
 ```{r, eval = F}
 b10.2 <-
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       pulled_left | trials(1) ~ 1 + prosoc_left,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
@@ -398,7 +399,7 @@ model_weights(b10.1, b10.2, b10.3, b10.4, weights = "waic") %>%
   round(digits = 2)
 ```
 
-Both the WAIC differences and the WAIC weights suggest out 9-parameter `b10.4` was substantially better than the previous models, even after correcting for overfitting. Some times group averages aren't good enough. When you have data with many occasions within cases, fitting models that allow for individual differences is generally the way to go.
+Both the WAIC differences and the WAIC weights suggest our 9-parameter `b10.4` was substantially better than the previous models, even after correcting for overfitting. Some times group averages aren't good enough. When you have data with many occasions within cases, fitting models that allow for individual differences is generally the way to go.
 
 #### Overthinking: Using the ~~by~~ `group_by()` function.
 
@@ -533,7 +534,8 @@ load("fits/b10.07.rda")
 
 ```{r, eval = F}
 b10.6 <-
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1 + male ,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
@@ -541,7 +543,8 @@ b10.6 <-
       seed = 10) 
 
 b10.7 <-
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 1,
       prior(normal(0, 10), class = Intercept),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
@@ -600,7 +603,7 @@ There are those warning messages, again. Using the loo-object for model `b10.6`,
 pareto_k_table(l_b10.6) 
 ```
 
-You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like nice and low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range. We can take a closer look like this:
+You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 1) %>% length()` in the "bad" $k$ range. We can take a closer look like this:
 
 ```{r, fig.width = 4.5, fig.height = 3.5}
 plot(l_b10.6)
@@ -745,7 +748,8 @@ load("fits/b10.09.rda")
 
 ```{r, eval = F}
 b10.8 <-
-  brm(data = d, family = binomial,
+  brm(data = d, 
+      family = binomial,
       admit | trials(applications) ~ 0 + dept,
       prior(normal(0, 10), class = b),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
@@ -1254,7 +1258,8 @@ load("fits/b10.10_c.rda")
 
 ```{r, eval = F}
 b10.10_c <-
-  brm(data = d, family = poisson,
+  brm(data = d, 
+      family = poisson,
       total_tools ~ 1 + log_pop_c + contact_high + contact_high:log_pop_c,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b)),
@@ -1430,7 +1435,7 @@ Compare that equation with the simpler version in section 2.3.1 (page 33 in the 
 
 $$\text{Pr} (k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
 
-McElreath then went on to explain how these models, multinomial logistic regression models, are among the more difficult of the GLMs to master. He wasn't kidding. To get a grasp on these, we'll cover them in a little more detail than he did in the text. To begin, let's simulate the data just like McElreath did in the R code 10.56 block.
+McElreath then went on to explain how multinomial logistic regression models are among the more difficult of the GLMs to master. He wasn't kidding. To get a grasp on these, we'll cover them in a little more detail than he did in the text. To begin, let's simulate the data just like McElreath did in the R code 10.56 block.
 
 ```{r, warning = F, message = F}
 library(rethinking)
@@ -1456,7 +1461,6 @@ Here's what the data look like.
 
 ```{r, fig.width = 3, fig.height = 2.25, message = F, warning = F}
 tibble(career = career) %>%
-  
   ggplot(aes(x = career)) +
   geom_bar(size = 0, fill = wes_palette("Moonrise2")[2])
 ```
@@ -1532,7 +1536,7 @@ Check the results.
 print(b10.16)
 ```
 
-`brms::brm()` referred to the $K$ categories as `mu1`, `mu2`, and `mu3`. Since `career == 1` is the reference category, the *score* for which was set to zero, there is no parameter for `mu1_Intercept`. That's a zero. Now notice how `mu2_Intercept` is about 0.5 and `mu3_Intercept` is about 1. That's just like those `score` values from our last tibble block! But these parameters are of *scores* or weights; they're not probabilities. This means just applying the `inv_logit_scaled()` function to them won't work.
+`brms::brm()` referred to the $K$ categories as `mu1`, `mu2`, and `mu3`. Since `career == 1` is the reference category, the *score* for which was set to zero, there is no parameter for `mu1_Intercept`. That's a zero. Now notice how `mu2_Intercept` is about 0.5 and `mu3_Intercept` is about 1. That's just like those `score` values from our last tibble block! But these parameters are of *scores* or weights; they are not probabilities. This means just applying the `inv_logit_scaled()` function to them won't work.
 
 ```{r}
 fixef(b10.16) %>% inv_logit_scaled()
@@ -1641,7 +1645,7 @@ library(patchwork)
 p1 + p2
 ```
 
-If we were working with a larger $N$, we could have gotten any with discrediting `family_income` into narrower bins. This is about as good as it gets with only 100 cases. It's time to switch out rethinking for brms.
+If we were working with a larger $N$, we could have gotten away with discretizing `family_income` into narrower bins. This is about as good as it gets with only 100 cases. It's time to switch out rethinking for brms.
 
 ```{r, message = F, warning = F}
 detach(package:rethinking, unload = T)
