@@ -292,7 +292,7 @@ First, we took one random draw from a normal distribution with a mean of the fir
 
 #### Rethinking: Varying intercepts as over-dispersion. 
 
-> In the previous chapter (page 346), the beta-binomial and gamma-Poisson models were presented as ways for coping with **over-dispersion** of count data. Varying intercepts accomplish the same thing, allowing count outcomes to be over-dispersed. they accomplish this, because when each observed count gets its own unique intercept, but these intercepts are pooled through a common distribution, the predictions expect over-dispersion just like a beta-binomial or gamma-Poisson model would. Compared to a beta-binomial or gamma-Poisson model, a binomial or Poisson model with a varying intercept on every observed outcome will often be easier to estimate and easier to extend. (p. 363, **emphasis** in the original)
+> In the previous chapter (page 346), the beta-binomial and gamma-Poisson models were presented as ways for coping with **over-dispersion** of count data. Varying intercepts accomplish the same thing, allowing count outcomes to be over-dispersed. They accomplish this, because when each observed count gets its own unique intercept, but these intercepts are pooled through a common distribution, the predictions expect over-dispersion just like a beta-binomial or gamma-Poisson model would. Compared to a beta-binomial or gamma-Poisson model, a binomial or Poisson model with a varying intercept on every observed outcome will often be easier to estimate and easier to extend. (p. 363, **emphasis** in the original)
 
 #### Overthinking: Prior for variance components.
 
@@ -366,7 +366,7 @@ The simulation formula should look familiar.
 
 ### Assign values to the parameters.
 
-Here we follow along with Mcelreath and "assign specific values representative of the actual tadpole data" (p. 366). However, our values will differ a little from his. Because he did not show a `set.seed()` line, we don’t know what seed was used to generate pseudo random draws from the `rnorm()` function. 
+Here we follow along with McElreath and "assign specific values representative of the actual tadpole data" (p. 366). However, our values will differ a little from his. Because he did not show a `set.seed()` line, we don’t know what seed was used to generate pseudo random draws from the `rnorm()` function. 
 
 ```{r}
 a       <-  1.4
@@ -819,7 +819,7 @@ The trace plots look great. Here are the other diagnostics along with the parame
 b12.5$fit
 ```
 
-Happily, our `n_eff` values are generally quite higher than those McElreath presented in the text. The good folks at Stan have been working hard to improve the software. 
+Happily, our `n_eff` values are generally quite higher than those McElreath presented in the text. The good folks at Stan have been [working hard to improve the software](https://cran.r-project.org/web/packages/rstan/NEWS). 
 
 If we'd like to restrict our focus to the parameter summaries, we can also use `brms::ranef()` to get those `depth=2`-type estimates. With `ranef()`, you get the group-specific estimates in a deviance metric. The `coef()` function, in contrast, yields the group-specific estimates in what you might call the natural metric. We'll get more language for this in the next chapter.
 
@@ -876,7 +876,7 @@ The two models yield nearly-equivalent information criteria values. Yet recall w
 >
 > So don't be shy--if you have a good theoretical reason to include a cluster variable, then you also have a good theoretical reason toe partially pool its parameters. (p. 376)
 
-This section just hints at a historical software difficulty. In short, it's not uncommon to have a theory-based model that includes multiple sources of clustering (i.e., requiring many `( <varying parameter(s)> | <grouping variable(s)> )` parts in the model). This can make for all kinds of computational difficulties and result in software error messages, inadmissible solutions, and so on. One of the practical solutions to difficulties like these has been to simplify the statistical models by removing some of the clustering terms. Even though such simpler models were not the theory-based ones, at least they yielded solutions. Nowadays, Stan (via brms or otherwise) is making it easier to fit the full theoretically-based model. To learn more about this topic, check out this nice blog post by [Michael Frank](https://twitter.com/mcxfrank), [*Mixed effects models: Is it time to go Bayesian by default?*](http://babieslearninglanguage.blogspot.com/2018/02/mixed-effects-models-is-it-time-to-go.html). Make sure to check out the discussion in the comments section, which includes all-stars like Bürkner and [Douglas Bates](http://pages.stat.wisc.edu/~bates/). You can get more context for the issue from [this (2013) paper](https://www.sciencedirect.com/science/article/pii/S0749596X12001180) by Barr, Levy, Scheepers, and Tily. 
+This section just hints at a historical software difficulty. In short, it's not uncommon to have a theory-based model that includes multiple sources of clustering (i.e., requiring many `( <varying parameter(s)> | <grouping variable(s)> )` parts in the model `formula`). This can make for all kinds of computational difficulties and result in software error messages, inadmissible solutions, and so on. One of the practical solutions to difficulties like these has been to simplify the statistical models by removing some of the clustering terms. Even though such simpler models were not the theory-based ones, at least they yielded solutions. Nowadays, Stan (via brms or otherwise) is making it easier to fit the full theoretically-based model. To learn more about this topic, check out this nice blog post by [Michael Frank](https://twitter.com/mcxfrank), [*Mixed effects models: Is it time to go Bayesian by default?*](http://babieslearninglanguage.blogspot.com/2018/02/mixed-effects-models-is-it-time-to-go.html). Make sure to check out the discussion in the comments section, which includes all-stars like Bürkner and [Douglas Bates](http://pages.stat.wisc.edu/~bates/). You can get more context for the issue from [this (2013) paper](https://www.sciencedirect.com/science/article/pii/S0749596X12001180) by Barr, Levy, Scheepers, and Tily. 
 
 ## Multilevel posterior predictions
 
@@ -1315,7 +1315,7 @@ b12.6 <-
       seed = 12)
 ```
 
-Note how we used the special `0 + intercept` syntax rather than using the default Intercept. This is because our predictor variable was not mean centered. For more info, see [here](https://github.com/paul-buerkner/brms/issues/114). Though we used the `0 + intercept` syntax for the fixed effect, it was not necessary for the random effect. Both ways work.
+Note how we used the special `0 + intercept` syntax rather than using the default Intercept. This is because our predictor variable was not mean centered. For more info, see [brms GitHub issue #114](https://github.com/paul-buerkner/brms/issues/114). Though we used the `0 + intercept` syntax for the fixed effect, it was not necessary for the random effect. Both ways work.
 
 Here is the data-processing work for our variant of Figure 12.6.
 
@@ -1375,7 +1375,7 @@ A big part of this chapter, both what McElreath focused on in the text and even 
 \text{logit} (p_i)                & = \alpha + \alpha_{\text{grouping variable}_i}\\
 \alpha                            & \sim \text{Normal} (0, 1) \\
 \alpha_{\text{grouping variable}} & \sim \text{Normal} (0, \sigma_{\text{grouping variable}}) \\
-\sigma_{\text{grouping variable}} & \sim \text{HalfCauchy} (0, 1)
+\sigma_{\text{grouping variable}} & \sim \text{HalfCauchy} (0, 1),
 \end{align*}
 
 and we've been grappling with the relation between the grand mean $\alpha$ and the group-level deviations $\alpha_{\text{grouping variable}}$. For situations where we have the `brms::brm()` model fit in hand, we've been playing with various ways to use the iterations, particularly with either the `posterior_samples()` method and the `fitted()/predict()` method. Both are great. But (a) we have other options, which I'd like to share, and (b) if you're like me, you probably need more practice than following along with the examples in the text. In this bonus section, we are going to introduce two simplified models and then practice working with combining the grand mean various combinations of the random effects.
