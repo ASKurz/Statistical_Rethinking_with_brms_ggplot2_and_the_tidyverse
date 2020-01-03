@@ -37,17 +37,17 @@ $$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} 
 
 By $\text{var()}$, of course, we meant variance (i.e., the `var()` function in R).
 
-McElreath's not a fan of the $R^2$. But it's important in my field, so instead of a summary at the end of the chapter, we will cover the Bayesian version of $R^2$ and how to use it in brms.
+McElreath is not a fan of the $R^2$. But it's important in my field, so instead of a summary at the end of the chapter, we will cover the Bayesian version of $R^2$ and how to use it in brms.
 
 ### More parameters always improve fit.
 
-> **Overfitting** occurs when a model learns too much from the sample. What this means is that there are both *regular* and *irregular* features in every sample. The regular features are the targets of our learning, because they generalize well or answer a question of interest. Regular features are useful, given an objective of our choice. The irregular features are instead aspects of the data that do not generalize and so may mislead us. (p. 169, *emphasis* in the original)
+> **Overfitting** occurs when a model learns too much from the sample. What this means is that there are both *regular* and *irregular* features in every sample. The regular features are the targets of our learning, because they generalize well or answer a question of interest. Regular features are useful, given an objective of our choice. The irregular features are instead aspects of the data that do not generalize and so may mislead us. (p. 169, **emphasis** in the original)
 
-There's a lot to like about this section, but my experience as a clinical psychologists inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individuals. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we’re about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/). Though not covered in this edition of the text, McElreath [plans on covering Student-$t$ regression](https://twitter.com/SolomonKurz/status/1207328933164830721) in his upcoming second edition. 
+There's a lot to like about this section, but my experience as a clinical psychologist inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individual cases. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we're about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/). Though not covered in this edition of the text, McElreath [plans on covering Student-$t$ regression](https://twitter.com/SolomonKurz/status/1207328933164830721) in his upcoming second edition. 
 
 In other words, the topics McElreath grappled with in this chapter are difficult and ones I hope you return to again and again during your data analysis career. Back to the text!
 
-We'll start off by making the data with brain size and body size for seven `species`.
+We'll start off by making the data with brain size and body size for seven `species` (see [McHenry & Coffing, 2000](https://www.researchgate.net/profile/Henry_Mchenry/publication/228368549_Australopithecus_To_Homo_Transformations_in_Body_and_Mind/links/572a6e1f08ae2efbfdbc20b6/Australopithecus-To-Homo-Transformations-in-Body-and-Mind.pdf)).
 
 ```{r, warning = F, message = F}
 library(tidyverse)
@@ -131,7 +131,7 @@ fits <-
 print(fits)
 ```
 
-Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). To learn more about this bulk approach to fitting models, check out Hadley Wickham's talk [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2339s&frags=pl%2Cwn). As you might learn in the talk, we can extract the $R^2$ from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
+Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). To learn more about this bulk approach to fitting models, check out Hadley Wickham's talk, [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2339s&frags=pl%2Cwn). As you might learn in the talk, we can extract the $R^2$ from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
 
 ```{r, fig.width = 8, fig.height = 1.5}
 fits <-
@@ -509,7 +509,7 @@ p <- c(.7, .15, .15)
 
 The formula for K-L divergence is
 
-$$D_\text{KL} (p, q) = \sum_i p_i \big ( \log (p_i) - \log (q_i) \big ) = \sum_i p_i \log \Bigg ( \frac{p_i}{q_i} \Bigg )$$
+$$D_\text{KL} (p, q) = \sum_i p_i \big ( \log (p_i) - \log (q_i) \big ) = \sum_i p_i \log \bigg ( \frac{p_i}{q_i} \bigg )$$
 
 which, in plainer language, is what McElreath described as "the average difference in log probability between the target ($p$) and model ($q$)" (p. 179).
 
@@ -530,7 +530,7 @@ tibble(p_1    = .3,
   mutate(d_kl = (p_1 * log(p_1 / q_1)) + (p_2 * log(p_2 / q_2)))
 ```
 
-Did you notice how we used the formula $D_\text{KL} (p, q) = \sum_i p_i \log \Bigg ( \frac{p_i}{q_i} \Bigg )$ within `mutate()`?
+Did you notice how we used the formula $D_\text{KL} (p, q) = \sum_i p_i \log \Big ( \frac{p_i}{q_i} \Big )$ within `mutate()`?
 
 Our systems in this section are binary (e.g., $q = \lbrace q_i, q_2 \rbrace$). Thus if you know $q_1 = .3$ you know of a necessity $q_2 = 1 - q_1$. Therefore we can code the tibble for the next example of when $p = q$ like this.
 
@@ -1043,7 +1043,7 @@ It's okay that the brms and loo packages don't yield the DIC because
 >
 > $$\text{WAIC} = -2 (\text{lppd} - p_\text{WAIC})$$
 >
-> And this value is yet another estimate of out-of-sample deviance. (pp. 191--192)
+> And this value is yet another estimate of out-of-sample deviance. (pp. 191--192, *emphasis* in the original)
 
 You'll see how to compute the WAIC in brms in just a bit.
 
@@ -1085,7 +1085,7 @@ ll <-
   as_tibble()
 ```
 
-Now we compute the "Bayesian deviance" (i.e., $\text{lppd}$), which follow the form
+Now we compute the "Bayesian deviance" (i.e., $\text{lppd}$), which follows the form
 
 $$\text{lppd} = \sum_{i = 1}^N \log \text{Pr} (y_i)$$
 
@@ -1232,7 +1232,7 @@ And again, our results don't perfectly match those in the text because a) we're 
 
 > AIC orders models in a way that approximates some forms of cross-validation, and WAIC is explicitly derived as an approximate Bayesian cross-validation...
 >
-> Perhaps a larger concern is that our train-test thought experiment pulls the test sample from exactly the same process as the training sample. This is a kind of *uniformitarian* assumption, in which future data are expected to come from the same process as past data and have the same rough range of values. (pp. 194--195)
+> Perhaps a larger concern is that our train-test thought experiment pulls the test sample from exactly the same process as the training sample. This is a kind of *uniformitarian* assumption, in which future data are expected to come from the same process as past data and have the same rough range of values. (pp. 194--195, *emphasis* in the original)
 
 This is one of those big-ticket issues that precisely-computed and neatly-presented statistics isn't so well suited to solve. If you're ready to ponder this further, Navarro's [*Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection*](https://link.springer.com/article/10.1007%2Fs42113-018-0019-z) is a fine place to start.
 
@@ -1356,7 +1356,7 @@ In brms, you can get a model's WAIC value with the `waic()` function.
 waic(b6.14)
 ```
 
-Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won't go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) from the makers of the [loo package](https://cran.r-project.org/package=loo). For now, back to the WAIC.
+Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published *Statistical Rethinking*. I won't go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) from the makers of the [loo package](https://mc-stan.org/loo/). For now, back to the WAIC.
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
