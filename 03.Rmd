@@ -115,7 +115,7 @@ Yep, that's more ideal.
 
 ## Sampling to summarize
 
-"Once your model produces a posterior distribution, the model's work is done. But your work has just begun. It is necessary to summarize and interpret the posterior distribution. Exactly now it is summarized depends upon your purpose" (p. 53).
+"Once your model produces a posterior distribution, the model's work is done. But your work has just begun. It is necessary to summarize and interpret the posterior distribution. Exactly how it is summarized depends upon your purpose" (p. 53).
 
 ### Intervals of defined boundaries.
 
@@ -152,7 +152,7 @@ samples %>%
   summarise(sum = mean(p_grid < .5))
 ```
 
-Much like McElreath discussed in the **Overthinking: Counting with** `sum` box, this works because R internally converts a logical expression, like `samples < 0/5`, to a vector of `TRUE` and `FALSE` results, one for each element of `samples`, saying whether or not each element matches the criterion" (p. 54). When we inserted that vector of `TRUE` and `FALSE` values within the `mean()` function, they were then internally converted to a vector of 1s and 0s, the mean of which was the probability. Tricky!
+Much like McElreath discussed in the **Overthinking: Counting with** `sum` box, this works "because R internally converts a logical expression, like `samples < 0/5`, to a vector of `TRUE` and `FALSE` results, one for each element of `samples`, saying whether or not each element matches the criterion" (p. 54). When we inserted that vector of `TRUE` and `FALSE` values within the `mean()` function, they were then internally converted to a vector of 1s and 0s, the mean of which was the probability. Tricky!
 
 To determine the posterior probability between 0.5 and 0.75, you can use `&` within `filter()`.
 
@@ -211,13 +211,13 @@ p1 + p2
 
 We'll come back for the lower two panels in a bit.
 
-Since we've saved our `p_grid` samples within the well-named `samples` tibble, we'll have to index with `$` within `quantile`.
+Since we saved our `p_grid` samples within the well-named `samples` tibble, we'll have to index with `$` within `quantile`.
 
 ```{r}
 (q_80 <- quantile(samples$p_grid, prob = .8))
 ```
 
-That value will come in handy for the lower left panel of Figure 3.2, so we saved it. But anyways, we could `select()` the `samples` vector, extract it from the tibble with `pull()`, and then pump it into `quantile()`:
+That value will come in handy for the lower left panel of Figure 3.2. But anyways, we could `select()` the `samples` vector, extract it from the tibble with `pull()`, and then pump it into `quantile()`.
 
 ```{r}
 samples %>% 
@@ -698,7 +698,7 @@ d <-
   ungroup() %>% 
   mutate(n           = str_c("n = ", n),
          probability = str_c("p = ", probability)) %>% 
-  unnest()
+  unnest(draws)
 
 head(d)
 ```
@@ -726,7 +726,7 @@ If you're new to applied statistics, you might be surprised how often mistakes a
 
 Let this haunt your dreams: "There is no way to really be sure that software works correctly" (p. 64).
 
-If you'd like to dive deeper into these dark waters, check out one my favorite talks from StanCon 2018, [*Esther Williams in the Harold Holt Memorial Swimming Pool*](https://youtu.be/pKZLJPrZLhU?t=26285), by the ineffable [Dan Simpson](https://twitter.com/dan_p_simpson). If Simpson doesn't end up drowning you, see Gabry and Simpson's talk at the Royal Statistical Society 2018, [*Visualization in Bayesian workflow*](https://www.youtube.com/watch?v=E8vdXoJId8M), a follow-up blog [*Maybe it's time to let the old ways die; or We broke R-hat so now we have to fix it*](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/), and that blog's associated pre-print by Vehtari, Gelman, Simpson, Carpenter, and Bürkner [*Rank-normalization, folding, and localization: An improved Rˆ for assessing convergence of MCMC*](https://arxiv.org/abs/1903.08008).
+If you'd like to dive deeper into these dark waters, check out one my favorite talks from StanCon 2018, [*Esther Williams in the Harold Holt Memorial Swimming Pool*](https://youtu.be/pKZLJPrZLhU?t=26285), by the ineffable [Dan Simpson](https://twitter.com/dan_p_simpson). If Simpson doesn't end up drowning you, see Gabry and Simpson's talk at the Royal Statistical Society 2018, [*Visualization in Bayesian workflow*](https://www.youtube.com/watch?v=E8vdXoJId8M), a follow-up blog [*Maybe it's time to let the old ways die; or We broke R-hat so now we have to fix it*](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/), and that blog's associated pre-print by Vehtari, Gelman, Simpson, Carpenter, and Bürkner [*Rank-normalization, folding, and localization: An improved $\hat R$ for assessing convergence of MCMC*](https://arxiv.org/abs/1903.08008).
 
 #### Is the model adequate?
 
@@ -996,7 +996,7 @@ f <-
 glimpse(f)
 ```
 
-By default, we have a generically-named vector `V1` of 4000 samples. We'll explain the defaults in later chapters. For now, notice we can view these in a density.
+By default, we have a generically-named vector `V1` of 4,000 samples. We'll explain the defaults in later chapters. For now, notice we can view these in a density.
 
 ```{r, fig.width = 7, fig.height = 2, message = F}
 f %>% 
