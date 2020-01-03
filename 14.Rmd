@@ -61,7 +61,7 @@ tibble(seed = 2:11) %>%
   mutate(value_returned = map_dbl(seed, take_sample))
 ```
 
-Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like.
+Each of those `value_returned` values stands for one of the three pancakes: 1 = BB, 2 = BU, and 3 = UU. In the next line, McElreath made slick use of a matrix to specify that. Here's what the matrix looks like.
 
 ```{r}
 matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, ncol = 3)
@@ -222,7 +222,7 @@ theme_set(theme_black())
 # execute `theme_set(theme_default())`
 ```
 
-In the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://cran.r-project.org/package=viridis), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html).
+In the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf), Bürkner recommended complimenting `theme_black()` with color scheme "C" from the [viridis package](https://github.com/sjmgarnier/viridis), which provides a variety of [colorblind-safe color palettes](https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html).
 
 ```{r, message = F, warning = F}
 # install.packages("viridis")
@@ -867,7 +867,7 @@ Like McElreath, we'll update the imputation line of our statistical model to:
 
 \begin{align*}
 \text{neocortex}_i & \sim \text{Normal} (\nu_i, \sigma_\text{neocortex}) \\
-\nu_i              & = \alpha_\text{neocortex} + \gamma_1 \text{logmass}_i \\
+\nu_i              & = \alpha_\text{neocortex} + \gamma_1 \text{logmass}_i,
 \end{align*}
 
 which includes the updated priors
@@ -1001,17 +1001,17 @@ Before we proceed, I should acknowledge that this section is heavily influenced 
 
 The basic version of a Bayesian meta-analysis follows the form
 
-$$y_i \sim \text{Normal}(\theta_i, \sigma_i)$$
+$$y_i \sim \text{Normal}(\theta_i, \sigma_i),$$
 
 where $y_i$ = the point estimate for the effect size of a single study, $i$, which is presumed to have been a draw from a Normal distribution centered on $\theta_i$. The data in meta-analyses are typically statistical summaries from individual studies. The one clear lesson from this chapter is that those estimates themselves come with error and those errors should be fully expressed in the meta-analytic model. Which we do. The standard error from study $i$ is specified $\sigma_i$, which is also a stand-in for the standard deviation of the Normal distribution from which the point estimate was drawn. Do note, we’re not estimating $\sigma_i$, here. Those values we take directly from the original studies. 
 
 Building on the model, we further presume that study $i$ is itself just one draw from a population of related studies, each of which have their own effect sizes. As such. we presume $\theta_i$ itself has a distribution following the form
 
-$$\theta_i \sim \text{Normal} (\mu, \tau)$$
+$$\theta_i \sim \text{Normal} (\mu, \tau),$$
 
 where $\mu$ is the meta-analytic effect (i.e., the population mean) and $\tau$ is the variation around that mean, what you might also think of as $\sigma_\tau$.
 
-Since there's no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's (2016) paper, [*Spanking and Child Outcomes: Old Controversies and New Meta-Analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
+Since there's no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's (2016) paper, [*Spanking and child outcomes: Old controversies and new meta-analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
 
 > Around the world, most children (80%) are spanked or otherwise physically punished by their parents ([UNICEF, 2014](https://www.unicef.org/publications/index_74865.html)). The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world ([Gershoff, 2013](https://onlinelibrary.wiley.com/doi/abs/10.1111/cdep.12038)). Several hundred studies have been conducted on the associations between parents' use of spanking or physical punishment and children's behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
 
@@ -1026,7 +1026,7 @@ glimpse(spank)
 
 In this paper, the effect size of interest is a Cohen's $d$, derived from the formula
 
-$$d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_\text{pooled}}$$
+$$d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_\text{pooled}},$$
 
 where
 
@@ -1091,7 +1091,7 @@ But enough technical talk. Let's look at the model results.
 print(b14.5)
 ```
 
-Thus, in our simple Bayesian meta-analysis, we have a population Cohen's $d$ of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these Cohen's* d*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
+Thus, in our simple Bayesian meta-analysis, we have a population Cohen's $d$ of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these Cohen's* $d$*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
 
 ```{r}
 spank %>% 
