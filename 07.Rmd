@@ -16,7 +16,7 @@ options(width = 100)
 
 ## Building an interaction.
 
-"Africa is special" (p. 211). Let's load the `rugged` data to see one of the reasons why.
+"Africa is special" (p. 211). Let's load the `rugged` data to see one of the reasons why ([Nunn & Puga, 2011](https://scholar.harvard.edu/files/nunn/files/ruggedness.pdf)).
 
 ```{r, message = F}
 library(rethinking)
@@ -556,7 +556,7 @@ Though continuous interactions can be more challenging to interpret, they're jus
 
 ### The data.
 
-Look at the `tulips`.
+Look at the `tulips` (adapted from [Grafen & Hails, 2000](https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?cc=us&lang=en&)).
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -645,7 +645,7 @@ b7.7 <-
          seed = 7)
 ```
 
-Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use `posterior_summary()`, which gets us most of the way there.
+Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use the `posterior_summary()` function, which gets us most of the way there.
 
 ```{r,}
 posterior_summary(b7.6) %>% round(digits = 2)
@@ -993,7 +993,7 @@ plot(conditional_effects(b7.9,
      points = T)
 ```
 
-One might want to evaluate the effects of the second term in the interaction--`water_c`, in this case--at values other than the mean and the mean +/- one standard deviation. When we reproduced the bottom row of Figure 7.7, we expressed the interaction based on values -1, 0, and 1 for `water_c`. We can do that, here, by using the `int_conditions` argument. It expects a list, so we'll put our desired `water_c` values in just that.
+One might want to evaluate the effects of the second term in the interaction--`water_c`, in this case--at values other than the mean and the mean $\pm$ one standard deviation. When we reproduced the bottom row of Figure 7.7, we expressed the interaction based on values -1, 0, and 1 for `water_c`. We can do that, here, by using the `int_conditions` argument. It expects a list, so we'll put our desired `water_c` values in just that.
 
 ```{r, fig.height = 3, fig.width = 4}
 ic <- 
