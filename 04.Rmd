@@ -42,7 +42,7 @@ pos <-
   ungroup() 
 ```
 
-That `map_dbl()` code within the first `mutate()` line might look odd. Go [here](https://purrr.tidyverse.org/reference/rerun.html) to learn more about iterating with `purrr::map_dbl()`.
+That `map_dbl()` code within the first `mutate()` line might look odd. Go [here](https://purrr.tidyverse.org/reference/map.html) to learn more about iterating with `purrr::map_dbl()`.
 
 We might `glimpse()` at the data.
 
@@ -110,7 +110,7 @@ p1 | p2 | p3
 
 While we were at it, we explored a few ways to express densities. The main action was with the `geom_line()`, `geom_density()`, and `stat_function()` functions, respectively.
 
-> Any process that ads together random values from the same distribution converges to a normal. But it’s not easy to grasp why addition should result in a bell curve of sums. Here’s a conceptual way to think of the process. Whatever the average value of the source distribution, each sample from it can be thought of as a fluctuation from the average value. When we begin to add these fluctuations together, they also begin to cancel one another out. A large positive fluctuation will cancel a large negative one. The more terms in the sum, the more chances for each fluctuation to be canceled by another, or by a series of smaller ones in the opposite direction. So eventually the most likely sum, in the sense that there are the most ways to realize it, will be a sum in which every fluctuation is canceled by another, a sum of zero (relative to the mean). (pp. 37--74)
+> Any process that ads together random values from the same distribution converges to a normal. But it’s not easy to grasp why addition should result in a bell curve of sums. Here’s a conceptual way to think of the process. Whatever the average value of the source distribution, each sample from it can be thought of as a fluctuation from the average value. When we begin to add these fluctuations together, they also begin to cancel one another out. A large positive fluctuation will cancel a large negative one. The more terms in the sum, the more chances for each fluctuation to be canceled by another, or by a series of smaller ones in the opposite direction. So eventually the most likely sum, in the sense that there are the most ways to realize it, will be a sum in which every fluctuation is canceled by another, a sum of zero (relative to the mean). (pp. 73--74)
 
 ### Normal by multiplication.
 
@@ -125,8 +125,8 @@ In the `runif()` part of that code, we generated 12 random draws from the unifor
 
 ```{r}
 set.seed(4)
-tibble(a   = 1,
-       b   = runif(12, 0, 0.1)) %>% 
+tibble(a = 1,
+       b = runif(12, 0, 0.1)) %>% 
   mutate(c = a + b) %>% 
   summarise(p = prod(c))
 ```
@@ -179,8 +179,8 @@ tibble(samples = map_dbl(1:1e4, ~ log(prod(1 + runif(12, 0, 0.5))))) %>%
 What we did was really compact. Walking it out a bit, here's what we all did within the second argument within `map_dbl()` (i.e., everything within `log()`). 
 
 ```{r}
-tibble(a   = runif(12, 0, 0.5),
-       b   = 1) %>% 
+tibble(a = runif(12, 0, 0.5),
+       b = 1) %>% 
   mutate(c = a + b) %>% 
   summarise(p = prod(c) %>% log())
 ```
@@ -197,7 +197,7 @@ The Gaussian is
 
 > a widespread pattern, appearing again and again at different scales and in different domains. Measurement errors, variations in growth, and the velocities of molecules all tend towards Gaussian distributions. These processes do this because at their heart, these processes add together fluctuations. And repeatedly adding finite fluctuations results in a distribution of sums that have shed all information about the underlying process, aside from mean and spread.
 >
-> One consequence of this is that statistical models based on Gaussian distributions cannot reliably identify micro-process... (p. 75)
+> One consequence of this is that statistical models based on Gaussian distributions cannot reliably identify micro-process. (p. 75)
 
 But they can still be useful.
 
@@ -347,7 +347,7 @@ This probably reflects my training history, but the structure of a data frame se
 
 #### Overthinking: Index magic.
 
-For more on indexing, check out [chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Roger Peng's *R Programming for Data Science* or even the [Subsetting](https://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
+For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Roger Peng's *R Programming for Data Science* or even the [Subsetting](https://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
 
 ### The model. 
 
@@ -600,7 +600,7 @@ That `labeller = label_parsed` bit in the `facet_wrap()` function is what conver
 
 This is the point in the project where we hop off the grid-approximation train. On the one hand, I think this is a great idea. Most of y'all reading this will never use grid approximation in a real-world applied data analysis. On the other hand, there is some pedagogical utility in practicing with it. It can help you grasp what it is we're dong when we apply Bayes' theorem. If you'd like more practice, check out the first several chapters in [Kruschke's (2014) textbook](https://sites.google.com/site/doingbayesiandataanalysis/) and the corresponding chapters in [my project translating it into brms and tidyverse](https://bookdown.org/ajkurz/DBDA_recoded/).
 
-### Fitting the model with ~~`map()`~~ `brm()`.
+### Fitting the model with ~~`map`~~ `brm()`.
 
 We won't actually use `rethinking::map()`--which you should not conflate with `purrr::map()`--, but will jumpt straight to the primary brms modeling function, `brm()`. In the text, McElreath indexed his models with names like `m4.1`. I will largely follow that convention, but will replace the *m* with a *b* to stand for the brms package. Plus, once in a blue moon we will actually use the rethinking package to fit a model in order to contrast it to one fit with brms. On those occasions, we will index them using the *m* prefix. Here's the first model with `brm()`.
 
@@ -654,9 +654,7 @@ Here's how to get the model summary of our `brm()` object.
 print(b4.1_hc)
 ```
 
-The `summary()` function works in a similar way. 
-
-You can also get a [Stan-like summary](https://cran.r-project.org/package=rstan/vignettes/rstan.html) like this.
+The `summary()` function works in a similar way. You can also get a [Stan-like summary](https://cran.r-project.org/package=rstan/vignettes/rstan.html) like this.
 
 ```{r}
 b4.1_hc$fit
@@ -707,7 +705,7 @@ summary(b4.1_hc)$fixed
 summary(b4.2)$fixed
 ```
 
-### Sampling from a ~~`map()`~~ `brm()` fit.
+### Sampling from a ~~`map`~~ `brm()` fit.
 
 brms doesn't seem to have a convenience function that works the way `vcov()` does for rethinking.
 
@@ -717,7 +715,7 @@ vcov(b4.1_hc)
 
 This only returned the first element in the matrix it did for rethinking. That is, it appears `brms::vcov()` only returns the variance/covariance matrix for the single-level $\beta$ parameters (i.e., those used to model $\mu$).
 
-However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot as we go along.
+However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot pf as we go along.
 
 ```{r}
 post <- posterior_samples(b4.1_hc)
@@ -820,7 +818,7 @@ But sometimes you want to actually model $\sigma$, such as in the case where you
 
 ## Adding a predictor
 
-> What we’ve done above is a Gaussian model of height in a population of adults. But it doesn't really have the usual feel of "regression" to it. Typically, we are interested in modeling how an outcome is related to some predictor variable. And by including a predictor variable in a particular way, we'll have linear regression. (p. 92)
+> What we've done above is a Gaussian model of height in a population of adults. But it doesn't really have the usual feel of "regression" to it. Typically, we are interested in modeling how an outcome is related to some predictor variable. And by including a predictor variable in a particular way, we'll have linear regression. (p. 92)
 
 Here's our scatter plot of our predictor `weight` and our criterion `height`.
 
@@ -840,7 +838,7 @@ ggplot(data = d2,
 
 > The strategy is to make the parameter for the mean of a Gaussian distribution, $\mu$, into a linear function of the predictor variable and other, new parameters that we invent. This strategy is often simply called the **linear model**. The linear model strategy instructs the golem to assume that the predictor variable has a perfect constant and additive relationship to the mean of the outcome. The golem then computes the posterior distribution of this constant relationship. (p. 92, **emphasis** in the original)
 
-In our new univariable model
+Our new univariable model will follow the formula
 
 \begin{align*}
 h_i & \sim \text{Normal}(\mu_i, \sigma) \\
@@ -976,7 +974,8 @@ load("fits/b04.04.rda")
 
 ```{r, eval = F}
 b4.4 <- 
-  brm(data = d2, family = gaussian,
+  brm(data = d2, 
+      family = gaussian,
       height ~ 1 + weight_c,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
@@ -1259,7 +1258,7 @@ mu <- fitted(b4.3, summary = F)
 str(mu)
 ```
 
-When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your data. Because we had 4000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
+When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your data. Because we had 4,000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4,000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
 
 Much like rethinking's `link()`, `fitted()` can accommodate custom predictor values with its `newdata` argument.
 
@@ -1345,7 +1344,7 @@ Similar to `rethinking::link()`, `brms::fitted()` uses the formula from your mod
 
 Even though our full statistical model (omitting priors for the sake of simplicity) is
 
-$$h_i \sim \text{Normal}(\mu_i = \alpha + \beta x_i, \sigma)$$
+$$h_i \sim \text{Normal}(\mu_i = \alpha + \beta x_i, \sigma),$$
 
 we've only been plotting the $\mu_i$ part. In order to bring in the variability expressed by $\sigma$, we'll have to switch to the `predict()` function. Much as `brms::fitted()` was our analogue to `rethinking::link()`, `brms::predict()` is our analogue to `rethinking::sim()`. 
 
