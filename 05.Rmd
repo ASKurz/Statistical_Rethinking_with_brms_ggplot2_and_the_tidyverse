@@ -709,17 +709,26 @@ pairs(d, col = "firebrick4")
 
 We may as well fit a model.
 
-```{r b5.4_supr, cache = T, message = F, warning = F}
-brm(data = d, 
-    family = gaussian,
-    y ~ 1 + x_real + x_spur,
-    prior = c(prior(normal(0, 10), class = Intercept),
-              prior(normal(0, 1), class = b),
-              prior(uniform(0, 10), class = sigma)),
-    iter = 2000, warmup = 500, chains = 4, cores = 4,
-    seed = 5) %>% 
-  
-  fixef() %>% 
+```{r b5.0_spur, echo = F}
+# save(b5.0_spur, file = "fits/b05.00_spur.rda")
+# rm(b5.0_spur)
+load("fits/b05.00_spur.rda")
+```
+
+```{r, eval = F}
+b5.0_spur <-
+  brm(data = d, 
+      family = gaussian,
+      y ~ 1 + x_real + x_spur,
+      prior = c(prior(normal(0, 10), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(uniform(0, 10), class = sigma)),
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
+      seed = 5)
+```
+
+```{r}
+fixef(b5.0_spur) %>% 
   round(digits = 2)
 ```
 
@@ -727,7 +736,7 @@ brm(data = d,
 
 > A second reason to use more than one predictor variable is to measure the direct influences of multiple factors on an outcome, when none of those influences is apparent from bivariate relationships. This kind of problem tends to arise when there are two predictor variables that are correlated with one another. However, one of these is positively correlated with the outcome and the other is negatively correlated with it. (p. 134)
 
-Let's load those tasty `milk` data.
+Let's load the [Hindle and Milligan (2011)](https://www.researchgate.net/publication/51751742_Primate_milk_Proximate_mechanisms_and_ultimate_perspectives) `milk` data.
 
 ```{r, message = F}
 library(rethinking)
@@ -1115,11 +1124,9 @@ print(b5.8)
 
 That 'Est.Error' column isn't looking too good. But it's easy to miss that, which is why McElreath suggested "a graphical view of the [output] is more useful because it displays the posterior [estimates] and [intervals] in a way that allows us with a glance to see that something has gone wrong here" (p. 143).
 
-Here's our coefficient plot using `brms::stanplot()` with a little help from `bayesplot::color_scheme_set()`.
+Here's our coefficient plot using `brms::stanplot()`.
 
 ```{r, message = F, fig.width = 6.5, fig.height = 1.75}
-color_scheme_set("red")
-
 stanplot(b5.8, 
          type = "intervals", 
          prob = .5, 
@@ -1133,8 +1140,6 @@ stanplot(b5.8,
         axis.ticks.y = element_blank(),
         axis.text.y  = element_text(hjust = 0))
 ```
-
-Now you can use the `brms::stanplot()` function without explicitly loading the bayesplot package. But loading bayesplot allows you to set the color scheme with `color_scheme_set()`.
 
 This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 6.2.a.
 
@@ -1348,7 +1353,7 @@ The posteriors for coefficients, especially for `perc.fat`, shrank to zero.
 posterior_summary(b5.12) %>% round(digits = 3)
 ```
 
-You can make custom pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
+You can make also pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
@@ -1358,7 +1363,7 @@ ggpairs(data = d, columns = c(3:4, 6)) +
   theme(panel.grid = element_blank())
 ```
 
-But you can customize [these](https://ggobi.github.io/ggally/), too. E.g.,
+But you can customize [these](https://ggobi.github.io/ggally/#ggallyggpairs), too. E.g.,
 
 ```{r, fig.width = 3, fig.height = 3}
 my_diag <- function(data, mapping, ...) {
@@ -1855,7 +1860,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, p1, p2, p3, b5.5, dcc, b5.6, b5.7, rho, b5.0_both, b5.0_pos, b5.0_neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
+rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, p1, p2, p3, b5.0_spur, b5.5, dcc, b5.6, b5.7, rho, b5.0_both, b5.0_pos, b5.0_neg, b5.8, b5.9, b5.10, b5.11, b5.12, my_diag, my_lower, sim_coll, n_seed, n_rho, b5.13, b5.14, b5.15, b5.15b, b5.16, b5.16_alt)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
