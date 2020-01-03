@@ -248,7 +248,7 @@ McElreath needed to include the `depth=2` argument in the `rethinking::precis()`
 print(b11.1)
 ```
 
-What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above. The summaries look like those in the text, the $\hat R $ values are great, and both measures of effective sample size are reasonably high. The model looks good.
+What McElreath's `m11.1stan` summary termed `cutpoints[k]`, ours termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above. The summaries look like those in the text, the $\hat R$ values are great, and both measures of effective sample size are reasonably high. The model looks good.
 
 Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `logistic()` function to get these into the probability metric.
 
@@ -293,10 +293,10 @@ I'm not aware that brms has an equivalent to the `rethinking::dordlogit()` funct
 ```{r}
 # first, we needed to specify the `logistic()` function, which is apart of the `dordlogit()` function
 logistic <- function(x) {
-    p <- 1 / (1 + exp(-x))
-    p <- ifelse(x == Inf, 1, p)
-    p
-    }
+  p <- 1 / (1 + exp(-x))
+  p <- ifelse(x == Inf, 1, p)
+  p
+}
 
 # now we get down to it
 dordlogit <- 
@@ -308,7 +308,7 @@ dordlogit <-
     p  <- p - np
     if (log == TRUE) p <- log(p)
     p
-    }
+  }
 ```
 
 The `dordlogit()` function works like this:
@@ -319,7 +319,7 @@ The `dordlogit()` function works like this:
 
 Note the slight difference in how we used `dordlogit()` with a `brm()` fit summarized by `fixef()` than the way McElreath did with a `map2stan()` fit summarized by `coef()`. McElreath just put `coef(m11.1)` into `dordlogit()`. We, however, more specifically placed `fixef(b11.1)[, 1]` into the function. With the `[, 1]` part, we specified that we were working with the posterior means (i.e., `Estimate`) and neglecting the other summaries (i.e., the posterior *SD*s and 95% intervals). If you forget to subset, chaos ensues.
 
-Next, as McElreath further noted in the text, "these probabilities imply an average outcome of:"
+Next, as McElreath further noted on page 338, "these probabilities imply an average outcome of:"
 
 ```{r}
 sum(pk * (1:7))
@@ -366,7 +366,7 @@ Check the summary.
 print(b11.1b)
 ```
 
-This yielded a mean estimate of 4.2, much like our `average_outcome_value`, above.
+This yielded a posterior mean of 4.2, much like our `average_outcome_value`, above. However, the lazy Gaussian model now has a $\sigma$ parameter, whereas $\sigma$ is a function of the probability estimate in the more-appropriate `b11.2` model (see section 11.3). If you only care about mean estimates, this won't matter much if you have a lot of data and the mean is far from the boundary. But mean posterior means get close to the upper or lower boundary, the lazy Gaussian model will yield silly estimates for the 95% intervals. Beware the lazy Gaussian model with data like this.
 
 **End aside**
 
@@ -497,7 +497,7 @@ fitted(b11.3,
 
 Hopefully by now it's clear why we needed the `nd` tibble, which we made use of in the `newdata = nd` argument. Because we set `summary = F`, we get draws from the posterior instead of summaries. With `max_iter`, we controlled how many of those posterior draws we wanted. McElreath used 100, which he indicated at the top of page 341, so we followed suit. It took me a minute to wrap my head around the meaning of the 14 vectors, which were named by `brms::fitted()` default. Notice how each column is named by two numerals, separated by a period. That first numeral indicates which if the two `intention` values the draw is based on (i.e., 1 stands for `intention == 0`, 2, stands for `intention == 1`). The numbers on the right of the decimals are the seven response options for `response`. For each posterior draw, you get one of those for each value of `intention`. Finally, it might not be immediately apparent, but the values are in the probability scale, just like `pk` on page 338.
 
-Now we know what we have in hand, it's just a matter of careful wrangling to get those probabilities into a more useful format to feed into ggplot2. I've extensively annotated the code, below. If you lose track of happens in a given step, just run the code up till that point. Go step by step.
+Now we know what we have in hand, it's just a matter of careful wrangling to get those probabilities into a more useful format to feed into ggplot2. I've extensively annotated the code, below. If you lose track of what happens in a given step, just run the code up till that point. Go step by step.
 
 ```{r, fig.width = 2.5, fig.height = 3.5}
 nd <-
@@ -546,13 +546,12 @@ fitted(b11.3,
                           probability = c(.05, .12, .20, .35, .53, .71, .87)),
             aes(label = text),
             size = 3) +
-  scale_x_continuous(breaks = 0:1) +
+  scale_x_continuous("intention", breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(ylim = 0:1) +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
-  labs(subtitle = "action = 0,\ncontact = 0",
-       x        = "intention") +
+  labs(subtitle = "action = 0,\ncontact = 0") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none",
@@ -612,13 +611,12 @@ p1 <-
                           probability = c(.05, .12, .20, .35, .53, .71, .87)),
             aes(label = text),
             size = 3) +
-  scale_x_continuous(breaks = 0:1) +
+  scale_x_continuous("intention", breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
-  labs(subtitle = "action = 0,\ncontact = 0",
-       x        = "intention") +
+  labs(subtitle = "action = 0,\ncontact = 0") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none",
@@ -640,13 +638,12 @@ p2 <-
                           probability = c(.12, .24, .35, .50, .68, .80, .92)),
             aes(label = text),
             size = 3) +
-  scale_x_continuous(breaks = 0:1) +
+  scale_x_continuous("intention", breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
-  labs(subtitle = "action = 1,\ncontact = 0",
-       x        = "intention") +
+  labs(subtitle = "action = 1,\ncontact = 0") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none",
@@ -668,28 +665,29 @@ p3 <-
                           probability = c(.15, .34, .44, .56, .695, .8, .92)),
             aes(label = text),
             size = 3) +
-  scale_x_continuous(breaks = 0:1) +
+  scale_x_continuous("intention", breaks = 0:1) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
                        high = canva_pal("Green fields")(4)[1]) +
   coord_cartesian(ylim = 0:1) +
-  labs(subtitle = "action = 0,\ncontact = 1",
-       x        = "intention") +
+  labs(subtitle = "action = 0,\ncontact = 1") +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         legend.position = "none",
         axis.ticks      = element_blank())
 
 # here we combine them with patchwork
-p1 + p2 + p3 + plot_annotation(title    = "Posterior predictions of the interaction model:",
-                               subtitle = "Here we're focusing on the parameters.")
+p1 + p2 + p3 + 
+  plot_annotation(title    = "Posterior predictions of the interaction model:",
+                  subtitle = "Here we're focusing on the parameters.",
+                  theme    = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
 If you'd like to learn more about these kinds of models and how to fit them in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework.
 
 ### Bonus: Figure 11.3 alternative.
 
-I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Nobody's got time for that. We've have clients to serve! Happily, we can go further. Look back at McElreath's R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here's the adjusted function:
+I have a lot of respect for McElreath. But man, Figure 11.3 is the worst. I'm in clinical psychology and there's no way a working therapist is going to look at a figure like that and have any sense of what's going on. Happily, we can go further. Look back at McElreath's R code 11.10 on page 338. See how he multiplied the elements of `pk` by their respective `response` values and then just summed them up to get an average outcome value? With just a little amendment to our custom `make_Figure_11.3_data()` function, we can wrangle our `fitted()` output to express average `response` values for each of our conditions of interest. Here's the adjusted function:
 
 ```{r}
 make_alternative_data <- function(action, contact, max_iter) {
@@ -722,7 +720,7 @@ make_alternative_data <- function(action, contact, max_iter) {
 }
 ```
 
-Our handy homemade `make_alternative_data()` function works very much like its predecessor. Before we put it to work, we might simplify our upcoming ggplot2 code. Did you notice how the last three plots, those three subplots for Figure 11.3, were all basically the same with slightly different input/ Instead of copy/pasting all that plot code, we can wrap the bulk of it into a custom plotting function we'll call `geom_figure11.3()`.
+Our handy homemade `make_alternative_data()` function works very much like its predecessor. Before we put it to work, we might simplify our upcoming ggplot2 code. Did you notice how the last three plots, those three subplots for Figure 11.3, were all basically the same with slightly different input? Instead of copy/pasting all that plot code, we can wrap the bulk of it into a custom plotting function we'll call `geom_figure11.3()`.
 
 ```{r}
 geom_figure11.3 <- function(subtitle, ...) {
@@ -750,7 +748,6 @@ p1 <-
   make_alternative_data(action   = 0, 
                         contact  = 0, 
                         max_iter = 100) %>% 
-  
   ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_figure11.3(subtitle = "action = 0,\ncontact = 0")
 
@@ -759,7 +756,6 @@ p2 <-
   make_alternative_data(action   = 1, 
                         contact  = 0, 
                         max_iter = 100) %>% 
-  
   ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_figure11.3(subtitle = "action = 1,\ncontact = 0")
 
@@ -768,14 +764,14 @@ p3 <-
   make_alternative_data(action   = 0, 
                         contact  = 1, 
                         max_iter = 100) %>% 
-  
   ggplot(aes(x = intention, y = mean_rating, group = iter)) +
   geom_figure11.3(subtitle = "action = 0,\ncontact = 1")
 
 # here we combine them with patchwork
 p1 + p2 + p3 + 
   plot_annotation(title    = "Posterior predictions of the interaction model:",
-                  subtitle = "This time we'll focus on the means.")
+                  subtitle = "This time we'll focus on the means.",
+                  theme    = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
 Finally; now those are plots I can sell in a clinical psychology journal! We did the right thing and used a sophisticated statistical model to treat the data appropriately, but we summarized the results in a way a substantive audience might understand them in.
@@ -965,14 +961,17 @@ If you look up to the histogram we made at the beginning of this section, you'll
 
 We can do something similar with the `brms::pp_check()` function. By setting `type = bars`, we'll get back a series of model-based simulations summarized by mean and error bars superimposed atop a histogram of the original data. With the `nsamples` argument, we indicated we wanted those mean and error bars to be based on 100 simulations.
 
-```{r, fig.width = 6, fig.height = 3}
+```{r, fig.width = 6, fig.height = 3, message = F}
 # this helps us set our custom color scheme
 bayesplot::color_scheme_set(canva_pal("Green fields")(4)[c(1, 1, 1, 1, 1, 4)])
 
+set.seed(11)
+
 pp_check(b11.4, type = "bars", nsamples = 100) +
+  scale_x_continuous(breaks = 0:7) +
   theme_hc() +
   theme(plot.background   = element_rect(fill = "grey92"),
-        legend.position   = c(.91, .8),
+        legend.position   = c(.91, .842),
         legend.background = element_rect(fill = "transparent"),
         axis.ticks        = element_blank())
 ```
@@ -991,11 +990,11 @@ In this chapter we'll cope with the problem using continuous mixture models--fir
 
 > A beta-binomial model assumes that each binomial count observation has its own probability of success. The model estimates the *distribution* of probabilities of success across cases, instead of a single probability of success. And predictor variables change the shape of this distribution, instead of directly determining the probability of each success. (p, 347, *emphasis* in the original)
 
-Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we've run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\bar p$ and a shape parameter $\theta$. In his R code 11.24, which we'll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` parameter is. If you want a beta with an average of .2, you set `pbar <- .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
+Unfortunately, we need to digress. As it turns out, there are multiple ways to parameterize the beta distribution and we've run square into two. In the text, McElreath wrote the beta distribution has two parameters, an average probability $\bar p$ and a shape parameter $\theta$. In his R code 11.24, which we'll reproduce in a bit, he demonstrated that parameterization with the `rethinking::dbeta2()` function. The nice thing about this parameterization is how intuitive the `pbar` parameter is. If you want a beta with an average of .2, you set `pbar = .2`. If you want the distribution to be more or less certain, make the `theta` argument more or less large, respectively.
 
-However, the beta density is typically defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
+However, the beta density is often defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
 
-$$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)}$$
+$$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)},$$
 
 which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan Functions Reference](https://mc-stan.org/docs/2_21/functions-reference/beta-distribution.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()` function.
 
@@ -1223,7 +1222,7 @@ lines %>%
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-There are other ways to do this. For ideas, check out my blog post [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/).
+There are other ways to do this. For ideas, check out my blog post, [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/).
 
 Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `fitted_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
@@ -1348,18 +1347,20 @@ crossing(mu    = c(1, 5, 9),
               fill = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, labels = NULL) +
   geom_vline(aes(xintercept = mu),
-             color = canva_pal("Green fields")(4)[3]) +
-  xlab("parameter space") +
+             color = canva_pal("Green fields")(4)[2], linetype = 3) +
+  labs(title = "Gamma can take many shapes",
+       subtitle = "(dotted vertical lines at the means)",
+       x = "parameter space") +
   coord_cartesian(xlim = 0:25) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"),
         axis.ticks.y    = element_blank()) +
-  facet_grid(theta_char ~ mu_char, labeller = label_parsed)
+  facet_grid(theta_char~mu_char, labeller = label_parsed)
 ```
 
 #### Bonus: Let's fit a negative-binomial model.
 
-McElreath didn't give an example of negative-binomial regression in the text. This can be a useful but somewhat perplexing model type, so let's take a detour for an extended example with the `UCBadmit` data. As in other examples, we will be modeling the `admit` rates.
+McElreath didn't give an example of negative-binomial regression in the text. This can be a useful but somewhat perplexing model type, so let's take a detour for an extended example with the `UCBadmit` data. As in other examples, we will be modeling the `admit` rates. We'll keep things simple and leave out predictor variables.
 
 ```{r b11.6, echo = F}
 # save(b11.6, file = "fits/b11.06.rda")
@@ -1426,7 +1427,7 @@ p %>%
   facet_wrap(~case, nrow = 2)
 ```
 
-Because this model had no predictors, we have the similar posterior-predictive distribution for each case in the data. It's important, however, to be very clear of what these posterior-predictive distributions are of. They are not of the data, per se. Let's look back at the text:
+Because this model had no predictors, we have similar posterior-predictive distributions for each case in the data. It's important, however, to be very clear of what these posterior-predictive distributions are of. They are not of the data, per se. Let's look back at the text:
 
 > A **negative-binomial** model, more usefully called a **gamma-Poisson** model, assumes that each Poisson count observation has its own rate. It estimates the shape of the gamma distribution to describe the Poisson rates across cases. (p. 350, **emphasis** in the original)
 
@@ -1603,7 +1604,7 @@ d %>%
             variance = var(admit))
 ```
 
-If you'd like more practice with the negative binomial model and some of the others models for categorical data we covered in this chapter and in Chapter 10, Alan Agresti covered them extensively in his (2015) text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
+If you'd like more practice with the negative-binomial model and some of the others models for categorical data we covered in this chapter and in Chapter 10, Alan Agresti covered them extensively in his (2015) text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
 
 ### Over-dispersion, entropy, and information criteria.
 
