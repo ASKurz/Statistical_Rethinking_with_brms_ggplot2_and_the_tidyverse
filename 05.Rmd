@@ -19,7 +19,7 @@ McElreath's listed reasons for multivariable regression include
 * multiple causation, and
 * interactions.
 
-We'll approach the first two in this chapter. Interactions are reserved for Chapter 6.
+We'll approach the first two in this chapter. Interactions are reserved for [Chapter 7][Interactions].
 
 #### Rethinking: Causal inference.
 
@@ -108,7 +108,7 @@ left_join(
   facet_wrap(~name) 
 ```
 
-One of the advantages of this visualization method is it just became clear that Nevada is missing from the `WaffleDivorce` data. Execute `d %>% distinct(Location)` to see for yourself and click [here](https://github.com/rmcelreath/rethinking/issues/62) to find out why it's missing. Those missing data should motivate the skills we'll cover in Chapter 14. But let's get back on track.
+One of the advantages of this visualization method is it just became clear that Nevada is missing from the `WaffleDivorce` data. Execute `d %>% distinct(Location)` to see for yourself and click [here](https://github.com/rmcelreath/rethinking/issues/62) to find out why it's missing. Those missing data should motivate the skills we'll cover in [Chapter 14][Missing Data and Other Opportunities]. But let's get back on track.
 
 Here we'll officially standardize the predictor, `MedianAgeMarriage`.
 
@@ -783,7 +783,7 @@ b5.5 <-
       seed = 5)
 ```
 
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to Chapter 14 where we'll learn how to do better. 
+The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better. 
 
 To compliment how McElreath removed cases with missing values on our variables of interest with base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
 
@@ -1519,7 +1519,7 @@ b5.14 <-
 print(b5.14)
 ```
 
-"Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in Chapter 10.
+"Now the impact of treatment is strong and positive, as it should be" (p. 152). In this case, there were really two outcomes. The first was the one we modeled, the height at the end of the experiment (i.e., `h1`). The second outcome, which was clearly related to `h1`, was the presence of fungus, captured by our binomial variable `fungus`. If you wanted to model that, you'd fit a logistic regression model, which we'll learn about in [Chapter 10][Logistic regression: Prosocial chimpanzees.].
 
 ## Categorical variables
 
@@ -1552,7 +1552,7 @@ d %>%
 
 Let's fit the first `height` model with the `male` dummy. 
 
-Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating Chapter 8, I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
+Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating [Chapter 8][Estimation.], I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
 
 ```{r b5.15, echo = F}
 # save(b5.15, file = "fits/b05.15.rda")
@@ -1848,7 +1848,7 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) syntax for multilevel models.
 
-Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We've already made use of it in the "Polynomial regression" section of Chapter 4.
+Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We've already made use of it in the ["Polynomial regression"][Polynomial regression] section of Chapter 4.
 
 ## Reference {-}
 

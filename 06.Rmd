@@ -38,7 +38,7 @@ $$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} 
 
 By $\text{var()}$, of course, we meant variance (i.e., the `var()` function in R).
 
-McElreath is not a fan of the $R^2$. But it's important in my field, so instead of a summary at the end of the chapter, we will cover the Bayesian version of $R^2$ and how to use it in brms.
+McElreath is not a fan of the $R^2$. But it's important in my field, so instead of a summary at the [end of the chapter][~~Summary~~ Bonus: $R^2$ talk], we will cover the Bayesian version of $R^2$ and how to use it in brms.
 
 ### More parameters always improve fit.
 
@@ -921,11 +921,11 @@ Our results don't perfectly align with those in the text. I suspect his is becau
 
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
-For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after Chapter 8. And if you're feeling feisty, also check out Simpson's related blog post [*(It’s never a) Total Eclipse of the Prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
+For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [*The prior can generally only be understood in the context of the likelihood*](https://arxiv.org/abs/1708.07487), a paper that will probably make more sense after [Chapter 9][Big Entropy and the Generalized Linear Model]. And if you're feeling feisty, also check out Simpson's related blog post [*(It’s never a) Total Eclipse of the Prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
 
 #### Rethinking: Multilevel models as adaptive regularization.
 
-> When you encounter multilevel models in Chapter 12, you'll see that their central device is to learn the strength of the prior form the data itself. So you can think of multilevel models as adaptive regularization, where the model itself tries to learn how skeptical it should be. (p. 188)
+> When you encounter multilevel models in [Chapter 12][Multilevel Models], you'll see that their central device is to learn the strength of the prior form the data itself. So you can think of multilevel models as adaptive regularization, where the model itself tries to learn how skeptical it should be. (p. 188)
 
 I found this connection difficult to grasp for a long time. Practice now and hopefully it'll sink in for you faster than it did me.
 
@@ -1678,7 +1678,7 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
 
 ## ~~Summary~~ Bonus: $R^2$ talk
 
-At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework, which will be a big deal for us starting in Chapter 10. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model `brm()` fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
+At the beginning of the chapter (pp. 167--168), McElreath briefly introduced $R^2$ as a popular way to assess the variance explained in a model. He pooh-poohed it because of its tendency to overfit. It's also limited in that it doesn't generalize well outside of the single-level Gaussian framework, which will be a big deal for us starting in [Chapter 10][Counting and Classification]. However, if you should find yourself in a situation where $R^2$ suits your purposes, the brms `bayes_R2()` function might be of use. Simply feeding a model `brm()` fit object into `bayes_R2()` will return the posterior mean, $SD$, and 95% intervals. For example:
 
 ```{r}
 bayes_R2(b6.14) %>% round(digits = 3)

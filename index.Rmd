@@ -5,7 +5,6 @@ author: ["A Solomon Kurz"]
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
-dev: svg
 documentclass: book
 geometry: margin = 0.5in
 urlcolor: blue
@@ -84,13 +83,13 @@ In April 19, 2019 came the 1.0.0 version. Some of the major changes were:
 * All models were refit with the current official version of brms, 2.8.0.
 * Adopting the `seed` argument within the `brm()` function made the model results more reproducible.
 * The [loo package](https://github.com/stan-dev/loo) was updated. As a consequence, our workflow for the WAIC and LOO changed, too.
-* I improved the brms alternative to McElreath’s `coeftab()` function.
+* I improved the brms alternative to McElreath's `coeftab()` function.
 * I made better use of the tidyverse, especially some of the [purrr](https://purrr.tidyverse.org/) functions.
-* Particularly in the later chapters, there’s a 
+* Particularly in the later chapters, there's a 
 greater emphasis on functions from the [tidybayes package](https://mjskay.github.io/tidybayes/).
-* Chapter 11 contains the updated brms 2.8.0 workflow for making custom distributions, using the beta-binomial model as the example.
-* Chapter 12 received a new bonus section contrasting different methods for working with multilevel posteriors.
-* Chapter 14 received a new bonus section introducing Bayesian meta-analysis and linking it to multilevel and measurement-error models.
+* Chapter [11.3.1][Beta-binomial.] contains the updated brms 2.8.0 workflow for making custom distributions, using the beta-binomial model as the example.
+* Chapter 12 received a new [bonus section][~~Summary~~ Bonus: `tidybayes::spread_draws()`] contrasting different methods for working with multilevel posteriors.
+* Chapter 14 received a new [bonus section][~~Summary~~ Bonus: Meta-analysis] introducing Bayesian meta-analysis and linking it to multilevel and measurement-error models.
 * With the help of others within the community, I corrected many typos and streamlined some of the code (e.g., [dropped an unnecessary use of the `mi()` function in section 14.2.1](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/21))
 * And in some cases, I corrected sections that were just plain wrong (e.g., some of my initial attempts in section 3.3 were incorrect).
 
@@ -106,8 +105,8 @@ In May 5, 2019 came the 1.0.1 version, which finally added a [PDF version](https
 
 Welcome to version 1.1.0! Noteworthy changes include:
 
-* substantial expansions to sections 10.3.1 (multinomial regression) and 11.3.2 (negative binomial regression),
-* the addition of a new section in Chapter 15 (15.9) encouraging others to code in public,
+* substantial expansions to sections [10.3.1][Multinomial.] (multinomial regression) and [11.3.2][Negative-binomial or gamma-Poisson.] (negative binomial regression),
+* the addition of a new section in Chapter 15 ([15.9][Code in public]) encouraging others to code in public,
 * refitting all models with brms version 2.10.3,
 * discussions on the new `Bulk_ESS` and `Tail_ESS` summaries of HMC effective sample size ([Vehtari et al., 2019](https://arxiv.org/abs/1903.08008?)),
 * saving all fits as external files in the new [GitHub fits folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits),
@@ -117,11 +116,12 @@ Welcome to version 1.1.0! Noteworthy changes include:
 * refreshed hyperlinks, and
 * various typo corrections.
 
-We have room for improvement. There are still two models that need work. The current solution for model 10.16 is [out of step with the text](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5), which I try to make clear in the prose. It also appears that the Gaussian process model from section 13.4 is off. Both models are beyond my current skill set and [friendly suggestions are welcome](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues). In addition to modeling concerns, typos may yet be looming and I'm sure there are places where the code could be made more streamlined, more elegant, or just more in-line with the tidyverse style. Which is all to say, I hope to release better and more useful updates in the future.
+We have room for improvement. There are still two models that need work. The current solution for model [10.16][Explicit multinomial models.] is [out of step with the text](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/5), which I try to make clear in the prose. It also appears that the Gaussian process model from section [13.4][Example: Spatial autocorrelation in Oceanic tools.] is off. Both models are beyond my current skill set and [friendly suggestions are welcome](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues). In addition to modeling concerns, typos may yet be looming and I'm sure there are places where the code could be made more streamlined, more elegant, or just more in-line with the tidyverse style. Which is all to say, I hope to release better and more useful updates in the future.
 
 Before we move on, I'd like to thank the following for their helpful contributions:
 
 * Paul-Christian Bürkner ([\@paul-buerkner](https://github.com/paul-buerkner)), 
+* Joseph V. Casillas ([\@jvcasillas](https://github.com/jvcasillas)),
 * Andrew Collier ([\@datawookie](https://github.com/datawookie)), 
 * Marco Colombo ([\@mcol](https://github.com/mcol)),
 * Jeff Hammerbacher ([\@hammer](https://github.com/hammer)), 

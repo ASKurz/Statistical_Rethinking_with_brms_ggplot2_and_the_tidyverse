@@ -27,7 +27,7 @@ The basic binomial model follows the form
 
 $$y \sim \text{Binomial} (n, p)$$
 
-where $y$ is some count variable, $n$ is the number of trials, and $p$ it the probability a given trial was a 1, which is sometimes termed a *success*. When $n = 1$, then $y$ is a vector of 0s and 1s. Presuming the logit link, which we just covered in Chapter 9, models of this type are commonly termed logistic regression. When $n > 1$, and still presuming the logit link, we might call our model an aggregated logistic regression model, or more generally an aggregated binomial regression model.
+where $y$ is some count variable, $n$ is the number of trials, and $p$ it the probability a given trial was a 1, which is sometimes termed a *success*. When $n = 1$, then $y$ is a vector of 0s and 1s. Presuming the logit link, which we just covered in [Chapter 9][Linking linear models to distributions.], models of this type are commonly termed logistic regression. When $n > 1$, and still presuming the logit link, we might call our model an aggregated logistic regression model, or more generally an aggregated binomial regression model.
 
 ### Logistic regression: Prosocial chimpanzees.
 
@@ -845,7 +845,7 @@ In my field of clinical psychology, Simpson's paradox is an important, if under-
 
 McElreath wrote:
 
-> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see Chapter 6). So what you define as a "point" affects WAIC's value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation. (p. 309)
+> The `WAIC` function in `rethinking` detects aggregated binomial models and automatically splits them apart into 0/1 Bernoulli trials, for the purpose of calculating WAIC. It does this, because WAIC is computed point by point (see [Chapter 6][Overthinking: WAIC calculation.]). So what you define as a "point" affects WAIC's value. In an aggregated binomial each "point" is a bunch of independent trials that happen to share the same predictor values. In order for the disaggregated and aggregated models to agree, it makes sense to use the disaggregated representation. (p. 309)
 
 To my knowledge, `brms::waic()` and `brms::loo()` do not do this, which might well be why some of our values didn't match up with those in the text. If you have additional insight on this, please [share with the rest of the class](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues).
 
@@ -1272,7 +1272,7 @@ b10.10_c <-
 print(b10.10_c)
 ```
 
-We've been using `bayesplot::mcmc_pairs()` a lot for our posterior pairs plots. Let's get in a little practice with `GGally::ggpairs()` for Figure 10.10. In Chapters 5 and 8, we used custom functions to augment the default `ggpairs()` output. We'll continue that trend, here. Here are the custom functions for the upper triangle, the diagonal, and the lower triangle.
+We've been using `bayesplot::mcmc_pairs()` a lot for our posterior pairs plots. Let's get in a little practice with `GGally::ggpairs()` for Figure 10.10. In Chapters [5][Multicollinear `milk`.] and [8][Visualization.], we used custom functions to augment the default `ggpairs()` output. We'll continue that trend, here. Here are the custom functions for the upper triangle, the diagonal, and the lower triangle.
 
 ```{r}
 my_upper <- function(data, mapping, ...) {
@@ -1420,11 +1420,11 @@ As McElreath pointed out in the text, "Your estimates will be slightly different
 
 ## Other count regressions
 
-The next two of the remaining four models are maximum entropy distributions for certain problem types. The last two are mixtures, of which we'll see more in the next chapter. 
+The next two of the remaining four models are maximum entropy distributions for certain problem types. The last two are mixtures, of which we'll see more in the [next chapter][Zero-inflated outcomes]. 
 
 ### Multinomial.
 
-> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in Chapter 9 when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, …, p_K$, then the probability of observing $y_1, …, y_K$ events of each type out of $n$ trials is (p. 323):
+> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in [Chapter 9][Maximum entropy] when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, …, p_K$, then the probability of observing $y_1, …, y_K$ events of each type out of $n$ trials is (p. 323):
 
 $$\text{Pr} (y_1, ..., y_K | n, p_1, ..., p_K) = \frac{n!}{\prod_i y_i!} \prod_{i = 1}^K p_i^{y_i}$$
 

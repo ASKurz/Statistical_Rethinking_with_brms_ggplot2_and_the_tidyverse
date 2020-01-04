@@ -622,7 +622,7 @@ b4.1 <-
       seed = 4)
 ```
 
-McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in Chapter 8, Hamiltonian Monte Carlo (HMC) tends to work better when you default to a half Cauchy for $\sigma$. We can do that like this.
+McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in [Chapter 8][Estimation.], Hamiltonian Monte Carlo (HMC) tends to work better when you default to a half Cauchy for $\sigma$. We can do that like this.
 
 ```{r b4.1_hc, echo = F}
 # save(b4.1_hc, file = "fits/b04.01_hc.rda")
@@ -641,7 +641,7 @@ b4.1_hc <-
       seed = 4)
 ```
 
-This leads to an important point. After running model with Hamiltonian Monte Carlo (HMC), it's a good idea to inspect the chains. As we'll see, McElreath coverd this in Chapter 8. Here's a typical way to do so in brms.
+This leads to an important point. After running model with Hamiltonian Monte Carlo (HMC), it's a good idea to inspect the chains. As we'll see, McElreath coverd this in [Chapter 8][Checking the chain.]. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 plot(b4.1_hc)
@@ -691,7 +691,7 @@ Check the chains.
 plot(b4.2)
 ```
 
-I had to increase the `warmup` due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. And again, we will learn more about these technical details in Chapter 8.
+I had to increase the `warmup` due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. And again, we will learn more about these technical details in [Chapter 8][Checking the chain.].
 
 Here's the model `summary()`.
 
@@ -798,7 +798,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in Chapter 8 and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?posterior_samples`.
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in [Chapter 8][Easy HMC: ~~map2stan~~ `brm()`] and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?posterior_samples`.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -815,7 +815,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine. 
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in Chapter 9.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.].
 
 ## Adding a predictor
 
@@ -1033,7 +1033,7 @@ d2 %>%
   theme(panel.grid = element_blank())
 ```
 
-In the brms reference manual, Bürkner described the job of the`fixef()` function as "extract[ing] the population-level ('fixed') effects from a brmsfit object". If you're new to multilevel models, it might not be clear what he meant by "population-level" or "fixed" effects. Don't worry. That'll all become clear starting around Chapter 12. In the meantime, just think of them as the typical regression parameters, minus $\sigma$.
+In the brms reference manual, Bürkner described the job of the`fixef()` function as "extract[ing] the population-level ('fixed') effects from a brmsfit object". If you're new to multilevel models, it might not be clear what he meant by "population-level" or "fixed" effects. Don't worry. That'll all become clear starting around [Chapter 12][Multilevel Models]. In the meantime, just think of them as the typical regression parameters, minus $\sigma$.
 
 #### Adding uncertainty around the mean.
 

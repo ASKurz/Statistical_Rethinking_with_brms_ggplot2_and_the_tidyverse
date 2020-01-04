@@ -24,7 +24,7 @@ These benefits include:
 
 > All of these benefits flow out of the same strategy and model structure. You learn one basic design and you get all of this for free.
 >
-> When it comes to regression, multilevel regression deserves to be the default approach. There are certainly contexts in which it would be better to use an old-fashioned single-level model. But the contexts in which multilevel models are superior are much more numerous. It is better to begin to build a multilevel analysis, and then realize it's unnecessary, than to overlook it. And once you grasp the basic multilevel stragety, it becomes much easier to incorporate related tricks such as allowing for measurement error in the data and even model missing data itself (Chapter 14). (p. 356)
+> When it comes to regression, multilevel regression deserves to be the default approach. There are certainly contexts in which it would be better to use an old-fashioned single-level model. But the contexts in which multilevel models are superior are much more numerous. It is better to begin to build a multilevel analysis, and then realize it's unnecessary, than to overlook it. And once you grasp the basic multilevel stragety, it becomes much easier to incorporate related tricks such as allowing for measurement error in the data and even model missing data itself ([Chapter 14][Counting and Classification]). (p. 356)
 
 I'm totally on board with this. After learning about the multilevel model, I see it everywhere. For more on the sentiment it should be the default, check out McElreath's blog post, [*Multilevel Regression as Default*](https://elevanth.org/blog/2017/08/24/multilevel-regression-as-default/).
 
@@ -78,7 +78,7 @@ d %>%
   count(density)
 ```
 
-Now fit this simple aggregated binomial model much like we practiced in Chapter 10.
+Now fit this simple aggregated binomial model much like we practiced in [Chapter 10][Aggregated binomial: Chimpanzees again, condensed.].
 
 ```{r b12.1, echo = F}
 # save(b12.1, file = "fits/b12.01.rda")
@@ -102,7 +102,7 @@ We don't need a `depth=2` argument to discover we have 48 different intercepts. 
 print(b12.1)
 ```
 
-Do you remember the dummy variables models from back in Chapter 6? This model is like one of those on steroids. It'll be instructive to take a look at their distributions in density plots. We'll plot them in both their log-odds and probability metrics. 
+Do you remember the dummy variables models from back in [Chapter 5][Binary categories.]? This model is like one of those on steroids. It'll be instructive to take a look at their distributions in density plots. We'll plot them in both their log-odds and probability metrics. 
 
 For kicks and giggles, let's use a [FiveThirtyEight-like theme](https://github.com/alex23lemm/theme_fivethirtyeight) for this chapter's plots. An easy way to do so is with help from the [ggthemes package](https://cran.r-project.org/package=ggthemes).
 
@@ -157,7 +157,7 @@ b12.2 <-
       seed = 12)
 ```
 
-The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/package=brms/vignettes/brms_overview.pdf), `( <varying parameter(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. For technical reasons we won't really get into until Chapter 13, Stan parameterizes this as a standard deviation. 
+The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/package=brms/vignettes/brms_overview.pdf), `( <varying parameter(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. For technical reasons we won't really get into until [Chapter 13][Adventures in Covariance], Stan parameterizes this as a standard deviation. 
 
 Let's do the WAIC comparisons.
 
@@ -293,7 +293,7 @@ First, we took one random draw from a normal distribution with a mean of the fir
 
 #### Rethinking: Varying intercepts as over-dispersion. 
 
-> In the previous chapter (page 346), the beta-binomial and gamma-Poisson models were presented as ways for coping with **over-dispersion** of count data. Varying intercepts accomplish the same thing, allowing count outcomes to be over-dispersed. They accomplish this, because when each observed count gets its own unique intercept, but these intercepts are pooled through a common distribution, the predictions expect over-dispersion just like a beta-binomial or gamma-Poisson model would. Compared to a beta-binomial or gamma-Poisson model, a binomial or Poisson model with a varying intercept on every observed outcome will often be easier to estimate and easier to extend. (p. 363, **emphasis** in the original)
+> In the previous chapter ([page 346][Over-dispersed outcomes]), the beta-binomial and gamma-Poisson models were presented as ways for coping with **over-dispersion** of count data. Varying intercepts accomplish the same thing, allowing count outcomes to be over-dispersed. They accomplish this, because when each observed count gets its own unique intercept, but these intercepts are pooled through a common distribution, the predictions expect over-dispersion just like a beta-binomial or gamma-Poisson model would. Compared to a beta-binomial or gamma-Poisson model, a binomial or Poisson model with a varying intercept on every observed outcome will often be easier to estimate and easier to extend. (p. 363, **emphasis** in the original)
 
 #### Overthinking: Prior for variance components.
 
@@ -619,7 +619,7 @@ b12.3$data %>%
 
 ### Multilevel chimpanzees.
 
-The initial multilevel update from model `b10.4` from the last chapter follows the statistical formula
+The initial multilevel update from model `b10.4` from [Chapter 10][Logistic regression: Prosocial chimpanzees.] follows the statistical formula
 
 \begin{align*}
 \text{left_pull}_i   & \sim \text{Binomial} (n_i = 1, p_i) \\
@@ -822,7 +822,7 @@ b12.5$fit
 
 Happily, our `n_eff` values are generally quite higher than those McElreath presented in the text. The good folks at Stan have been [working hard to improve the software](https://cran.r-project.org/web/packages/rstan/NEWS). 
 
-If we'd like to restrict our focus to the parameter summaries, we can also use `brms::ranef()` to get those `depth=2`-type estimates. With `ranef()`, you get the group-specific estimates in a deviance metric. The `coef()` function, in contrast, yields the group-specific estimates in what you might call the natural metric. We'll get more language for this in the next chapter.
+If we'd like to restrict our focus to the parameter summaries, we can also use `brms::ranef()` to get those `depth=2`-type estimates. With `ranef()`, you get the group-specific estimates in a deviance metric. The `coef()` function, in contrast, yields the group-specific estimates in what you might call the natural metric. We'll get more language for this in the [next chapter][Adventures in Covariance].
 
 ```{r}
 ranef(b12.5)$actor[, , "Intercept"] %>% 
@@ -1187,7 +1187,7 @@ p4 <-
 p4
 ```
 
-For marginal of actor, we can continue using the same `nd` data. This time we'll be sticking with the default `re_formula` setting, which will accommodate the multilevel nature of the model. However, we'll also be adding `allow_new_levels = T` and `sample_new_levels = "gaussian"`. The former will allow us to marginalize across the specific actors in our data and the latter will instruct `fitted()` to use the multivariate normal distribution implied by the random effects. It'll make more sense why I say *multivariate* normal by the end of the next chapter. For now, just go with it.
+For marginal of actor, we can continue using the same `nd` data. This time we'll be sticking with the default `re_formula` setting, which will accommodate the multilevel nature of the model. However, we'll also be adding `allow_new_levels = T` and `sample_new_levels = "gaussian"`. The former will allow us to marginalize across the specific actors in our data and the latter will instruct `fitted()` to use the multivariate normal distribution implied by the random effects. It'll make more sense why I say *multivariate* normal by the end of the [next chapter][Adventures in Covariance]. For now, just go with it.
 
 ```{r, warning = F, message = F}
 (
@@ -1365,7 +1365,7 @@ p %>%
 
 Glorious.
 
-> The envelope of predictions is a lot wider here than it was back in Chapter 10. This is a consequene of the varying intercepts, combined with the fact that there is much more variation in the data than a pure-Poisson model anticipates. (p. 384)
+> The envelope of predictions is a lot wider here than it was back in [Chapter 10][Example: Oceanic tool complexity.]. This is a consequene of the varying intercepts, combined with the fact that there is much more variation in the data than a pure-Poisson model anticipates. (p. 384)
 
 ## ~~Summary~~ Bonus: `tidybayes::spread_draws()`
 
