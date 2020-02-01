@@ -85,7 +85,8 @@ d %>%
     pebbles = 10.5,
     label   = str_c(c(1, 90, 1260, 37800, 113400), 
                     rep(c(" way", " ways"), times = c(1, 4)))),
-    aes(label = label), hjust = 1) +
+    aes(label = label), 
+    hjust = 1) +
   scale_y_continuous(breaks = c(0, 5, 10), limits = c(0, 12)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium1")[6]),
@@ -110,8 +111,7 @@ d %>%
   
   # plot
   ggplot(aes(x = log_ways, y = h)) +
-  geom_abline(intercept = 0, slope = 1.37, 
-              color = "white") +
+  geom_abline(intercept = 0, slope = 1.37, color = "white") +
   geom_point(size = 2.5, color = ghibli_palette("MarnieMedium1")[7]) +
   geom_text(aes(y = text_y, label = key)) +
   labs(x = "log(ways) per pebble",
@@ -147,9 +147,9 @@ alpha_per_beta <- function(beta, variance = 1) {
   sqrt((variance * gamma(1 / beta)) / gamma(3 / beta))
 }
 
-tibble(mu      = 0,
+tibble(mu   = 0,
        # I arrived at these values by trial and error
-       beta    = c(1, 1.5, 2, 4)) %>% 
+       beta = c(1, 1.5, 2, 4)) %>% 
   mutate(alpha = alpha_per_beta(beta)) %>% 
   expand(nesting(mu, beta, alpha), 
          value = seq(from = -5, to = 5, by = .1)) %>% 
@@ -158,25 +158,23 @@ tibble(mu      = 0,
            exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   
   # plot
-  ggplot(aes(x = value, y = density,
-             group = beta)) +
-  geom_line(aes(color = beta == 2,
-                size  = beta == 2)) +
+  ggplot(aes(x = value, y = density, group = beta)) +
+  geom_line(aes(color = beta == 2, size  = beta == 2)) +
   scale_color_manual(values = c(ghibli_palette("MarnieMedium2")[c(2, 4)])) +
   scale_size_manual(values = c(1/4, 1.25)) +
   labs(subtitle = "Guess which color denotes the Gaussian.") +
   coord_cartesian(xlim = -4:4) +
-  theme(panel.grid       = element_blank(),
-        legend.position  = "none",
+  theme(panel.grid = element_blank(),
+        legend.position = "none",
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
 Here's Figure 9.2's right panel.
 
 ```{r, fig.width = 3.5, fig.height = 3, warning = F}
-tibble(mu      = 0,
+tibble(mu   = 0,
        # this time we need a more densely-packed sequence of `beta` values
-       beta    = seq(from = 1, to = 4, length.out = 100)) %>% 
+       beta = seq(from = 1, to = 4, length.out = 100)) %>% 
   mutate(alpha = alpha_per_beta(beta)) %>% 
   expand(nesting(mu, beta, alpha), 
          value = -8:8) %>% 
@@ -189,9 +187,9 @@ tibble(mu      = 0,
   ggplot(aes(x = beta, y = entropy)) +
   geom_vline(xintercept = 2, color = "white") +
   geom_line(size = 2, color = ghibli_palette("MarnieMedium2")[6]) +
-  coord_cartesian(ylim = c(1.34, 1.42)) +
   xlab(expression(paste(beta, " (i.e., shape)"))) +
-  theme(panel.grid       = element_blank(),
+  coord_cartesian(ylim = c(1.34, 1.42)) +
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
@@ -246,7 +244,7 @@ Here's the pre-Figure 9.3 data McElreath presented at the bottom of page 275.
          bw = c(1/4, 1/6, 2/6, 4/8),
          wb = c(1/4, 1/6, 2/6, 2/8),
          bb = c(1/4, 2/6, 1/6, 1/8))
-  )
+)
 ```
 
 Those data take just a tiny bit of wrangling before they're ready to plot in our version of Figure 9.3.
@@ -259,10 +257,9 @@ d %>%
   ggplot(aes(x = key, y = value, group = 1)) +
   geom_point(size = 2, color = ghibli_palette("PonyoMedium")[4]) +
   geom_line(color = ghibli_palette("PonyoMedium")[5]) +
+  labs(x = NULL, y = NULL) +
   coord_cartesian(ylim = 0:1) +
-  labs(x = NULL,
-       y = NULL) +
-  theme(panel.grid   = element_blank(),
+  theme(panel.grid = element_blank(),
         axis.ticks.x = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("PonyoMedium")[2]),
         strip.background = element_rect(fill = ghibli_palette("PonyoMedium")[6])) +
@@ -275,7 +272,7 @@ If we go step by step, we might count the expected value for each `distribution`
 d %>% 
   gather(sequence, probability, -distribution) %>% 
   # `str_count()` will count the number of times "b" occurs within a given row of `sequence`
-  mutate(n_b     = str_count(sequence, "b")) %>% 
+  mutate(n_b = str_count(sequence, "b")) %>% 
   mutate(product = probability * n_b) %>% 
   group_by(distribution) %>% 
   summarise(expected_value = sum(product))
@@ -324,6 +321,7 @@ sim_p <- function(seed, g = 1.4) {
   tibble(h   = -sum(p * log(p)), 
          p   = p,
          key = factor(c("ww", "bw", "wb", "bb"), levels = c("ww", "bw", "wb", "bb")))
+  
 }
 ```
 
@@ -399,9 +397,8 @@ p1 <-
                  color = ghibli_palette("LaputaMedium")[5]) +
   geom_text(data = subset_d %>% group_by(seed) %>% slice(1),
             aes(y = height + .5, label = distribution)) +
-  scale_x_continuous("Entropy",
-                     breaks = seq(from = .7, to = 1.2, by = .1)) +
-  theme(panel.grid       = element_blank(),
+  scale_x_continuous("Entropy", breaks = seq(from = .7, to = 1.2, by = .1)) +
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]))
 ```
 
@@ -418,7 +415,7 @@ p2 <-
   geom_point(size = 2, color = ghibli_palette("LaputaMedium")[4]) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, .75)) +
   xlab(NULL) +
-  theme(panel.grid   = element_blank(),
+  theme(panel.grid = element_blank(),
         axis.ticks.x = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]),
         strip.background = element_rect(fill = ghibli_palette("LaputaMedium")[6])) +
@@ -472,8 +469,8 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(xlim = 0:2,
                   ylim = c(0, 1.2)) +
-  theme(panel.grid       = element_blank(),
-        legend.position  = "none",
+  theme(panel.grid = element_blank(),
+        legend.position = "none",
         panel.background = element_rect(fill = ghibli_palette("MononokeMedium")[1]))
 ```
 
@@ -510,7 +507,7 @@ tibble(x = seq(from = 0, to = 5, length.out = length_out)) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:4) +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~label, scales = "free_y", labeller = label_parsed)
@@ -528,7 +525,7 @@ tibble(x = seq(from = -5, to = 5, length.out = length_out)) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = -4:4) +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -546,7 +543,7 @@ tibble(x = 0:20) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:10) +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -564,7 +561,7 @@ tibble(x = 0:10) %>%
   scale_x_continuous(NULL, breaks = NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:10) +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("SpiritedMedium")[5]),
         strip.background = element_rect(fill = ghibli_palette("SpiritedMedium")[7])) +
   facet_wrap(~strip, labeller = label_parsed)
@@ -618,7 +615,7 @@ alpha <- 0
 beta  <- 4
 
 lines <-
-  tibble(x           = seq(from = -1, to = 1, by = .25)) %>% 
+  tibble(x = seq(from = -1, to = 1, by = .25)) %>% 
   mutate(`log-odds`  = alpha + x * beta,
          probability = exp(alpha + x * beta) / (1 + exp(alpha + x * beta)))
 
@@ -626,7 +623,7 @@ lines <-
 beta  <- 2
 
 d <-
-  tibble(x           = seq(from = -1.5, to = 1.5, length.out = 50)) %>% 
+  tibble(x = seq(from = -1.5, to = 1.5, length.out = 50)) %>% 
   mutate(`log-odds`  = alpha + x * beta,
          probability = exp(alpha + x * beta) / (1 + exp(alpha + x * beta))) 
 
@@ -677,7 +674,7 @@ set.seed(9)
   d <-
   tibble(x = rep(0:1, each = 100)) %>% 
   mutate(y = rnorm(n = n(), mean = 100, sd = 10 + x * 10))
-  )
+)
 ```
 
 We can view what data like these look like with aid from `tidybayes::geom_halfeyeh()`.
@@ -689,12 +686,12 @@ d %>%
   mutate(x = x %>% as.character()) %>% 
   
   ggplot(aes(x = y, y = x, fill = x)) +
-  geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
-                point_interval = mean_qi, .width = .68) +
+  geom_halfeyeh(point_interval = mean_qi, .width = .68,
+                color = ghibli_palette("KikiMedium")[2]) +
   scale_fill_manual(values = c(ghibli_palette("KikiMedium")[c(4, 6)])) +
-  theme(panel.grid       = element_blank(),
-        axis.ticks.y     = element_blank(),
-        legend.position  = "none",
+  theme(panel.grid = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none",
         panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
 ```
 
@@ -739,22 +736,23 @@ head(post)
 
 With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of `y` based on the `x` dummy and then examine them in a plot.
 
-```{r, fig.width = 3.5, fig.height = 2.5}
+```{r, fig.width = 3.75, fig.height = 2.5}
 post %>% 
   transmute(`x == 0` = exp(b_sigma_Intercept + b_sigma_x * 0),
             `x == 1` = exp(b_sigma_Intercept + b_sigma_x * 1)) %>% 
   gather(key, sd) %>% 
   
   ggplot(aes(x = sd, y = key, fill = key)) +
-  geom_halfeyeh(color = ghibli_palette("KikiMedium")[2],
-                point_interval = median_qi, .width = .95) +
+  geom_halfeyeh(point_interval = median_qi, .width = .95,
+                color = ghibli_palette("KikiMedium")[2]) +
   scale_fill_manual(values = c(ghibli_palette("KikiMedium")[c(4, 6)])) +
-  labs(x = expression(sigma[x]), y = NULL,
-       subtitle = expression(paste("Model-implied ", italic(SD), "s by group x"))) +
+  labs(subtitle = "Model-implied standard deviations by group",
+       x = expression(sigma[x]), 
+       y = NULL) +
   coord_cartesian(ylim = c(1.5, 2)) +
-  theme(panel.grid       = element_blank(),
-        axis.ticks.y     = element_blank(),
-        legend.position  = "none",
+  theme(panel.grid = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none",
         panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
 ```
 
@@ -782,12 +780,12 @@ alpha <- 0
 beta  <- 2
 
 lines <-
-  tibble(`log-measurement`      = -3:3) %>% 
-  mutate(`original measurement` = exp(`log-measurement`))
+  tibble(`log-measurement`      = -3:3,
+         `original measurement` = exp(-3:3))
 
 # now we're ready to make the primary data
 d <-
-  tibble(x                      = seq(from = -1.5, to = 1.5, length.out = 50)) %>% 
+  tibble(x = seq(from = -1.5, to = 1.5, length.out = 50)) %>% 
   mutate(`log-measurement`      = alpha + x * beta,
          `original measurement` = exp(alpha + x * beta)) 
 
