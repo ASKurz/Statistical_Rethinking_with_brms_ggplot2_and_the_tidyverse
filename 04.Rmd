@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_04, echo = F, cache = F}
+```{r, echo = F, cache = F}
 knitr::opts_chunk$set(fig.retina = 2.5)
 options(width = 100)
 ```
@@ -101,7 +101,7 @@ p3 <-
   geom_density(color = "transparent", fill = "dodgerblue3", alpha = 1/2) +
   coord_cartesian(xlim = -6:6) +
   labs(title = "16 steps",
-       y     = "density")
+       y = "density")
 
 library(patchwork)
 
@@ -227,7 +227,7 @@ tibble(mu    = 0,
   # plot!
   ggplot(aes(x = y, y = p_y)) +
   geom_line() +
-  ylab(expression(paste(italic(p), "(", italic("y|"), mu==0, ",",  sigma==1, ")")))
+  ylab(expression(italic(p)(italic("y|")*mu==0*","~sigma==1)))
 ```
 
 You get the same results is you switch out that mutate line with `mutate(p_y = dnorm(y)) %>%`. To learn more, execute `?dnorm`.
@@ -261,12 +261,12 @@ We can break McElreath's R code 4.6 down a little bit with a tibble like so.
 n_points <- 100
 
 d <-
-  tibble(w          = 6, 
-         n          = 9,
-         p_grid     = seq(from = 0, to = 1, length.out = n_points)) %>% 
+  tibble(w      = 6, 
+         n      = 9,
+         p_grid = seq(from = 0, to = 1, length.out = n_points)) %>% 
   mutate(prior      = dunif(p_grid, 0, 1),
          likelihood = dbinom(w, n, p_grid)) %>% 
-  mutate(posterior  = likelihood * prior / sum(likelihood * prior))
+  mutate(posterior = likelihood * prior / sum(likelihood * prior))
 
 head(d)
 ```
@@ -354,15 +354,15 @@ For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdat
 
 The likelihood for our model is 
 
-$$h_i \sim \text{Normal}(\mu, \sigma)$$
+$$h_i \sim \operatorname{Normal}(\mu, \sigma)$$
 
 Our $\mu$ prior will be
 
-$$\mu \sim \text{Normal}(178, 20)$$
+$$\mu \sim \operatorname{Normal}(178, 20)$$
 
 And our prior for $\sigma$ will be
 
-$$\sigma \sim \text{Uniform}(0, 50)$$
+$$\sigma \sim \operatorname{Uniform}(0, 50)$$
 
 Here's the shape of the prior for $\mu$ in $N(178, 20)$.
 
@@ -392,13 +392,13 @@ n <- 1e4
 set.seed(4)
 tibble(sample_mu    = rnorm(n, mean = 178,       sd  = 20),
        sample_sigma = runif(n, min  = 0,         max = 50)) %>% 
-  mutate(x          = rnorm(n, mean = sample_mu, sd  = sample_sigma)) %>% 
+  mutate(x = rnorm(n, mean = sample_mu, sd  = sample_sigma)) %>% 
   
   ggplot(aes(x = x)) +
   geom_density(fill = "black", size = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(subtitle = expression(paste("Prior predictive distribution for ", italic(h[i]))),
-       x        = NULL) +
+  labs(subtitle = expression(Prior~predictive~distribution~"for"~italic(h[i])),
+       x = NULL) +
   theme(panel.grid = element_blank())
 ```
 
@@ -437,10 +437,10 @@ d_grid <-
   d_grid %>% 
   mutate(log_likelihood = map2(mu, sigma, grid_function)) %>%
   unnest(log_likelihood) %>% 
-  mutate(prior_mu       = dnorm(mu,    mean = 178, sd  = 20, log = T),
-         prior_sigma    = dunif(sigma, min  = 0,   max = 50, log = T)) %>% 
-  mutate(product        = log_likelihood + prior_mu + prior_sigma) %>% 
-  mutate(probability    = exp(product - max(product)))
+  mutate(prior_mu    = dnorm(mu,    mean = 178, sd  = 20, log = T),
+         prior_sigma = dunif(sigma, min  = 0,   max = 50, log = T)) %>% 
+  mutate(product = log_likelihood + prior_mu + prior_sigma) %>% 
+  mutate(probability = exp(product - max(product)))
   
 head(d_grid)
 ```
@@ -557,10 +557,10 @@ Now we'll use the amended `grid_function()` to make the posterior.
 d_grid <-
   d_grid %>% 
   mutate(log_likelihood = map2_dbl(mu, sigma, grid_function)) %>% 
-  mutate(prior_mu       = dnorm(mu,    mean = 178, sd  = 20, log = T),
-         prior_sigma    = dunif(sigma, min  = 0,   max = 50, log = T)) %>% 
-  mutate(product        = log_likelihood + prior_mu + prior_sigma) %>% 
-  mutate(probability    = exp(product - max(product)))
+  mutate(prior_mu    = dnorm(mu,    mean = 178, sd  = 20, log = T),
+         prior_sigma = dunif(sigma, min  = 0,   max = 50, log = T)) %>% 
+  mutate(product = log_likelihood + prior_mu + prior_sigma) %>% 
+  mutate(probability = exp(product - max(product)))
 ```
 
 Did you catch our use of `purrr::map2_dbl()`, there, in place of `purrr::map2()`? It turns out that `purrr::map()` and `purrr::map2()` always return a list (see [here](https://purrr.tidyverse.org/reference/map.html) and [here](https://purrr.tidyverse.org/reference/map2.html)). But as [Phil Straforelli](https://twitter.com/PStrafo) kindly [pointed out](https://twitter.com/PStrafo/status/1046853175917961217), we can add the `_dbl` suffix to those functions, which will instruct the purrr package to return a double vector (i.e., a [common kind of numeric vector](https://r4ds.had.co.nz/vectors.html#important-types-of-atomic-vector)). The advantage of that approach is we no longer need to follow our `map()` or `map2()` lines with `unnest()`. To learn more about the ins and outs of the `map()` family, check out [this section](https://r4ds.had.co.nz/iteration.html#the-map-functions) from *R4DS* or Jenny Bryan's [*purrr tutorial*](https://jennybc.github.io/purrr-tutorial/).
@@ -1157,9 +1157,7 @@ p1 <-
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
-  labs(subtitle = "N = 10") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
+  labs(subtitle = "N = 10")
 
 p2 <-
   ggplot(data =  d2[1:50 , ], 
@@ -1170,9 +1168,7 @@ p2 <-
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
-  labs(subtitle = "N = 50") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
+  labs(subtitle = "N = 50")
 
 p3 <-
   ggplot(data =  d2[1:150 , ], 
@@ -1183,9 +1179,7 @@ p3 <-
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
-  labs(subtitle = "N = 150") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
+  labs(subtitle = "N = 150")
 
 p4 <- 
   ggplot(data =  d2[1:352 , ], 
@@ -1196,9 +1190,7 @@ p4 <-
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
-  labs(subtitle = "N = 352") +
-  theme_bw() +
-  theme(panel.grid = element_blank())
+  labs(subtitle = "N = 352")
 ```
 
 Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our `d2` data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
@@ -1206,7 +1198,9 @@ Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index row
 Now we can combine the ggplots with patchwork syntax to make the full version of Figure 4.5.
 
 ```{r, fig.width = 5, fig.height = 5}
-p1 + p2 + p3 + p4
+(p1 + p2 + p3 + p4) &
+  theme_bw() &
+  theme(panel.grid = element_blank())
 ```
 
 #### Plotting regression intervals and contours.
@@ -1238,16 +1232,15 @@ We'll use `mean_hdi()` to get both 89% and 95% HPDIs along with the mean.
 mean_hdi(mu_at_50[,1], .width = c(.89, .95))
 ```
 
-If you wanted to express those sweet 95% HPDIs on your density plot, you might use the `tidybayes::stat_pointintervalh()` function. Since `stat_pointintervalh()` also returns a point estimate, we'll just throw in the mode.
+If you wanted to express those sweet 95% HPDIs on your density plot, you might use the `tidybayes::geom_halfeyeh()` function. Since `geom_halfeyeh()` also returns a point estimate, we'll just throw in the mode.
 
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
-  ggplot(aes(x = mu_at_50)) +
-  geom_density(size = 0, fill = "royalblue") +
-  stat_pointintervalh(aes(y = 0), 
-                      point_interval = mode_hdi, .width = .95) +
+  ggplot(aes(x = mu_at_50, y = 0)) +
+  geom_halfeyeh(point_interval = mode_hdi, .width = .95,
+                fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = expression(mu["height | weight = 50"])) +
+  xlab(expression(mu["height | weight = 50"])) +
   theme_classic()
 ```
 
