@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_12, echo = FALSE, cache = FALSE}
+```{r, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(fig.retina = 2.5)
 options(width = 100)
 ```
@@ -222,9 +222,9 @@ post_mdn %>%
   geom_point(aes(y = post_mdn), shape = 1) +
   coord_cartesian(ylim = c(0, 1)) +
   scale_x_continuous(breaks = c(1, 16, 32, 48)) +
-  labs(title    = "Multilevel shrinkage!",
+  labs(title = "Multilevel shrinkage!",
        subtitle = "The empirical proportions are in orange while the model-\nimplied proportions are the black circles. The dashed line is\nthe model-implied average survival proportion.") +
-  annotate("text", x = c(8, 16 + 8, 32 + 8), y = 0, 
+  annotate(geom = "text", x = c(8, 16 + 8, 32 + 8), y = 0, 
            label = c("small tanks", "medium tanks", "large tanks")) +
   theme_fivethirtyeight() +
   theme(panel.grid = element_blank())
@@ -245,13 +245,10 @@ p1 <-
   ggplot(aes(x = x, group = iter)) +
   geom_line(aes(y = dnorm(x, b_Intercept, sd_tank__Intercept)),
             alpha = .2, color = "orange2") +
-  labs(title    = "Population survival distribution",
+  labs(title = "Population survival distribution",
        subtitle = "log-odds scale") +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = c(-3, 4)) + 
-  theme_fivethirtyeight() +
-  theme(plot.title    = element_text(size = 13),
-        plot.subtitle = element_text(size = 10))
+  coord_cartesian(xlim = c(-3, 4))
 ```
 
 Now we make our Figure 12.2.b and then bind the two subplots with patchwork.
@@ -265,15 +262,15 @@ p2 <-
                inv_logit_scaled())) +
   geom_density(size = 0, fill = "orange2") +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title    = "Probability of survival",
-       subtitle = "transformed by the inverse-logit function") +
-  theme_fivethirtyeight() +
-  theme(plot.title    = element_text(size = 13),
-        plot.subtitle = element_text(size = 10))
+  labs(title = "Probability of survival",
+       subtitle = "transformed by the inverse-logit function")
 
 library(patchwork)
 
-p1 + p2
+(p1 + p2) &
+  theme_fivethirtyeight() &
+  theme(plot.title = element_text(size = 12),
+        plot.subtitle = element_text(size = 10))
 ```
 
 In the left plot, notice the uncertainty in terms of both location $\alpha$ and scale $\sigma$. For both pots, note how we sampled 12,000 imaginary `tanks` rather than McElreath's 8,000. This is because we had 12,000 HMC iterations (i.e., execute `nrow(post)`).
@@ -333,9 +330,9 @@ tibble(x = seq(from = 0, to = 6, by = .01)) %>%
                aes(x = sd_tank__Intercept), 
                fill = "orange2", size = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = c(0, 5)) +
-  labs(title    = "Bonus prior/posterior plot\nfor sd_tank__Intercept",
+  labs(title = "Bonus prior/posterior plot\nfor sd_tank__Intercept",
        subtitle = "The prior is the semitransparent ramp in the\nbackground. The posterior is the solid orange\nmound.") +
+  coord_cartesian(xlim = c(0, 5)) +
   theme_fivethirtyeight()
 ```  
 
@@ -412,7 +409,7 @@ set.seed(12)
   dsim <-
   dsim %>%
   mutate(si = rbinom(n = n(), prob = inv_logit_scaled(true_a), size = ni))
-  )
+)
 ```
 
 ### Compute the no-pooling estimates.
@@ -424,7 +421,7 @@ The no-pooling estimates (i.e., $\alpha_{\text{tank}_i}$) are the results of sim
   dsim <-
   dsim %>%
   mutate(p_nopool = si / ni)
-  )
+)
 ```
 
 "These are the same no-pooling estimates you'd get by fitting a model with a dummy variable for each pond and flat priors that induce no regularization" (p. 367). That is, these are the same kinds of estimates we got back when we fit `b12.1`.
@@ -476,7 +473,7 @@ p_partpool <-
 dsim <- 
   dsim %>%
   bind_cols(p_partpool) %>% 
-  mutate(p_true         = inv_logit_scaled(true_a)) %>%
+  mutate(p_true = inv_logit_scaled(true_a)) %>%
   mutate(nopool_error   = abs(p_nopool   - p_true),
          partpool_error = abs(p_partpool - p_true))
 
@@ -510,11 +507,11 @@ dsim %>%
   scale_x_continuous(breaks = c(1, 10, 20, 30, 40, 50, 60)) +
   annotate("text", x = c(15 - 7.5, 30 - 7.5, 45 - 7.5, 60 - 7.5), y = .45, 
            label = c("tiny (5)", "small (10)", "medium (25)", "large (35)")) +
-  labs(y        = "absolute error",
-       title    = "Estimate error by model type",
-       subtitle = "The horizontal axis displays pond number. The vertical axis measures\nthe absolute error in the predicted proportion of survivors, compared to\nthe true value used in the simulation. The higher the point, the worse\nthe estimate. No-pooling shown in orange. Partial pooling shown in black.\nThe orange and dashed black lines show the average error for each kind\nof estimate, across each initial density of tadpoles (pond size). Smaller\nponds produce more error, but the partial pooling estimates are better\non average, especially in smaller ponds.") +
+  labs(title    = "Estimate error by model type",
+       subtitle = "The horizontal axis displays pond number. The vertical axis measures\nthe absolute error in the predicted proportion of survivors, compared to\nthe true value used in the simulation. The higher the point, the worse\nthe estimate. No-pooling shown in orange. Partial pooling shown in black.\nThe orange and dashed black lines show the average error for each kind\nof estimate, across each initial density of tadpoles (pond size). Smaller\nponds produce more error, but the partial pooling estimates are better\non average, especially in smaller ponds.",
+       y        = "absolute error") +
   theme_fivethirtyeight() +
-  theme(panel.grid    = element_blank(),
+  theme(panel.grid = element_blank(),
         plot.subtitle = element_text(size = 10))
 ```
 
@@ -547,7 +544,7 @@ new_dsim <-
   tibble(pond   = 1:n_ponds,
          ni     = rep(c(5, 10, 25, 35), each = n_ponds / 4) %>% as.integer(),
          true_a = rnorm(n = n_ponds, mean = a, sd = sigma)) %>% 
-    mutate(si       = rbinom(n = n(), prob = inv_logit_scaled(true_a), size = ni)) %>% 
+    mutate(si = rbinom(n = n(), prob = inv_logit_scaled(true_a), size = ni)) %>% 
     mutate(p_nopool = si / ni)
 
 glimpse(new_dsim)
@@ -587,19 +584,19 @@ bind_rows(posterior_samples(b12.3),
   geom_hline(yintercept = sigma, color = "orange3", linetype = 3) +
   scale_fill_gradient(low = "grey25", high = "orange3") +
   ggtitle("Our simulation posteriors contrast a bit",
-          subtitle = expression(paste(alpha, " is on the x and ", sigma, " is on the y, both in log-odds. The dotted lines intersect at the true values."))) +
+          subtitle = expression(alpha*" is on the x and "*sigma*" is on the y, both in log-odds. The dotted lines intersect at the true values.")) +
   coord_cartesian(xlim = c(.7, 2),
                   ylim = c(.8, 1.9)) +
   theme_fivethirtyeight() +
   theme(legend.position = "none",
-        panel.grid      = element_blank()) +
+        panel.grid = element_blank()) +
   facet_wrap(~model, ncol = 2)
 ```
 
 If you'd like the `stanfit` portion of your `brm()` object, subset with `$fit`. Take `b12.3`, for example. You might check out its structure via `b12.3$fit %>% str()`. Here's the actual Stan code.
 
 ```{r}
-b12.3$fit@ stanmodel
+b12.3$fit@stanmodel
 ```
 
 And you can get the data of a given `brm()` fit object like so.
@@ -655,7 +652,7 @@ two_gaussians %>%
   geom_density(aes(x = y2), 
                size = 0, fill = "orange4", alpha = 1/3) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(title = "Our simulated Gaussians") +
+  ggtitle("Our simulated Gaussians") +
   theme_fivethirtyeight()
 ```
 
@@ -832,10 +829,10 @@ ranef(b12.5)$block[, , "Intercept"] %>%
   round(digits = 2)
 ```
 
-We might make the coefficient plot of Figure 12.4.a with `stanplot()`.
+We might make the coefficient plot of Figure 12.4.a with `mcmc_plot()`.
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
-stanplot(b12.5, pars = c("^r_", "^b_", "^sd_")) +
+mcmc_plot(b12.5, pars = c("^r_", "^b_", "^sd_")) +
   theme_fivethirtyeight() +
   theme(axis.text.y = element_text(hjust = 0))
 ```
@@ -850,9 +847,9 @@ post %>%
                size = 0, fill = "orange4", alpha = 3/4)  +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = c(0, 4)) +
-  labs(title = expression(sigma["[x]"])) +
-  annotate("text", x = 2/3, y = 2, label = "block", color = "orange4") +
-  annotate("text", x = 2, y = 3/4, label = "actor", color = "orange1") +
+  ggtitle(expression(sigma["[x]"])) +
+  annotate(geom = "text", x = 2/3, y = 2, label = "block", color = "orange4") +
+  annotate(geom = "text", x = 2, y = 3/4, label = "actor", color = "orange1") +
   theme_fivethirtyeight()
 ```
 
@@ -907,7 +904,7 @@ nd <-
   as_tibble() %>% 
   mutate(condition = factor(c("0/0", "1/0", "0/1", "1/1"), 
                             levels = c("0/0", "1/0", "0/1", "1/1")))
-  )
+)
 ```
 
 ```{r}
@@ -985,11 +982,11 @@ my_fitted <- function(prosoc_left, condition) {
          condition   = c(0, 0, 1, 1)) %>% 
   mutate(post = map2(prosoc_left, condition, my_fitted)) %>% 
   unnest(post) %>% 
-  mutate(condition = str_c(prosoc_left, "/", condition)) %>% 
-  mutate(condition = factor(condition, levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
   group_by(condition) %>% 
   tidybayes::mean_qi(fitted)
-  )
+)
 
 # the empirical summaries
 chimp <- 5
@@ -1000,8 +997,8 @@ chimp <- 5
   group_by(prosoc_left, condition) %>% 
   summarise(prob = mean(pulled_left)) %>% 
   ungroup() %>% 
-  mutate(condition = str_c(prosoc_left, "/", condition)) %>% 
-  mutate(condition = factor(condition, levels = c("0/0", "1/0", "0/1", "1/1")))
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1")))
 )
 ```
 
@@ -1069,7 +1066,7 @@ p1
 
 If we want to depict the variability across the chimps, we need to include `sd_actor__Intercept` into the calculations. In the first block of code, below, we simulate a bundle of new intercepts defined by
 
-$$\alpha_\text{actor} \sim \text{Normal} (0, \sigma_\text{actor})$$
+$$\alpha_\text{actor} \sim \operatorname{Normal} (0, \sigma_\text{actor})$$
 
 ```{r}
 # the random effects
@@ -1106,7 +1103,7 @@ ran_and_fix_ef <-
   summarise(m  = mean(prob),
             ll = quantile(prob, probs = .1),
             ul = quantile(prob, probs = .9))
-  )
+)
 ```
 
 Behold Figure 12.5.b.
@@ -1166,9 +1163,9 @@ nd <-
          probs = c(.1, .9)) %>% 
   as_tibble() %>% 
   bind_cols(nd) %>% 
-  mutate(condition = str_c(prosoc_left, "/", condition) %>% 
-           factor(., levels = c("0/0", "1/0", "0/1", "1/1")))
-  )
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1")))
+)
 ```
 
 You should notice a few things. Since `b12.4` is a multilevel model, it had three predictors: `prosoc_left`, `condition`, and `actor`. However, our `nd` data only included the first two of those predictors. The reason `fitted()` permitted that was because we set `re_formula = NA`. When you do that, you tell `fitted()` to ignore group-level effects (i.e., focus only on the fixed effects). This was our `fitted()` version of ignoring the `r_` vectors returned by `posterior_samples()`. Here's the plot.
@@ -1199,8 +1196,8 @@ For marginal of actor, we can continue using the same `nd` data. This time we'll
          sample_new_levels = "gaussian") %>% 
   as_tibble() %>% 
   bind_cols(nd) %>% 
-  mutate(condition = str_c(prosoc_left, "/", condition) %>% 
-           factor(., levels = c("0/0", "1/0", "0/1", "1/1")))
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1")))
   )
 ```
 
@@ -1239,10 +1236,10 @@ n_sim <- 50
   mutate(iter = 1:n_sim) %>% 
   gather(key, value, -iter) %>% 
   bind_cols(nd %>% 
-              transmute(condition = str_c(prosoc_left, "/", condition) %>% 
-                          factor(., levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+              transmute(condition = factor(str_c(prosoc_left, "/", condition), 
+                                           levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
               expand(condition, iter = 1:n_sim))
-  )
+)
 ```
 
 ```{r, fig.width = 2.5, fig.height = 3.25}
@@ -1287,12 +1284,12 @@ rm(Kline)
 The statistical formula for our multilevel count model is
 
 \begin{align*}
-\text{total_tools}_i    & \sim \text{Poisson} (\mu_i) \\
+\text{total_tools}_i    & \sim \operatorname{Poisson} (\mu_i) \\
 \text{log} (\mu_i)      & = \alpha + \alpha_{\text{culture}_i} + \beta \text{log} (\text{population}_i) \\
-\alpha                  & \sim \text{Normal} (0, 10) \\
-\beta                   & \sim \text{Normal} (0, 1) \\
-\alpha_{\text{culture}} & \sim \text{Normal} (0, \sigma_{\text{culture}}) \\
-\sigma_{\text{culture}} & \sim \text{HalfCauchy} (0, 1) \\
+\alpha                  & \sim \operatorname{Normal} (0, 10) \\
+\beta                   & \sim \operatorname{Normal} (0, 1) \\
+\alpha_{\text{culture}} & \sim \operatorname{Normal} (0, \sigma_{\text{culture}}) \\
+\sigma_{\text{culture}} & \sim \operatorname{HalfCauchy} (0, 1). \\
 \end{align*}
 
 With brms, we don't actually need to make the `logpop` or `society` variables. We're ready to fit the multilevel `Kline` model with the data in hand.
@@ -1355,7 +1352,8 @@ p %>%
   geom_ribbon(aes(ymin = Q5.5,  ymax = Q94.5), fill = "orange2", alpha = 1/3) +
   geom_ribbon(aes(ymin = Q16.5, ymax = Q83.5), fill = "orange2", alpha = 1/3) +
   geom_line(color = "orange4") +
-  geom_text(data = d, aes(y = total_tools, label = culture), 
+  geom_text(data = d, 
+            aes(y = total_tools, label = culture), 
             size = 2.33, color = "blue") +
   ggtitle("Total tools as a function of log(population)") +
   coord_cartesian(ylim = range(d$total_tools)) +
@@ -1372,11 +1370,11 @@ Glorious.
 A big part of this chapter, both what McElreath focused on in the text and even our plotting digression a bit above, focused on how to combine the fixed effects of a multilevel with the group-level. Given some binomial variable, $\text{criterion}$, and some group term, $\text{grouping variable}$, we've learned the simple multilevel model follows a form like
 
 \begin{align*}
-\text{criterion}_i                & \sim \text{Binomial} (n_i \geq 1, p_i) \\
+\text{criterion}_i                & \sim \operatorname{Binomial} (n_i \geq 1, p_i) \\
 \text{logit} (p_i)                & = \alpha + \alpha_{\text{grouping variable}_i}\\
-\alpha                            & \sim \text{Normal} (0, 1) \\
-\alpha_{\text{grouping variable}} & \sim \text{Normal} (0, \sigma_{\text{grouping variable}}) \\
-\sigma_{\text{grouping variable}} & \sim \text{HalfCauchy} (0, 1),
+\alpha                            & \sim \operatorname{Normal} (0, 1) \\
+\alpha_{\text{grouping variable}} & \sim \operatorname{Normal} (0, \sigma_{\text{grouping variable}}) \\
+\sigma_{\text{grouping variable}} & \sim \operatorname{HalfCauchy} (0, 1),
 \end{align*}
 
 and we've been grappling with the relation between the grand mean $\alpha$ and the group-level deviations $\alpha_{\text{grouping variable}}$. For situations where we have the `brms::brm()` model fit in hand, we've been playing with various ways to use the iterations, particularly with either the `posterior_samples()` method and the `fitted()/predict()` method. Both are great. But (a) we have other options, which I'd like to share, and (b) if you're like me, you probably need more practice than following along with the examples in the text. In this bonus section, we are going to introduce two simplified models and then practice working with combining the grand mean various combinations of the random effects.
@@ -1394,11 +1392,11 @@ b12.4$formula
 In addition to the model intercept and random effects for the individual chimps (i.e., `actor`), we also included fixed effects for the study conditions. For our bonus section, it'll be easier if we reduce this to a simple intercepts-only model with the sole `actor` grouping factor. That model will follow the form 
 
 \begin{align*}
-\text{pulled_left}_i  & \sim \text{Binomial} (n_i = 1, p_i) \\
+\text{pulled_left}_i  & \sim \operatorname{Binomial} (n_i = 1, p_i) \\
 \text{logit} (p_i)    & = \alpha + \alpha_{\text{actor}_i}\\
-\alpha                & \sim \text{Normal} (0, 10) \\
-\alpha_{\text{actor}} & \sim \text{Normal} (0, \sigma_{\text{actor}}) \\
-\sigma_{\text{actor}} & \sim \text{HalfCauchy} (0, 1)
+\alpha                & \sim \operatorname{Normal} (0, 10) \\
+\alpha_{\text{actor}} & \sim \operatorname{Normal} (0, \sigma_{\text{actor}}) \\
+\sigma_{\text{actor}} & \sim \operatorname{HalfCauchy} (0, 1)
 \end{align*}
 
 Before we fit the model, you might recall that (a) we've already removed the `chimpanzees` data after saving the data as `d` and (b) we subsequently reassigned the `Kline` data to `d`. Instead of reloading the rethinking package to retrieve the `chimpanzees` data, we might also acknowledge that the data has also been saved within our `b12.4` fit object. [It's easy to forget such things.]
@@ -1450,13 +1448,13 @@ b12.5$data %>%
 It's the same data we used from the `b12.4` model, but with the addition of the `block` index. With those data in hand, we can fit the intercepts-only version of our cross-classified model. This model formula follows the form
 
 \begin{align*}
-\text{pulled_left}_i  & \sim \text{Binomial} (n_i = 1, p_i) \\
+\text{pulled_left}_i  & \sim \operatorname{Binomial} (n_i = 1, p_i) \\
 \text{logit} (p_i)    & = \alpha + \alpha_{\text{actor}_i} + \alpha_{\text{block}_i}\\
-\alpha                & \sim \text{Normal} (0, 10) \\
-\alpha_{\text{actor}} & \sim \text{Normal} (0, \sigma_{\text{actor}}) \\
-\alpha_{\text{block}} & \sim \text{Normal} (0, \sigma_{\text{block}}) \\
-\sigma_{\text{actor}} & \sim \text{HalfCauchy} (0, 1) \\
-\sigma_{\text{block}} & \sim \text{HalfCauchy} (0, 1)
+\alpha                & \sim \operatorname{Normal} (0, 10) \\
+\alpha_{\text{actor}} & \sim \operatorname{Normal} (0, \sigma_{\text{actor}}) \\
+\alpha_{\text{block}} & \sim \operatorname{Normal} (0, \sigma_{\text{block}}) \\
+\sigma_{\text{actor}} & \sim \operatorname{HalfCauchy} (0, 1) \\
+\sigma_{\text{block}} & \sim \operatorname{HalfCauchy} (0, 1)
 \end{align*}
 
 Fit the model.
@@ -1643,10 +1641,10 @@ str(c3)
 
 One of the nicest things about the `coef()` method is how is scales well. This code is no more burdensome for 5 group levels than it is for 5000. It's also a post-processing version of the distinction McElreath made on page 372 between the two equivalent ways you might define a Gaussian:
 
-$$\text{Normal}(10, 1)$$
+$$\operatorname{Normal}(10, 1)$$
 and
 
-$$10 + \text{Normal}(0, 1)$$
+$$10 + \operatorname{Normal}(0, 1)$$
 
 Conversely, it can be a little abstract. Let's keep expanding our options. 
 
@@ -1717,7 +1715,7 @@ If we want to use `fitted()` for our third task of getting the posterior draws f
   b12.8$data %>% 
   distinct(actor) %>% 
   mutate(block = 1)
-  )
+)
 ```
 
 This time, we no longer need that `re_formula` argument.
