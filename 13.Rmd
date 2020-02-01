@@ -93,18 +93,18 @@ theme_pearl_earring <- function(light_color = "#E8DCCF",
                                 my_family = "Courier",
                                 ...) {
   
-  theme(text       = element_text(color = light_color, family = my_family),
+  theme(line = element_line(color = light_color),
+        text = element_text(color = light_color, family = my_family),
         strip.text = element_text(color = light_color, family = my_family),
-        axis.text  = element_text(color = light_color),
+        axis.text = element_text(color = light_color),
         axis.ticks = element_line(color = light_color),
-        line       = element_line(color = light_color),
-        plot.background   = element_rect(fill = dark_color, color = dark_color),
-        panel.background  = element_rect(fill = dark_color, color = light_color),
-        strip.background  = element_rect(fill = dark_color, color = "transparent"),
-        panel.grid = element_blank(),
+        axis.line = element_blank(),
         legend.background = element_rect(fill = dark_color, color = "transparent"),
-        legend.key        = element_rect(fill = dark_color, color = "transparent"),
-        axis.line = element_blank(), 
+        legend.key = element_rect(fill = dark_color, color = "transparent"),
+        panel.background = element_rect(fill = dark_color, color = light_color),
+        panel.grid = element_blank(),
+        plot.background = element_rect(fill = dark_color, color = dark_color),
+        strip.background = element_rect(fill = dark_color, color = "transparent"),
         ...)
   
 }
@@ -137,11 +137,11 @@ sigma    <-  0.5  # std dev within cafes
 set.seed(13)  # used to replicate example
 d <-
   vary_effects %>% 
-  mutate(cafe      = 1:n_cafes) %>% 
+  mutate(cafe = 1:n_cafes) %>% 
   expand(nesting(cafe, a_cafe, b_cafe), visit = 1:n_visits) %>% 
   mutate(afternoon = rep(0:1, times = n() / 2)) %>% 
-  mutate(mu        = a_cafe + b_cafe * afternoon) %>% 
-  mutate(wait      = rnorm(n = n(), mean = mu, sd = sigma))
+  mutate(mu = a_cafe + b_cafe * afternoon) %>% 
+  mutate(wait = rnorm(n = n(), mean = mu, sd = sigma))
 ```
 
 We might peek at the data.
@@ -168,7 +168,7 @@ d %>%
                      labels = rep(c("M", "A"), times = 5)) +
   scale_y_continuous("wait time in minutes", limits = c(0, 4)) +
   theme_pearl_earring(legend.position = "none",
-                      axis.ticks.x    = element_blank()) +
+                      axis.ticks.x = element_blank()) +
   facet_wrap(~cafe, ncol = 1)
 ```
 
@@ -275,12 +275,10 @@ post %>%
                color = "transparent", fill = "#EEDA9D", alpha = 3/4) +
   geom_density(aes(x = cor_cafe__Intercept__afternoon),
                color = "transparent", fill = "#A65141", alpha = 9/10) +
-  annotate("text", label = "posterior", 
-           x = -0.35, y = 2.2, 
-           color = "#A65141", family = "Courier") +
-  annotate("text", label = "prior", 
-           x = 0, y = 0.9, 
-           color = "#EEDA9D", alpha = 2/3, family = "Courier") +
+  annotate(geom = "text", x = -0.35, y = 2.2, 
+           label = "posterior", color = "#A65141", family = "Courier") +
+  annotate(geom = "text", x = 0, y = 0.9, 
+           label = "prior", color = "#EEDA9D", alpha = 2/3, family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab("correlation") +
   theme_pearl_earring()
@@ -406,16 +404,15 @@ p2 <-
                  size  = 0, alpha = 1/20, fill = "#E7CDC2",
                  level = level)
     }, 
-    # Enter the levels here
+    # enter the levels here
     level = c(seq(from = 1/10, to = 9/10, by = 1/10), .99)) +
   geom_point(aes(group = cafe, color = pooled)) +
   geom_line(aes(group = cafe), size = 1/4) +
-  scale_color_manual("Pooled?",
-                     values = c("#80A0C7", "#A65141")) +
-  coord_cartesian(xlim = range(estimates$morning),
-                  ylim = range(estimates$afternoon)) +
+  scale_color_manual("Pooled?", values = c("#80A0C7", "#A65141")) +
   labs(x = "morning wait (mins)",
        y = "afternoon wait (mins)") +
+  coord_cartesian(xlim = range(estimates$morning),
+                  ylim = range(estimates$afternoon)) +
   theme_pearl_earring()
 ```
 
@@ -543,7 +540,7 @@ rbind(coef(b13.2)$dept_id[, , "Intercept"],
       fixef(b13.2),
       VarCorr(b13.2)$dept_id$sd) %>% 
   as_tibble() %>% 
-  mutate(parameter = c(paste("Intercept [", 1:6, "]", sep = ""), 
+  mutate(parameter = c(str_c("Intercept[", 1:6, "]"), 
                        "Intercept", "male", "sigma")) %>% 
   select(parameter, everything()) %>% 
   mutate_if(is_double, round, digits = 2)
@@ -615,7 +612,7 @@ post %>%
   scale_color_manual(values = c("#80A0C7", "#B1934A", "#A65141", "#EEDA9D")) +
   scale_x_continuous(NULL, breaks = c(1001, 5000)) +
   ylab(NULL) +
-  theme_pearl_earring(legend.position  = c(.825, .06),
+  theme_pearl_earring(legend.position = c(.825, .06),
                       legend.direction = "horizontal") +
   facet_wrap(~key, ncol = 3, scales = "free_y")
 ```
@@ -637,8 +634,8 @@ rhat(b13.3) %>%
   scale_color_manual(values = c("#80A0C7", "#A65141")) +
   labs(x = NULL, y = NULL) +
   theme_pearl_earring(legend.position = "none",
-                      axis.ticks.y    = element_blank(),
-                      axis.text.y     = element_text(hjust = 0))
+                      axis.ticks.y = element_blank(),
+                      axis.text.y = element_text(hjust = 0))
 ```
 
 Them are some respectable $\hat R$ values. The plot accentuates their differences, but they're all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric.
@@ -655,7 +652,7 @@ We may as well keep our doing-things-by-hand kick going. Instead relying on `bay
 rbind(coef(b13.3)$dept_id[, , 1],
       coef(b13.3)$dept_id[, , 2]) %>% 
   as_tibble() %>% 
-  mutate(param   = c(paste("Intercept", 1:6), paste("male", 1:6)),
+  mutate(param   = c(str_c("Intercept ", 1:6), str_c("male ", 1:6)),
          reorder = c(6:1, 12:7)) %>% 
 
   # plot
@@ -667,8 +664,8 @@ rbind(coef(b13.3)$dept_id[, , 1],
   xlab(NULL) +
   coord_flip() +
   theme_pearl_earring(legend.position = "none",
-                      axis.ticks.y    = element_blank(),
-                      axis.text.y     = element_text(hjust = 0))
+                      axis.ticks.y = element_blank(),
+                      axis.text.y = element_text(hjust = 0))
 ```
 
 Just like in the text, our `male` slopes are much less dispersed than our intercepts.
@@ -684,12 +681,11 @@ post <- posterior_samples(b13.3)
 
 post %>% 
   ggplot(aes(x = cor_dept_id__Intercept__male, y = 0)) +
-  geom_halfeyeh(fill = "#394165", color = "#8B9DAF", 
-                point_interval = median_qi, .width = .95) +
+  geom_halfeyeh(point_interval = median_qi, .width = .95, 
+                fill = "#394165", color = "#8B9DAF") +
   scale_x_continuous(breaks = c(-1, median(post$cor_dept_id__Intercept__male), 1),
-                     labels = c(-1, "-.35", 1)) +
+                     labels = c(-1, "-.35", 1), limits = c(-1, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = -1:1) +
   labs(subtitle = "The dot is at the median; the\nhorizontal bar is the 95% CI.",
        x = "correlation") +
   theme_pearl_earring()
@@ -725,12 +721,12 @@ un_pooled_params <-
   # here we put our `prob_to_logit()` function to work
   mutate(intercept = prob_to_logit(intercept),
          slope     = prob_to_logit(slope)) %>%
-  mutate(slope     = slope - intercept)
+  mutate(slope = slope - intercept)
 
 # here we combine the partially-pooled and unpooled means into a single data object
 params <-
   bind_rows(partially_pooled_params, un_pooled_params) %>%
-  mutate(pooled      = rep(c("partially", "not"), each = n() / 2)) %>%
+  mutate(pooled = rep(c("partially", "not"), each = n() / 2)) %>%
   mutate(dept_letter = rep(LETTERS[1:6], times = 2))  # this will help with plotting
 
 params
@@ -755,10 +751,10 @@ ggplot(data = params, aes(x = intercept, y = slope)) +
   geom_text_repel(data = params %>% filter(pooled == "partially"),
                   aes(label = dept_letter),
                   color = "#E8DCCF", size = 4, family = "Courier", seed = 13.6) +
+  labs(x = expression("intercept ("*alpha[dept_id]*")"),
+       y = expression("slope ("*beta[dept_id]*")")) +
   coord_cartesian(xlim = range(params$intercept),
                   ylim = range(params$slope)) +
-  labs(x = expression(paste("intercept (", alpha[dept_id], ")")),
-       y = expression(paste("slope (", beta[dept_id], ")"))) +
   theme_pearl_earring()
 ```
 
@@ -882,7 +878,7 @@ Even though it's not apparent in the syntax, our model `b13.6` was already fit u
 
 It's a little janky, but we can compute the number of effective samples (bulk NES, anyways) for all our parameters like so.
 
-```{r, fig.width = 3.25, fig.height = 3}
+```{r, fig.width = 3.25, fig.height = 3, warning = F}
 ratios_cp <- neff_ratio(b13.6)
 
 neff <-
@@ -904,12 +900,10 @@ neff %>%
   geom_boxplot(fill = "#394165", color = "#8B9DAF") +
   geom_quasirandom(method = "tukeyDense",
                    size = 2/3, color = "#EEDA9D", alpha = 2/3) +
-  scale_x_discrete(NULL, breaks = NULL,
-                   expand = c(.75, .75)) +
-  scale_y_continuous(breaks = c(0, 6000, 12000)) +
-  coord_cartesian(ylim = 0:12000) +
-  labs(y = "effective samples",
-       subtitle = "The non-centered\nparameterization is the\nbrms default. No fancy\ncoding required.") +
+  scale_x_discrete(NULL, breaks = NULL, expand = c(.75, .75)) +
+  scale_y_continuous("effective samples", breaks = c(0, 6000, 12000)) +
+  labs(subtitle = "The non-centered\nparameterization is the\nbrms default. No fancy\ncoding required.") +
+  coord_cartesian(ylim = 0:15000) +
   theme_pearl_earring()
 ```
 
@@ -1011,8 +1005,7 @@ d_mat %>%
   mutate(column = factor(column, levels = colnames(d_mat)),
          row    = factor(row,    levels = rownames(d_mat)) %>% fct_rev()) %>%
 
-  ggplot(aes(x = column, 
-             y = row)) + 
+  ggplot(aes(x = column, y = row)) + 
   geom_raster(aes(fill = distance)) + 
   geom_text(aes(label = round(distance, digits = 1)),
             size = 3, family = "Courier", color = "#100F14") +
@@ -1026,10 +1019,9 @@ d_mat %>%
 Figure 13.8 shows the "shape of the function relating distance to the covariance $\mathbf K_{ij}$."
  
 ```{r, fig.width = 3.25, fig.height = 3}
-tibble(
-  x       = seq(from = 0, to = 4, by = .01),
-  linear  = exp(-1 * x),
-  squared = exp(-1 * x^2)) %>%
+tibble(x       = seq(from = 0, to = 4, by = .01),
+       linear  = exp(-1 * x),
+       squared = exp(-1 * x^2)) %>%
   
   ggplot(aes(x = x)) +
   geom_line(aes(y = linear),
@@ -1096,11 +1088,11 @@ posterior_summary(b13.7) %>%
 
 Our Gaussian process parameters are different than McElreath's. From the brms reference manual, here's the brms parameterization:
 
-$$k(x_{i},x_{j}) = sdgp^2 \text{exp} \big (-||x_i - x_j||^2 / (2 lscale^2) \big )$$
+$$k(x_{i},x_{j}) = sdgp^2 \exp \big (-||x_i - x_j||^2 / (2 lscale^2) \big )$$
 
 What McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplatlon2` before it's on the same scale as `etasq` in the text. Here it is.
 
-```{r, warning = F}
+```{r}
 posterior_samples(b13.7) %>% 
   transmute(sdgp_squared = sdgp_gplatlon2^2) %>% 
   mean_hdi(sdgp_squared, .width = .89) %>% 
@@ -1115,7 +1107,7 @@ $$\rho^2 = 1/(2 \cdot lscale^2)$$
 
 But that doesn't appear to be the case. *Sigh*. 
 
-```{r, warning = F}
+```{r}
 posterior_samples(b13.7) %>% 
   transmute(rho_squared = 1 / (2 * lscale_gplatlon2^2)) %>% 
   mean_hdi(rho_squared, .width = .89) %>% 
@@ -1184,8 +1176,7 @@ Here's the model intercept posterior, by package.
 
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "a"] %>% 
-  bind_rows(post_b13.7%>% 
-              transmute(a = b_Intercept)) %>% 
+  bind_rows(post_b13.7%>% transmute(a = b_Intercept)) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = a, fill = package)) +
@@ -1193,7 +1184,7 @@ post_m13.7[, "a"] %>%
   scale_fill_manual(NULL, values = c("#80A0C7", "#A65141")) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Not identical, but pretty close",
-       x     = "intercept") +
+       x = "intercept") +
   theme_pearl_earring()
 ```
 
@@ -1201,9 +1192,7 @@ Now check the slopes.
 
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "bp"] %>% 
-  bind_rows(post_b13.7 %>% 
-              transmute(bp = b_logpop)
-              ) %>% 
+  bind_rows(post_b13.7 %>%  transmute(bp = b_logpop)) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = bp, fill = package)) +
@@ -1211,7 +1200,7 @@ post_m13.7[, "bp"] %>%
   scale_fill_manual(NULL, values = c("#80A0C7", "#A65141")) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Again, pretty close",
-       x     = "slope") +
+       x = "slope") +
   theme_pearl_earring()
 ```
 
@@ -1219,8 +1208,7 @@ This one, $\eta^2$, required a little transformation.
               
 ```{r, fig.width = 6, fig.height = 2}
 post_m13.7[, "etasq"] %>% 
-  bind_rows(post_b13.7 %>% 
-              transmute(etasq = sdgp_gplatlon2^2)) %>% 
+  bind_rows(post_b13.7 %>% transmute(etasq = sdgp_gplatlon2^2)) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = etasq, fill = package)) +
@@ -1228,7 +1216,7 @@ post_m13.7[, "etasq"] %>%
   scale_fill_manual(NULL, values = c("#80A0C7", "#A65141")) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Still in the same ballpark",
-       x     = expression(eta^2)) +
+       x = expression(eta^2)) +
   coord_cartesian(xlim = 0:3) +
   theme_pearl_earring()
 ```
@@ -1237,17 +1225,15 @@ $\rho^2$ required more extensive transformation of the brms posterior:
               
 ```{r, fig.width = 8, fig.height = 2.5}
 post_m13.7[, "rhosq"] %>%
-  bind_rows(post_b13.7%>% 
-              transmute(rhosq = 1 / (2 * (lscale_gplatlon2^2)))
-            ) %>% 
+  bind_rows(post_b13.7%>% transmute(rhosq = 1 / (2 * (lscale_gplatlon2^2)))) %>% 
   mutate(package = rep(c("rethinking", "brms"), each = nrow(post_m13.7))) %>% 
   
   ggplot(aes(x = rhosq, fill = package)) +
   geom_density(size = 0) +
   scale_fill_manual(NULL, values = c("#80A0C7", "#A65141")) +
-  labs(title    = "Holy smokes are those not the same!",
+  labs(title = "Holy smokes are those not the same!",
        subtitle = "Notice how differently the y axes got scaled. Also, that brms density is\nright skewed for days.",
-       x        = expression(rho^2)) +
+       x = expression(rho^2)) +
   coord_cartesian(xlim = 0:50) +
   theme_pearl_earring(legend.position = "none") +
   facet_wrap(~package, scales = "free_y")
@@ -1347,7 +1333,8 @@ p1 <-
   ggplot(aes(x = lon2, y = lat)) +
   geom_line(aes(group = group, alpha = correlation^2),
             color = "#80A0C7") +
-  geom_point(data = d, aes(size = logpop), color = "#DCA258") +
+  geom_point(data = d, 
+             aes(size = logpop), color = "#DCA258") +
   geom_text_repel(data = d, aes(label = culture), 
                   seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
   scale_alpha_continuous(range = c(0, 1)) +
@@ -1385,7 +1372,8 @@ p2 <-
   geom_line(aes(y = total_tools, group = group, alpha = correlation^2),
             color = "#80A0C7") +
   geom_point(data = d, 
-             aes(y = total_tools, size = logpop), color = "#DCA258") +
+             aes(y = total_tools, size = logpop), 
+             color = "#DCA258") +
   geom_text_repel(data = d, 
                   aes(y = total_tools, label = culture), 
                   seed = 0, point.padding = .3, size = 3, color = "#FCF9F0") +
@@ -1539,14 +1527,14 @@ b13.10 %>%
   
   ggplot(aes(x = effect, y = reorder(discipline, effect))) +
   geom_vline(xintercept = 0, color = "#E8DCCF", alpha = 1/2) +
-  geom_halfeyeh(.width = .95, size = .9, relative_scale = .9,
+  geom_halfeyeh(.width = .95, size = .9, scale = .9,
                 color = "#80A0C7", fill = "#394165") +
-  labs(title    = "Random slopes for the male dummy",
+  labs(title = "Random slopes for the male dummy",
        subtitle = "The dots and horizontal lines are the posterior means and percentile-based\n95% intervals, respectively. The values are on the log scale.",
-       x        = NULL, y = NULL) +
+       x = NULL, y = NULL) +
   coord_cartesian(xlim = c(-1.5, 1.5)) +
   theme_pearl_earring(axis.ticks.y = element_blank(),
-                      axis.text.y  = element_text(hjust = 0))
+                      axis.text.y = element_text(hjust = 0))
 ```
 
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
