@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_03, echo = FALSE, cache = FALSE}
+```{r, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(fig.retina = 2.5)
 options(width = 100)
 ```
@@ -22,10 +22,10 @@ We'll do so within a tibble.
 ```{r, message = F, warning = F}
 library(tidyverse)
 
-tibble(pr_positive_vampire   = .95,
-       pr_positive_mortal    = .01,
-       pr_vampire            = .001) %>% 
-  mutate(pr_positive         = pr_positive_vampire * pr_vampire + pr_positive_mortal * (1 - pr_vampire)) %>% 
+tibble(pr_positive_vampire = .95,
+       pr_positive_mortal  = .01,
+       pr_vampire          = .001) %>% 
+  mutate(pr_positive = pr_positive_vampire * pr_vampire + pr_positive_mortal * (1 - pr_vampire)) %>% 
   mutate(pr_vampire_positive = pr_positive_vampire * pr_vampire / pr_positive) %>% 
   glimpse()
 ```
@@ -33,10 +33,10 @@ tibble(pr_positive_vampire   = .95,
 Here's the other way of tackling the vampire problem, this time using the frequency format.
 
 ```{r}
-tibble(pr_vampire            = 100 / 100000,
-       pr_positive_vampire   = 95 / 100,
-       pr_positive_mortal    = 99 / 99900) %>% 
-  mutate(pr_positive         = 95 + 999) %>% 
+tibble(pr_vampire          = 100 / 100000,
+       pr_positive_vampire = 95 / 100,
+       pr_positive_mortal  = 99 / 99900) %>% 
+  mutate(pr_positive = 95 + 999) %>% 
   mutate(pr_vampire_positive = pr_positive_vampire * 100 / pr_positive) %>% 
   glimpse()
 ```
@@ -55,12 +55,12 @@ n_trials  <- 9
 
 (
   d <-
-  tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
+  tibble(p_grid = seq(from = 0, to = 1, length.out = n),
          # note we're still using a flat uniform prior
-         prior      = 1) %>% 
+         prior  = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
-  mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
-  )
+  mutate(posterior = (likelihood * prior) / sum(likelihood * prior))
+)
 ```
 
 Now we'll use the `dplyr::sample_n()` function to sample rows from `d`, saving them as `sample`.
@@ -396,7 +396,7 @@ n_trials  <- 9
 new_d <-
   d %>% 
   mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
-  mutate(posterior  = (likelihood * prior) / sum(posterior))
+  mutate(posterior = (likelihood * prior) / sum(posterior))
 
 set.seed(3)
 
@@ -408,10 +408,8 @@ new_samples <-
 Here are the intervals by `.width` and type of `.interval`.
 
 ```{r}
-bind_rows(
-  mean_hdi(new_samples$p_grid, .width = c(.8, .95)),
-  mean_qi(new_samples$p_grid, .width = c(.8, .95))
-  ) %>% 
+bind_rows(mean_hdi(new_samples$p_grid, .width = c(.8, .95)),
+          mean_qi(new_samples$p_grid,  .width = c(.8, .95))) %>% 
   select(.width, .interval, ymin:ymax) %>% 
   arrange(.width) %>% 
   mutate_if(is.double, round, digits = 2)
@@ -479,11 +477,9 @@ We can inspect the three types of point estimate in the left panel of Figure 3.4
 ```{r, warning = F}
 (
   point_estimates <-
-  bind_rows(
-    samples %>% mean_qi(p_grid),
-    samples %>% median_qi(p_grid),
-    samples %>% mode_qi(p_grid)
-  ) %>% 
+  bind_rows(samples %>% mean_qi(p_grid),
+            samples %>% median_qi(p_grid),
+            samples %>% mode_qi(p_grid)) %>% 
   select(p_grid, .point) %>% 
   # these last two columns will help us annotate  
   mutate(x = p_grid + c(-.03, .03, -.03),
@@ -630,7 +626,7 @@ Letting $n = 2$, $p(w) = .7$, and $w_\text{observed} = 0 \text{ through }2$, the
 tibble(n           = 2,
        probability = .7,
        w           = 0:2) %>% 
-  mutate(density   = dbinom(w, size = n, prob = probability))
+  mutate(density = dbinom(w, size = n, prob = probability))
 ```
 
 If we're going to simulate, we should probably [set our seed](https://stackoverflow.com/questions/13605271/reasons-for-using-the-set-seed-function). Doing so makes the results reproducible.
@@ -695,7 +691,7 @@ simulate_binom <- function(n, probability) {
 d <-
   crossing(n           = c(3, 6, 9),
            probability = c(.3, .6, .9)) %>% 
-  mutate(draws       = map2(n, probability, simulate_binom)) %>% 
+  mutate(draws = map2(n, probability, simulate_binom)) %>% 
   ungroup() %>% 
   mutate(n           = str_c("n = ", n),
          probability = str_c("p = ", probability)) %>% 
@@ -749,12 +745,12 @@ n_trials  <- 9
 
 (
   d <-
-  tibble(p_grid     = seq(from = 0, to = 1, length.out = n),
+  tibble(p_grid = seq(from = 0, to = 1, length.out = n),
          # note we're still using a flat uniform prior
-         prior      = 1) %>% 
+         prior  = 1) %>% 
   mutate(likelihood = dbinom(n_success, size = n_trials, prob = p_grid)) %>% 
-  mutate(posterior  = (likelihood * prior) / sum(likelihood * prior))
-  )
+  mutate(posterior = (likelihood * prior) / sum(likelihood * prior))
+)
 ```
 
 We can make our version of the top of Figure 3.6 with a little tricky `filter`ing.
@@ -772,8 +768,7 @@ d %>%
   geom_point(data = . %>%
                filter(p_grid %in% c(seq(from = .1, to = .9, by = .1), 3 / 10)),
              aes(y = posterior)) +
-  annotate(geom = "text", 
-           x = .08, y = .0025,
+  annotate(geom = "text", x = .08, y = .0025,
            label = "Posterior probability") +
   scale_size_continuous(range = c(0, 1)) +
   scale_x_continuous("probability of water", breaks = c(0:10) / 10) +
@@ -795,9 +790,9 @@ simulate_binom <- function(probability) {
 
 d_small <-
   tibble(probability = seq(from = .1, to = .9, by = .1)) %>% 
-  mutate(draws       = purrr::map(probability, simulate_binom)) %>% 
+  mutate(draws = purrr::map(probability, simulate_binom)) %>% 
   unnest(draws) %>% 
-  mutate(label       = str_c("p = ", probability))
+  mutate(label = str_c("p = ", probability))
 
 head(d_small)
 ```
@@ -908,13 +903,13 @@ samples %>%
   geom_histogram(aes(fill = longest_run_length == 3),
                  binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
+  scale_fill_viridis_d(option = "D", end = .9) +
   scale_x_continuous("longest run length",
                      breaks = seq(from = 0, to = 9, by = 3)) +
-  scale_fill_viridis_d(option = "D", end = .9) +
   ylab("frequency") +
   coord_cartesian(xlim = 0:9) +
-  theme(panel.grid = element_blank(), 
-        legend.position = "none")
+  theme(legend.position = "none",
+        panel.grid = element_blank())
 ```
 
 Let's look at `rle()` again.
@@ -940,13 +935,13 @@ samples %>%
   geom_histogram(aes(fill = longest_run_length == 6),
                  binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
+  scale_fill_viridis_d(option = "D", end = .9) +
   scale_x_continuous("number of switches",
                      breaks = seq(from = 0, to = 9, by = 3)) +
-  scale_fill_viridis_d(option = "D", end = .9) +
   ylab("frequency") +
   coord_cartesian(xlim = 0:9) +
-  theme(panel.grid = element_blank(), 
-        legend.position = "none")
+  theme(legend.position = "none",
+        panel.grid = element_blank())
 ```
 
 ## ~~Summary~~ Let's practice in brms
@@ -1003,8 +998,7 @@ By default, we have a generically-named vector `V1` of 4,000 samples. We'll expl
 f %>% 
   ggplot(aes(x = p)) +
   geom_density(fill = "grey50", color = "grey50") +
-  annotate(geom = "text", 
-           x = .08, y = 2.5,
+  annotate(geom = "text", x = .08, y = 2.5,
            label = "Posterior probability") +
   scale_x_continuous("probability of water",
                      breaks = c(0, .5, 1),
@@ -1031,8 +1025,8 @@ f %>%
   scale_x_continuous("number of water samples",
                      breaks = seq(from = 0, to = 9, by = 3)) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, 1200)) +
-  coord_cartesian(xlim = 0:9) +
   ggtitle("Posterior predictive distribution") +
+  coord_cartesian(xlim = 0:9) +
   theme(panel.grid = element_blank())
 ```
 
