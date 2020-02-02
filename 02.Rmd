@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_02, echo = FALSE, cache = FALSE}
+```{r, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(fig.retina = 2.5)
 options(width = 100)
 ```
@@ -77,8 +77,8 @@ As a quick aside, check out Suzan Baert's blog post [*Data Wrangling Part 2: Tra
 Here's the basic structure of the possibilities per marble draw.
 
 ```{r}
-tibble(draw            = 1:3,
-       marbles         = 4) %>% 
+tibble(draw    = 1:3,
+       marbles = 4) %>% 
   mutate(possibilities = marbles ^ draw) %>% 
   knitr::kable()
 ```
@@ -94,7 +94,7 @@ If you walk that out a little, you can structure the data required to approach F
          draw     = rep(1:3, times = c(4^1, 4^2, 4^3)),
          fill     = rep(c("b", "w"), times = c(1, 3)) %>% 
            rep(., times = c(4^0 + 4^1 + 4^2)))
-  )
+)
 ```
 
 See what I did there with the parentheses? If you assign a value to an object in R (e.g., `dog <- 1`) and just hit return, nothing will immediately pop up in the [console](https://r4ds.had.co.nz/introduction.html#prerequisites). You have to actually execute `dog` before R will return `1`. But if you wrap the code within parentheses (e.g., `(dog <- 1)`), R will perform the assignment and return the value as if you had executed `dog`.
@@ -108,8 +108,8 @@ d %>%
              shape = 21, size = 3) +
   scale_y_continuous(breaks = 1:3) +
   scale_fill_manual(values  = c("navy", "white")) +
-  theme(panel.grid.minor = element_blank(),
-        legend.position  = "none")
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank())
 ```
 
 To my mind, the easiest way to connect the dots in the appropriate way is to make two auxiliary tibbles.
@@ -122,7 +122,7 @@ To my mind, the easiest way to connect the dots in the appropriate way is to mak
          xend = ((1:4^2) / 4),
          y    = 1,
          yend = 2)
-  )
+)
 
 # these will connect the dots from the second and third draws
 (
@@ -131,7 +131,7 @@ To my mind, the easiest way to connect the dots in the appropriate way is to mak
          xend = (1:4^3) / (4^2),
          y    = 2,
          yend = 3)
-  )
+)
 ```
 
 We can use the `lines_1` and `lines_2` data in the plot with two `geom_segment()` functions.
@@ -139,20 +139,20 @@ We can use the `lines_1` and `lines_2` data in the plot with two `geom_segment()
 ```{r, fig.width = 8, fig.height = 2}
 d %>% 
   ggplot(aes(x = position, y = draw)) +
-  geom_segment(data  = lines_1,
+  geom_segment(data = lines_1,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
-  geom_segment(data  = lines_2,
+               size = 1/3) +
+  geom_segment(data = lines_2,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
+               size = 1/3) +
   geom_point(aes(fill = fill),
              shape = 21, size = 3) +
   scale_y_continuous(breaks = 1:3) +
-  scale_fill_manual(values  = c("navy", "white")) +
-  theme(panel.grid.minor = element_blank(),
-        legend.position  = "none")
+  scale_fill_manual(values = c("navy", "white")) +
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank())
 ```
 
 We've generated the values for `position` (i.e., the x-axis), in such a way that they're all justified to the right, so to speak. But we'd like to center them. For `draw == 1`, we'll need to subtract 0.5 from each. For `draw == 2`, we need to reduce the scale by a factor of 4 and we'll then need to reduce the scale by another factor of 4 for `draw == 3`. The `ifelse()` function will be of use for that.
@@ -163,7 +163,7 @@ d <-
   mutate(denominator = ifelse(draw == 1, .5,
                               ifelse(draw == 2, .5 / 4,
                                      .5 / 4^2))) %>% 
-  mutate(position    = position - denominator)
+  mutate(position = position - denominator)
 
 d
 ```
@@ -191,20 +191,20 @@ Now the plot's looking closer.
 ```{r, fig.width = 8, fig.height = 2}
 d %>% 
   ggplot(aes(x = position, y = draw)) +
-  geom_segment(data  = lines_1,
+  geom_segment(data = lines_1,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
-  geom_segment(data  = lines_2,
+               size = 1/3) +
+  geom_segment(data = lines_2,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
+               size = 1/3) +
   geom_point(aes(fill = fill),
              shape = 21, size = 3) +
   scale_y_continuous(breaks = 1:3) +
-  scale_fill_manual(values  = c("navy", "white")) +
-  theme(panel.grid.minor = element_blank(),
-        legend.position  = "none")
+  scale_fill_manual(values = c("navy", "white")) +
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank())
 ```
 
 For the final step, we'll use `coord_polar()` to change the [coordinate system](https://ggplot2.tidyverse.org/reference/coord_polar.html), giving the plot a mandala-like feel.
@@ -212,22 +212,22 @@ For the final step, we'll use `coord_polar()` to change the [coordinate system](
 ```{r, fig.width = 4, fig.height = 4}
 d %>% 
   ggplot(aes(x = position, y = draw)) +
-  geom_segment(data  = lines_1,
+  geom_segment(data = lines_1,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
-  geom_segment(data  = lines_2,
+               size = 1/3) +
+  geom_segment(data = lines_2,
                aes(x = x, xend = xend,
                    y = y, yend = yend),
-               size  = 1/3) +
+               size = 1/3) +
   geom_point(aes(fill = fill),
              shape = 21, size = 4) +
-  scale_fill_manual(values  = c("navy", "white")) +
+  scale_fill_manual(values = c("navy", "white")) +
   scale_x_continuous(NULL, limits = c(0, 4), breaks = NULL) +
   scale_y_continuous(NULL, limits = c(0.75, 3), breaks = NULL) +
-  theme(panel.grid      = element_blank(),
-        legend.position = "none") +
-  coord_polar()
+  coord_polar() +
+  theme(legend.position = "none",
+        panel.grid = element_blank())
 ```
 
 To make our version of Figure 2.3, we'll have to add an index to tell us which paths remain logically valid after each choice. We'll call the index `remain`.
@@ -257,26 +257,26 @@ d <-
 # finally, the plot:
 d %>% 
   ggplot(aes(x = position, y = draw)) +
-  geom_segment(data  = lines_1,
+  geom_segment(data = lines_1,
                aes(x = x, xend = xend,
                    y = y, yend = yend,
                    alpha = remain %>% as.character()),
-               size  = 1/3) +
-  geom_segment(data  = lines_2,
+               size = 1/3) +
+  geom_segment(data = lines_2,
                aes(x = x, xend = xend,
                    y = y, yend = yend,
                    alpha = remain %>% as.character()),
-               size  = 1/3) +
+               size = 1/3) +
   geom_point(aes(fill = fill, alpha = remain %>% as.character()),
              shape = 21, size = 4) +
   # it's the alpha parameter that makes elements semitransparent
   scale_alpha_manual(values = c(1/10, 1)) +
-  scale_fill_manual(values  = c("navy", "white")) +
+  scale_fill_manual(values = c("navy", "white")) +
   scale_x_continuous(NULL, limits = c(0, 4), breaks = NULL) +
   scale_y_continuous(NULL, limits = c(0.75, 3), breaks = NULL) +
-  theme(panel.grid      = element_blank(),
-        legend.position = "none") +
-  coord_polar()
+  coord_polar() +
+  theme(legend.position = "none",
+        panel.grid = element_blank())
 ```
 
 Letting "w" = a white dot and "b" = a blue dot, we might recreate the table in the middle of page 23 like so.
@@ -338,7 +338,7 @@ d <-
   mutate(position = ifelse(pie_index == "a", position,
                            ifelse(pie_index == "b", position + 4,
                                   position + 4 * 2)))
-  )
+)
 ```
 
 Both `lines_1` and `lines_2` require adjustments for `x` and `xend`. Our current approach is a nested `ifelse()`. Rather than copy and paste that multi-line `ifelse()` code for all four, let's wrap it in a compact function, which we'll call `move_over()`.
@@ -368,7 +368,7 @@ Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_o
   # to get the position axis correct for `pie_index == "b"` or `"c"`, we'll need to offset
   mutate(x    = move_over(position = x,    index = pie_index),
          xend = move_over(position = xend, index = pie_index))
-  )
+)
 
 (
   lines_2 <-
@@ -383,7 +383,7 @@ Now we'll make our new `lines_1` and `lines_2` data, for which we'll use `move_o
   # to get the position axis correct for `pie_index == "b"` or `"c"`, we'll need to offset
   mutate(x    = move_over(position = x,    index = pie_index),
          xend = move_over(position = xend, index = pie_index))
-  )
+)
 ```
 
 For the last data wrangling step, we add the `remain` indices to help us determine which parts to make semitransparent. I'm not sure of a slick way to do this, so these are the result of brute force counting.
@@ -453,26 +453,26 @@ We're finally ready to plot our Figure 2.4!
 d %>% 
   ggplot(aes(x = position, y = draw)) +
   geom_vline(xintercept = c(0, 4, 8), color = "white", size = 2/3) +
-  geom_segment(data  = lines_1,
+  geom_segment(data = lines_1,
                aes(x = x, xend = xend,
                    y = y, yend = yend,
                    alpha = remain %>% as.character()),
-               size  = 1/3) +
-  geom_segment(data  = lines_2,
+               size = 1/3) +
+  geom_segment(data = lines_2,
                aes(x = x, xend = xend,
                    y = y, yend = yend,
                    alpha = remain %>% as.character()),
-               size  = 1/3) +
+               size = 1/3) +
   geom_point(aes(fill = fill, size = draw, alpha = remain %>% as.character()),
              shape = 21) +
   scale_size_continuous(range = c(3, 1.5)) +
   scale_alpha_manual(values = c(1/10, 1)) +
-  scale_fill_manual(values  = c("navy", "white")) +
+  scale_fill_manual(values = c("navy", "white")) +
   scale_x_continuous(NULL, limits = c(0, 12),     breaks = NULL) +
   scale_y_continuous(NULL, limits = c(0.75, 3.5), breaks = NULL) +
-  theme(panel.grid      = element_blank(),
-        legend.position = "none") +
-  coord_polar()
+  coord_polar() +
+  theme(legend.position = "none",
+        panel.grid = element_blank())
 ```
 
 ### Using prior information.
@@ -499,9 +499,9 @@ We might update to reproduce the table a the top of page 26, like this.
 t <-
   t %>% 
   select(p_1:p_4, `new count`) %>% 
-  rename(`prior count`   = `new count`) %>% 
+  rename(`prior count` = `new count`) %>% 
   mutate(`factory count` = c(0, 3:0)) %>% 
-  mutate(`new count`     = `prior count` * `factory count`)
+  mutate(`new count` = `prior count` * `factory count`)
 
 t %>% 
   knitr::kable()
@@ -548,7 +548,7 @@ t %>%
   select(p_1:p_4) %>% 
   mutate(p                      = seq(from = 0, to = 1, by = .25),
          `ways to produce data` = c(0, 3, 8, 9, 0)) %>% 
-  mutate(plausibility           = `ways to produce data` / sum(`ways to produce data`))
+  mutate(plausibility = `ways to produce data` / sum(`ways to produce data`))
 ```
 
 We just computed the plausibilities, but here's McElreath's R code 2.1.
@@ -581,7 +581,7 @@ Here we'll add the cumulative number of trials, `n_trials`, and the cumulative n
   d %>% 
   mutate(n_trials  = 1:9,
          n_success = cumsum(toss == "w"))
-  )
+)
 ```
 
 Fair warning: We don't learn the skills for making Figure 2.5 until later in the chapter. So consider the data wrangling steps in this section as something of a preview.
@@ -604,8 +604,7 @@ d %>%
          likelihood = dbinom(x    = n_success, 
                              size = n_trials, 
                              prob = p_water),
-         strip      = str_c("n = ", n_trials)
-         ) %>% 
+         strip      = str_c("n = ", n_trials)) %>% 
   # the next three lines allow us to normalize the prior and the likelihood, 
   # putting them both in a probability metric 
   group_by(n_trials) %>% 
@@ -706,7 +705,7 @@ tibble(a = 0,
   scale_x_continuous(breaks = c(0, 1:3, 9)) +
   scale_y_continuous(breaks = c(0, 1/9, 1/3, 1/2, 2/3, 1),
                      labels = c("0", "1/9", "1/3", "1/2", "2/3", "1")) +
-  theme(panel.grid.minor   = element_blank(),
+  theme(panel.grid.minor = element_blank(),
         panel.grid.major.x = element_blank()) +
   facet_wrap(~b, ncol = 5)
 ```
@@ -719,7 +718,7 @@ tibble(parameter_space = seq(from = 0, to = 1, length.out = 50)) %>%
   
   ggplot(aes(x = parameter_space, ymin = 0, ymax = prob)) +
   geom_ribbon() +
-  coord_cartesian(ylim = 0:2) +
+  ylim(0, 2) +
   theme(panel.grid = element_blank())
 ```
 
@@ -769,9 +768,9 @@ p1 <-
   scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "prior") +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         strip.background = element_blank(),
-        strip.text       = element_blank()) +
+        strip.text = element_blank()) +
   facet_wrap(row ~ ., scales = "free_y", ncol = 1)
 
 p2 <-
@@ -782,9 +781,9 @@ p2 <-
   scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "likelihood") +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         strip.background = element_blank(),
-        strip.text       = element_blank()) +
+        strip.text = element_blank()) +
   facet_wrap(row ~ ., scales = "free_y", ncol = 1)
 
 p3 <-
@@ -795,9 +794,9 @@ p3 <-
   scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "posterior") +
-  theme(panel.grid       = element_blank(),
+  theme(panel.grid = element_blank(),
         strip.background = element_blank(),
-        strip.text       = element_blank()) +
+        strip.text = element_blank()) +
   facet_wrap(row ~ ., scales = "free_y", ncol = 1)
 
 library(patchwork)
@@ -814,12 +813,13 @@ Also, to learn all about `dplyr::filter()`, check out Baert's [*Data Wrangling P
 We just employed grid approximation over the last figure. In order to get nice smooth lines, we computed the posterior over 1000 evenly-spaced points on the probability space. Here we'll prepare for Figure 2.7 with 20.
 
 ```{r}
-(d <-
- tibble(p_grid            = seq(from = 0, to = 1, length.out = 20),  # define grid
-        prior             = 1) %>%                                   # define prior
-   mutate(likelihood      = dbinom(6, size = 9, prob = p_grid)) %>%  # compute likelihood at each value in grid
-   mutate(unstd_posterior = likelihood * prior) %>%                  # compute product of likelihood and prior
-   mutate(posterior       = unstd_posterior / sum(unstd_posterior))  # standardize the posterior, so it sums to 1
+(
+  d <-
+    tibble(p_grid = seq(from = 0, to = 1, length.out = 20),      # define grid
+           prior  = 1) %>%                                       # define prior
+    mutate(likelihood = dbinom(6, size = 9, prob = p_grid)) %>%  # compute likelihood at each value in grid
+    mutate(unstd_posterior = likelihood * prior) %>%             # compute product of likelihood and prior
+    mutate(posterior = unstd_posterior / sum(unstd_posterior))   # standardize the posterior, so it sums to 1
 )
 ```
 
@@ -841,11 +841,11 @@ Now here's the code for the left hand panel of Figure 2.7.
 
 ```{r}
 p2 <-
-  tibble(p_grid            = seq(from = 0, to = 1, length.out = 5),
-       prior             = 1) %>%
-  mutate(likelihood      = dbinom(6, size = 9, prob = p_grid)) %>%
+  tibble(p_grid = seq(from = 0, to = 1, length.out = 5),
+         prior  = 1) %>%
+  mutate(likelihood = dbinom(6, size = 9, prob = p_grid)) %>%
   mutate(unstd_posterior = likelihood * prior) %>%
-  mutate(posterior       = unstd_posterior / sum(unstd_posterior)) %>% 
+  mutate(posterior = unstd_posterior / sum(unstd_posterior)) %>% 
   
   ggplot(aes(x = p_grid, y = posterior)) +
   geom_point() +
@@ -915,12 +915,12 @@ tibble(w = c(6, 12, 24),
          p_grid = seq(from = 0, to = 1, length.out = n_grid)) %>% 
   mutate(prior = 1,
          m     = .67)  %>%
-  mutate(likelihood           = dbinom(w, size = n, prob = p_grid)) %>%
+  mutate(likelihood = dbinom(w, size = n, prob = p_grid)) %>%
   mutate(unstd_grid_posterior = likelihood * prior,
          unstd_quad_posterior = dnorm(p_grid, m, s)) %>%
   group_by(w) %>% 
-  mutate(grid_posterior       = unstd_grid_posterior / sum(unstd_grid_posterior),
-         quad_posterior       = unstd_quad_posterior / sum(unstd_quad_posterior),
+  mutate(grid_posterior = unstd_grid_posterior / sum(unstd_grid_posterior),
+         quad_posterior = unstd_quad_posterior / sum(unstd_quad_posterior),
          n = str_c("n = ", n)) %>% 
   mutate(n = factor(n, levels = c("n = 9", "n = 18", "n = 36"))) %>% 
   
@@ -958,8 +958,8 @@ b2.1 <-
       w | trials(36) ~ 1,
       prior(beta(1, 1), class = Intercept),
       iter = 4000, warmup = 1000,
-      control = list(adapt_delta = .9),
-      seed = 4)
+      control = list(adapt_delta = .95),
+      seed = 2)
 ```
 
 The model output from brms looks like so.
@@ -983,7 +983,7 @@ posterior_samples(b2.1) %>%
   facet_wrap(~n)
 ```
 
-If you're still confused. Cool. This is just a preview. We'll start walking through fitting models in brms in Chapter 4 and we'll learn a lot about regression with the binomial likelihood in Chapter 10.
+If you're still confused. Cool. This is just a preview. We'll start walking through fitting models in brms in [Chapter 4][A Gaussian model of height] and we'll learn a lot about regression with the binomial likelihood in [Chapter 10][Counting and Classification].
 
 ## Reference {-}
 
