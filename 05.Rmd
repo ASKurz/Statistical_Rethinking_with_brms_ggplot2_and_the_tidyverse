@@ -311,7 +311,7 @@ The `tidybaes::stat_pointintervalh()` function offers a third way, this time wit
 library(tidybayes)
 
 post %>% 
-  select(-lp__) %>% 
+  select(b_Intercept:sigma) %>% 
   gather() %>% 
   
   ggplot(aes(x = value, y = reorder(key, value))) +  # note how we used `reorder()` to arrange the coefficients
@@ -1160,8 +1160,8 @@ While we're at it, you can make a similar plot with the [`mcmc_scatter()` functi
 
 ```{r, fig.width = 3, fig.height = 3}
 post %>% 
-  mcmc_scatter(pars  = c("b_leg_left", "b_leg_right"),
-               size  = 1/3, 
+  mcmc_scatter(pars = c("b_leg_left", "b_leg_right"),
+               size = 1/3, 
                alpha = 1/10) +
   theme_bw() +
   theme(panel.grid = element_blank())
@@ -1241,10 +1241,8 @@ posterior_samples(b5.9) %>%
 We might also use `tidybayes::stat_pointintervalh()` to compare the posterior of `b_leg_left` from `b5.9` to the joint posterior `b_leg_left + b_leg_right` from `b5.8`. For kicks, we'll depict the posteriors with `tidybayes::stat_gradientintervalh()` and use three levels of posterior intervals.
 
 ```{r, fig.width = 6, fig.height = 1, warning = F, message = F}
-bind_cols(
-  post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_right),
-  posterior_samples(b5.9) %>% transmute(`only b_leg_left` = b_leg_left)
-) %>% 
+bind_cols(post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_right),
+          posterior_samples(b5.9) %>% transmute(`only b_leg_left` = b_leg_left)) %>% 
   gather() %>% 
 
   ggplot(aes(x = value, y = key)) +
@@ -1314,8 +1312,8 @@ b5.11 <-
 Compare the coefficient summaries.
 
 ```{r}
-posterior_summary(b5.10) %>% round(digits = 3)
-posterior_summary(b5.11) %>% round(digits = 3)
+posterior_summary(b5.10)[1:3, ] %>% round(digits = 3)
+posterior_summary(b5.11)[1:3, ] %>% round(digits = 3)
 ```
 
 If you'd like to get just the 95% intervals similar to the way McElreath reported them in the prose on page 146, you might use the handy `posterior_interval()` function.
@@ -1345,7 +1343,7 @@ b5.12 <-
 The posteriors for coefficients, especially for `perc.fat`, shrank to zero.
 
 ```{r}
-posterior_summary(b5.12) %>% round(digits = 3)
+posterior_summary(b5.12)[1:4, ] %>% round(digits = 3)
 ```
 
 You can make also pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
@@ -1394,6 +1392,7 @@ First we'll get the data and define the functions. You'll note I've defined my `
 
 ```{r, warning = F, message = F}
 sim_coll <- function(seed, rho) {
+  
   set.seed(seed)
   d <-
     d %>% 
@@ -1404,6 +1403,7 @@ sim_coll <- function(seed, rho) {
   m <- lm(kcal.per.g ~ perc.fat + x, data = d)
   
   sqrt(diag(vcov(m)))[2]  # parameter SD
+  
 }
 
 # how many simulations per `rho`-value would you like?
@@ -1455,9 +1455,9 @@ n <- 100
 
 set.seed(5)
 d <- 
-  tibble(h0        = rnorm(n, mean = 10, sd = 2), 
-         treatment = rep(0:1, each = n / 2),
+  tibble(treatment = rep(0:1, each = n / 2),
          fungus    = rbinom(n, size = 1, prob = .5 - treatment * 0.4),
+         h0        = rnorm(n, mean = 10, sd = 2), 
          h1        = h0 + rnorm(n, mean = 5 - 3 * fungus, sd = 1))
 ```
 
@@ -1614,7 +1614,7 @@ fitted(b5.15,
 The reparameterized model follows the form
 
 \begin{align*}
-\text{height}_i & \sim \text{Normal}(\mu_i, \sigma) \\
+\text{height}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i & = \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
 \end{align*}
 
