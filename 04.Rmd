@@ -218,9 +218,9 @@ McElreath's right. "This looks monstrous" (p. 76). Why not demystify that monste
 
 ```{r, fig.width = 4, fig.height = 2.75}
 # define our input values
-tibble(mu    = 0,
-       sigma = 1,
-       y     = seq(from = -4, to = 4, by = .1)) %>% 
+tibble(y     = seq(from = -4, to = 4, by = .1),
+       mu    = 0,
+       sigma = 1) %>% 
   # compute p(y) using a hand-made gaussian likelihood
   mutate(p_y = (1 / sqrt(2 * pi * sigma^2)) * exp(-(y - mu)^2 / (2 * sigma^2))) %>% 
   
@@ -261,9 +261,9 @@ We can break McElreath's R code 4.6 down a little bit with a tibble like so.
 n_points <- 100
 
 d <-
-  tibble(w      = 6, 
-         n      = 9,
-         p_grid = seq(from = 0, to = 1, length.out = n_points)) %>% 
+  tibble(p_grid = seq(from = 0, to = 1, length.out = n_points),
+         w      = 6, 
+         n      = 9) %>% 
   mutate(prior      = dunif(p_grid, 0, 1),
          likelihood = dbinom(w, n, p_grid)) %>% 
   mutate(posterior = likelihood * prior / sum(likelihood * prior))
@@ -535,9 +535,8 @@ n <- 200
 
 # note we've redefined the ranges of `mu` and `sigma`
 d_grid <-
-  tibble(mu    = seq(from = 150, to = 170, length.out = n),
-         sigma = seq(from = 4,   to = 20,  length.out = n)) %>% 
-  expand(mu, sigma)
+  crossing(mu    = seq(from = 150, to = 170, length.out = n),
+           sigma = seq(from = 4,   to = 20,  length.out = n))
 ```
 
 Second, we'll redefine our custom `grid_function()` function to operate over the `height` values of `d3`.
@@ -644,7 +643,7 @@ b4.1_hc <-
 This leads to an important point. After running model with Hamiltonian Monte Carlo (HMC), it's a good idea to inspect the chains. As we'll see, McElreath coverd this in [Chapter 8][Checking the chain.]. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
-plot(b4.1_hc)
+plot(b4.1_hc) 
 ```
 
 If you want detailed diagnostics for the HMC chains, execute `launch_shinystan(b4.1)`. It'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results.
@@ -716,7 +715,7 @@ vcov(b4.1_hc)
 
 This only returned the first element in the matrix it did for rethinking. That is, it appears `brms::vcov()` only returns the variance/covariance matrix for the single-level $\beta$ parameters (i.e., those used to model $\mu$).
 
-However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot pf as we go along.
+However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot of as we go along.
 
 ```{r}
 post <- posterior_samples(b4.1_hc)
@@ -770,7 +769,7 @@ The base R code is compact, but somewhat opaque. Here's how to do something simi
 
 ```{r}
 post %>%
-  select(-lp__) %>% 
+  select(sigma:Intercept) %>% 
   gather(parameter) %>%
   group_by(parameter) %>%
   summarise(mean = mean(value),
@@ -790,7 +789,7 @@ And if you're willing to drop the posterior $SD$s, you can use `tidybayes::mean_
 
 ```{r, warning = F}
 post %>% 
-  select(-lp__) %>% 
+  select(sigma:Intercept) %>% 
   gather(parameter) %>%
   group_by(parameter) %>%
   mean_qi(value)
@@ -873,7 +872,7 @@ Our univariable model has three priors:
 McElreath recommended we plot them. If you recall, we've already plotted $\text{Normal}(178, 100)$ and $\text{Uniform}(0, 50)$. Here's what the prior for our new $\beta$ parameter looks like.
 
 ```{r, fig.width = 3, fig.height = 3}
-tibble(beta      = -40:40) %>% 
+tibble(beta = -40:40) %>% 
   mutate(density = dnorm(beta, mean = 0, sd = 10)) %>% 
   
   ggplot(aes(x = beta, ymin = 0, ymax = density)) +
@@ -952,7 +951,7 @@ Again, brms doesn't have a convenient `corr = TRUE` argument for `plot()` or `su
 
 ```{r}
 posterior_samples(b4.3) %>%
-  select(-lp__) %>%
+  select(b_Intercept:sigma) %>%
   cor() %>%
   round(digits = 2)
 ```
@@ -994,7 +993,7 @@ Like before, the uniform prior required extensive `warmup` iterations to produce
 
 ```{r}
 posterior_samples(b4.4) %>%
-  select(-lp__) %>%
+  select(b_Intercept:sigma) %>%
   cor() %>%
   round(digits = 2)
 ```
@@ -1375,9 +1374,9 @@ d2 %>%
               fill = "grey70", color = "black", alpha = 1, size = 1/2) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
+  ylab("height") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
-  ylab("height") +
   theme(text = element_text(family = "Times"),
         panel.grid = element_blank())
 ```
