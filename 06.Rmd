@@ -6,7 +6,7 @@ output:
   github_document
 ---
 
-```{r set-options_06, echo = FALSE, cache = FALSE}
+```{r, echo = FALSE, cache = FALSE}
 knitr::opts_chunk$set(fig.retina = 2.5)
 options(width = 100)
 ```
@@ -84,10 +84,10 @@ d %>%
   ggplot(aes(x =  mass, y = brain, label = species)) +
   geom_point(color = carto_pal(7, "BurgYl")[5]) +
   geom_text_repel(size = 3, color = carto_pal(7, "BurgYl")[7], family = "Courier", seed = 438) +
-  coord_cartesian(xlim = 30:65) +
   labs(subtitle = "Average brain volume by body\nmass for six hominin species",
        x = "body mass (kg)",
        y = "brain volume (cc)") +
+  coord_cartesian(xlim = 30:65) +
   theme_classic() +
   theme(text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
@@ -96,14 +96,14 @@ d %>%
 The first six models, which we'll be fitting using OLS regression via the `lm()` function, range in complexity from the simple univariable model
 
 \begin{align*}
-\text{brain}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{brain}_i & \sim \operatorname{Normal} (\mu_i, \sigma) \\
 \mu_i & = \beta_0 + \beta_1 \text{mass}_i,
 \end{align*}
 
 to the dizzying sixth-degree polynomial model
 
 \begin{align*}
-\text{brain}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{brain}_i & \sim \operatorname{Normal} (\mu_i, \sigma) \\
 \mu_i & = \beta_0 + \beta_1 \text{mass}_i + \beta_2 \text{mass}_i^2 + \beta_3 \text{mass}_i^3 + \beta_4 \text{mass}_i^4 + \beta_5 \text{mass}_i^5 + \beta_6 \text{mass}_i^6.
 \end{align*}
 
@@ -124,9 +124,9 @@ fits <-
                      "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4)", 
                      "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5)", 
                      "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5) + I(mass^6)")) %>% 
-  mutate(fit     = map2(model, formula, fit_lm)) %>% 
-  mutate(tidy    = map(fit, tidy),
-         glance  = map(fit, glance))
+  mutate(fit = map2(model, formula, fit_lm)) %>% 
+  mutate(tidy   = map(fit, tidy),
+         glance = map(fit, glance))
 
 # what did we just do?
 print(fits)
@@ -237,7 +237,7 @@ p6 <-
   geom_hline(yintercept = 0, color = carto_pal(7, "BurgYl")[2], linetype = 2) + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              size = 1/2, alpha = 1/3,
               formula = y ~ poly(x, 6)) +
   coord_cartesian(ylim = c(-300, 1500)) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==1))
@@ -397,8 +397,8 @@ weatherperson %>%
   scale_color_manual(values = c("white", "black")) +
   scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
   scale_y_discrete(NULL, expand = c(0, 0)) +
-  theme(legend.position = "none",
-        axis.ticks.y = element_blank(),
+  theme(axis.ticks.y = element_blank(),
+        legend.position = "none",
         text = element_text(family = "Courier"))
 ```
 
@@ -420,8 +420,8 @@ newcomer %>%
   scale_color_manual(values = c("white", "black")) +
   scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
   scale_y_discrete(NULL, expand = c(0, 0)) +
-  theme(legend.position = "none",
-        axis.ticks.y = element_blank(),
+  theme(axis.ticks.y = element_blank(),
+        legend.position = "none",
         text = element_text(family = "Courier"))
 ```
 
@@ -804,10 +804,10 @@ dev_tibble %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        legend.position = "none",
+  theme(legend.position = "none",
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
+        text = element_text(family = "Courier")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -908,10 +908,10 @@ s %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        legend.position = "none",
+  theme(legend.position = "none",
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
+        text = element_text(family = "Courier")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -972,9 +972,9 @@ dev_tibble  %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
+  theme(panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
         strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4))) +
+        text = element_text(family = "Courier")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -1218,10 +1218,10 @@ s %>%
        x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
+  theme(legend.position  = "none",
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        legend.position  = "none") +
+        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
+        text = element_text(family = "Courier")) +
   facet_wrap(~ic, ncol = 1)
 ```
 
@@ -1359,7 +1359,7 @@ Note the warning message. Statisticians have made notable advances in Bayesian i
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
-```{r w_b6.11, cache = T, message = F, warning = F}
+```{r w_b6.11, message = F, warning = F}
 waic(b6.11)
 ```
 
@@ -1374,7 +1374,7 @@ b6.11 <- add_criterion(b6.11, "waic")
 With that in place, here's how you'd extract the WAIC information from the fit object.
 
 ```{r}
-b6.11$waic
+b6.11$criteria$waic
 ```
 
 *Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output, which can be convenient. But second, it sets you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
@@ -1447,14 +1447,15 @@ w[, 7:8] %>%
   ggplot(aes(x = model_name, y = waic, 
              ymin = waic - se_waic, 
              ymax = waic + se_waic)) +
-  geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
+  geom_pointrange(color = carto_pal(7, "BurgYl")[7], 
+                  fill = carto_pal(7, "BurgYl")[5], shape = 21) +
   labs(title = "My custom WAIC plot",
        x = NULL, y = NULL) +
   coord_flip() +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
+  theme(axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
+        text = element_text(family = "Courier"))
 ```
 
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
@@ -1546,7 +1547,9 @@ my_coef_tab <-
   mutate(fit = purrr::map(model, get)) %>% 
   mutate(tidy = purrr::map(fit, tidy)) %>% 
   unnest(tidy) %>% 
-  filter(term != "lp__")
+  filter(term != "lp__") %>% 
+  # this is because `b_Intercept` is redundant with `Intercept`
+  filter(term != "b_Intercept")
 
 head(my_coef_tab)
 ```
@@ -1596,11 +1599,11 @@ ggplot(data = wrangled_my_coef_tab,
   scale_x_discrete(NULL, labels = wrangled_my_coef_tab$axis) +
   ggtitle("My coeftab() plot") +
   coord_flip() +
-  theme(text = element_text(family = "Courier"),
-        panel.grid = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
+        panel.grid = element_blank(),
+        text = element_text(family = "Courier"))
 ```
 
 However, if you’re willing to deviate just a bit from the format of McElreath's `coeftab()` plot, here's a more elegant way to work with our `my_coef_tab` tibble.
@@ -1615,11 +1618,11 @@ my_coef_tab %>%
        y = NULL) +
   coord_flip() +
   theme_classic() +
-  theme(text = element_text(family = "Courier"),
-        panel.grid = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
+        panel.grid = element_blank(),
+        text = element_text(family = "Courier"),
         strip.background = element_rect(color = "transparent")) +
   facet_wrap(~term, ncol = 1)
 ```
@@ -1665,7 +1668,7 @@ pp_average(b6.11, b6.12, b6.13, b6.14,
   geom_point(data = d, 
              aes(y = kcal.per.g), 
              size = 2, color = carto_pal(7, "BurgYl")[7]) +
-  labs(y = "kcal.per.g") +
+  ylab("kcal.per.g") +
   coord_cartesian(xlim = range(d$neocortex), 
                   ylim = range(d$kcal.per.g)) +
   theme_classic() +
@@ -1689,7 +1692,7 @@ rbind(bayes_R2(b6.11),
       bayes_R2(b6.13), 
       bayes_R2(b6.14)) %>%
   as_tibble() %>%
-  mutate(model = c("b6.11", "b6.12", "b6.13", "b6.14"),
+  mutate(model                   = c("b6.11", "b6.12", "b6.13", "b6.14"),
          r_square_posterior_mean = round(Estimate, digits = 2)) %>%
   select(model, r_square_posterior_mean)
 ```
