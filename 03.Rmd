@@ -222,8 +222,7 @@ That value will come in handy for the lower left panel of Figure 3.2. But anyway
 
 ```{r}
 samples %>% 
-  select(p_grid) %>% 
-  pull() %>% 
+  pull(p_grid) %>% 
   quantile(prob = .8)
 ```
 
@@ -518,8 +517,8 @@ What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't
 ```{r}
 make_loss <- function(our_d) {
   d %>% 
-  mutate(loss = posterior * abs(our_d - p_grid)) %>% 
-  summarise(weighted_average_loss = sum(loss))
+    mutate(loss = posterior * abs(our_d - p_grid)) %>% 
+    summarise(weighted_average_loss = sum(loss))
 }
 
 (
@@ -565,8 +564,8 @@ The quadratic loss $(d - p)^2$ suggests we should use the mean instead. Let's in
 # ammend our loss function
 make_loss <- function(our_d) {
   d %>% 
-  mutate(loss = posterior * (our_d - p_grid)^2) %>% 
-  summarise(weighted_average_loss = sum(loss))
+    mutate(loss = posterior * (our_d - p_grid)^2) %>% 
+    summarise(weighted_average_loss = sum(loss))
 }
 
 # remake our `l` data
@@ -653,8 +652,7 @@ set.seed(3)
 d <- tibble(draws = rbinom(n_draws, size = 2, prob = .7))
 
 d %>% 
-  group_by(draws) %>% 
-  count() %>% 
+  count(draws) %>% 
   mutate(proportion = n / nrow(d))
 ```
 
@@ -806,8 +804,8 @@ d_small %>%
                  color = "grey92", size = 1/10) +
   scale_x_continuous(NULL, breaks = seq(from = 0, to = 9, by = 3)) +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = 0:9) +
   labs(subtitle = "Sampling distributions") +
+  coord_cartesian(xlim = 0:9) +
   theme(panel.grid = element_blank()) +
   facet_wrap(~ label, ncol = 9) 
 ```
@@ -952,23 +950,18 @@ Open brms.
 library(brms)
 ```
 
-In brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
+With brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
 
-```{r b3.1, echo = F}
-# save(b3.1, file = "fits/b03.01.rda")
-# rm(b3.1)
-load("fits/b03.01.rda")
-```
-
-```{r, eval = F}
+```{r b3.1}
 b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
       w | trials(9) ~ 1,
       # this is a flat prior
       prior(beta(1, 1), class = Intercept),
+      control = list(adapt_delta = .999),
       seed = 3,
-      control = list(adapt_delta = .999))
+      file = "fits/b03.01")
 ```
 
 We'll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
@@ -984,7 +977,8 @@ Much like the way we used the `samples()` function to simulate probability value
 
 ```{r, warning = F}
 f <-
-  fitted(b3.1, summary = F,
+  fitted(b3.1, 
+         summary = F,
          scale = "linear") %>% 
   as_tibble() %>% 
   set_names("p")
@@ -1043,7 +1037,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(n, n_success, n_trials, d, n_samples, samples, p1, p2, q_80, q_10_and_90, new_d, new_samples, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, tosses, b3.1, f)
+rm(n, n_success, n_trials, d, n_samples, samples, p1, p2, q_80, q_10_and_90, new_d, new_samples, point_estimates, make_loss, l, min_loss, n_draws, simulate_binom, d_small, tosses, b3.1, f)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}

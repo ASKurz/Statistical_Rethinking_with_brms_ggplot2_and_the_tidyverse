@@ -945,13 +945,7 @@ library(brms)
 
 Here re-fit the last model from above, the one for which $w = 24$ and $n = 36$. 
 
-```{r b2.1, echo = F}
-# save(b2.1, file = "fits/b02.01.rda")
-# rm(b2.1)
-load("fits/b02.01.rda")
-```
-
-```{r, eval = F}
+```{r b2.01}
 b2.1 <-
   brm(data = list(w = 24), 
       family = binomial(link = "identity"),
@@ -959,7 +953,8 @@ b2.1 <-
       prior(beta(1, 1), class = Intercept),
       iter = 4000, warmup = 1000,
       control = list(adapt_delta = .95),
-      seed = 2)
+      seed = 2,
+      file = "fits/b02.01")
 ```
 
 The model output from brms looks like so.
@@ -996,7 +991,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F, warning = F, message = F}
-rm(d, lines_1, lines_2, n_blue, n_white, t, move_over, ways, sequence_length, p1, p2, p3, globe_qa, globe_qa_18, globe_qa_36, n_grid, globe_qa_brms)
+rm(d, lines_1, lines_2, n_blue, n_white, t, move_over, ways, sequence_length, p1, p2, p3, globe_qa, globe_qa_18, globe_qa_36, n_grid, globe_qa_brms, b2.1)
 ```
 
 ```{r, echo = F, warning = F, message = F, results = "hide"}
