@@ -164,8 +164,8 @@ tibble(mu   = 0,
   scale_size_manual(values = c(1/4, 1.25)) +
   labs(subtitle = "Guess which color denotes the Gaussian.") +
   coord_cartesian(xlim = -4:4) +
-  theme(panel.grid = element_blank(),
-        legend.position = "none",
+  theme(legend.position = "none",
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
 ```
 
@@ -259,8 +259,8 @@ d %>%
   geom_line(color = ghibli_palette("PonyoMedium")[5]) +
   labs(x = NULL, y = NULL) +
   coord_cartesian(ylim = 0:1) +
-  theme(panel.grid = element_blank(),
-        axis.ticks.x = element_blank(),
+  theme(axis.ticks.x = element_blank(),
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("PonyoMedium")[2]),
         strip.background = element_rect(fill = ghibli_palette("PonyoMedium")[6])) +
   facet_wrap(~distribution)
@@ -415,8 +415,8 @@ p2 <-
   geom_point(size = 2, color = ghibli_palette("LaputaMedium")[4]) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, .75)) +
   xlab(NULL) +
-  theme(panel.grid = element_blank(),
-        axis.ticks.x = element_blank(),
+  theme(axis.ticks.x = element_blank(),
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("LaputaMedium")[7]),
         strip.background = element_rect(fill = ghibli_palette("LaputaMedium")[6])) +
   facet_wrap(~distribution)
@@ -469,8 +469,8 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(xlim = 0:2,
                   ylim = c(0, 1.2)) +
-  theme(panel.grid = element_blank(),
-        legend.position = "none",
+  theme(legend.position = "none",
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MononokeMedium")[1]))
 ```
 
@@ -689,9 +689,9 @@ d %>%
   geom_halfeyeh(point_interval = mean_qi, .width = .68,
                 color = ghibli_palette("KikiMedium")[2]) +
   scale_fill_manual(values = c(ghibli_palette("KikiMedium")[c(4, 6)])) +
-  theme(panel.grid = element_blank(),
-        axis.ticks.y = element_blank(),
+  theme(axis.ticks.y = element_blank(),
         legend.position = "none",
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
 ```
 
@@ -703,13 +703,7 @@ library(brms)
 
 For such a model, we have two formulas: one for $\mu$ and one for $\sigma$. We wrap both within the `bf()` function. 
 
-```{r b9.1, echo = F}
-# save(b9.1, file = "fits/b09.01.rda")
-# rm(b9.1)
-load("fits/b09.01.rda")
-```
-
-```{r, eval = F}
+```{r b9.1}
 b9.1 <- 
   brm(data = d,
       family = gaussian,
@@ -717,7 +711,8 @@ b9.1 <-
       prior = c(prior(normal(100, 10), class = Intercept),
                 prior(normal(0, 10),   class = Intercept, dpar = sigma),
                 prior(normal(0, 10),   class = b,         dpar = sigma)),
-      seed = 9)
+      seed = 9,
+      file = "fits/b09.01")
 ```
 
 Do note our use of the `dpar` arguments in the `prior` statements. Here's the summary.
@@ -750,9 +745,9 @@ post %>%
        x = expression(sigma[x]), 
        y = NULL) +
   coord_cartesian(ylim = c(1.5, 2)) +
-  theme(panel.grid = element_blank(),
-        axis.ticks.y = element_blank(),
+  theme(axis.ticks.y = element_blank(),
         legend.position = "none",
+        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
 ```
 
@@ -838,7 +833,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, p1, p2, ranked_d, subset_d, length_out, alpha, beta, lines, b9.1, post)
+rm(d, alpha_per_beta, count_ways, p, sim_p, n_rep, p1, p2, ranked_d, subset_d, a, length_out, alpha, beta, lines, b9.1, post)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
