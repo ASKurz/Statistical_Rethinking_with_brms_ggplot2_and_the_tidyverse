@@ -80,20 +80,15 @@ d %>%
 
 Now fit this simple aggregated binomial model much like we practiced in [Chapter 10][Aggregated binomial: Chimpanzees again, condensed.].
 
-```{r b12.1, echo = F}
-# save(b12.1, file = "fits/b12.01.rda")
-# rm(b12.1)
-load("fits/b12.01.rda")
-```
-
-```{r, eval = F}
+```{r b12.1}
 b12.1 <- 
   brm(data = d, 
       family = binomial,
       surv | trials(density) ~ 0 + factor(tank),
       prior(normal(0, 5), class = b),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.01")
 ```
 
 We don't need a `depth=2` argument to discover we have 48 different intercepts. Just good old `print()` will do.
@@ -121,8 +116,8 @@ tibble(estimate = fixef(b12.1)[, 1]) %>%
   labs(title = "Tank-level intercepts from the no-pooling model",
        subtitle = "Notice now inspecting the distributions of the posterior means can offer insights you\nmight not get if you looked at them one at a time.") +
   theme_fivethirtyeight() +
-  theme(panel.grid = element_blank(),
-        legend.position = "none") +
+  theme(legend.position = "none",
+        panel.grid = element_blank()) +
   facet_wrap(~key, scales = "free")
 ```
 
@@ -140,13 +135,7 @@ Even though it seems like we can derive important insights from how the `tank`-l
 
 You specify the corresponding multilevel model like this.
 
-```{r b12.2, echo = F}
-# save(b12.2, file = "fits/b12.02.rda")
-# rm(b12.2)
-load("fits/b12.02.rda")
-```
-
-```{r, eval = F}
+```{r b12.2}
 b12.2 <- 
   brm(data = d, 
       family = binomial,
@@ -154,14 +143,15 @@ b12.2 <-
       prior = c(prior(normal(0, 1), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
       iter = 4000, warmup = 1000, chains = 4, cores = 4,
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.02")
 ```
 
 The syntax for the varying effects follows the [lme4 style](https://cran.r-project.org/package=brms/vignettes/brms_overview.pdf), `( <varying parameter(s)> | <grouping variable(s)> )`. In this case `(1 | tank)` indicates only the intercept, `1`, varies by `tank`. The extent to which parameters vary is controlled by the prior, `prior(cauchy(0, 1), class = sd)`, which is <u>parameterized in the standard deviation metric</u>. Do note that last part. It's common in multilevel software to model in the variance metric, instead. For technical reasons we won't really get into until [Chapter 13][Adventures in Covariance], Stan parameterizes this as a standard deviation. 
 
 Let's do the WAIC comparisons.
 
-```{r}
+```{r, message = F}
 b12.1 <- add_criterion(b12.1, "waic")
 b12.2 <- add_criterion(b12.2, "waic")
 
@@ -296,18 +286,13 @@ First, we took one random draw from a normal distribution with a mean of the fir
 
 Yep, you can use the exponential distribution for your priors in brms, too. Here it is for model `b12.2`.
 
-```{r b12.2b, echo = F}
-# save(b12.2b, file = "fits/b12.02b.rda")
-# rm(b12.2b)
-load("fits/b12.02b.rda")
-```
-
-```{r, eval = F}
+```{r b12.2b}
 b12.2b <- 
   update(b12.2,
          prior = c(prior(normal(0, 1), class = Intercept),
                    prior(exponential(1), class = sd)),
-         seed = 12)
+         seed = 12,
+         file = "fits/b12.02b")
 ```
 
 The model summary:
@@ -430,13 +415,7 @@ The no-pooling estimates (i.e., $\alpha_{\text{tank}_i}$) are the results of sim
 
 To follow along with McElreath, set `chains = 1, cores = 1` to fit with one chain.
 
-```{r b12.3, echo = F}
-# save(b12.3, file = "fits/b12.03.rda")
-# rm(b12.3)
-load("fits/b12.03.rda")
-```
-
-```{r, eval = F}
+```{r b12.3}
 b12.3 <- 
   brm(data = dsim, 
       family = binomial,
@@ -444,7 +423,8 @@ b12.3 <-
       prior = c(prior(normal(0, 1), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
       iter = 10000, warmup = 1000, chains = 1, cores = 1,
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.03")
 ```
 
 Here's our standard brms summary.
@@ -552,17 +532,12 @@ glimpse(new_dsim)
 
 Fit the new model.
 
-```{r b12.3_new, echo = F}
-# save(b12.3_new, file = "fits/b12.03_new.rda")
-# rm(b12.3_new)
-load("fits/b12.03_new.rda")
-```
-
-```{r, eval = F}
+```{r b12.3_new}
 b12.3_new <- 
   update(b12.3,
          newdata = new_dsim,
-         seed = 12)
+         seed = 12,
+         file = "fits/b12.03_new")
 ```
 
 ```{r}
@@ -676,13 +651,7 @@ library(brms)
 
 For our brms model with varying intercepts for `actor` but not `block`, we employ the `pulled_left ~ 1 + ... + (1 | actor)` syntax, specifically omitting a `(1 | block)` section.
 
-```{r b12.4, echo = F}
-# save(b12.4, file = "fits/b12.04.rda")
-# rm(b12.4)
-load("fits/b12.04.rda")
-```
-
-```{r, eval = F}
+```{r b12.4}
 b12.4 <- 
   brm(data = d, 
       family = binomial,
@@ -693,7 +662,8 @@ b12.4 <-
       # I'm using 4 cores, instead of the `cores=3` in McElreath's code
       iter = 5000, warmup = 1000, chains = 4, cores = 4,  
       control = list(adapt_delta = 0.95),
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.04")
 ```
 
 The initial solutions came with a few divergent transitions. Increasing `adapt_delta` to `0.95` solved the problem.
@@ -711,9 +681,9 @@ post %>%
   mcmc_trace(facet_args = list(ncol = 4)) +
   scale_x_continuous(breaks = c(0, 2500, 5000)) +
   theme_fivethirtyeight() +
-  theme(legend.position = c(.96, .1),
-        legend.direction = "vertical",
-        legend.key.size = unit(0.5, "cm"))
+  theme(legend.direction = "vertical",
+        legend.key.size = unit(0.5, "cm"),
+        legend.position = c(.96, .1))
 ```
 
 They look great. Here's the posterior distribution for $\sigma_\text{actor}$.
@@ -781,13 +751,7 @@ The full cross-classified statistical model follows the form
 
 Our brms model with varying intercepts for both `actor` and `block` now employs the `... (1 | actor) + (1 | block)` syntax.
 
-```{r b12.5, echo = F}
-# save(b12.5, file = "fits/b12.05.rda")
-# rm(b12.5)
-load("fits/b12.05.rda")
-```
-
-```{r, eval = F}
+```{r b12.5}
 b12.5 <- 
   update(b12.4,
          newdata = d,
@@ -795,7 +759,8 @@ b12.5 <-
            (1 | actor) + (1 | block),
          iter = 6000, warmup = 1000, cores = 4, chains = 4, 
          control = list(adapt_delta = 0.99),
-         seed = 12)
+         seed = 12,
+         file = "fits/b12.05")
 ```
 
 This time we increased `adapt_delta` to `0.99` to avoid divergent transitions. We can look at the primary coefficients with `print()`. McElreath urged us again to inspect the trace plots.
@@ -855,7 +820,7 @@ post %>%
 
 We might compare our models by their PSIS-LOO values.
 
-```{r}
+```{r, message = F}
 b12.4 <- add_criterion(b12.4, "loo")
 b12.5 <- add_criterion(b12.5, "loo")
 
@@ -1131,10 +1096,10 @@ p3 <-
   filter(iter %in% c(1:50)) %>%
   
   ggplot(aes(x = condition, y = prob, group = iter)) +
-  theme_fivethirtyeight() +
   ggtitle("50 simulated actors") +
   coord_cartesian(ylim = 0:1) +
   geom_line(alpha = 1/2, color = "orange3") +
+  theme_fivethirtyeight() +
   theme(plot.title = element_text(size = 14, hjust = .5))
 
 p3
@@ -1294,23 +1259,18 @@ The statistical formula for our multilevel count model is
 
 With brms, we don't actually need to make the `logpop` or `society` variables. We're ready to fit the multilevel `Kline` model with the data in hand.
 
-```{r b12.6, echo = F}
-# save(b12.6, file = "fits/b12.06.rda")
-# rm(b12.6)
-load("fits/b12.06.rda")
-```
-
-```{r, eval = F}
+```{r b12.6}
 b12.6 <- 
   brm(data = d, 
       family = poisson,
-      total_tools ~ 0 + intercept + log(population) + 
+      total_tools ~ 0 + Intercept + log(population) + 
         (1 | culture),
-      prior = c(prior(normal(0, 10), class = b, coef = intercept),
+      prior = c(prior(normal(0, 10), class = b, coef = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 1), class = sd)),
       iter = 4000, warmup = 1000, cores = 3, chains = 3,
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.06")
 ```
 
 Note how we used the special `0 + intercept` syntax rather than using the default Intercept. This is because our predictor variable was not mean centered. For more info, see [brms GitHub issue #114](https://github.com/paul-buerkner/brms/issues/114). Though we used the `0 + intercept` syntax for the fixed effect, it was not necessary for the random effect. Both ways work.
@@ -1408,13 +1368,7 @@ b12.4$data %>%
 
 So there's no need to reload anything. Everything we need is already at hand. Let's fit the intercepts-only model.
 
-```{r b12.7, echo = F}
-# save(b12.7, file = "fits/b12.07.rda")
-# rm(b12.7)
-load("fits/b12.07.rda")
-```
-
-```{r, eval = F}
+```{r b12.7}
 b12.7 <- 
   brm(data = b12.4$data, 
       family = binomial,
@@ -1423,7 +1377,8 @@ b12.7 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.95),
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.07")
 ```
 
 Here's the model summary.
@@ -1459,13 +1414,7 @@ It's the same data we used from the `b12.4` model, but with the addition of the 
 
 Fit the model.
 
-```{r b12.8, echo = F}
-# save(b12.8, file = "fits/b12.08.rda")
-# rm(b12.8)
-load("fits/b12.08.rda")
-```
-
-```{r, eval = F}
+```{r b12.8}
 b12.8 <- 
   brm(data = b12.5$data, 
       family = binomial,
@@ -1474,7 +1423,8 @@ b12.8 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.95),
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.08")
 ```
 
 Here's the summary.
