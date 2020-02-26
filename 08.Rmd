@@ -154,13 +154,7 @@ str(dd.trim)
 
 Finally, we get to work that sweet HMC via `brms::brm()`.
 
-```{r b8.1, echo = F}
-# save(b8.1, file = "fits/b08.01.rda")
-# rm(b8.1)
-load("fits/b08.01.rda")
-```
-
-```{r, eval = F}
+```{r b8.1}
 b8.1 <-
   brm(data = dd, 
       family = gaussian,
@@ -168,7 +162,8 @@ b8.1 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2), class = sigma)),
-      seed = 8)
+      seed = 8,
+      file = "fits/b08.01")
 ```
 
 Now we have officially ditched the uniform distribution for $\sigma$. Never again! Here's the posterior:
@@ -200,17 +195,12 @@ For more technical details, see the paper. In short, `Bulk_ESS` in the output fr
 
 Here we sample in parallel by adding `cores = 4`.
 
-```{r b8.1b, echo = F}
-# save(b8.1b, file = "fits/b08.01b.rda")
-# rm(b8.1b)
-load("fits/b08.01b.rda")
-```
-
-```{r, eval = F}
+```{r b8.1b}
 b8.1b <- 
   update(b8.1, 
          cores = 4,
-         seed = 8)
+         seed = 8,
+         file = "fits/b08.01b")
 ```
 
 This model sampled so fast that it really didn't matter if we sampled in parallel or not. It will for others.
@@ -296,8 +286,8 @@ b8.1 <- add_criterion(b8.1, c("waic", "loo"))
 You retrieve that information by subsetting the fit object.
 
 ```{r}
-b8.1$waic
-b8.1$loo
+b8.1$criteria$waic
+b8.1$criteria$loo
 ```
 
 In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we've been bantering on about the $\text{elpd}$ and its relation to the WAIC and the LOO since [Chapter 6][Information criteria]. This is a fine place to go into some detail.
@@ -457,13 +447,7 @@ For more on these topics, you might also check out Gabry and Modrák's vignette,
 
 As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an `inits` argument rather than with `start`.
 
-```{r b8.2, echo = F}
-# save(b8.2, file = "fits/b08.02.rda")
-# rm(b8.2)
-load("fits/b08.02.rda")
-```
-
-```{r, eval = F}
+```{r b8.2}
 b8.2 <-
   brm(data = list(y = c(-1, 1)), 
       family = gaussian,
@@ -473,7 +457,8 @@ b8.2 <-
       inits = list(list(Intercept = 0, sigma = 1),
                    list(Intercept = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
-      seed = 8)
+      seed = 8,
+      file = "fits/b08.02")
 ```
 
 Those were some silly flat priors. Check the damage.
@@ -499,13 +484,7 @@ print(b8.2)
 
 Holy smokes, those parameters are a mess! Plus we got a nasty warning message, too. Watch our reasonable priors save the day.
 
-```{r b8.3, echo = F}
-# save(b8.3, file = "fits/b08.03.rda")
-# rm(b8.3)
-load("fits/b08.03.rda")
-```
-
-```{r, eval = F}
+```{r b8.3}
 b8.3 <-
   brm(data = list(y = c(-1, 1)), 
       family = gaussian,
@@ -515,7 +494,8 @@ b8.3 <-
       inits = list(list(Intercept = 0, sigma = 1),
                    list(Intercept = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
-      seed = 8)
+      seed = 8,
+      file = "fits/b08.03")
 ```
 
 ```{r}
@@ -637,13 +617,7 @@ set.seed(8)
 y <- rnorm(100, mean = 0, sd = 1)
 ```
 
-```{r b8.4, echo = F}
-# save(b8.4, file = "fits/b08.04.rda")
-# rm(b8.4)
-load("fits/b08.04.rda")
-```
-
-```{r, eval = F}
+```{r b8.4}
 b8.4 <-
   brm(data = list(y           = y,
                   intercept_1 = 1,
@@ -655,7 +629,8 @@ b8.4 <-
       inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
                    list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
-      seed = 8)
+      seed = 8,
+      file = "fits/b08.04")
 ```
 
 Our model results don't perfectly mirror McElreath's, but they're identical in spirit.
@@ -666,13 +641,7 @@ print(b8.4)
 
 Note the frightening warning message. Those results are a mess! Let's try again.
 
-```{r b8.5, echo = F}
-# save(b8.5, file = "fits/b08.05.rda")
-# rm(b8.5)
-load("fits/b08.05.rda")
-```
-
-```{r, eval = F}
+```{r b8.5}
 b8.5 <-
   brm(data = list(y           = y,
                   intercept_1 = 1,
@@ -684,7 +653,8 @@ b8.5 <-
       inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
                    list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
-      seed = 8)
+      seed = 8,
+      file = "fits/b08.05")
 ```
 
 ```{r}
