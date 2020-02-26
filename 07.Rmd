@@ -60,16 +60,7 @@ d.A0 <-
 
 The first two models predicting `log_gdp` are univariable.
 
-```{r b7.1, echo = F}
-# save(b7.1, file = "fits/b07.01.rda")
-# save(b7.2, file = "fits/b07.02.rda")
-# rm(b7.1)
-# rm(b7.2)
-load("fits/b07.01.rda")
-load("fits/b07.02.rda")
-```
-
-```{r, eval = F}
+```{r b7.1}
 b7.1 <-
   brm(data = d.A1, 
       family = gaussian,
@@ -78,13 +69,15 @@ b7.1 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      seed = 7)
+      seed = 7,
+      file = "fits/b07.01")
 
 b7.2 <-
   update(b7.1, 
          newdata = d.A0,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.02")
 ```
 
 In the text, McElreath more or less dared us to figure out how to make Figure 7.2. Here's the brms-relevant data wrangling.
@@ -146,40 +139,30 @@ It's generally not a good idea to split up your data and run separate analyses, 
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
 
-```{r b7.3, echo = F}
-# save(b7.3, file = "fits/b07.03.rda")
-# rm(b7.3)
-load("fits/b07.03.rda")
-```
-
-```{r, eval = F}
+```{r b7.3}
 b7.3 <-
   update(b7.1,
          newdata = dd,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.03")
 ```
 
 Now we'll add the dummy.
 
-```{r b7.4, echo = F}
-# save(b7.4, file = "fits/b07.04.rda")
-# rm(b7.4)
-load("fits/b07.04.rda")
-```
-
-```{r, eval = F}
+```{r b7.4}
 b7.4 <-
   update(b7.3,
          newdata = dd,
          formula = log_gdp ~ 1 + rugged + cont_africa,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7) 
+         seed = 7,
+         file = "fits/b07.04") 
 ```
 
 Using the skills from [Chapter 6][Comparing WAIC values.], let's compute the information criteria for the two models. Note how with the `add_criterion()` function, you can compute both the LOO and the WAIC at once.
 
-```{r}
+```{r, message = F}
 b7.3 <- add_criterion(b7.3, c("loo", "waic"))
 b7.4 <- add_criterion(b7.4, c("loo", "waic"))
 ```
@@ -235,9 +218,9 @@ ggplot(aes(x = rugged, fill = cont_africa, color = cont_africa)) +
   ylab("log GDP from year 2000") +
   theme_pander() + 
   theme(text = element_text(family = "Times"),
-        legend.position  = c(.69, .94),
-        legend.title     = element_blank(),
-        legend.direction = "horizontal")
+        legend.direction = "horizontal",
+        legend.position = c(.69, .94),
+        legend.title = element_blank())
 ```
 
 ### Adding a linear interaction does work.
@@ -259,23 +242,18 @@ $$\mu_i = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \text{rugged}_i + \b
 
 Fit the model.
 
-```{r b7.5, echo = F}
-# save(b7.5, file = "fits/b07.05.rda")
-# rm(b7.5)
-load("fits/b07.05.rda")
-```
-
-```{r, eval = F}
+```{r b7.5}
 b7.5 <-
   update(b7.4,
          formula = log_gdp ~ 1 + rugged*cont_africa,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7) 
+         seed = 7,
+         file = "fits/b07.05") 
 ```
 
 For kicks, we'll just use the LOO to compare the last three models.
 
-```{r}
+```{r, message = F}
 b7.5 <- add_criterion(b7.5, c("loo", "waic"))
 
 l <- loo_compare(b7.3, b7.4, b7.5,
@@ -310,18 +288,13 @@ The conventional equation for the interaction model might look like:
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
-```{r b7.5b, echo = F}
-# save(b7.5b, file = "fits/b07.05b.rda")
-# rm(b7.5b)
-load("fits/b07.05b.rda")
-```
-
-```{r, eval = F}
+```{r b7.5b}
 b7.5b <-
   update(b7.5,
          formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7) 
+         seed = 7,
+         file = "fits/b07.05b") 
 ```
 
 From here on, I will default to this style of syntax for interactions.
@@ -447,7 +420,7 @@ What proportion of these differences is below zero?
 post %>%
   mutate(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
          gamma_notAfrica = b_rugged) %>% 
-  mutate(diff            = gamma_Africa -gamma_notAfrica) %>%
+  mutate(diff = gamma_Africa -gamma_notAfrica) %>%
   summarise(Proportion_of_the_difference_below_0 = sum(diff < 0) / length(diff))
 ```
 
@@ -459,7 +432,7 @@ Why stop with computation when you can plot?
 post %>%
   mutate(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
          gamma_notAfrica = b_rugged) %>% 
-  mutate(diff            = gamma_Africa -gamma_notAfrica) %>% 
+  mutate(diff = gamma_Africa -gamma_notAfrica) %>% 
   
   ggplot(aes(x = diff)) +
   geom_density(alpha = 1/4,
@@ -528,7 +501,7 @@ f <-
 dd %>% 
   mutate(ox          = ifelse(rugged > median(rugged), 0.05, -0.05),
          cont_africa = cont_africa + ox) %>%
-  mutate(ox          = factor(ox)) %>% 
+  mutate(ox = factor(ox)) %>% 
   select(cont_africa, everything()) %>%
   
   # plot
@@ -601,7 +574,7 @@ rm(tulips)
 
 Here we continue with McElreath's very-flat priors for the multivariable and interaction models.
 
-```{r, eval = F}
+```{r }
 b7.6 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water + shade,
@@ -609,27 +582,20 @@ b7.6 <-
                 prior(normal(0, 100), class = b),
                 prior(uniform(0, 100), class = sigma)),
       iter = 2000, warmup = 1000, cores = 4, chains = 4,
-      seed = 7)
+      seed = 7,
+      file = "fits/b07.06")
 
 b7.7 <- 
   update(b7.6, 
          formula = blooms ~ 1 + water + shade + water:shade,
          iter = 2000, warmup = 1000, cores = 4, chains = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.07")
 ```
 
 Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "[increase] adapt_delta above 0.8." While we're at it, we'll put better priors on $\sigma$.
 
-```{r b7.6, echo = F}
-# save(b7.6, file = "fits/b07.06.rda")
-# save(b7.7, file = "fits/b07.07.rda")
-# rm(b7.6)
-# rm(b7.7)
-load("fits/b07.06.rda")
-load("fits/b07.07.rda")
-```
-
-```{r, eval = F}
+```{r b7.6}
 b7.6 <-
   update(b7.6,
          prior = c(prior(normal(0, 100), class = Intercept),
@@ -637,13 +603,15 @@ b7.6 <-
                    prior(cauchy(0, 10), class = sigma)),
          control = list(adapt_delta = 0.9),
          iter = 2000, warmup = 1000, cores = 4, chains = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.06")
 
 b7.7 <- 
   update(b7.6, 
          formula = blooms ~ 1 + water + shade + water:shade,
          iter = 2000, warmup = 1000, cores = 4, chains = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.07")
 ```
 
 Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use the `posterior_summary()` function, which gets us most of the way there.
@@ -657,7 +625,7 @@ This is an example where HMC yielded point estimates notably different from MAP.
 
 Let's look at WAIC.
 
-```{r waic_b7.6_and_b7.7, cache = T}
+```{r, message = F}
 b7.6 <- add_criterion(b7.6, "waic")
 b7.7 <- add_criterion(b7.7, "waic")
 
@@ -675,7 +643,7 @@ cbind(waic_diff = w[, 1] * -2,
 
 Why not compute the WAIC weights?
 
-```{r model_weights_b7.6_and_b7.7, cache = T}
+```{r}
 model_weights(b7.6, b7.7, weights = "waic")
 ```
 
@@ -700,16 +668,7 @@ d <-
 
 Now refit the models with our shiny new centered predictors.
 
-```{r b7.8, echo = F}
-# save(b7.8, file = "fits/b07.08.rda")
-# save(b7.9, file = "fits/b07.09.rda")
-# rm(b7.8)
-# rm(b7.9)
-load("fits/b07.08.rda")
-load("fits/b07.09.rda")
-```
-
-```{r, eval = F}
+```{r b7.8}
 b7.8 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water_c + shade_c,
@@ -718,13 +677,15 @@ b7.8 <-
                 prior(cauchy(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.9),
-      seed = 7)
+      seed = 7,
+      file = "fits/b07.08")
 
 b7.9 <- 
   update(b7.8, 
          formula = blooms ~ 1 + water_c + shade_c + water_c:shade_c,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 7)
+         seed = 7,
+         file = "fits/b07.09")
 ```
 
 Check out the results.
@@ -858,7 +819,7 @@ fitted(b7.8) %>%
   scale_x_continuous("Shade (centered)", breaks = c(-1, 0, 1)) +
   ylab("Blooms") +
   theme_pander() + 
-  theme(text             = element_text(family = "Times"),
+  theme(text = element_text(family = "Times"),
         panel.background = element_rect(color = "black")) +
   facet_grid(y_grid ~ x_grid)
 ```
@@ -881,19 +842,21 @@ We can look at the regression line and its percentile-based intervals like so:
 conditional_effects(b7.3)
 ```
 
-If we nest `conditional_effects()` within `plot()` with a `points = T` argument, we can add the original data to the figure.
+If we feed the `conditional_effects()` output into the `plot()` function with a `points = T` argument, we can add the original data to the figure.
 
 ```{r, fig.height = 3, fig.width = 3.5}
-plot(conditional_effects(b7.3), points = T)
+conditional_effects(b7.3) %>% 
+  plot(points = T)
 ```
 
 We can further customize the plot. For example, we can replace the intervals with a spaghetti plot. While we're at it, we can use `point_args` to adjust the `geom_jitter()` parameters.
 
 ```{r, fig.height = 3, fig.width = 3.5}
-plot(conditional_effects(b7.3,
-                         spaghetti = T, nsamples = 200),
-     points = T,
-     point_args = c(alpha = 1/2, size = 1))
+conditional_effects(b7.3,
+                    spaghetti = T, 
+                    nsamples = 200) %>% 
+  plot(points = T,
+       point_args = c(alpha = 1/2, size = 1))
 ```
 
 With multiple predictors, things get more complicated. Consider our multivariable, non-interaction model, `b7.4`.
@@ -913,18 +876,15 @@ b7.4$data %>%
 
 One way to fix that is to adjust the data set and refit the model.
 
-```{r b7.4_factor, echo = F}
-# save(b7.4_factor, file = "fits/b07.04_factor.rda")
-# rm(b7.4_factor)
-load("fits/b07.04_factor.rda")
-```
-
-```{r, eval = F}
+```{r b7.4_factor}
 d_factor <-
   b7.4$data %>% 
   mutate(cont_africa = factor(cont_africa))
 
-b7.4_factor <- update(b7.4, newdata = d_factor)
+b7.4_factor <- 
+  update(b7.4, 
+         newdata = d_factor,
+         file = "fits/b07.04_factor")
 ```
 
 Using the `update()` syntax often speeds up the re-fitting process.
@@ -945,18 +905,15 @@ conditional_effects(b7.5)
 
 The `conditional_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean $\pm$ one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
 
-```{r b7.5_factor, echo = F}
-# save(b7.5_factor, file = "fits/b07.05_factor.rda")
-# rm(b7.5_factor)
-load("fits/b07.05_factor.rda")
-```
-
-```{r, eval = F}
+```{r b7.5_factor}
 d_factor <-
   b7.5$data %>% 
   mutate(cont_africa = factor(cont_africa))
 
-b7.5_factor <- update(b7.5, newdata = d_factor)
+b7.5_factor <- 
+  update(b7.5, 
+         newdata = d_factor,
+         file = "fits/b07.05_factor")
 ```
 
 Just for kicks, we'll use `probs = c(.25, .75)` to return [50% intervals](https://statmodeling.stat.columbia.edu/2016/11/05/why-i-prefer-50-to-95-intervals/), rather than the conventional 95%.
@@ -969,11 +926,11 @@ conditional_effects(b7.5_factor,
 With the `effects` argument, we can just return the interaction effect, which is where all the action's at. While we're at it, we'll use `plot()` to change some of the settings.
 
 ```{r, fig.height = 3, fig.width = 4}
-plot(conditional_effects(b7.5_factor,
-                         effects = "rugged:cont_africa", 
-                         spaghetti = T, nsamples = 150),
-     points = T,
-     point_args = c(alpha = 2/3, size = 1), mean = F)
+conditional_effects(b7.5_factor,
+                    effects = "rugged:cont_africa", 
+                    spaghetti = T, nsamples = 150) %>% 
+  plot(points = T,
+       point_args = c(alpha = 2/3, size = 1), mean = F)
 ```
 
 Note, the ordering of the variables matters for the interaction term. Consider our interaction model for the tulips data.
@@ -985,13 +942,13 @@ b7.9$formula
 The plot tells a slightly different story, depending on whether you specify `effects = "shade_c:water_c"` or `effects = "water_c:shade_c"`.
 
 ```{r, fig.height = 3, fig.width = 4}
-plot(conditional_effects(b7.9, 
-                         effects = "shade_c:water_c"),
-     points = T)
-     
-plot(conditional_effects(b7.9, 
-                         effects = "water_c:shade_c"),
-     points = T)
+conditional_effects(b7.9, 
+                    effects = "shade_c:water_c") %>% 
+  plot(points = T)
+
+conditional_effects(b7.9, 
+                    effects = "water_c:shade_c") %>% 
+  plot(points = T)
 ```
 
 One might want to evaluate the effects of the second term in the interaction--`water_c`, in this case--at values other than the mean and the mean $\pm$ one standard deviation. When we reproduced the bottom row of Figure 7.7, we expressed the interaction based on values -1, 0, and 1 for `water_c`. We can do that, here, by using the `int_conditions` argument. It expects a list, so we'll put our desired `water_c` values in just that.
@@ -1000,10 +957,10 @@ One might want to evaluate the effects of the second term in the interaction--`w
 ic <- 
   list(water_c = c(-1, 0, 1))
 
-plot(conditional_effects(b7.9,
-                         effects = "shade_c:water_c",
-                         int_conditions = ic),
-     points = T)
+conditional_effects(b7.9,
+                    effects = "shade_c:water_c",
+                    int_conditions = ic) %>% 
+  plot(points = T)
 ```
 
 ## Reference {-}
