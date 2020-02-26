@@ -244,13 +244,7 @@ library(brms)
 
 As defined above, our first model has both varying intercepts and `afternoon` slopes. I should point out that the `(1 + afternoon | cafe)` syntax specifies that we'd like `brm()` to fit the random effects for `1` (i.e., the intercept) and the `afternoon` slope as correlated. Had we wanted to fit a model in which they were orthogonal, we'd have coded `(1 + afternoon || cafe)`.
 
-```{r b13.1, echo = F}
-# save(b13.1, file = "fits/b13.01.rda")
-# rm(b13.1)
-load("fits/b13.01.rda")
-```
-
-```{r, eval = F}
+```{r b13.1}
  b13.1 <- 
   brm(data = d, 
       family = gaussian,
@@ -261,7 +255,8 @@ load("fits/b13.01.rda")
                 prior(cauchy(0, 2), class = sigma),
                 prior(lkj(2), class = cor)),
       iter = 5000, warmup = 2000, chains = 2, cores = 2,
-      seed = 13)
+      seed = 13,
+      file = "fits/b13.01")
 ```
 
 With Figure 13.4, we assess how the posterior for the correlation of the random effects compares to its prior.
@@ -465,13 +460,7 @@ The statistical formula for our varying-intercepts logistic regression model fol
 
 Since there’s only one left-hand term in our `(1 | dept_id)` code, there’s only one random effect.
 
-```{r b13.2, echo = F}
-# save(b13.2, file = "fits/b13.02.rda")
-# rm(b13.2)
-load("fits/b13.02.rda")
-```
-
-```{r, eval = F}
+```{r b13.2}
 b13.2 <- 
   brm(data = d, 
       family = binomial,
@@ -481,7 +470,8 @@ b13.2 <-
                 prior(cauchy(0, 2), class = sd)),
       iter = 4500, warmup = 500, chains = 3, cores = 3,
       seed = 13,
-      control = list(adapt_delta = 0.99))
+      control = list(adapt_delta = 0.99),
+      file = "fits/b13.02")
 ```
 
 Since we don't have a `depth=2` argument in `brms::summary()`, we'll have to get creative. One way to look at the parameters is with `b13.2$fit`:
@@ -576,13 +566,7 @@ Now we're ready to allow our `male` dummy to varies, too, the statistical model 
 
 Fit the model.
 
-```{r b13.3, echo = F}
-# save(b13.3, file = "fits/b13.03.rda")
-# rm(b13.3)
-load("fits/b13.03.rda")
-```
-
-```{r, eval = F}
+```{r b13.3}
 b13.3 <- 
   brm(data = d, 
       family = binomial,
@@ -594,7 +578,8 @@ b13.3 <-
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       seed = 13,
       control = list(adapt_delta = .99,
-                     max_treedepth = 12))
+                     max_treedepth = 12),
+      file = "fits/b13.03")
 ```
 
 McElreath encouraged us to make sure the chains look good. Instead of relying on convenience functions, let's do it by hand.
@@ -633,9 +618,9 @@ rhat(b13.3) %>%
              size = 2) +
   scale_color_manual(values = c("#80A0C7", "#A65141")) +
   labs(x = NULL, y = NULL) +
-  theme_pearl_earring(legend.position = "none",
-                      axis.ticks.y = element_blank(),
-                      axis.text.y = element_text(hjust = 0))
+  theme_pearl_earring(axis.ticks.y = element_blank(),
+                      axis.text.y = element_text(hjust = 0),
+                      legend.position = "none")
 ```
 
 Them are some respectable $\hat R$ values. The plot accentuates their differences, but they're all basically 1 (e.g., see what happens is you set `coord_cartesian(xlim = c(0.99, 1.01))`). Here are the random effects in the **centered** metric.
@@ -663,9 +648,9 @@ rbind(coef(b13.3)$dept_id[, , 1],
   scale_color_manual(values = c("#394165", "#A65141")) +
   xlab(NULL) +
   coord_flip() +
-  theme_pearl_earring(legend.position = "none",
-                      axis.ticks.y = element_blank(),
-                      axis.text.y = element_text(hjust = 0))
+  theme_pearl_earring(axis.ticks.y = element_blank(),
+                      axis.text.y = element_text(hjust = 0),
+                      legend.position = "none")
 ```
 
 Just like in the text, our `male` slopes are much less dispersed than our intercepts.
@@ -707,7 +692,7 @@ partially_pooled_params <-
 # a transformation of the `inv_logit_scaled()` function.
 prob_to_logit <- function(x) {
   -log((1 / x) -1)
-  }
+}
 
 # compute unpooled estimates directly from data
 un_pooled_params <-
@@ -762,13 +747,7 @@ ggplot(data = params, aes(x = intercept, y = slope)) +
 
 Fit the no-gender model.
 
-```{r b13.4, echo = F}
-# save(b13.4, file = "fits/b13.04.rda")
-# rm(b13.4)
-load("fits/b13.04.rda")
-```
-
-```{r, eval = F}
+```{r b13.4}
 b13.4 <- 
   brm(data = d, 
       family = binomial,
@@ -778,12 +757,13 @@ b13.4 <-
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       seed = 13,
       control = list(adapt_delta = .99,
-                     max_treedepth = 12))
+                     max_treedepth = 12),
+      file = "fits/b13.04")
 ```
 
 Compare the three models by the WAIC.
 
-```{r}
+```{r, message = F}
 b13.2 <- add_criterion(b13.2, "waic")
 b13.3 <- add_criterion(b13.3, "waic")
 b13.4 <- add_criterion(b13.4, "waic")
@@ -853,13 +833,7 @@ And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
 Let's fit this beast.
 
-```{r b13.6, echo = F}
-# save(b13.6, file = "fits/b13.06.rda")
-# rm(b13.6)
-load("fits/b13.06.rda")
-```
-
-```{r, eval = F}
+```{r b13.6}
 b13.6 <- 
   brm(data = d, 
       family = binomial,
@@ -871,7 +845,8 @@ b13.6 <-
                 prior(cauchy(0, 2), class = sd),
                 prior(lkj(4), class = cor)),
       iter = 5000, warmup = 1000, chains = 3, cores = 3,
-      seed = 13)
+      seed = 13,
+      file = "fits/b13.06")
 ```
 
 Even though it's not apparent in the syntax, our model `b13.6` was already fit using the [non-centered parameterization. Behind the scenes, Bürkner has brms do this automatically](https://github.com/paul-buerkner/brms/issues/211). It's been that way all along. 
@@ -912,7 +887,7 @@ McElreath reported this model only has about 18 parameters. Let's compute the WA
 ```{r}
 b13.6 <- add_criterion(b13.6, "waic")
 
-b13.6$waic
+b13.6$criteria$waic
 ```
 
 Yep, only about 18. Here are our standard deviation parameters.
@@ -936,13 +911,7 @@ First off, recall that `fitted()` returns summary values, by default. If we want
 
 Moving forward, before we can follow along with McElreath's R code 13.27, we need to refit the simpler model from way back in [Chapter 12][Two types of cluster.].
 
-```{r b12.5, echo = F}
-# save(b12.5, file = "fits/b12.05.rda")
-# rm(b12.5)
-load("fits/b12.05.rda")
-```
-
-```{r, eval = F}
+```{r b12.5}
 b12.5 <- 
   brm(data = d, 
       family = binomial,
@@ -953,7 +922,8 @@ b12.5 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 6000, warmup = 1000, cores = 4, chains = 4, 
       control = list(adapt_delta = 0.99),
-      seed = 12)
+      seed = 12,
+      file = "fits/b12.05")
 ```
 
 Now we can compare them by the WAIC.
@@ -1058,25 +1028,20 @@ library(brms)
 
 Okay, it appears this is going to be a bit of a ride. It's not entirely clear to me if we can fit a Gaussian process model in brms that's a direct equivalent to what McElreath did with rethinking. But we can try. First, note our use of the `gp()` syntax in the `brm()` function, below. We're attempting to tell brms that we would like to include latitude and longitude (i.e., `lat` and `long2`, respectively) in a Gaussian process. Also note how our priors are a little different than those in the text. I'll explain, below. Let's just move ahead and fit the model.
 
-```{r b13.7, echo = F}
-# save(b13.7, file = "fits/b13.07.rda")
-# rm(b13.7)
-load("fits/b13.07.rda")
-```
-
-```{r, eval = F}
+```{r b13.7}
 b13.7 <- 
   brm(data = d, 
       family = poisson,
       total_tools ~ 1 + gp(lat, lon2) + logpop,
       prior = c(prior(normal(0, 10), class = Intercept),
-                prior(normal(0, 1), class = b),
-                prior(inv_gamma(2.874624, 0.393695), class = lscale),
+                prior(normal(0, 1), class = b, coef = logpop),
+                prior(inv_gamma(2.874624, 0.393695), class = lscale, coef = gplatlon2),
                 prior(cauchy(0, 1), class = sdgp)),
       iter = 1e4, warmup = 2000, chains = 4, cores = 4,
       seed = 13,
       control = list(adapt_delta = 0.999,
-                     max_treedepth = 12))
+                     max_treedepth = 12),
+      file = "fits/b13.07")
 ```
 
 Here's the model summary.
@@ -1121,7 +1086,22 @@ get_prior(data = d, family = poisson,
           total_tools ~ 1 + gp(lat, lon2) + logpop)
 ```
 
-That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha)'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
+That is, we used the brms default prior for $lscale$. In a [GitHub exchange](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/8), Bürkner pointed out that brms uses special priors for $lscale$ parameters based on [Michael Betancourt](https://twitter.com/betanalpha)'s [vignette on the topic](https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html). We can use the `dinvgamma()` function from the well-named [invgamma package](https://CRAN.R-project.org/package=invgamma) to get a sense of what that prior looks like.
+  
+```{r, fig.width = 4, fig.height = 2.5}
+tibble(x = seq(from = 0, to = 2, by = 0.01)) %>% 
+  mutate(density = invgamma::dinvgamma(x, 2.874624, 0.393695)) %>% 
+  
+  ggplot(aes(x = x, ymin = 0, ymax = density)) +
+  geom_ribbon(size = 0, fill = "#EEDA9D") +
+  annotate(geom = "text", x = 1.1, y = 5.5,
+           label = "inverse gamma(2.874624, 0.393695)",
+           color = "#EEDA9D") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme_pearl_earring()
+```
+
+Though it isn't included in this document, I also ran the model with the `cauchy(0, 1)` prior and the results were quite similar. So the big discrepancy between our model and the one in the text isn't based on that prior.
 
 Now that we've hopped on the comparison train, we may as well keep going down the track. Let’s reproduce McElreath's model with rethinking. 
 
@@ -1425,13 +1405,7 @@ Let's fit a few models.
 
 First, we'll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we'll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
-```{r b13.8, echo = F}
-# save(b13.8, file = "fits/b13.08.rda")
-# rm(b13.8)
-load("fits/b13.08.rda")
-```
-
-```{r, eval = F}
+```{r b13.8}
 b13.8 <- 
   brm(data = funding, 
       family = binomial,
@@ -1440,7 +1414,8 @@ b13.8 <-
       prior = c(prior(normal(0, 4), class = Intercept),
                 prior(normal(0, 4), class = b)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      seed = 13)
+      seed = 13,
+      file = "fits/b13.08")
 ```
 
 If you inspect them, the chains look great. We'll jump straight to the posterior summaries.
@@ -1462,16 +1437,7 @@ Pretty small. But recall how Simpson's paradox helped us understand the Berkley 
 
 Just like in section 13.2, let's fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the `male` dummy slopes to vary by discipline.
 
-```{r b13.9, echo = F}
-# save(b13.9,  file = "fits/b13.09.rda")
-# save(b13.10, file = "fits/b13.10.rda")
-# rm(b13.9)
-# rm(b13.10)
-load("fits/b13.09.rda")
-load("fits/b13.10.rda")
-```
-
-```{r, eval = F}
+```{r b13.9}
 b13.9 <- 
   brm(data = funding, 
       family = binomial,
@@ -1481,7 +1447,8 @@ b13.9 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = .99),
-      seed = 13)
+      seed = 13,
+      file = "fits/b13.09")
 
 b13.10 <- 
   brm(data = funding, 
@@ -1493,12 +1460,13 @@ b13.10 <-
                 prior(lkj(4), class = cor)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = .99),
-      seed = 13)
+      seed = 13,
+      file = "fits/b13.10")
 ```
 
 We'll compare the models with information criteria.
 
-```{r}
+```{r, message = F}
 b13.8  <- add_criterion(b13.8,  "waic")
 b13.9  <- add_criterion(b13.9,  "waic")
 b13.10 <- add_criterion(b13.10, "waic")
@@ -1533,8 +1501,8 @@ b13.10 %>%
        subtitle = "The dots and horizontal lines are the posterior means and percentile-based\n95% intervals, respectively. The values are on the log scale.",
        x = NULL, y = NULL) +
   coord_cartesian(xlim = c(-1.5, 1.5)) +
-  theme_pearl_earring(axis.ticks.y = element_blank(),
-                      axis.text.y = element_text(hjust = 0))
+  theme_pearl_earring(axis.text.y = element_text(hjust = 0),
+                      axis.ticks.y = element_blank())
 ```
 
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
