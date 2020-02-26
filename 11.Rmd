@@ -215,13 +215,7 @@ R_i & \sim \text{Ordered} (\mathbf p) \\
 
 Whereas in `rethinking::map()` you indicate the likelihood by `<criterion> ~ dordlogit(phi , c(<the thresholds>)`, in `brms::brm()` you code `family = cumulative`. Here's how to fit the intercepts-only model.
 
-```{r b11.1, echo = F}
-# save(b11.1, file = "fits/b11.01.rda")
-# rm(b11.1)
-load("fits/b11.01.rda")
-```
-
-```{r, eval = F}
+```{r b11.1}
 # define the start values
 inits <- list(`Intercept[1]` = -2,
               `Intercept[2]` = -1,
@@ -239,7 +233,8 @@ b11.1 <-
       prior(normal(0, 10), class = Intercept),
       iter = 2000, warmup = 1000, cores = 2, chains = 2,
       inits = inits_list,  # here we add our start values
-      seed = 11)
+      seed = 11,
+      file = "fits/b11.01")
 ```
 
 McElreath needed to include the `depth=2` argument in the `rethinking::precis()` function to show the threshold parameters from his `m11.1stan` model (R code 11.8). With a `brm()` fit, we just use `print()` or `summary()` as usual.
@@ -346,13 +341,7 @@ explicit_example %>%
 
 This made me wonder how this would compare if we were lazy and ignored the categorical nature of the `response`. Here we refit the model with the typical Gaussian likelihood.
 
-```{r b11.1b, echo = F}
-# save(b11.1b, file = "fits/b11.01b.rda")
-# rm(b11.1b)
-load("fits/b11.01b.rda")
-```
-
-```{r, eval = F}
+```{r b11.1b}
 b11.1b <-
   brm(data = d, family = gaussian,
       response ~ 1,
@@ -360,7 +349,8 @@ b11.1b <-
       prior = c(prior(normal(4, 10), class = Intercept),
                 prior(cauchy(0, 1), class = sigma)),
       iter = 2000, warmup = 1000, cores = 4, chains = 4,
-      seed = 11)
+      seed = 11,
+      file = "fits/b11.01b")
 ```
 
 Check the summary.
@@ -385,16 +375,7 @@ sum(pk * (1:7))
 
 So the rule is we *subtract the linear model from each interecept*. "This way, a positive $\beta$ value indicates that an increase in the predictor variable $x$ results in an increase in the average response" (p. 338). Let's fit our multivariable models.
 
-```{r b11.2, echo = F}
-# save(b11.2, file = "fits/b11.02.rda")
-# save(b11.3, file = "fits/b11.03.rda")
-# rm(b11.2)
-# rm(b11.3)
-load("fits/b11.02.rda")
-load("fits/b11.03.rda")
-```
-
-```{r, eval = F}
+```{r b11.2}
 # start values for b11.2
 inits <- list(`Intercept[1]` = -1.9,
               `Intercept[2]` = -1.2,
@@ -414,7 +395,8 @@ b11.2 <-
                 prior(normal(0, 10), class = b)),
       iter = 2000, warmup = 1000, cores = 2, chains = 2,
       inits = list(inits, inits),
-      seed = 11)
+      seed = 11,
+      file = "fits/b11.02")
 
 # start values for b11.3
 inits <- list(`Intercept[1]`      = -1.9,
@@ -434,7 +416,8 @@ b11.3 <-
          formula = response ~ 1 + action + intention + contact + action:intention + contact:intention,
          iter = 2000, warmup = 1000, cores = 2, chains = 2,
          inits = list(inits, inits),
-         seed = 11)
+         seed = 11,
+         file = "fits/b11.03")
 ```
 
 We don't have a `coeftab()` function in brms like for rethinking. But [as we did for Chapter 6][Comparing estimates.], we can reproduce it with help from the [broom package](https://cran.r-project.org/package=broom) and a bit of data wrangling.
@@ -459,7 +442,7 @@ If you really wanted that last `nobs` row at the bottom, you could elaborate on 
 
 Here we compute the WAIC.
 
-```{r}
+```{r, warning = F, message = F}
 b11.1 <- add_criterion(b11.1, "waic")
 b11.2 <- add_criterion(b11.2, "waic")
 b11.3 <- add_criterion(b11.3, "waic")
@@ -616,9 +599,9 @@ p1 <-
                        high = canva_pal("Green fields")(4)[1]) +
   labs(subtitle = "action = 0,\ncontact = 0") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
+  theme(axis.ticks = element_blank(),
         legend.position = "none",
-        axis.ticks = element_blank())
+        plot.background = element_rect(fill = "grey92"))
 
 # Figure 11.3.b
 p2 <-
@@ -641,9 +624,9 @@ p2 <-
                        high = canva_pal("Green fields")(4)[1]) +
   labs(subtitle = "action = 1,\ncontact = 0") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
+  theme(axis.ticks = element_blank(),
         legend.position = "none",
-        axis.ticks = element_blank())
+        plot.background = element_rect(fill = "grey92"))
 
 # Figure 11.3.c
 p3 <-
@@ -666,18 +649,18 @@ p3 <-
                        high = canva_pal("Green fields")(4)[1]) +
   labs(subtitle = "action = 0,\ncontact = 1") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
+  theme(axis.ticks = element_blank(),
         legend.position = "none",
-        axis.ticks = element_blank())
+        plot.background = element_rect(fill = "grey92"))
 
 # here we combine them with patchwork
 p1 + p2 + p3 + 
-  plot_annotation(title    = "Posterior predictions of the interaction model:",
+  plot_annotation(title = "Posterior predictions of the interaction model:",
                   subtitle = "Here we're focusing on the parameters.",
-                  theme    = theme(plot.background = element_rect(fill = "grey92")))
+                  theme = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
-If you’d like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my sister project [*Doing Bayesian Data Analysis in brms and the tidyverse*](https://bookdown.org/content/3686/) were we model ordinal data with a series of cumulative probit models.
+If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my sister project [*Doing Bayesian Data Analysis in brms and the tidyverse*](https://bookdown.org/content/3686/) were we model ordinal data with a series of cumulative probit models.
 
 ### Bonus: Figure 11.3 alternative.
 
@@ -725,9 +708,9 @@ geom_figure11.3 <- function(subtitle, ...) {
     scale_y_continuous("response", breaks = 1:7, limits = c(1, 7)),
     labs(subtitle = subtitle),
     theme_hc(),
-    theme(plot.background = element_rect(fill = "grey92"),
-          legend.position = "none",
-          axis.ticks = element_blank())
+    theme(axis.ticks = element_blank(),
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
   )
   
 }
@@ -824,8 +807,8 @@ d <-
                                canva_pal("Green fields")(4)[1])) +
   xlab("Manuscripts completed") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
 ```
 
 With these data, the likelihood of observing zero on `y`, (i.e., the likelihood zero manuscripts were completed on a given occasion) is
@@ -860,13 +843,7 @@ y_i & \sim \text{ZIPoisson} (p_i, \lambda_i)\\
 
 One last thing to note is that in brms, $p_i$ is denoted `zi`. To fit a zero-inflated Poisson model with brms, make sure to specify the correct likelihood with `family = zero_inflated_poisson`. To use a non-default prior for `zi`, make sure to indicate `class = zi` within the `prior()` function.
 
-```{r b11.4, echo = F}
-# save(b11.4, file = "fits/b11.04.rda")
-# rm(b11.4)
-load("fits/b11.04.rda")
-```
-
-```{r, eval = F}
+```{r b11.4}
 b11.4 <- 
   brm(data = d, 
       family = zero_inflated_poisson,
@@ -874,7 +851,8 @@ b11.4 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(beta(2, 2), class = zi)),  # the brms default is beta(1, 1)
       cores = 4,
-      seed = 11) 
+      seed = 11,
+      file = "fits/b11.04") 
 ```
 
 ```{r}
@@ -898,8 +876,8 @@ tibble(`zi prior`= seq(from = 0, to = 1, length.out = 50)) %>%
   scale_x_continuous("prior for zi", breaks = c(0, .5, 1)) +
   scale_y_continuous(NULL, breaks = NULL) +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
-        legend.position = "none") +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "grey92")) +
   facet_wrap(~prior)
 ```
 
@@ -944,8 +922,8 @@ tibble(x = 0:4) %>%
   geom_col(fill = canva_pal("Green fields")(4)[4]) +
   xlab("Manuscripts completed") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
-        axis.ticks = element_blank())
+  theme(axis.ticks = element_blank(),
+        plot.background = element_rect(fill = "grey92"))
 ```
 
 If you look up to the histogram we made at the beginning of this section, you'll see this isn't a terrible approximation.
@@ -961,10 +939,10 @@ set.seed(11)
 pp_check(b11.4, type = "bars", nsamples = 100) +
   scale_x_continuous(breaks = 0:7) +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
+  theme(axis.ticks = element_blank(),
         legend.position = c(.91, .842),
         legend.background = element_rect(fill = "transparent"),
-        axis.ticks = element_blank())
+        plot.background = element_rect(fill = "grey92"))
 ```
 
 Those mean and error bars suggest the model did a good job simulating data that resemble the original data.
@@ -1135,14 +1113,8 @@ Second, we've become accustomed to using the `y | trials() ~ ...` syntax when de
 > To provide information about the number of trials (an integer variable), we are going to use the addition argument `vint()`, which can only be used in custom families. Simiarily, if we needed to include additional vectors of real data, we would use `vreal()`. Actually, for this particular example, we could more elegantly apply the addition argument `trials()` instead of `vint()` as in the basic binomial model. However, since the present vignette is ment to give a general overview of the topic, we will go with the more general method.
 >
 > We now have all components together to fit our custom beta-binomial model:
-  
-```{r b11.5, echo = F}
-# save(b11.5, file = "fits/b11.05.rda")
-# rm(b11.5)
-load("fits/b11.05.rda")
-```
 
-```{r, eval = F}
+```{r b11.5}
 b11.5 <-
   brm(data = d, 
       family = beta_binomial2,  # here's our custom likelihood
@@ -1151,7 +1123,8 @@ b11.5 <-
                 prior(exponential(1), class = phi)),
       iter = 4000, warmup = 1000, cores = 2, chains = 2,
       stanvars = stanvars,  # note our `stanvars`
-      seed = 11)
+      seed = 11,
+      file = "fits/b11.05")
 ```
 
 Success, our results look a lot like those in the text!
@@ -1271,7 +1244,7 @@ predict(b11.5) %>%
              color = canva_pal("Green fields")(4)[2],
              size = 2) +
   scale_x_continuous(breaks = 1:12) +
-  scale_y_continuous(breaks = c(0, .5, 1), ylim = c(0, 1)) +
+  scale_y_continuous(breaks = c(0, .5, 1), limits = c(0, 1)) +
   labs(subtitle = "Posterior validation check",
        y = "Admittance probability") +
   theme_hc() +
@@ -1340,13 +1313,7 @@ crossing(mu    = c(1, 5, 9),
 
 McElreath didn't give an example of negative-binomial regression in the text. This can be a useful but somewhat perplexing model type, so let's take a detour for an extended example with the `UCBadmit` data. As in other examples, we will be modeling the `admit` rates. We'll keep things simple and leave out predictor variables.
 
-```{r b11.6, echo = F}
-# save(b11.6, file = "fits/b11.06.rda")
-# rm(b11.6)
-load("fits/b11.06.rda")
-```
-
-```{r, eval = F}
+```{r b11.6}
 b11.6 <-
   brm(data = d, 
       family = negbinomial,
@@ -1354,7 +1321,8 @@ b11.6 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(gamma(0.01, 0.01), class = shape)),  # this is the brms default
       iter = 4000, warmup = 1000, cores = 2, chains = 2,
-      seed = 11)
+      seed = 11,
+      file = "fits/b11.06")
 ```
 
 You may have noticed we used the brms default `prior(gamma(0.01, 0.01), class = shape)` for the shape parameter. Here's what that prior looks like.
@@ -1593,7 +1561,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, pp_expect_beta_binomial2, post, mu, b11.6, p, alpha)
+rm(d, logit, d_plot, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, pp_expect_beta_binomial2, post, mu, b11.6, p, alpha)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
