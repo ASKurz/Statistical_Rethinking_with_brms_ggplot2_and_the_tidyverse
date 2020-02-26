@@ -146,9 +146,9 @@ fits %>%
   scale_x_continuous(expression(italic(R)^2), limits = 0:1, breaks = 0:1) +
   ylab(NULL) +
   theme_classic() +
-  theme(axis.text.y = element_text(hjust = 0),
+  theme(text = element_text(family = "Courier"),
+        axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        text = element_text(family = "Courier"),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
@@ -397,9 +397,9 @@ weatherperson %>%
   scale_color_manual(values = c("white", "black")) +
   scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
   scale_y_discrete(NULL, expand = c(0, 0)) +
-  theme(axis.ticks.y = element_blank(),
-        legend.position = "none",
-        text = element_text(family = "Courier"))
+  theme(text = element_text(family = "Courier"),
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
 ```
 
 Here's how the newcomer fared.
@@ -420,9 +420,9 @@ newcomer %>%
   scale_color_manual(values = c("white", "black")) +
   scale_x_continuous(breaks = 1:10, expand = c(0, 0)) +
   scale_y_discrete(NULL, expand = c(0, 0)) +
-  theme(axis.ticks.y = element_blank(),
-        legend.position = "none",
-        text = element_text(family = "Courier"))
+  theme(text = element_text(family = "Courier"),
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
 ```
 
 If we do the math entailed in the tibbles, we'll see why the newcomer could boast "I'm the best person for the job" (p. 175).
@@ -635,13 +635,7 @@ library(brms)
 
 Now we'll specify the initial values and fit the model.
 
-```{r b6.8, echo = F}
-# save(b6.8, file = "fits/b06.08.rda")
-# rm(b6.8)
-load("fits/b06.08.rda")
-```
-
-```{r, eval = F}
+```{r b6.8}
 # define the starting values
 inits <- list(Intercept = mean(d$brain),
               mass_s    = 0,
@@ -658,7 +652,8 @@ b6.8 <-
                 prior(cauchy(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       inits = inits_list,  # here we insert our start values
-      seed = 6)
+      seed = 6,
+      file = "fits/b06.08")
 ```
 
 ```{r}
@@ -736,7 +731,8 @@ dev_20 <-
     r <- mcreplicate(n_sim, sim.train.test(N = n, k = k),
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ]))
-    })
+  }
+  )
 
 # here's our dev object based on N <- 100
 n       <- 100
@@ -746,7 +742,8 @@ dev_100 <-
     r <- mcreplicate(n_sim, sim.train.test(N = n, k = k), 
                      mc.cores = n_cores);
     c(mean(r[1, ]), mean(r[2, ]), sd(r[1, ]), sd(r[2, ]))
-    })
+  }
+  )
 ```
 
 ```{r, echo = F}
@@ -804,10 +801,10 @@ dev_tibble %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(legend.position = "none",
+  theme(text = element_text(family = "Courier"),
+        legend.position = "none",
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        text = element_text(family = "Courier")) +
+        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -908,10 +905,10 @@ s %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(legend.position = "none",
+  theme(text = element_text(family = "Courier"),
+        legend.position = "none",
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        text = element_text(family = "Courier")) +
+        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -972,9 +969,9 @@ dev_tibble  %>%
   labs(x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        text = element_text(family = "Courier")) +
+  theme(text = element_text(family = "Courier"),
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
+        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white")) +
   facet_wrap(~n, scale = "free_y")
 ```
 
@@ -1050,13 +1047,7 @@ You'll see how to compute the WAIC in brms in just a bit.
 
 Here is how to fit the pre-WAIC model in brms.
 
-```{r b6.0_waic, echo = F}
-# save(b6.0_waic, file = "fits/b06.00_waic.rda")
-# rm(b6.0_waic)
-load("fits/b06.00_waic.rda")
-```
-
-```{r, eval = F}
+```{r b6.0_waic}
 data(cars)
 
 b6.0_waic <- 
@@ -1066,7 +1057,8 @@ b6.0_waic <-
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 30), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      seed = 6)
+      seed = 6,
+      file = "fits/b06.00_waic")
 ```
 
 Here's the summary.
@@ -1218,10 +1210,10 @@ s %>%
        x = "number of parameters",
        y = "deviance") +
   theme_classic() +
-  theme(legend.position  = "none",
+  theme(text = element_text(family = "Courier"),
+        legend.position = "none",
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white"),
-        text = element_text(family = "Courier")) +
+        strip.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[1], 1/4), color = "white")) +
   facet_wrap(~ic, ncol = 1)
 ```
 
@@ -1272,22 +1264,7 @@ library(brms)
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-```{r b6.11, echo = F}
-# save(b6.11, file = "fits/b06.11.rda")
-# save(b6.12, file = "fits/b06.12.rda")
-# save(b6.13, file = "fits/b06.13.rda")
-# save(b6.14, file = "fits/b06.14.rda")
-# rm(b6.11)
-# rm(b6.12)
-# rm(b6.13)
-# rm(b6.14)
-load("fits/b06.11.rda")
-load("fits/b06.12.rda")
-load("fits/b06.13.rda")
-load("fits/b06.14.rda")
-```
-
-```{r, eval = F}
+```{r b6.11}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
@@ -1301,7 +1278,8 @@ b6.11 <-
                 prior(uniform(0, 100), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       inits = inits_list,
-      seed = 6)
+      seed = 6,
+      file = "fits/b06.11")
 
 inits <- list(Intercept = mean(d$kcal.per.g),
               neocortex = 0,
@@ -1317,7 +1295,8 @@ b6.12 <-
                 prior(uniform(0, 100), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       inits = inits_list,
-      seed = 6)
+      seed = 6,
+      file = "fits/b06.12")
 
 inits <- list(Intercept   = mean(d$kcal.per.g),
               `log(mass)` = 0,
@@ -1329,7 +1308,8 @@ b6.13 <-
          newdata = d,
          formula = kcal.per.g ~ 1 + log(mass),
          inits = inits_list,
-         chains = 4, cores = 4)
+         chains = 4, cores = 4,
+         file = "fits/b06.13")
 
 inits <- list(Intercept   = mean(d$kcal.per.g),
               neocortex   = 0,
@@ -1342,7 +1322,8 @@ b6.14 <-
          newdata = d,
          formula = kcal.per.g ~ 1 + neocortex + log(mass),
          inits = inits_list,
-         chains = 4, cores = 4)
+         chains = 4, cores = 4,
+         file = "fits/b06.14")
 ```
 
 > The priors are all flat above, which is clearly not the best idea. But his will let you get a sense of what the sample alone says, in the absence of regularization, and how WAIC measures overfitting. Then in the problems at the end of the chapter, you'll explore regularization. (p. 197)
@@ -1453,9 +1434,9 @@ w[, 7:8] %>%
        x = NULL, y = NULL) +
   coord_flip() +
   theme_classic() +
-  theme(axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        text = element_text(family = "Courier"))
+  theme(text = element_text(family = "Courier"),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)))
 ```
 
 We briefly discussed the alternative information criteria, the LOO, above. Here’s how to use it in brms.
@@ -1547,9 +1528,7 @@ my_coef_tab <-
   mutate(fit = purrr::map(model, get)) %>% 
   mutate(tidy = purrr::map(fit, tidy)) %>% 
   unnest(tidy) %>% 
-  filter(term != "lp__") %>% 
-  # this is because `b_Intercept` is redundant with `Intercept`
-  filter(term != "b_Intercept")
+  filter(term != "lp__")
 
 head(my_coef_tab)
 ```
@@ -1599,11 +1578,11 @@ ggplot(data = wrangled_my_coef_tab,
   scale_x_discrete(NULL, labels = wrangled_my_coef_tab$axis) +
   ggtitle("My coeftab() plot") +
   coord_flip() +
-  theme(axis.text.y = element_text(hjust = 0),
+  theme(text = element_text(family = "Courier"),
+        axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
-        panel.grid = element_blank(),
-        text = element_text(family = "Courier"))
+        panel.grid = element_blank())
 ```
 
 However, if you’re willing to deviate just a bit from the format of McElreath's `coeftab()` plot, here's a more elegant way to work with our `my_coef_tab` tibble.
@@ -1618,11 +1597,11 @@ my_coef_tab %>%
        y = NULL) +
   coord_flip() +
   theme_classic() +
-  theme(axis.text.y = element_text(hjust = 0),
+  theme(text = element_text(family = "Courier"),
+        axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
         panel.grid = element_blank(),
-        text = element_text(family = "Courier"),
         strip.background = element_rect(color = "transparent")) +
   facet_wrap(~term, ncol = 1)
 ```
@@ -1773,7 +1752,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, b6.0_waic, log_p_y, lppd, v_i, pwaic, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, cars, b6.0_waic, log_p_y, lppd, v_i, pwaic, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
