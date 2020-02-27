@@ -57,19 +57,14 @@ We start with the simple intercept-only logistic regression model, which follows
 
 In the `brm()` `formula` syntax, including a `|` bar on the left side of a formula indicates we have extra supplementary information about our criterion. In this case, that information is that each `pulled_left` value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
 
-```{r b10.1, echo = F}
-# save(b10.1, file = "fits/b10.01.rda")
-# rm(b10.1)
-load("fits/b10.01.rda")
-```
-
-```{r, eval = F}
+```{r b10.1}
 b10.1 <-
   brm(data = d, 
       family = binomial,
       pulled_left | trials(1) ~ 1,
       prior(normal(0, 10), class = Intercept),
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.01")
 ```
 
 You might use `fixef()` to get a focused summary of the intercept.
@@ -97,29 +92,22 @@ fixef(b10.1) %>%
 
 With the next two chimp models, we add predictors in the usual way.
 
-```{r b10.2, echo = F}
-# save(b10.2, file = "fits/b10.02.rda")
-# save(b10.3, file = "fits/b10.03.rda")
-# rm(b10.2)
-# rm(b10.3)
-load("fits/b10.02.rda")
-load("fits/b10.03.rda")
-```
-
-```{r, eval = F}
+```{r b10.2}
 b10.2 <-
   brm(data = d, 
       family = binomial,
       pulled_left | trials(1) ~ 1 + prosoc_left,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.02")
 
 b10.3 <-
   update(b10.2,
          newdata = d,
          formula = pulled_left | trials(1) ~ 1 + prosoc_left + condition:prosoc_left,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.03")
 ```
 
 Compute the WAIC for each model and save the results within the brmfit objects.
@@ -183,9 +171,10 @@ w %>%
                   shape = 16) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1:2, 4)]) +
   coord_flip() +
-  labs(x = NULL, y = NULL,
-       title = "WAIC") +
-  theme(axis.ticks.y    = element_blank(),
+  labs(title = "WAIC",
+       x = NULL, 
+       y = NULL) +
+  theme(axis.ticks.y = element_blank(),
         legend.position = "none")
 ```
 
@@ -255,10 +244,9 @@ ppa %>%
   geom_line(data = d_plot,
             aes(y = pulled_left, group = actor),
             color = wes_palette("Moonrise2")[1], size = 1/3) +
-  scale_x_discrete(expand = c(.03, .03)) +
+  scale_x_discrete("prosoc_left/condition", expand = c(.03, .03)) +
+  ylab("proportion pulled left") +
   coord_cartesian(ylim = 0:1) +
-  labs(x = "prosoc_left/condition",
-       y = "proportion pulled left") +
   theme(axis.ticks.x = element_blank())
 ```
 
@@ -291,20 +279,15 @@ In equations, the next model follows the form
 
 Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice we're using the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model will be of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
 
-```{r b10.4, echo = F}
-# save(b10.4, file = "fits/b10.04.rda")
-# rm(b10.4)
-load("fits/b10.04.rda")
-```
-
-```{r, eval = F}
+```{r b10.4}
 b10.4 <-
   brm(data = d, family = binomial,
       pulled_left | trials(1) ~ 0 + factor(actor) + prosoc_left + condition:prosoc_left ,
       prior(normal(0, 10), class = b),
       iter = 2500, warmup = 500, chains = 2, cores = 2,
       control = list(adapt_delta = 0.9),
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.04")
 ```
 
 Within the tidyverse, the `distinct()` function returns the information you'd otherwise get from `unique()`.
@@ -337,9 +320,9 @@ post %>%
   geom_density(color = "transparent",
                fill = wes_palette("Moonrise2")[1]) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x        = NULL,
-       title    = "Actor 2's large and uncertain intercept",
-       subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.")
+  labs(title = "Actor 2's large and uncertain intercept",
+       subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.",
+       x = NULL)
 ```
 
 Figure 10.4. shows the idiographic trajectories for four of our chimps.
@@ -377,7 +360,7 @@ f %>%
   scale_x_discrete("prosoc_left/condition", expand = c(.03, .03)) +
   scale_y_continuous("proportion pulled left",
                      breaks = c(0, .5, 1), limits = c(0, 1)) +
-  theme(axis.ticks.x     = element_blank(),
+  theme(axis.ticks.x = element_blank(),
         # color came from: https://www.color-hex.com/color/ccc591
         panel.background = element_rect(fill = "#d1ca9c",
                                         color = "transparent")) +
@@ -431,13 +414,7 @@ d_aggregated %>%
 
 To fit an aggregated binomial model in brms, we augment the `<criterion> | trials()` syntax where the value that goes in `trials()` is either a fixed number, as in this case, or variable in the data indexing $n$. Either way, at least some of those trials will have an $n > 1$. Here we'll use the hard-code method, just like McElreath did in the text.
 
-```{r b10.5, echo = F}
-# save(b10.5, file = "fits/b10.05.rda")
-# rm(b10.5)
-load("fits/b10.05.rda")
-```
-
-```{r, eval = F}
+```{r b10.5}
 b10.5 <-
   brm(data = d_aggregated, 
       family = binomial,
@@ -445,7 +422,8 @@ b10.5 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
       iter = 2500, warmup = 500, cores = 2, chains = 2, 
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.05")
 ```
 
 We might compare `b10.3` with `b10.5` like this.
@@ -461,8 +439,8 @@ A coefficient plot can offer a complimentary perspective.
 library(broom)
 
 # wrangle
-tibble(model  = str_c("b10.", c(3, 5))) %>% 
-  mutate(fit  = map(model, get)) %>% 
+tibble(model = str_c("b10.", c(3, 5))) %>% 
+  mutate(fit = map(model, get)) %>% 
   mutate(tidy = map(fit, tidy)) %>% 
   unnest(tidy) %>% 
   filter(term != "lp__") %>% 
@@ -475,9 +453,9 @@ tibble(model  = str_c("b10.", c(3, 5))) %>%
                       color = term),
                   shape = 16) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1:2, 4)]) +
-  coord_flip() +
   labs(x = NULL, y = NULL) +
-  theme(axis.ticks.y    = element_blank(),
+  coord_flip() +
+  theme(axis.ticks.y = element_blank(),
         legend.position = "none") +
   facet_wrap(~term, ncol = 1)
 ```
@@ -524,16 +502,7 @@ n_{\text{admit}_i} & \sim \text{Binomial} (n_i, p_i) \\
 
 The second model omits the `male` predictor.
 
-```{r b10.6, echo = F}
-# save(b10.6, file = "fits/b10.06.rda")
-# save(b10.7, file = "fits/b10.07.rda")
-# rm(b10.6)
-# rm(b10.7)
-load("fits/b10.06.rda")
-load("fits/b10.07.rda")
-```
-
-```{r, eval = F}
+```{r b10.6}
 b10.6 <-
   brm(data = d, 
       family = binomial,
@@ -541,7 +510,8 @@ b10.6 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10) 
+      seed = 10,
+      file = "fits/b10.06") 
 
 b10.7 <-
   brm(data = d, 
@@ -549,12 +519,13 @@ b10.7 <-
       admit | trials(applications) ~ 1,
       prior(normal(0, 10), class = Intercept),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.07")
 ```
 
 Compute the information criteria for each model and save the results within the brmfit objects.
 
-```{r}
+```{r, message = F}
 b10.6 <- add_criterion(b10.6, "waic")
 b10.7 <- add_criterion(b10.7, "waic")
 ```
@@ -721,9 +692,9 @@ ggplot(data = d, aes(x = case, y = admit / applications)) +
             aes(y = admit, label = dept),
             color = wes_palette("Moonrise2")[2],
             family = "serif") +
+  labs(title = "Posterior validation check",
+       y = "Proportion admitted") +
   coord_cartesian(ylim = 0:1) +
-  labs(y     = "Proportion admitted",
-       title = "Posterior validation check") +
   theme(axis.ticks.x = element_blank())
 ```
 
@@ -738,29 +709,22 @@ n_{\text{admit}_i}   & \sim \text{Binomial} (n_i, p_i) \\
 
 We don't need to coerce an index like McElreath did in the text. But here are the models.
 
-```{r b10.8, echo = F}
-# save(b10.8, file = "fits/b10.08.rda")
-# save(b10.9, file = "fits/b10.09.rda")
-# rm(b10.8)
-# rm(b10.9)
-load("fits/b10.08.rda")
-load("fits/b10.09.rda")
-```
-
-```{r, eval = F}
+```{r b10.8}
 b10.8 <-
   brm(data = d, 
       family = binomial,
       admit | trials(applications) ~ 0 + dept,
       prior(normal(0, 10), class = b),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10) 
+      seed = 10,
+      file = "fits/b10.08") 
 
 b10.9 <-
   update(b10.8,
          newdata = d,
          formula = admit | trials(applications) ~ 0 + dept + male,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.09")
 ```
 
 Let's make two more `loo()` objects using `reloo = T`.
@@ -822,9 +786,9 @@ predict(b10.9) %>%
             aes(y = admit, label = dept),
             color = wes_palette("Moonrise2")[2],
             family = "serif") +
+  labs(title = "Posterior validation check",
+       y = "Proportion admitted") +
   coord_cartesian(ylim = 0:1) +
-  labs(y     = "Proportion admitted",
-       title = "Posterior validation check") +
   theme(axis.ticks.x = element_blank())
 ```
 
@@ -859,22 +823,17 @@ y <- c(rep(0, 10), rep(1, 10))
 x <- c(rep(-1, 9), rep(1, 11))
 ```
 
-We are going to depart from McElreath's naming convention in the text and call this fit `b10.good`. It'll make it easier to find in this project's [`fits` folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits). 
+We are going to depart from McElreath's naming convention in the text and call this fit `b10.good`. It'll make it easier to find in this project's [`fits` folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits).
 
-```{r b10.good, echo = F}
-# save(b10.good, file = "fits/b10.good.rda")
-# rm(b10.good)
-load("fits/b10.good.rda")
-```
-
-```{r, eval = F}
+```{r b10.good}
 b10.good <-
   brm(data = list(y = y, x = x), 
       family = binomial,
-      y ~ 1 + x,
+      y | trials(1) ~ 1 + x,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
-      seed = 10) 
+      seed = 10,
+      file = "fits/b10.good") 
 ```
 
 Our model summary will differ a bit from the one in the text. It seems this is because of the MAP/HMC contrast and our choice of priors.
@@ -982,13 +941,7 @@ Our statistical model will follow the form
 
 The only new thing in our model code is `family = poisson`. brms defaults to the `log()` link.
 
-```{r b10.10, echo = F}
-# save(b10.10, file = "fits/b10.10.rda")
-# rm(b10.10)
-load("fits/b10.10.rda")
-```
-
-```{r, eval = F}
+```{r b10.10}
 b10.10 <-
   brm(data = d, 
       family = poisson,
@@ -996,7 +949,8 @@ b10.10 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b)),
       iter = 3000, warmup = 1000, chains = 4, cores = 4,
-      seed = 10) 
+      seed = 10,
+      file = "fits/b10.10") 
 ```
 
 ```{r}
@@ -1023,8 +977,8 @@ post %>%
   rename(b_interaction = `b_log_pop:contact_high`) %>%
 
   mcmc_intervals(prob = .5, prob_outer = .95) +
-  theme(axis.ticks.y = element_blank(),
-        axis.text.y  = element_text(hjust = 0))
+  theme(axis.text.y = element_text(hjust = 0),
+        axis.ticks.y = element_blank())
 ```
 
 How plausible is it a high-contact island will have more tools than a low-contact island?
@@ -1034,7 +988,7 @@ post <-
   post %>%
   mutate(lambda_high = exp(b_Intercept + b_contact_high + (b_log_pop + `b_log_pop:contact_high`) * 8),
          lambda_low  = exp(b_Intercept + b_log_pop * 8)) %>% 
-  mutate(diff        = lambda_high - lambda_low) 
+  mutate(diff = lambda_high - lambda_low) 
 
 post %>%
   summarise(sum = sum(diff > 0) / length(diff))
@@ -1050,7 +1004,7 @@ post %>%
   geom_vline(xintercept = 0, linetype = 2,
              color = wes_palette("Moonrise2")[2]) +
   scale_y_continuous(NULL, breaks = NULL) +
-  labs(x = "lambda_high - lambda_low")
+  xlab("lambda_high - lambda_low")
 ```
 
 I'm not happy with how clunky this solution is, but one way to get those marginal dot and line plots for the axes is to make intermediary tibbles. Anyway, here's a version of Figure 10.8.b.
@@ -1106,46 +1060,35 @@ To get a feel for what's possible with `ggMarginal()`, check out [Dean Attali](h
 
 Here we deconstruct model `b10.10`, bit by bit.
 
-```{r b10.11, echo = F}
-# save(b10.11, file = "fits/b10.11.rda")
-# save(b10.12, file = "fits/b10.12.rda")
-# save(b10.13, file = "fits/b10.13.rda")
-# save(b10.14, file = "fits/b10.14.rda")
-# rm(b10.11)
-# rm(b10.12)
-# rm(b10.13)
-# rm(b10.14)
-load("fits/b10.11.rda")
-load("fits/b10.12.rda")
-load("fits/b10.13.rda")
-load("fits/b10.14.rda")
-```
-
-```{r, eval = F}
+```{r b10.11}
 # no interaction
 b10.11 <- 
   update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.11")
 
 # no contact rate
 b10.12 <-
   update(b10.10, formula = total_tools ~ 1 + log_pop,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.12")
 
 # no log-population
 b10.13 <-
   update(b10.10, formula = total_tools ~ 1 + contact_high,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.13")
 
 # intercept only
 b10.14 <-
   update(b10.10, formula = total_tools ~ 1,
-         seed = 10)
+         seed = 10,
+         file = "fits/b10.14")
 ```
 
 I know we got all excited with the LOO, above. Let's just be lazy and go WAIC. [Though beware, the LOO opens up a similar can of worms, here.]
 
-```{r w_b10.10_through_w_b10.14, cache = T}
+```{r, message = F}
 b10.10 <- add_criterion(b10.10, criterion = "waic")
 b10.11 <- add_criterion(b10.11, criterion = "waic")
 b10.12 <- add_criterion(b10.12, criterion = "waic")
@@ -1178,16 +1121,17 @@ w %>%
   rownames_to_column(var = "model") %>%
   
   ggplot(aes(x = reorder(model, -waic), 
-             y    = waic,
+             y = waic,
              ymin = waic - se_waic,
              ymax = waic + se_waic,
              color = model)) +
   geom_pointrange(shape = 16, show.legend = F) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1, 2, 1, 1, 1)]) +
   coord_flip() +
-  labs(x = NULL, y = NULL,
-       title = "WAIC") +
-  theme(axis.ticks.y    = element_blank())
+  labs(title = "WAIC",
+       x = NULL,
+       y = NULL) +
+  theme(axis.ticks.y = element_blank())
 ```
 
 Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf), you'll find several weighting schemes.
@@ -1206,24 +1150,20 @@ ppa <-
   bind_cols(nd)
 
 ppa %>%
-  ggplot(aes(x     = log_pop,
-             group = contact_high)) +
-  geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5,
-                  fill = contact_high, color = contact_high),
+  ggplot(aes(x = log_pop, group = contact_high, color = contact_high)) +
+  geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5, fill = contact_high),
               stat = "identity",
               alpha = 1/4, size = 1/2) +
   geom_text(data = d, 
-             aes(y     = total_tools,
-                 label = total_tools,
-                 color = contact_high),
+             aes(y = total_tools, label = total_tools),
              size = 3.5) +
+  labs(subtitle = "Blue is the high contact rate; black is the low.",
+       x = "log population",
+       y = "total tools") +
   coord_cartesian(xlim = c(7.1, 12.4),
                   ylim = c(12, 70)) +
-  labs(x = "log population",
-       y = "total tools",
-       subtitle = "Blue is the high contact rate; black is the low.") +
   theme(legend.position = "none",
-        panel.border    = element_blank())
+        panel.border = element_blank())
 ```
 
 In case you were curious, here are those LOO weights.
@@ -1251,13 +1191,7 @@ d <-
 
 Now fit the `log_pop`-centered model.
 
-```{r b10.10_c, echo = F}
-# save(b10.10_c, file = "fits/b10.10_c.rda")
-# rm(b10.10_c)
-load("fits/b10.10_c.rda")
-```
-
-```{r, eval = F}
+```{r b10.10_c}
 b10.10_c <-
   brm(data = d, 
       family = poisson,
@@ -1265,7 +1199,8 @@ b10.10_c <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b)),
       iter = 3000, warmup = 1000, chains = 4, cores = 4,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.10_c")
 ```
 
 ```{r}
@@ -1337,7 +1272,7 @@ posterior_samples(b10.10_c) %>%
   theme(strip.text = element_text(size = 11))
 ```
 
-In case you were wondering, it turns out you cannot combine `GGally::ggpairs()` plots with syntax from the patchwork package. Go [here](https://github.com/thomasp85/patchwork/issues/52) to learn why.
+In case you were wondering, it turns out you cannot combine `GGally::ggpairs()` plots with syntax from the patchwork package. Check out [issue #52 on the patchwork GitHub repo](https://github.com/thomasp85/patchwork/issues/52) to learn why.
 
 ### Example: Exposure and the offset.
 
@@ -1363,19 +1298,13 @@ Let's make them tidy and add `log_days`.
   tibble(y         = c(y, y_new), 
          days      = c(rep(1, num_days), rep(7, num_weeks)),
          monastery = c(rep(0, num_days), rep(1, num_weeks))) %>%
-  mutate(log_days  = log(days))
+  mutate(log_days = log(days))
 )
 ```
 
 With the brms package, you use the `offset()` syntax, in which you put a pre-processed variable like `log_days` or the log of a variable, such as `log(days)`.
 
-```{r b10.15, echo = F}
-# save(b10.15, file = "fits/b10.15.rda")
-# rm(b10.15)
-load("fits/b10.15.rda")
-```
-
-```{r, eval = F}
+```{r b10.15}
 b10.15 <-
   brm(data = d, 
       family = poisson,
@@ -1383,7 +1312,8 @@ b10.15 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b)),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.15")
 ```
 
 As we look at the model summary, keep in mind that the parameters are on the per-one-unit-of-time scale. Since we simulated the data based on summary information from two units of time--one day and seven days--, this means the parameters are in the scale of $\log (\lambda)$ per one day.
@@ -1478,9 +1408,9 @@ tibble(career) %>%
 To help build an appreciation for how we simulated data with these proportions and how the process links in with the formulas, above, we'll retrace the first few simulation steps within a tidyverse-centric work flow. Recall how in those first few steps we defined values for `income`, `score`, and `p`. Here they are again in a tibble.
 
 ```{r}
-tibble(income  = 1:3) %>% 
+tibble(income = 1:3) %>% 
   mutate(score = 0.5 * income) %>% 
-  mutate(p     = exp(score) / sum(exp(score)))
+  mutate(p = exp(score) / sum(exp(score)))
 ```
 
 Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above:
@@ -1491,7 +1421,7 @@ What still might seem mysterious is what those $s$ values in the equation are. I
 
 ```{r}
 tibble(score = 104 + c(0.5, 1, 1.5)) %>% 
-  mutate(p   = exp(score) / sum(exp(score)))
+  mutate(p = exp(score) / sum(exp(score)))
 ```
 
 Now keeping that in mind, recall how McElreath said that though we have $K$ categories, $K = 3$ in this case, we only estimate $K - 1$ linear models. "In a multinomial (or categorical) GLM, you need $K - 1$ linear models for $K$ types of events" (pp. 323--324). Right before he showed the code for `m10.16`, he further wrote:
@@ -1503,7 +1433,7 @@ In his model code (R code 10.57), you'll see he used zero as that constant value
 ```{r}
 tibble(income = 1:3,
        score  = c(0, 0.5, 1)) %>% 
-  mutate(p    = exp(score) / sum(exp(score)))
+  mutate(p = exp(score) / sum(exp(score)))
 ```
 
 Those `p` values are still the same as in the prior examples. If our model fitting is successful, our statistical model will return just those probability estimates. To get ready to fit our model, let's switch out rethinking for brms.
@@ -1513,22 +1443,28 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
+Before we fit the model, we might take a quick look at the prior structure with `brms::get_prior()`.
+
 Here's our multinomial model in brms. Do note the specification `family = categorical(link = logit)`.
-      
-```{r b10.16, echo = F}
-# save(b10.16, file = "fits/b10.16.rda")
-# rm(b10.16)
-load("fits/b10.16.rda")
+
+```{r}
+get_prior(data = list(career = career), 
+          family = categorical(link = logit),
+          career ~ 1)
 ```
 
-```{r, eval = F}
+In brms-parlance, this an Intercepts-only model. We have two "intercepts", which are differentiated in the `dpar` column. We'll talk more about what these are in just a bit; don't worry. I show this here because as of brms 2.12.0, "specifying global priors for regression coefficients in categorical models is deprecated." The upshot is even if we want to use the same prior for both, we need to use the `dpar` argument for each. With that in mind, here's our multinomial model in brms. Do note the specification `family = categorical(link = logit)`.
+
+```{r b10.16}
 b10.16 <-
   brm(data = list(career = career), 
       family = categorical(link = logit),
       career ~ 1,
-      prior(normal(0, 5), class = Intercept),
+      prior = c(prior(normal(0, 5), class = Intercept, dpar = mu2),
+                prior(normal(0, 5), class = Intercept, dpar = mu3)),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.16")
 ```
 
 Check the results.
@@ -1655,22 +1591,19 @@ library(brms)
 
 Here's the brms version of McElreath's `m10.17`.
 
-```{r b10.17, echo = F}
-# save(b10.17, file = "fits/b10.17.rda")
-# rm(b10.17)
-load("fits/b10.17.rda")
-```
-
-```{r, eval = F}
+```{r b10.17}
 b10.17 <-
   brm(data = list(career        = career,  # note how we used a list instead of a tibble
                   family_income = family_income), 
       family = categorical(link = logit),
       career ~ 1 + family_income,
-      prior = c(prior(normal(0, 5), class = Intercept),
-                prior(normal(0, 5), class = b)),
+      prior = c(prior(normal(0, 5), class = Intercept, dpar = mu2),
+                prior(normal(0, 5), class = Intercept, dpar = mu3),
+                prior(normal(0, 5), class = b, dpar = mu2),
+                prior(normal(0, 5), class = b, dpar = mu3)),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.17")
 ```
 
 Happily, these results cohere with the rethinking model.
@@ -1697,10 +1630,7 @@ rbind(f[, , 1],
       f[, , 2],
       f[, , 3]) %>% 
   data.frame() %>% 
-  bind_cols(
-    nd %>% 
-      expand(career = 1:3, family_income)
-  ) %>% 
+  bind_cols(nd %>% expand(career = 1:3, family_income)) %>% 
   mutate(career = str_c("career: ", career)) %>% 
   
   # plot
@@ -1716,8 +1646,8 @@ rbind(f[, , 1],
   scale_y_continuous("probability", limits = c(0, 1),
                      breaks = 0:3 / 3,
                      labels = c("0", ".33", ".67", "1")) +
-  theme(legend.position = "none",
-        axis.text.y = element_text(hjust = 0)) +
+  theme(axis.text.y = element_text(hjust = 0),
+        legend.position = "none") +
   facet_wrap(~career)
 ```
 
@@ -1736,13 +1666,10 @@ rbind(f[, , 1],
       f[, , 2],
       f[, , 3]) %>% 
   data.frame() %>% 
-  bind_cols(
-    nd %>% 
-      expand(career = 1:3, family_income)
-  ) %>% 
+  bind_cols(nd %>% expand(career = 1:3, family_income)) %>% 
   group_by(family_income) %>% 
   mutate(proportion = Estimate / sum(Estimate),
-         career = factor(career)) %>% 
+         career     = factor(career)) %>% 
   
   # plot!
   ggplot(aes(x = family_income, y = proportion)) +
@@ -1774,16 +1701,7 @@ library(brms)
 
 Fit the models.
 
-```{r b10.binom, echo = F}
-# save(b10.binom, file = "fits/b10.binom.rda")
-# save(b10.pois, file = "fits/b10.pois.rda")
-# rm(b10.binom)
-# rm(b10.pois)
-load("fits/b10.binom.rda")
-load("fits/b10.pois.rda")
-```
-
-```{r, eval = F}
+```{r b10.binom}
 # binomial model of overall admission probability
 b10.binom <-
   brm(data = d, 
@@ -1791,7 +1709,8 @@ b10.binom <-
       admit | trials(applications) ~ 1,
       prior(normal(0, 100), class = Intercept),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.binom")
 
 # Poisson model of overall admission rate and rejection rate
 b10.pois <-
@@ -1801,7 +1720,8 @@ b10.pois <-
       mvbind(admit, rej) ~ 1,
       prior(normal(0, 100), class = Intercept),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.pois")
 ```
 
 Note, the `mvbind()` syntax made `b10.pois` a multivariate Poisson model. Starting with version 2.0.0, [brms supports a variety of multivariate models](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b10.pois`.
@@ -1823,10 +1743,10 @@ post %>%
   scale_fill_manual(values = c(wes_palette("Moonrise2")[1],
                                wes_palette("Moonrise2")[2])) +
   labs(title = " Mean admit/reject rates across departments",
-       x     = "# applications",
-       y     = NULL) +
-  theme(legend.position = "none",
-        axis.ticks.y    = element_blank())
+       x = "# applications",
+       y = NULL) +
+  theme(axis.ticks.y = element_blank(),
+        legend.position = "none")
 ```
 
 We might compare the model summaries.
@@ -1875,11 +1795,11 @@ bind_cols(
                 color = wes_palette("Moonrise2")[4]) +
   scale_fill_manual(values = c(wes_palette("Moonrise2")[2:1])) +
   labs(title = "Two models, same marginal posterior",
-       x     = "admissions probability",
-       y     = NULL) +
+       x = "admissions probability",
+       y = NULL) +
   coord_cartesian(ylim = c(1.5, 2.25)) +
-  theme(axis.text.y     = element_text(hjust = 0),
-        axis.ticks.y    = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
+        axis.ticks.y = element_blank(),
         legend.position = "none")
 ```
 
@@ -1915,21 +1835,16 @@ list(x = x, y = y) %>%
 
 We fit the geometric model using `family = geometric(link = log)`.
 
-```{r b10.18, echo = F}
-# save(b10.18, file = "fits/b10.18.rda")
-# rm(b10.18)
-load("fits/b10.18.rda")
-```
-
-```{r, eval = F}
+```{r b10.18}
 b10.18 <-
   brm(data = list(y = y, x = x), 
       family = geometric(link = log),
-      y ~ 0 + intercept + x,
-      prior = c(prior(normal(0, 10), class = b, coef = intercept),
-                prior(normal(0, 1), class = b)),
+      y ~ 0 + Intercept + x,
+      prior = c(prior(normal(0, 10), class = b, coef = Intercept),
+                prior(normal(0, 1), class = b, coef = x)),
       iter = 2500, warmup = 500, chains = 2, cores = 2,
-      seed = 10)
+      seed = 10,
+      file = "fits/b10.18")
 ```
 
 Inspect the results.
@@ -1945,11 +1860,11 @@ $$f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg 
 Even though the parameters brms yielded look different from those in the text, their predictions describe the data well. Here's the `conditional_effects()` plot.
 
 ```{r, fig.width = 4, fig.height = 2.5}
-plot(conditional_effects(b10.18),
-     points = T,
-     point_args = c(size = 3/5, alpha = 2/3),
-     line_args  = c(color = wes_palette("Moonrise2")[1],
-                    fill  = wes_palette("Moonrise2")[1]))
+conditional_effects(b10.18) %>% 
+  plot(points = T,
+       point_args = c(size = 3/5, alpha = 2/3),
+       line_args = c(color = wes_palette("Moonrise2")[1],
+                     fill = wes_palette("Moonrise2")[1]))
 ```
 
 ## Summary
