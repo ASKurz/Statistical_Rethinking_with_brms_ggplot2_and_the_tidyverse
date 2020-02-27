@@ -81,9 +81,9 @@ print(b15.1)
 head(b15.1$data)
 ```
 
-As an alternative, Bürkner recently added a `file` argument in `brms:brm()` that will help you do this, too. The origins of the argument live [here](https://github.com/paul-buerkner/brms/issues/472). By default, `file` is set to `NULL`. To make use of the argument, specify a character string. `file` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
+The other option, which we’ve been using extensively throughout the earlier chapters, is to use `file` argument within the `brms::brm()` function. You can read about the origins of the argument in [issue #472 on the brms GitHub repo](https://github.com/paul-buerkner/brms/issues/472). To make use of the `file` argument, specify a character string. `brm()` will then save your fitted model object in an external `.rds` file via the `saveRDS()` function. Let's give it a whirl, this time with an interaction.
 
-```{r, message = F, results = "hide"}
+```{r b15.2, message = F, results = "hide"}
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
@@ -129,7 +129,7 @@ b15.2 <-
       file = "fits/b15.02")
 ```
 
-It takes just a fraction of a second. Once again, we're ready to work with the fit.
+It takes just a fraction of a second. Once again, we're ready to work with `b15.2`.
 
 ```{r}
 b15.2$formula
@@ -149,7 +149,7 @@ The model from Bürkner’s vignette, `b15.1`, was no joke. If you wanted to be 
 
 Even if that was the final model I was interested in as a scientist, I still wouldn't start with it. I'd build up incrementally, just to make sure nothing looked fishy. One place to start would be a simple intercepts-only model.
 
-```{r, message = F, results = "hide"}
+```{r b15.0, message = F, results = "hide"}
 b15.0 <- 
   brm(mvbind(tarsus, back) ~ 1, 
       data = BTdata, chains = 2, cores = 2,
