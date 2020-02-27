@@ -121,13 +121,7 @@ d <-
 
 Now we're ready to fit the first univariable model.
 
-```{r b5.1, echo = F}
-# save(b5.1, file = "fits/b05.01.rda")
-# rm(b5.1)
-load("fits/b05.01.rda")
-```
-
-```{r, eval = F}
+```{r b5.1}
 b5.1 <- 
   brm(data = d, 
       family = gaussian,
@@ -136,7 +130,8 @@ b5.1 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.01")
 ```
 
 Check the summary.
@@ -184,13 +179,7 @@ d <-
 
 We're ready to fit our second univariable model, this time with `Marriage_s` as the predictor.
 
-```{r b5.2, echo = F}
-# save(b5.2, file = "fits/b05.02.rda")
-# rm(b5.2)
-load("fits/b05.02.rda")
-```
-
-```{r, eval = F}
+```{r b5.2}
 b5.2 <- 
   brm(data = d, 
       family = gaussian,
@@ -199,7 +188,8 @@ b5.2 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.02")
 ```
 
 ```{r}
@@ -254,13 +244,7 @@ Now we'll get both predictors in there with our very first multivariable model. 
 
 Much like we used the `+` operator to add single predictors to the intercept, we just use more `+` operators in the `formula` argument to add more predictors. Also notice we're using the same prior `prior(normal(0, 1), class = b)` for both predictors. Within the brms framework, they are both of `class = b`. But if we wanted their priors to differ, we'd make two `prior()` statements and differentiate them with the `coef` argument. You'll see examples of that later on.
 
-```{r b5.3, echo = F}
-# save(b5.3, file = "fits/b05.03.rda")
-# rm(b5.3)
-load("fits/b05.03.rda")
-```
-
-```{r, eval = F}
+```{r b5.3}
 b5.3 <- 
   brm(data = d, 
       family = gaussian,
@@ -269,7 +253,8 @@ b5.3 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.03")
 ```
 
 Our multivariable summary will have multiple rows below the 'Intercept' row.
@@ -298,9 +283,9 @@ mcmc_intervals(post[, 1:4],
                point_est = "median") +
   ggtitle("My fancy bayesplot-based coefficient plot") +
   theme_bw() +
-  theme(panel.grid = element_blank(),
-        axis.text.y = element_text(hjust = 0),
-        axis.ticks.y = element_blank())
+  theme(axis.text.y = element_text(hjust = 0),
+        axis.ticks.y = element_blank(),
+        panel.grid = element_blank())
 ```
 
 Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
@@ -321,10 +306,10 @@ post %>%
   labs(title = "My tidybayes-based coefficient plot",
        x = NULL, y = NULL) +
   theme_bw() +
-  theme(panel.grid = element_blank(),
-        panel.grid.major.y = element_line(color = alpha("firebrick4", 1/4), linetype = 3),
-        axis.text.y  = element_text(hjust = 0),
-        axis.ticks.y = element_blank())
+  theme(axis.text.y = element_text(hjust = 0),
+        axis.ticks.y = element_blank(),
+        panel.grid = element_blank(),
+        panel.grid.major.y = element_line(color = alpha("firebrick4", 1/4), linetype = 3))
 ```
 
 The substantive interpretation of all those coefficient plots is: "*Once we know median age at marriage for a State, there is little or no additive predictive power in also knowing the rate of marriage in that State*" (p. 126, *emphasis* in the original).
@@ -341,13 +326,7 @@ McElreath's prose is delightfully deflationary. "There is a huge literature deta
 
 To get ready to make our residual plots, we'll predict `Marriage_s` with `MedianAgeMarriage_s`.
 
-```{r b5.4, echo = F}
-# save(b5.4, file = "fits/b05.04.rda")
-# rm(b5.4)
-load("fits/b05.04.rda")
-```
-
-```{r, eval = F}
+```{r b5.4}
 b5.4 <- 
   brm(data = d,
       family = gaussian,
@@ -356,7 +335,8 @@ b5.4 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.04")
 ```
 
 ```{r}
@@ -425,13 +405,7 @@ r %>%
 
 To get the `MedianAgeMarriage_s` residuals, we have to fit the corresponding model first.
 
-```{r b5.4b, echo = F}
-# save(b5.4b, file = "fits/b05.04b.rda")
-# rm(b5.4b)
-load("fits/b05.04b.rda")
-```
-
-```{r, eval = F}
+```{r b5.4b}
 b5.4b <- 
   brm(data = d, 
       family = gaussian,
@@ -440,7 +414,8 @@ b5.4b <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.04b")
 ```
 
 And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
@@ -635,9 +610,9 @@ p2 <-
   labs(x = NULL, y = NULL) +
   coord_flip(ylim = c(-6, 5)) +
   theme_bw() +
-  theme(panel.grid = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0))
+        panel.grid = element_blank())
 
 p2
 ```
@@ -708,13 +683,7 @@ pairs(d, col = "firebrick4")
 
 We may as well fit a model.
 
-```{r b5.0_spur, echo = F}
-# save(b5.0_spur, file = "fits/b05.00_spur.rda")
-# rm(b5.0_spur)
-load("fits/b05.00_spur.rda")
-```
-
-```{r, eval = F}
+```{r b5.0_spur}
 b5.0_spur <-
   brm(data = d, 
       family = gaussian,
@@ -723,7 +692,8 @@ b5.0_spur <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.00_spur")
 ```
 
 ```{r}
@@ -763,13 +733,7 @@ By just looking at that mess, do you think you could describe the associations o
 
 McElreath has us start of with a simple univariable `milk` model.
 
-```{r b5.5, echo = F}
-# save(b5.5, file = "fits/b05.05.rda")
-# rm(b5.5)
-load("fits/b05.05.rda")
-```
-
-```{r, eval = F}
+```{r b5.5}
 b5.5 <- 
   brm(data = d, 
       family = gaussian,
@@ -778,7 +742,8 @@ b5.5 <-
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 1), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.05")
 ```
 
 The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better. 
@@ -844,13 +809,7 @@ dcc <-
 
 Now we use `log_mass` as the new sole predictor.
 
-```{r b5.6, echo = F}
-# save(b5.6, file = "fits/b05.06.rda")
-# rm(b5.6)
-load("fits/b05.06.rda")
-```
-
-```{r, eval = F}
+```{r b5.6}
 b5.6 <- 
   brm(data = dcc, 
       family = gaussian,
@@ -860,7 +819,8 @@ b5.6 <-
                 prior(uniform(0, 1), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       control = list(adapt_delta = 0.9),
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.06")
 ```
 
 ```{r}
@@ -907,13 +867,7 @@ Finally, we're ready to fit with both predictors included in the "joint model." 
 
 Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
 
-```{r b5.7, echo = F}
-# save(b5.7, file = "fits/b05.07.rda")
-# rm(b5.7)
-load("fits/b05.07.rda")
-```
-
-```{r, eval = F}
+```{r b5.7}
 b5.7 <- 
   brm(data = dcc, 
       family = gaussian,
@@ -923,7 +877,8 @@ b5.7 <-
                 prior(uniform(0, 1), class = sigma)),
       iter = 4000, warmup = 2000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.999),
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.07")
 ```
 
 ```{r}
@@ -1015,34 +970,27 @@ pairs(d, col = "firebrick4")
 
 Here we fit the models with a little help from the `update()` function.
 
-```{r b5.0_both, echo = F}
-# save(b5.0_both, file = "fits/b05.00_both.rda")
-# save(b5.0_pos, file = "fits/b05.00_pos.rda")
-# save(b5.0_neg, file = "fits/b05.00_neg.rda")
-# rm(b5.0_both)
-# rm(b5.0_pos)
-# rm(b5.0_neg)
-load("fits/b05.00_both.rda")
-load("fits/b05.00_pos.rda")
-load("fits/b05.00_neg.rda")
-```
-
-```{r, eval = F}
+```{r b5.0_both}
 b5.0_both <- 
   brm(data = d, family = gaussian,
       y ~ 1 + x_pos + x_neg,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.00_both")
 
 b5.0_pos <-
   update(b5.0_both, 
-         formula = y ~ 1 + x_pos)
+         formula = y ~ 1 + x_pos,
+         seed = 5,
+         file = "fits/b05.00_pos")
 
 b5.0_neg <-
   update(b5.0_both, 
-         formula = y ~ 1 + x_neg)
+         formula = y ~ 1 + x_neg,
+         seed = 5,
+         file = "fits/b05.00_neg")
 ```
 
 Compare the coefficients.
@@ -1095,13 +1043,7 @@ d %>%
 
 Here's our attempt to predict `height` with both legs in the model.
 
-```{r b5.8, echo = F}
-# save(b5.8, file = "fits/b05.08.rda")
-# rm(b5.8)
-load("fits/b05.08.rda")
-```
-
-```{r, eval = F}
+```{r b5.8}
 b5.8 <- 
   brm(data = d, 
       family = gaussian,
@@ -1110,7 +1052,8 @@ b5.8 <-
                 prior(normal(2, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.08")
 ```
 
 Let's inspect the damage.
@@ -1133,9 +1076,9 @@ mcmc_plot(b5.8,
        subtitle = "Holy smokes; look at the widths of those betas!") +
   theme_bw() +
   theme(text = element_text(size = 14),
-        panel.grid = element_blank(),
+        axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0))
+        panel.grid = element_blank())
 ```
 
 This is perhaps the simplest way to plot the bivariate posterior of our two predictor coefficients, Figure 6.2.a.
@@ -1200,13 +1143,7 @@ post %>%
 
 Now we fit the model after ditching one of the leg lengths.
 
-```{r b5.9, echo = F}
-# save(b5.9, file = "fits/b05.09.rda")
-# rm(b5.9)
-load("fits/b05.09.rda")
-```
-
-```{r, eval = F}
+```{r b5.9}
 b5.9 <- 
   brm(data = d, 
       family = gaussian,
@@ -1215,7 +1152,8 @@ b5.9 <-
                 prior(normal(2, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.09")
 ```
 
 ```{r}
@@ -1250,9 +1188,9 @@ bind_cols(post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_rig
                          fill = "firebrick") +
   labs(x = NULL, y = NULL) +
   theme_bw() +
-  theme(panel.grid = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0))
+        panel.grid = element_blank())
 ```
 
 The results are within simulation variance of one another.
@@ -1279,16 +1217,7 @@ library(brms)
 
 We'll follow the text and fit the two univariable models, first. Note our use of the `update()` function.
 
-```{r b5.10, echo = F}
-# save(b5.10, file = "fits/b05.10.rda")
-# save(b5.11, file = "fits/b05.11.rda")
-# rm(b5.10)
-# rm(b5.11)
-load("fits/b05.10.rda")
-load("fits/b05.11.rda")
-```
-
-```{r, eval = F}
+```{r b5.10}
 # `kcal.per.g` regressed on `perc.fat`
 b5.10 <- 
   brm(data = d, 
@@ -1298,7 +1227,8 @@ b5.10 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.10")
 
 # `kcal.per.g` regressed on `perc.lactose`
 b5.11 <- 
@@ -1306,7 +1236,8 @@ b5.11 <-
          newdata = d,
          formula = kcal.per.g ~ 1 + perc.lactose,
          iter = 2000, warmup = 500, chains = 4, cores = 4,
-         seed = 5)
+         seed = 5,
+         file = "fits/b05.11")
 ```
 
 Compare the coefficient summaries.
@@ -1325,19 +1256,14 @@ posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 
 Now "watch what happens when we place both predictor variables in the same regression model" (p. 146).
 
-```{r b5.12, echo = F}
-# save(b5.12, file = "fits/b05.12.rda")
-# rm(b5.12)
-load("fits/b05.12.rda")
-```
-
-```{r, eval = F}
+```{r b5.12}
 b5.12 <- 
   update(b5.11,
          newdata = d,
          formula = kcal.per.g ~ 1 + perc.fat + perc.lactose,
          iter = 2000, warmup = 500, chains = 4, cores = 4,
-         seed = 5)
+         seed = 5,
+         file = "fits/b05.12")
 ```
 
 The posteriors for coefficients, especially for `perc.fat`, shrank to zero.
@@ -1470,13 +1396,7 @@ d %>%
 
 These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = 0.99`.
 
-```{r b5.13, echo = F}
-# save(b5.13, file = "fits/b05.13.rda")
-# rm(b5.13)
-load("fits/b05.13.rda")
-```
-
-```{r, eval = F}
+```{r b5.13}
 b5.13 <- 
   brm(data = d, 
       family = gaussian,
@@ -1486,7 +1406,8 @@ b5.13 <-
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       control = list(adapt_delta = 0.99),
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.13")
 ```
 
 ```{r}
@@ -1495,18 +1416,13 @@ print(b5.13)
 
 Now fit the model after excluding `fungus`, our post-treatment variable.
 
-```{r b5.14, echo = F}
-# save(b5.14, file = "fits/b05.14.rda")
-# rm(b5.14)
-load("fits/b05.14.rda")
-```
-
-```{r, eval = F}
+```{r b5.14}
 b5.14 <- 
   update(b5.13, 
          formula = h1 ~ 1 + h0 + treatment,
          iter = 2000, warmup = 1000, chains = 4, cores = 4,
-         seed = 5)
+         seed = 5,
+         file = "fits/b05.14")
 ```
 
 ```{r}
@@ -1548,13 +1464,7 @@ Let's fit the first `height` model with the `male` dummy.
 
 Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating [Chapter 8][Estimation.], I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
 
-```{r b5.15, echo = F}
-# save(b5.15, file = "fits/b05.15.rda")
-# rm(b5.15)
-load("fits/b05.15.rda")
-```
-
-```{r, eval = F}
+```{r b5.15}
 b5.15 <- 
   brm(data = d, 
       family = gaussian,
@@ -1563,7 +1473,8 @@ b5.15 <-
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 2), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.15")
 ```
 
 "To interpret these estimates, you have to note that the parameter $\alpha$ ([`Intercept`]) is now the average height *among females*" (p. 154).
@@ -1628,13 +1539,7 @@ d <-
 
 Everyone has their own idiosyncratic way of coding. One of my quirks is I always explicitly specify a model's intercept following the form `y ~ 1 + x`, where `y` is the criterion, `x` stands for the predictors, and `1` is the intercept. You don't have to do this, of course. You could just code `y ~ x` to get the same results. The `brm()` function assumes you want that intercept. One of the reasons I like the verbose version is it reminds me to think about the intercept and to include it in my priors. Another nice feature is that is helps me make sense of the code for this model: ` height ~ 0 + male + female`. When we replace `… ~ 1 + …` with `… ~ 0 + …`, we tell `brm()` to remove the intercept. Removing the intercept allows us to include ALL levels of a given categorical variable in our model. In this case, we’ve expressed sex as two dummies, `female` and `male`. Taking out the intercept lets us put both dummies into the formula.
 
-```{r b5.15b, echo = F}
-# save(b5.15b, file = "fits/b05.15b.rda")
-# rm(b5.15b)
-load("fits/b05.15b.rda")
-```
-
-```{r, eval = F}
+```{r b5.15b}
 b5.15b <- 
   brm(data = d, 
       family = gaussian,
@@ -1642,7 +1547,8 @@ b5.15b <-
       prior = c(prior(normal(178, 100), class = b),
                 prior(cauchy(0, 2), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.15b")
 ```
 
 ```{r}
@@ -1705,13 +1611,7 @@ d <-
 
 Now we'll fit the model with three of the four dummies. In this model, `clade_ape` is the reference category captured by the intercept.
 
-```{r b5.16, echo = F}
-# save(b5.16, file = "fits/b05.16.rda")
-# rm(b5.16)
-load("fits/b05.16.rda")
-```
-
-```{r, eval = F}
+```{r b5.16}
 b5.16 <- 
   brm(data = d, 
       family = gaussian,
@@ -1720,7 +1620,8 @@ b5.16 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.16")
 ```
 
 ```{r}
@@ -1784,9 +1685,9 @@ fitted(b5.16,
   labs(x = "kcal.per.g",
        y = NULL) +
   theme_bw() +
-  theme(panel.grid = element_blank(),
+  theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
-        axis.text.y = element_text(hjust = 0))
+        panel.grid = element_blank())
 ```
 
 And there are multiple ways to compute summary statistics for the difference between `NWM` and `OWM`, too.
@@ -1815,13 +1716,7 @@ The corresponding `formula` argument within `brm()` would be `kcal.per.g ~ 1 + c
 
 "Another way to conceptualize categorical variables is to construct a vector of intercept parameters, one parameter for each category" (p. 158). Using the code below, there's no need to transform `d$clade` into `d$clade_id`. The advantage of this approach is the indices in the model summary are more descriptive than `a[1]` through `a[4]`.
 
-```{r b5.16_alt, echo = F}
-# save(b5.16_alt, file = "fits/b05.16_alt.rda")
-# rm(b5.16_alt)
-load("fits/b05.16_alt.rda")
-```
-
-```{r, eval = F}
+```{r b5.16_alt}
 b5.16_alt <- 
   brm(data = d, 
       family = gaussian,
@@ -1829,7 +1724,8 @@ b5.16_alt <-
       prior = c(prior(normal(.6, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      seed = 5)
+      seed = 5,
+      file = "fits/b05.16_alt")
 ```
 
 ```{r}
@@ -1865,3 +1761,4 @@ ggplot2::theme_set(ggplot2::theme_grey())
 
 bayesplot::color_scheme_set("blue")
 ```
+
