@@ -132,9 +132,9 @@ Behold the probability density for the generalized normal distribution:
 
 $$\text{Pr} (y | \mu, \alpha, \beta) = \frac{\beta}{2 \alpha \Gamma \bigg (\frac{1}{\beta} \bigg )} e ^ {- \bigg (\frac{|y - \mu|}{\alpha} \bigg ) ^ {\beta}}$$
 
-In this formulation, $\alpha =$ the scale, $\beta =$ the shape, $\mu =$ the location, and $\Gamma =$ the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you read closely in the text, you'll discover that the densities in the right panel of Figure 9.2 were all created with the constraint $\sigma^2 = 1$. But $\sigma^2 \neq \alpha$ and there's no $\sigma$ in the equations in the text. However, it appears the variance for the generalized normal distribution follows the form:
+In this formulation, $\alpha =$ the scale, $\beta =$ the shape, $\mu =$ the location, and $\Gamma =$ the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you read closely in the text, you'll discover that the densities in the right panel of Figure 9.2 were all created with the constraint $\sigma^2 = 1$. But $\sigma^2 \neq \alpha$ and there's no $\sigma$ in the equations in the text. However, it appears the variance for the generalized normal distribution follows the form
 
-$$\sigma^2 = \frac{\alpha^2 \Gamma (3/\beta)}{\Gamma (1/\beta)}$$
+$$\sigma^2 = \frac{\alpha^2 \Gamma (3/\beta)}{\Gamma (1/\beta)}.$$
 
 So if you do the algebra, you'll see that you can compute $\alpha$ for a given $\sigma^2$ and $\beta$ like so:
 
@@ -187,7 +187,7 @@ tibble(mu   = 0,
   ggplot(aes(x = beta, y = entropy)) +
   geom_vline(xintercept = 2, color = "white") +
   geom_line(size = 2, color = ghibli_palette("MarnieMedium2")[6]) +
-  xlab(expression(paste(beta, " (i.e., shape)"))) +
+  xlab(expression(beta*" (i.e., shape)")) +
   coord_cartesian(ylim = c(1.34, 1.42)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("MarnieMedium2")[7]))
@@ -480,10 +480,10 @@ The binomial model follows the basic form
 
 \begin{align*}
 y_i    & \sim \text{Binomial} (n, p_i) \\
-f(p_i) & = \alpha + \beta x_i
+f(p_i) & = \alpha + \beta x_i,
 \end{align*}
 
-The $f()$ portion of the second line represents the link function. We need the link function because, though the shape of the Binomial distribution is determined by two parameters--$n$ and $p$--, neither is equivalent to the Gaussian mean $\mu$. The mean outcome, rather, is $np$--a function of both. The link function also ensures the model doesn't make probability predictions outside of the boundary $[0, 1]$.
+where the $f()$ portion of the second line represents the link function. We need the link function because, though the shape of the Binomial distribution is determined by two parameters--$n$ and $p$--, neither is equivalent to the Gaussian mean $\mu$. The mean outcome, rather, is $np$--a function of both. The link function also ensures the model doesn't make probability predictions outside of the boundary $[0, 1]$.
 
 Let's get more general.
 
@@ -581,7 +581,7 @@ These models generally follow the form
 
 \begin{align*}
 y_i         & \sim \text{Some distribution} (\theta_i, \phi) \\
-f(\theta_i) & = \alpha + \beta x_i
+f(\theta_i) & = \alpha + \beta x_i,
 \end{align*}
 
 where $\theta_i$ is a parameter of central interest (e.g., the probability of 1 in a Binomial distribution) and $\phi$ is a placeholder for any other parameters necessary for the likelihood but not of primary substantive interest (e.g., $\sigma$ in work-a-day Gaussian models). And as stated earlier, $f()$ is the link function.
@@ -603,9 +603,9 @@ Speaking of,
 >
 > $$\text{log} \frac{p_i}{1 - p_i} = \alpha + \beta x_i$$
 
-If we do the final algebraic manipulation on page 285, we can solve for $p_i$ in terms of the linear model:
+If we do the final algebraic manipulation on page 285, we can solve for $p_i$ in terms of the linear model
 
-$$p_i = \frac{\exp (\alpha + \beta x_i)}{1 + \exp (\alpha + \beta x_i)}$$
+$$p_i = \frac{\exp (\alpha + \beta x_i)}{1 + \exp (\alpha + \beta x_i)}.$$
 
 As we'll see later, we will make great use of this formula via the `brms::inv_logit_scaled()` when making sense of logistic regression models. Now we have that last formula in hand, we can make the data necessary for Figure 9.7.
 
@@ -759,7 +759,7 @@ d %>%
   summarise(sd = sd(y) %>% round(digits = 1)) 
 ```
 
-For more on models like this, check out Christakis's [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), my translation for which lives [here](https://bookdown.org/ajkurz/DBDA_recoded/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters [12][Multilevel Models] and [13][Adventures in Covariance]), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
+For more on models like this, check out Christakis's [*2014: What scientific idea is ready for retirement?*](https://www.edge.org/response-detail/25437) or [*The "average" treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright*](http://humannaturelab.net/publications/the-average-treatment-effect-a-construct-ripe-for-retirement-a-commentary-on-deaton-and-cartwright). Kruschke covered modeling $\sigma$ a bit in his [*Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), my translation for which lives [here](https://bookdown.org/content/3686/). Finally, this is foreshadowing a bit because it requires the multilevel model (see Chapters [12][Multilevel Models] and [13][Adventures in Covariance]), but you might also check out the preprint by Williams, Liu, Martin, and Rast, [*Bayesian Multivariate Mixed-Effects Location Scale Modeling of Longitudinal Relations among Affective Traits, States, and Physical Activity*](https://psyarxiv.com/4kfjp/).
 
 But getting back to the text,
 
