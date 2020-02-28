@@ -85,7 +85,7 @@ library(dutchmasters)
 dutchmasters$pearl_earring
 ```
 
-We'll name our custom theme `theme_pearl_earring()`. I cobbled together this approach to defining a custom ggplot2 theme with help from [Chapter 16 of Wichkam's *ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/programming.html); [Chapter 4.6 of Peng, Kross, and Anderson's *Mastering Software Development in R*](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html); LEA WANIEK Lea Waniek's blog post, [*Custom themes in ggplot2*](https://www.statworx.com/de/blog/custom-themes-in-ggplot2/), and Joey Stanley's blog post [*Custom Themes in ggplot2*](https://joeystanley.com/blog/custom-themes-in-ggplot2).
+We'll name our custom theme `theme_pearl_earring()`. I cobbled together this approach to defining a custom ggplot2 theme with help from [Chapter 16 of Wichkam's *ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/programming.html); [Chapter 4.6 of Peng, Kross, and Anderson's *Mastering Software Development in R*](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html); Lea Waniek's blog post, [*Custom themes in ggplot2*](https://www.statworx.com/de/blog/custom-themes-in-ggplot2/), and Joey Stanley's blog post [*Custom Themes in ggplot2*](https://joeystanley.com/blog/custom-themes-in-ggplot2).
 
 ```{r}
 theme_pearl_earring <- function(light_color = "#E8DCCF", 
@@ -186,12 +186,12 @@ The statistical formula for our varying-slopes model follows the form
 \sigma        & \sim \text{HalfCauchy} (0, 1) \\
 \sigma_\alpha & \sim \text{HalfCauchy} (0, 1) \\
 \sigma_\beta  & \sim \text{HalfCauchy} (0, 1) \\
-\mathbf R     & \sim \text{LKJcorr} (2)
+\mathbf R     & \sim \text{LKJcorr} (2),
 \end{align*}
 
-Of the notable new parts, $\mathbf S$ is the covariance matrix and $\mathbf R$ is the corresponding correlation matrix, which we might more fully express as
+where $\mathbf S$ is the covariance matrix and $\mathbf R$ is the corresponding correlation matrix, which we might more fully express as
 
-$$\begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}$$
+$$\begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}.$$
 
 And according to our prior, $\mathbf R$ is distributed as $\text{LKJcorr} (2)$. We'll use `rethinking::rlkjcorr()` to get a better sense of what that even is.
 
@@ -234,6 +234,30 @@ ggplot(data = r_1, aes(x = V2)) +
   xlab("correlation") +
   theme_pearl_earring()
 ```
+
+As it turns out, the shape of the LKJ is sensitive to both $\eta$ and the $K$ dimensions of the correlation matrix. Our simulations only considered the shapes for when $K = 2$. We can use a combination of the `parse_dist()` and `stat_dist_halfeyeh()` functions from the tidybayes package to derive analytic solutions for different combinations of $\eta$ and $K$.
+
+```{r, fig.width = 8, fig.height = 4}
+library(tidybayes)
+
+crossing(k   = 2:5,
+         eta = 1:4) %>% 
+  mutate(prior = str_c("lkjcorr_marginal(", k, ", ", eta, ")"),
+         strip = str_c("K==", k)) %>% 
+  parse_dist(prior) %>%
+  
+  ggplot(aes(y = eta, dist = .dist, args = .args)) +
+  stat_dist_halfeyeh(.width = c(.5, .95),
+                     color = "#FCF9F0", fill = "#A65141") +
+  scale_x_continuous(expression(rho), limits = c(-1, 1),
+                     breaks = c(-1, -.5, 0, .5, 1), labels = c("-1", "-.5", "0", ".5", "1")) +
+  scale_y_continuous(expression(eta), breaks = 1:4) +
+  ggtitle(expression("Marginal correlation for the LKJ prior relative to K and "*eta)) +
+  theme_pearl_earring() +
+  facet_wrap(~strip, labeller = label_parsed, ncol = 4)
+```
+
+To learn more about this method, check out Kay's [*Marginal distribution of a single correlation from an LKJ distribution*](http://mjskay.github.io/tidybayes/reference/lkjcorr_marginal.html).
 
 Okay, let's get ready to model and switch out rethinking for brms.
 
@@ -455,10 +479,10 @@ The statistical formula for our varying-intercepts logistic regression model fol
 \alpha_\text{dept_id} & \sim \text{Normal} (\alpha, \sigma) \\
 \alpha                 & \sim \text{Normal} (0, 10) \\
 \beta                  & \sim \text{Normal} (0, 1) \\
-\sigma                 & \sim \text{HalfCauchy} (0, 2) \\
+\sigma                 & \sim \text{HalfCauchy} (0, 2). \\
 \end{align*}
 
-Since there’s only one left-hand term in our `(1 | dept_id)` code, there’s only one random effect.
+Since there's only one left-hand term in our `(1 | dept_id)` code, there's only one random effect.
 
 ```{r b13.2}
 b13.2 <- 
@@ -561,7 +585,7 @@ Now we're ready to allow our `male` dummy to varies, too, the statistical model 
 \alpha                        & \sim \text{Normal} (0, 10) \\
 \beta                         & \sim \text{Normal} (0, 1) \\
 (\sigma_\alpha, \sigma_\beta) & \sim \text{HalfCauchy} (0, 2) \\
-\mathbf R                     & \sim \text{LKJcorr} (2)
+\mathbf R                     & \sim \text{LKJcorr} (2).
 \end{align*}
 
 Fit the model.
@@ -660,9 +684,7 @@ Just like in the text, our `male` slopes are much less dispersed than our interc
 Figure 13.6.a depicts the correlation between the full UCB model's varying intercepts and slopes.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
-library(tidybayes)
-
-post <- posterior_samples(b13.3)
+lost <- posterior_samples(b13.3)
 
 post %>% 
   ggplot(aes(x = cor_dept_id__Intercept__male, y = 0)) +
@@ -826,10 +848,10 @@ My maths aren't the best. But if I'm following along correctly, here's a fuller 
 (\sigma_{\alpha_\text{actor}}, \sigma_{\beta_{1_\text{actor}}}, \sigma_{\beta_{2_\text{actor}}}) & \sim \text{HalfCauchy} (0, 2) \\
 (\sigma_{\alpha_\text{block_id}}, \sigma_{\beta_{1_\text{block_id}}}, \sigma_{\beta_{2_\text{block_id}}}) & \sim \text{HalfCauchy} (0, 2) \\
 \mathbf R_\text{actor}     & \sim \text{LKJcorr} (4) \\
-\mathbf R_\text{block_id}  & \sim \text{LKJcorr} (4)
+\mathbf R_\text{block_id}  & \sim \text{LKJcorr} (4),
 \end{align*}
 
-And now each $\mathbf R$ is a $3 \times 3$ correlation matrix.
+where each $\mathbf R$ is a $3 \times 3$ correlation matrix.
 
 Let's fit this beast.
 
@@ -1066,9 +1088,9 @@ posterior_samples(b13.7) %>%
 
 Now we're in the ballpark. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`.
 
-Now look at the denominator of the inner part of Bürkner equation, $2 lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect: 
+Now look at the denominator of the inner part of Bürkner equation, $2 lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly--and that may well be a big if--, we might expect
 
-$$\rho^2 = 1/(2 \cdot lscale^2)$$
+$$\rho^2 = 1/(2 \cdot lscale^2).$$
 
 But that doesn't appear to be the case. *Sigh*. 
 
