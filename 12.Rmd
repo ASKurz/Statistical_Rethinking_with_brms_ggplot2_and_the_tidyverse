@@ -128,7 +128,7 @@ Even though it seems like we can derive important insights from how the `tank`-l
 \text{logit} (p_i)   & = \alpha_{\text{tank}_i} \\
 \alpha_{\text{tank}} & \sim \text{Normal} (\alpha, \sigma) \\
 \alpha               & \sim \text{Normal} (0, 1) \\
-\sigma               & \sim \text{HalfCauchy} (0, 1)
+\sigma               & \sim \text{HalfCauchy} (0, 1).
 \end{align*}
 
 > The Gaussian distribution with mean $\alpha$ and standard deviation $\sigma$ is the prior for each tank's intercept. But that prior itself has priors for $\alpha$ and $\sigma$. So there are two *levels* in the model, each resembling a simpler model. (p. 359, *emphasis* in the original)
@@ -286,7 +286,7 @@ First, we took one random draw from a normal distribution with a mean of the fir
 
 Yep, you can use the exponential distribution for your priors in brms, too. Here it is for model `b12.2`.
 
-```{r b12.2b}
+```{r b12.2b, message = F}
 b12.2b <- 
   update(b12.2,
          prior = c(prior(normal(0, 1), class = Intercept),
@@ -600,7 +600,7 @@ The initial multilevel update from model `b10.4` from [Chapter 10][Logistic regr
 \alpha                & \sim \text{Normal} (0, 10) \\
 \beta_1               & \sim \text{Normal} (0, 10) \\
 \beta_2               & \sim \text{Normal} (0, 10) \\
-\sigma_{\text{actor}} & \sim \text{HalfCauchy} (0, 1)
+\sigma_{\text{actor}} & \sim \text{HalfCauchy} (0, 1).
 \end{align*}
 
 > Notice that $\alpha$ is inside the linear model, not inside the Gaussian prior for $\alpha_\text{actor}$. This is mathematically equivalent to what [we] did with the tadpoles earlier in the chapter. You can always take the mean out of a Gaussian distribution and treat that distribution as a constant plus a Gaussian distribution centered on zero.
@@ -746,12 +746,12 @@ The full cross-classified statistical model follows the form
 \beta_1               & \sim \text{Normal} (0, 10) \\
 \beta_2               & \sim \text{Normal} (0, 10) \\
 \sigma_{\text{actor}} & \sim \text{HalfCauchy} (0, 1) \\
-\sigma_{\text{block}} & \sim \text{HalfCauchy} (0, 1)
+\sigma_{\text{block}} & \sim \text{HalfCauchy} (0, 1).
 \end{align*}
 
 Our brms model with varying intercepts for both `actor` and `block` now employs the `... (1 | actor) + (1 | block)` syntax.
 
-```{r b12.5}
+```{r b12.5, message = F}
 b12.5 <- 
   update(b12.4,
          newdata = d,
@@ -1031,7 +1031,7 @@ p1
 
 If we want to depict the variability across the chimps, we need to include `sd_actor__Intercept` into the calculations. In the first block of code, below, we simulate a bundle of new intercepts defined by
 
-$$\alpha_\text{actor} \sim \operatorname{Normal} (0, \sigma_\text{actor})$$
+$$\alpha_\text{actor} \sim \operatorname{Normal} (0, \sigma_\text{actor}).$$
 
 ```{r}
 # the random effects
@@ -1356,7 +1356,7 @@ In addition to the model intercept and random effects for the individual chimps 
 \text{logit} (p_i)    & = \alpha + \alpha_{\text{actor}_i}\\
 \alpha                & \sim \operatorname{Normal} (0, 10) \\
 \alpha_{\text{actor}} & \sim \operatorname{Normal} (0, \sigma_{\text{actor}}) \\
-\sigma_{\text{actor}} & \sim \operatorname{HalfCauchy} (0, 1)
+\sigma_{\text{actor}} & \sim \operatorname{HalfCauchy} (0, 1).
 \end{align*}
 
 Before we fit the model, you might recall that (a) we've already removed the `chimpanzees` data after saving the data as `d` and (b) we subsequently reassigned the `Kline` data to `d`. Instead of reloading the rethinking package to retrieve the `chimpanzees` data, we might also acknowledge that the data has also been saved within our `b12.4` fit object. [It's easy to forget such things.]
@@ -1409,7 +1409,7 @@ It's the same data we used from the `b12.4` model, but with the addition of the 
 \alpha_{\text{actor}} & \sim \operatorname{Normal} (0, \sigma_{\text{actor}}) \\
 \alpha_{\text{block}} & \sim \operatorname{Normal} (0, \sigma_{\text{block}}) \\
 \sigma_{\text{actor}} & \sim \operatorname{HalfCauchy} (0, 1) \\
-\sigma_{\text{block}} & \sim \operatorname{HalfCauchy} (0, 1)
+\sigma_{\text{block}} & \sim \operatorname{HalfCauchy} (0, 1).
 \end{align*}
 
 Fit the model.
@@ -1594,7 +1594,7 @@ One of the nicest things about the `coef()` method is how is scales well. This c
 $$\operatorname{Normal}(10, 1)$$
 and
 
-$$10 + \operatorname{Normal}(0, 1)$$
+$$10 + \operatorname{Normal}(0, 1).$$
 
 Conversely, it can be a little abstract. Let's keep expanding our options. 
 
@@ -1686,7 +1686,7 @@ Let's learn one more option.
 
 ### `tidybayes::spread_draws()`
 
-Up till this point, we've really only used the tidybayes package for plotting (e.g., with `geom_halfeyeh()`) and summarizing (e.g., with `median_qi()`). But tidybayes is more general; it offers a handful of convenience functions for wrangling posterior draws from a tidyverse perspective. One such function is `spread_draws()`, which you can learn all about in Matthew Kay's vignette [*Extracting and visualizing tidy draws from brms models*](https://mjskay.github.io/tidybayes/articles/tidy-brms.html). Let's take a look at how we'll be using it.
+Up till this point, we've really only used the tidybayes package for plotting (e.g., with `geom_halfeyeh()`) and summarizing (e.g., with `median_qi()`). But tidybayes is more general; it offers a handful of convenience functions for wrangling posterior draws from a tidyverse perspective. One such function is `spread_draws()`, which you can learn all about in Matthew Kay's vignette, [*Extracting and visualizing tidy draws from brms models*](https://mjskay.github.io/tidybayes/articles/tidy-brms.html). Let's take a look at how we'll be using it.
 
 ```{r, warning = F, message = F}
 b12.7 %>%
