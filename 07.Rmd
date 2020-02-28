@@ -17,7 +17,7 @@ options(width = 100)
 
 ## Building an interaction.
 
-"Africa is special" (p. 211). Let's load the `rugged` data to see one of the reasons why ([Nunn & Puga, 2011](https://scholar.harvard.edu/files/nunn/files/ruggedness.pdf)).
+"Africa is special" (p. 211). Let's load the `rugged` data ([Nunn & Puga, 2011](https://scholar.harvard.edu/files/nunn/files/ruggedness.pdf)) to see one of the reasons why.
 
 ```{r, message = F}
 library(rethinking)
@@ -233,7 +233,7 @@ Yes, it sure does. But before we fit, here's the equation:
 \gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i \\
 \alpha & \sim \text{Normal}(8, 100) \\
 \beta_1, \beta_2, \text{ and } \beta_3 & \sim \text{Normal}(0, 1) \\
-\sigma & \sim \text{Uniform}(0, 10)
+\sigma & \sim \text{Uniform}(0, 10).
 \end{align*}
 
 Because $\gamma_i$ is just a placeholder for a second linear model, we can just substitute that second linear model in for $\gamma_i$. If we did, here's what the composite linear model would look like:
@@ -283,7 +283,7 @@ The conventional equation for the interaction model might look like:
 
 \begin{align*}
 \text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
-\mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i
+\mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i.
 \end{align*}
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
@@ -301,11 +301,11 @@ From here on, I will default to this style of syntax for interactions.
 
 Since this is the same model, it yields the same information criteria estimates. Here we'll confirm that with the LOO.
 
-```{r ics_b7.5_and_b7.5b, cache = T}
+```{r, message = F}
 b7.5b <- add_criterion(b7.5b, c("loo", "waic"))
 
-b7.5$loo
-b7.5b$loo
+b7.5$criteria$loo
+b7.5b$criteria$loo
 ```
 
 When compared, they have the exact same LOO weights, too.
@@ -457,25 +457,25 @@ post %>%
 
 ### Buridan's interaction.
 
-Recall the original equation.
+Recall the original equation,
 
 \begin{align*}
 \text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
 \mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i
+\gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i.
 \end{align*}
 
-Next McElreath replaced $\gamma_i$ with the expression for $\mu_i$.
+Next McElreath replaced $\gamma_i$ with the expression for $\mu_i$:
 
 \begin{align*}
 \mu_i & = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \times \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
-      & = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i
+      & = \alpha + \beta_1 \text{rugged}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i + \beta_2 \text{cont_africa}_i.
 \end{align*}
 
-And new we'll factor together the terms containing $\text{cont_africa}_i$.
+And now we'll factor together the terms containing $\text{cont_africa}_i$:
 
 $$
-\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont_africa}_i
+\mu_i = \alpha + \beta_1 \text{rugged}_i + \underbrace{(\beta_2 + \beta_3 \text{rugged}_i)}_G \times \text{cont_africa}_i.
 $$
 
 And just as in the text, our $G$ term looks a lot like the original $\gamma_i$ term.
@@ -541,7 +541,7 @@ str(d)
 
 ### The un-centered models.
 
-The likelihoods for the next two models are
+The equations for the next two models are
 
 \begin{align*}
 \text{blooms}_i & \sim \text{Normal} (\mu_i, \sigma) \\
@@ -561,7 +561,7 @@ and
 \beta_1 & \sim \text{Normal} (0, 100) \\
 \beta_2 & \sim \text{Normal} (0, 100) \\
 \beta_3 & \sim \text{Normal} (0, 100) \\
-\sigma  & \sim \text{Uniform} (0, 100)
+\sigma  & \sim \text{Uniform} (0, 100).
 \end{align*}
 
 Load brms.
