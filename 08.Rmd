@@ -98,11 +98,11 @@ tibble(week   = 1:1e5,
 
 The Gibbs sampler ([Geman & Geman, 1984](https://ieeexplore.ieee.org/abstract/document/4767596); [Casella & George, 1992](https://www.researchgate.net/publication/224839754_Explaning_the_Gibbs_Sampler/link/55b1085a08ae092e964fc20d/download)) uses *conjugate* pairs (i.e., pairs of priors and likelihoods that have analytic solutions for the posterior of an individual parameter) to efficiently sample from the posterior. Gibbs was the workhorse algorithm during the rise of Bayesian computation in the 1990s. However, it's limited in that (a) you might not want to use conjugate priors and (b) it can be quite inefficient with complex hierarchical models, which we'll be fitting soon. 
 
-We will not be using the Gibbs sampler in this project. It's available for use in R. For an extensive applied introduction, check out [Kruschke's (2014) text](https://sites.google.com/site/doingbayesiandataanalysis/).
+We will not be using the Gibbs sampler in this project. It's available for use in R. For an extensive applied introduction, check out [Kruschke's (2015) text](https://sites.google.com/site/doingbayesiandataanalysis/).
 
 ### Hamiltonian Monte Carlo.
 
-Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath’s [lecture on the topic from January 2019](https://www.youtube.com/watch?v=v-j0UmWf3Us).
+Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath's [lecture on the topic from January 2019](https://www.youtube.com/watch?v=v-j0UmWf3Us) or one of these lectures ([here](https://www.youtube.com/watch?v=jUSZboSq1zg), [here](https://www.youtube.com/watch?v=_fnDz2Bz3h8), or [here](https://www.youtube.com/watch?v=pHsuIaPbNbY)) by Michael Betancourt.
 
 ## Easy HMC: ~~map2stan~~ `brm()`
 
@@ -482,7 +482,7 @@ Let's peek at the summary.
 print(b8.2)
 ```
 
-Holy smokes, those parameters are a mess! Plus we got a nasty warning message, too. Watch our reasonable priors save the day.
+Holy smokes, those parameters are a mess! Plus we got nasty warning messages, too. Watch our reasonable priors save the day.
 
 ```{r b8.3}
 b8.3 <-
