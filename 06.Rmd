@@ -28,13 +28,13 @@ Toward that end, we will employ
 >
 > ...Whatever you thing about null hypothesis significance testing in general, using it to select among structurally different models is a mistake--$p$-values are not designed to help you navigate between undercutting and overfitting. (p. 167, **emphasis** in the original)
 
-McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in [Kruschke's (2014) text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [project translating it to brms and the tidyverse](https://bookdown.org/ajkurz/DBDA_recoded/).
+McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in [Kruschke's (2015) text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [project translating it to brms and the tidyverse](https://bookdown.org/content/3686/). The great [Frank Harrell](https://twitter.com/f2harrell) has complied [*A Litany of Problems With p-values*](https://www.fharrell.com/post/pval-litany/), which you might also find of use.
 
 ## The problem with parameters
 
 The $R^2$ is a popular way to measure how well you can retrodict the data. It traditionally follows the form
 
-$$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} = 1 - \frac{\text{var(residuals)}}{\text{var(outcome)}}$$
+$$R^2 = \frac{\text{var(outcome)} - \text{var(residuals)}}{\text{var(outcome)}} = 1 - \frac{\text{var(residuals)}}{\text{var(outcome)}}.$$
 
 By $\text{var()}$, of course, we meant variance (i.e., the `var()` function in R).
 
@@ -479,7 +479,7 @@ weatherperson %>%
 
 Within the context of information theory, *information* is "the reduction of uncertainty derived from learning an outcome" (p. 177). *Information entropy* is a way of measuring that uncertainty in a way that is (a) continuous, (b) increases as the number of possible events increases, and (c) is additive. The formula for information entropy is:
 
-$$H(p) = - \text E \log (p_i) = - \sum_{i = 1}^n p_i \log (p_i)$$
+$$H(p) = - \text E \log (p_i) = - \sum_{i = 1}^n p_i \log (p_i).$$
 
 McElreath put it in words as "the uncertainty contained in a probability distribution is the average log-probability of the event" (p. 178). We'll compute the information entropy for weather at the first unnamed location, which we'll call `McElreath's house`, and `Abu Dhabi` at once.
 
@@ -510,7 +510,7 @@ p <- c(.7, .15, .15)
 
 The formula for K-L divergence is
 
-$$D_\text{KL} (p, q) = \sum_i p_i \big ( \log (p_i) - \log (q_i) \big ) = \sum_i p_i \log \bigg ( \frac{p_i}{q_i} \bigg )$$
+$$D_\text{KL} (p, q) = \sum_i p_i \big ( \log (p_i) - \log (q_i) \big ) = \sum_i p_i \log \bigg ( \frac{p_i}{q_i} \bigg ),$$
 
 which, in plainer language, is what McElreath described as "the average difference in log probability between the target ($p$) and model ($q$)" (p. 179).
 
@@ -1078,7 +1078,7 @@ ll <-
 
 Now we compute the "Bayesian deviance" (i.e., $\text{lppd}$), which follows the form
 
-$$\text{lppd} = \sum_{i = 1}^N \log \text{Pr} (y_i)$$
+$$\text{lppd} = \sum_{i = 1}^N \log \text{Pr} (y_i).$$
 
 We'll do it in two steps, saving the $\log \text{Pr} (y_i)$ and the $\text{lppd}$ as two objects.
 
@@ -1360,7 +1360,7 @@ b6.11$criteria$waic
 
 *Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output, which can be convenient. But second, it sets you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
 
-```{r w_b6.12_through_b6.14}
+```{r w_b6.12_through_b6.14, message = F}
 # compute and save the WAIC information for the next three models
 b6.12 <- add_criterion(b6.12, "waic")
 b6.13 <- add_criterion(b6.13, "waic")
