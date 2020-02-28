@@ -25,7 +25,7 @@ We'll approach the first two in this chapter. Interactions are reserved for [Cha
 
 "Despite its central importance, there is no unified approach to causal inference yet in the sciences or in statistics" (p. 120). 
 
-McElreath didn't cover this much in this edition of the text. However, it appears his second edition will cover it more extensively. He announced as much in [this blog post](https://elevanth.org/blog/2018/07/14/statistical-rethinking-edition-2-eta-2020/) and experimented in mixing it in with the material in during his [Statistical Rethinking Winter 2019](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) lecture series. 
+McElreath didn't cover this much in this edition of the text. However, it appears his second edition will cover it more extensively. He announced as much in [this blog post](https://elevanth.org/blog/2018/07/14/statistical-rethinking-edition-2-eta-2020/) and experimented in mixing it in with the material in during his [Statistical Rethinking Winter 2019](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) lecture series. To dip in, you might check out the recent blog post by Finn Lattimore and David Rohde, [*Causal Inference with Bayes Rule*](https://gradientinstitute.org/blog/6/).
 
 ## Spurious associations
 
@@ -235,7 +235,7 @@ Now we'll get both predictors in there with our very first multivariable model. 
 \alpha  & \sim \operatorname{Normal}(10, 10) \\
 \beta_1 & \sim \operatorname{Normal}(0, 1) \\
 \beta_2 & \sim \operatorname{Normal}(0, 1) \\
-\sigma  & \sim \operatorname{Uniform}(0, 10)
+\sigma  & \sim \operatorname{Uniform}(0, 10).
 \end{align*}
 
 > It might help to read the $+$ symbols as "or" and then say: *A State’s divorce rate can be a function of its marriage rate **or** its median age at marriage*. The "or" indicates independent associations, which may be purely statistical or rather causal. (p. 124, *emphasis* in the original)
@@ -318,9 +318,9 @@ The substantive interpretation of all those coefficient plots is: "*Once we know
 
 McElreath's prose is delightfully deflationary. "There is a huge literature detailing a variety of plotting techniques that all attempt to help one understand multiple linear regression. None of these techniques is suitable for all jobs, and most do not generalize beyond linear regression" (p. 126). Now you're inspired, let's learn three:
 
-* Predictor residual plots
-* Counterfactual plots
-* Posterior prediction plots
+* Predictor residual plots,
+* Counterfactual plots, and
+* Posterior prediction plots.
 
 #### Predictor residual plots.
 
@@ -535,7 +535,7 @@ fitted(b5.3, newdata = nd) %>%
 
 #### Posterior prediction plots.
 
-"In addition to understanding the estimates, it's important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
+"In addition to understanding the estimates, it's important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post, [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
 
 In this version of Figure 5.6.a, the thin lines are the 95% intervals and the thicker lines are $\pm$ the posterior $SD$, both of which are returned when you use `fitted()`.
 
@@ -854,7 +854,7 @@ fitted(b5.6,
   theme(panel.grid = element_blank())
 ```
 
-Finally, we're ready to fit with both predictors included in the "joint model." Here's the statistical formula
+Finally, we're ready to fit with both predictors included in the "joint model." Here's the statistical formula:
 
 \begin{align*}
 \text{kcal.per.g}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
@@ -862,7 +862,7 @@ Finally, we're ready to fit with both predictors included in the "joint model." 
 \alpha  & \sim \operatorname{Normal}(0, 100) \\
 \beta_1 & \sim \operatorname{Normal}(0, 1) \\
 \beta_2 & \sim \operatorname{Normal}(0, 1) \\
-\sigma  & \sim \operatorname{Uniform}(0, 1)
+\sigma  & \sim \operatorname{Uniform}(0, 1).
 \end{align*}
 
 Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
@@ -1122,7 +1122,7 @@ On page 165, McElreath clarified that "from the computer's perspective, this mod
 
 \begin{align*}
 y_i   & \sim \operatorname{Normal}(\mu_i, \sigma) \\
-\mu_i & = \alpha + (\beta_1 + \beta_2) x_i
+\mu_i & = \alpha + (\beta_1 + \beta_2) x_i.
 \end{align*}
 
 Accordingly, here's the posterior of the sum of the two regression coefficients, Figure 6.2.b. We'll use `tidybayes::geom_halfeyeh()` to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.
@@ -1526,7 +1526,7 @@ The reparameterized model follows the form
 
 \begin{align*}
 \text{height}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
-\mu_i & = \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i
+\mu_i & = \alpha_\text{female} (1 - \text{male}_i) + \alpha_\text{male} \text{male}_i.
 \end{align*}
 
 So then a `female` dummy would satisfy the condition $\text{female}_i = (1 - \text{male}_i)$. Let's make that dummy.
@@ -1707,7 +1707,7 @@ post %>%
 If we wanted to fit the model including `perc.fat` as an additional predictor, the basic statistical formula would be
 
 $$
-\mu_i = \alpha + \beta_\text{clade_nwm} \text{clade_nwm}_i + \beta_\text{clade_owm} \text{clade_owm}_i + \beta_\text{clade_s} \text{clade_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i
+\mu_i = \alpha + \beta_\text{clade_nwm} \text{clade_nwm}_i + \beta_\text{clade_owm} \text{clade_owm}_i + \beta_\text{clade_s} \text{clade_s}_i + \beta_\text{perc.fat} \text{perc.fat}_i.
 $$
 
 The corresponding `formula` argument within `brm()` would be `kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s + perc.fat`.
