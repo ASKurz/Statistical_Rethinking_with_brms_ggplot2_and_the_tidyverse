@@ -19,13 +19,13 @@ options(width = 110)
 
 In this chapter, we focus on the two most common types of count models: the binomial and the Poisson.
 
-Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my blog [*Robust Linear Regression with Student’s $t$-Distribution*](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/).
+Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my blog post, [*Robust Linear Regression with Student's $t$-Distribution*](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/).
 
 ## Binomial regression
 
 The basic binomial model follows the form
 
-$$y \sim \text{Binomial} (n, p)$$
+$$y \sim \text{Binomial} (n, p),$$
 
 where $y$ is some count variable, $n$ is the number of trials, and $p$ it the probability a given trial was a 1, which is sometimes termed a *success*. When $n = 1$, then $y$ is a vector of 0s and 1s. Presuming the logit link, which we just covered in [Chapter 9][Linking linear models to distributions.], models of this type are commonly termed logistic regression. When $n > 1$, and still presuming the logit link, we might call our model an aggregated logistic regression model, or more generally an aggregated binomial regression model.
 
@@ -52,7 +52,7 @@ We start with the simple intercept-only logistic regression model, which follows
 \begin{align*}
 \text{pulled_left}_i & \sim \text{Binomial} (1, p_i) \\
 \text{logit} (p_i)    & = \alpha \\
-\alpha                & \sim \text{Normal} (0, 10)
+\alpha                & \sim \text{Normal} (0, 10).
 \end{align*}
 
 In the `brm()` `formula` syntax, including a `|` bar on the left side of a formula indicates we have extra supplementary information about our criterion. In this case, that information is that each `pulled_left` value corresponds to a single trial (i.e., `trials(1)`), which itself corresponds to the $n = 1$ portion of the statistical formula, above.
@@ -274,7 +274,7 @@ In equations, the next model follows the form
 \text{logit} (p_i)    & = \alpha_{\text{actor}} + (\beta_1 + \beta_2 \text{condition}_i) \text{prosoc_left}_i \\
 \alpha_{\text{actor}} & \sim \text{Normal} (0, 10) \\
 \beta_1               & \sim \text{Normal} (0, 10) \\
-\beta_2               & \sim \text{Normal} (0, 10)
+\beta_2               & \sim \text{Normal} (0, 10).
 \end{align*}
 
 Enclosing the `actor` variable within `factor()` will produce the indexing we need to get `actor`-specific intercepts. Also notice we're using the `0 + factor(actor)` part of the model `formula` to suppress the brms default intercept. As such, the priors for all parameters in the model will be of `class = b`. And since we’re using the same Gaussian prior for each, we only need one line for the `prior` argument.
@@ -497,7 +497,7 @@ The univariable logistic model with `male` as the sole predictor of `admit` foll
 n_{\text{admit}_i} & \sim \text{Binomial} (n_i, p_i) \\
 \text{logit} (p_i) & = \alpha + \beta \text{male}_i \\
 \alpha             & \sim \text{Normal} (0, 10) \\
-\beta              & \sim \text{Normal} (0, 10)
+\beta              & \sim \text{Normal} (0, 10).
 \end{align*}
 
 The second model omits the `male` predictor.
@@ -704,7 +704,7 @@ As alluded to in all that LOO/`pareto_k` talk, above, this is not a great fit. S
 n_{\text{admit}_i}   & \sim \text{Binomial} (n_i, p_i) \\
 \text{logit} (p_i)   & = \alpha_{\text{dept}_i} + \beta \text{male}_i \\
 \alpha_{\text{dept}} & \sim \text{Normal} (0, 10) \\
-\beta                & \sim \text{Normal} (0, 10)
+\beta                & \sim \text{Normal} (0, 10).
 \end{align*}
 
 We don't need to coerce an index like McElreath did in the text. But here are the models.
@@ -867,18 +867,18 @@ tibble(y = rbinom(1e5, 1000, 1/1000)) %>%
             y_variance = var(y))
 ```
 
-Yes, those statistics are virtually the same. When dealing with Poisson data, $\mu = \sigma^2$. When you have a number of trials for which $n$ is unknown or much larger than seen in the data, the Poisson likelihood is a useful tool. We define it like this
+Yes, those statistics are virtually the same. When dealing with Poisson data, $\mu = \sigma^2$. When you have a number of trials for which $n$ is unknown or much larger than seen in the data, the Poisson likelihood is a useful tool. We define it as
 
-$$y \sim \text{Poisson} (\lambda)$$
+$$y \sim \text{Poisson} (\lambda).$$
 
 As $\lambda$ expresses both mean and variance because, within this model, the variance scales right along with the mean. Since $\lambda$ is constrained to be positive, we typically use the log link. Thus the basic Poisson regression model is
 
 \begin{align*}
 y_i                    & \sim \text{Poisson} (\lambda_i) \\
-\log (\lambda_i) & = \alpha + \beta x_i
+\log (\lambda_i) & = \alpha + \beta x_i,
 \end{align*}
 
-We read further:
+where all model parameters receive priors following the forms we've been practicing. We read further:
 
 > The parameter $\lambda$ is the expected value, but it's also commonly thought of as a rate. Both interpretations are correct, and realizing this allows to make Poisson models for which the exposure varies across cases $i$...
 >
@@ -936,7 +936,7 @@ Our statistical model will follow the form
 \alpha  & \sim \text{Normal} (0, 100) \\
 \beta_1 & \sim \text{Normal} (0, 1) \\
 \beta_2 & \sim \text{Normal} (0, 1) \\
-\beta_3 & \sim \text{Normal} (0, 1)
+\beta_3 & \sim \text{Normal} (0, 1).
 \end{align*}
 
 The only new thing in our model code is `family = poisson`. brms defaults to the `log()` link.
@@ -1060,7 +1060,7 @@ To get a feel for what's possible with `ggMarginal()`, check out [Dean Attali](h
 
 Here we deconstruct model `b10.10`, bit by bit.
 
-```{r b10.11}
+```{r b10.11, warning = F, message = F}
 # no interaction
 b10.11 <- 
   update(b10.10, formula = total_tools ~ 1 + log_pop + contact_high,
@@ -1324,11 +1324,11 @@ print(b10.15)
 
 The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It's a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
 
-To get the posterior distributions for average daily outputs for the old and new monasteries, respectively, we'll use use the following formulas:
+To get the posterior distributions for average daily outputs for the old and new monasteries, respectively, we'll use use the formulas
 
 \begin{align*}
-\lambda_\text{old} & = \exp (\alpha) \\
-\lambda_\text{new} & = \exp (\alpha + \beta_\text{monastery})
+\lambda_\text{old} & = \exp (\alpha) \;\;\; \text{and} \\
+\lambda_\text{new} & = \exp (\alpha + \beta_\text{monastery}).
 \end{align*}
 
 Following those transformations, we'll summarize the $\lambda$ distributions with medians and 89% HDIs with help from the `tidybayes::mean_hdi()` function.
@@ -1415,7 +1415,7 @@ tibble(income = 1:3) %>%
 
 Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above:
 
-$$\text{Pr} (k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
+$$\text{Pr} (k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
 
 What still might seem mysterious is what those $s$ values in the equation are. In the simulation and in the prose, McElreath called them *scores*. Another way to think about them is as weights. The thing to get is that their exact values aren't important so much as their difference one from another. You'll note that `score` for `income == 2` was 0.5 larger than that of `income == 1`. The same was true for `income == 3` and `income == 2`. So if we add an arbitrary constant to each of those `score` values, like 104, we'll get the same `p` values.
 
@@ -1775,7 +1775,7 @@ exp(k[1]) / (exp(k[1]) + exp(k[2]))
 
 The formula for what we just did in code is
 
-$$p_\text{admit} = \frac{\lambda_1}{\lambda_1 + \lambda_2} = \frac{\exp (\alpha_1)}{\exp (\alpha_1) + \exp (\alpha_2)}$$
+$$p_\text{admit} = \frac{\lambda_1}{\lambda_1 + \lambda_2} = \frac{\exp (\alpha_1)}{\exp (\alpha_1) + \exp (\alpha_2)}.$$
 
 To get a better appreciation on how well the two model types converge on the same solution, we might plot the full poster for admissions probability from each.
 
@@ -1855,7 +1855,7 @@ print(b10.18, digits = 2)
 
 It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/package=brms/vignettes/brms_families.html#binary-and-count-data-models) than rethinking does. It follows the form
 
-$$f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg (\frac{1}{\mu_i + 1} \bigg )$$
+$$f(y_i) = {y_i \choose y_i} \bigg (\frac{\mu_i}{\mu_i + 1} \bigg )^{y_i} \bigg (\frac{1}{\mu_i + 1} \bigg ).$$
 
 Even though the parameters brms yielded look different from those in the text, their predictions describe the data well. Here's the `conditional_effects()` plot.
 
