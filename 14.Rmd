@@ -16,13 +16,13 @@ options(width = 100)
 For the opening example, we're playing with the conditional probability
 
 $$
-\text{Pr(burnt down | burnt up)} = \frac{\text{Pr(burnt up, burnt down)}}{\text{Pr(burnt up)}}
+\text{Pr(burnt down | burnt up)} = \frac{\text{Pr(burnt up, burnt down)}}{\text{Pr(burnt up)}}.
 $$
 
 It works out that 
 
 $$
-\text{Pr(burnt down | burnt up)} = \frac{1/3}{1/2} = \frac{2}{3}
+\text{Pr(burnt down | burnt up)} = \frac{1/3}{1/2} = \frac{2}{3}.
 $$
 
 We might express the math in the middle of page 423 in tibble form like this.
@@ -395,7 +395,7 @@ Again, from `b_Intercept` to `sigma`, the output is about the same. But model `b
 \alpha  & \sim \text{Normal} (0, 10) \\
 \beta_1 & \sim \text{Normal} (0, 10) \\
 \beta_2 & \sim \text{Normal} (0, 10) \\
-\sigma  & \sim \text{HalfCauchy} (0, 2.5)
+\sigma  & \sim \text{HalfCauchy} (0, 2.5).
 \end{align*}
 
 *Note*. The `normal(0, 10)` prior McElreath used was [quite informative and can lead to discrepancies between the rethinking and brms results](https://github.com/paul-buerkner/brms/issues/114) if you're not careful. A large issue is the default way brms handles intercept priors. From the hyperlink, Bürkner wrote:
@@ -678,10 +678,10 @@ Our statistical model follows the form
 \beta_2                 & \sim \text{Normal} (0, 10) \\
 \sigma                  & \sim \text{HalfCauchy} (0, 1) \\
 \nu                     & \sim \text{Normal} (0.5, 1) \\
-\sigma_\text{neocortex} & \sim \text{HalfCauchy} (0, 1)
+\sigma_\text{neocortex} & \sim \text{HalfCauchy} (0, 1).
 \end{align*}
 
-If you look closely, you’ll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \text{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter.
+If you look closely, you'll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \text{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter.
 
 When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the `brm()` function. Otherwise, things get cluttered in a hurry.
 
@@ -956,7 +956,7 @@ p2 <-
 p1 | p2
 ```
 
-If modern missing data methods are new to you, you might also check out van Burren's great online text [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I'm also a fan of Enders's [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
+If modern missing data methods are new to you, you might also check out van Burren's great online text, [*Flexible Imputation of Missing Data. Second Edition*](https://stefvanbuuren.name/fimd/). I'm also a fan of Enders's [*Applied Missing Data Analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
 
 ## ~~Summary~~ Bonus: Meta-analysis
 
@@ -999,17 +999,17 @@ $$d = \frac{\mu_\text{treatment} - \mu_\text{comparison}}{\sigma_\text{pooled}},
 
 where
 
-$$\sigma_\text{pooled} = \sqrt{\frac{((n_1 - 1) \sigma_1^2) + ((n_2 - 1) \sigma_2^2)}{n_1 + n_2 -2}}$$
+$$\sigma_\text{pooled} = \sqrt{\frac{((n_1 - 1) \sigma_1^2) + ((n_2 - 1) \sigma_2^2)}{n_1 + n_2 -2}}.$$
 
 To help make the equation for $d$ clearer for our example, we might re-express it as
 
-$$d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_\text{pooled}}$$
+$$d = \frac{\mu_\text{spanked} - \mu_\text{not spanked}}{\sigma_\text{pooled}}.$$
 
 McElreath didn't really focus on effect sizes in his text. If you need a refresher, you might check out Kelley and Preacher's [*On effect size*](https://www.researchgate.net/profile/Ken_Kelley/publication/270757972_On_Effect_Size/links/0046351b0cd48217ce000000/On-Effect-Size.pdf). But in words, Cohen's $d$ is a standardized mean difference between two groups.
 
 So if you look back up at the results of `glimpse(spank)` you'll notice the column `d`, which is indeed a vector of Cohen's $d$ effect sizes. The last two columns, `ll` and `ul`, are the lower and upper limits of the associated 95% frequentist confidence intervals. But we don't want confidence intervals for our `d`-values; we want their standard errors. Fortunately, we can compute those with the following formula
 
-$$SE = \frac{\text{upper limit} - \text{lower limit}}{3.92}$$
+$$SE = \frac{\text{upper limit} - \text{lower limit}}{3.92}.$$
 
 Here it is in code.
 
@@ -1027,7 +1027,7 @@ Now are data are ready, we can express our first Bayesian meta-analysis with the
 \text{d}_i & \sim \text{Normal}(\theta_i, \sigma_i = \text{se}_i) \\
 \theta_i   & \sim \text{Normal} (\mu, \tau) \\
 \mu        & \sim \text{Normal} (0, 1) \\
-\tau       & \sim \text{HalfCauchy} (0, 1)
+\tau       & \sim \text{HalfCauchy} (0, 1).
 \end{align*}
 
 The last two lines, of course, spell out our priors. In psychology, it's pretty rare to see Cohen's $d$-values greater than the absolute value of $\pm 1$. So in the absence of more specific domain knowledge--which I don't have--, it seems like $\text{Normal} (0, 1)$ is a reasonable place to start. And just like McElreath used $\text{HalfCauchy} (0, 1)$ as the default prior for the group-level standard deviations, [it makes sense to use it here](https://psyarxiv.com/7tbrm/) for our meta-analytic $\tau$ parameter.
