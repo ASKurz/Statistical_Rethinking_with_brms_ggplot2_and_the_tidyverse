@@ -212,7 +212,7 @@ But they can still be useful.
 
 Let $y$ be the criterion, $\mu$ be the mean, and $\sigma$ be the standard deviation. Then the probability density of some Gaussian value $y$ is
 
-$$p(y|\mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \Bigg (- \frac{(y - \mu)^2}{2 \sigma^2} \Bigg)$$
+$$p(y|\mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \Bigg (- \frac{(y - \mu)^2}{2 \sigma^2} \Bigg).$$
 
 McElreath's right. "This looks monstrous" (p. 76). Why not demystify that monster with a little R code? For simplicity, we'll look at $p(y)$ over a series of $y$ values ranging from -4 to 4, holding $\mu = 0$ and $\sigma = 1$. Then we'll plot.
 
@@ -240,7 +240,7 @@ Our mathy ways of summarizing models will be something like
 \text{criterion}_i & \sim \text{Normal}(\mu_i, \sigma) \\
 \mu_i  & = \beta \times \text{predictor}_i \\
 \beta  & \sim \text{Normal}(0, 10) \\
-\sigma & \sim \text{HalfCauchy}(0, 1)
+\sigma & \sim \text{HalfCauchy}(0, 1).
 \end{align*}
 
 And as McElreath then followed up with, "If that doesn't make much sense, good. That indicates that you are holding the right textbook" (p. 77). Welcome applied statistics!
@@ -251,7 +251,7 @@ For the globe tossing model, the probability $p$ of a count of water $w$ based o
 
 \begin{align*}
 w & \sim \text{Binomial}(n, p) \\
-p & \sim \text{Uniform}(0, 1)
+p & \sim \text{Uniform}(0, 1).
 \end{align*}
 
 We can break McElreath's R code 4.6 down a little bit with a tibble like so.
@@ -354,15 +354,15 @@ For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdat
 
 The likelihood for our model is 
 
-$$h_i \sim \operatorname{Normal}(\mu, \sigma)$$
+$$h_i \sim \operatorname{Normal}(\mu, \sigma),$$
 
-Our $\mu$ prior will be
+our $\mu$ prior will be
 
-$$\mu \sim \operatorname{Normal}(178, 20)$$
+$$\mu \sim \operatorname{Normal}(178, 20),$$
 
-And our prior for $\sigma$ will be
+and our prior for $\sigma$ will be
 
-$$\sigma \sim \operatorname{Uniform}(0, 50)$$
+$$\sigma \sim \operatorname{Uniform}(0, 50).$$
 
 Here's the shape of the prior for $\mu$ in $N(178, 20)$.
 
@@ -698,7 +698,7 @@ brms doesn't seem to have a convenience function that works the way `vcov()` doe
 vcov(b4.1_hc)
 ```
 
-This only returned the first element in the matrix it did for rethinking. That is, it appears `brms::vcov()` only returns the variance/covariance matrix for the single-level $\beta$ parameters (i.e., those used to model $\mu$).
+This only returned the first element in the matrix it did for rethinking. That is, it appears the `brms::vcov()` function only returns the variance/covariance matrix for the single-level $\beta$ parameters (i.e., those used to model $\mu$).
 
 However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot of as we go along.
 
@@ -708,7 +708,7 @@ post <- posterior_samples(b4.1_hc)
 head(post)
 ```
 
-Now `select()` the columns containing the draws from the desired parameters and feed them into `cof()`.
+Now `select()` the columns containing the draws from the desired parameters and feed them into `cov()`.
 
 ```{r}
 select(post, b_Intercept:sigma) %>% 
@@ -799,7 +799,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine. 
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.].
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.]. Kruschke also covered several models of this kind in his (2015) text, [*Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), which I've translated into brms and tidyverse code. Check out [Section 16.3](https://bookdown.org/content/3686/metric-predicted-variable-on-one-or-two-groups.html#two-groups) for an example of modeling $\log \sigma$ with a grouping variable.
 
 ## Adding a predictor
 
@@ -830,7 +830,7 @@ h_i & \sim \text{Normal}(\mu_i, \sigma) \\
 \mu_i & = \alpha + \beta x_i \\
 \alpha & \sim \text{Normal}(178, 100) \\
 \beta & \sim \text{Normal}(0, 10) \\
-\sigma & \sim \text{Uniform}(0, 50)
+\sigma & \sim \text{Uniform}(0, 50).
 \end{align*}
 
 #### Likelihood.
@@ -1353,9 +1353,9 @@ d %>%
   glimpse()
 ```
 
-The quadratic is probably the most commonly-used polynomial regression model.
+The quadratic is probably the most commonly-used polynomial regression model. It follows the form
 
-$$\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2$$
+$$\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2.$$
 
 McElreath warned: "Fitting these models to data is easy. Interpreting them can be hard" (p. 111). Standardizing will help `brm()` fit the model. We might standardize our `weight` variable like so.
 
@@ -1424,7 +1424,7 @@ ggplot(data = d,
 
 From a formula perspective, the cubic model is a simple extenstion of the quadratic:
 
-$$\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3$$
+$$\mu = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3.$$
 
 Fit it like so.
 
