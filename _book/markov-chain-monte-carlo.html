@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>8 Markov Chain Monte Carlo | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
-  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="8 Markov Chain Monte Carlo | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
@@ -22,18 +21,18 @@
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
 
-<meta name="author" content="A Solomon Kurz">
+<meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2019-05-05">
+<meta name="date" content="2020-02-29" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="interactions.html">
-<link rel="next" href="big-entropy-and-the-generalized-linear-model.html">
+<link rel="prev" href="interactions.html"/>
+<link rel="next" href="big-entropy-and-the-generalized-linear-model.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -41,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -51,41 +53,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 </head>
@@ -105,7 +132,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-0.9.0."><i class="fa fa-check"></i>Version 0.9.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.0."><i class="fa fa-check"></i>Version 1.0.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.1."><i class="fa fa-check"></i>Version 1.0.1.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.1.0."><i class="fa fa-check"></i>Version 1.1.0.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#thank-yous-are-in-order"><i class="fa fa-check"></i>Thank-you’s are in order</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -166,11 +199,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
 <li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
 <li class="chapter" data-level="4.3.4" data-path="linear-models.html"><a href="linear-models.html#sampling-from-the-posterior."><i class="fa fa-check"></i><b>4.3.4</b> Sampling from the posterior.</a></li>
-<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map()</code></del> <code>brm()</code>.</a></li>
-<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map()</code></del> <code>brm()</code> fit.</a></li>
+<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map</code></del> <code>brm()</code>.</a></li>
+<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map</code></del> <code>brm()</code> fit.</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy"><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy</a></li>
+<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy."><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy.</a></li>
 <li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
 <li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
 </ul></li>
@@ -190,7 +223,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical variables</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -244,13 +277,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.3.4" data-path="interactions.html"><a href="interactions.html#plotting-implied-predictions."><i class="fa fa-check"></i><b>7.3.4</b> Plotting implied predictions.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.4" data-path="interactions.html"><a href="interactions.html#interactions-in-design-formulas"><i class="fa fa-check"></i><b>7.4</b> Interactions in design formulas</a></li>
-<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code></a></li>
+<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effectsconditional_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code>/<code>conditional_effects()</code></a></li>
 <li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#reference-6"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a><ul>
 <li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
-<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a></li>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#gibbs-sampling."><i class="fa fa-check"></i><b>8.2.1</b> Gibbs sampling.</a></li>
+<li class="chapter" data-level="8.2.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#hamiltonian-monte-carlo."><i class="fa fa-check"></i><b>8.2.2</b> Hamiltonian Monte Carlo.</a></li>
+</ul></li>
 <li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a><ul>
 <li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
 <li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
@@ -276,6 +312,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a><ul>
 <li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
 <li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
+<li class="chapter" data-level="9.2.3" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#absolute-and-relative-differences."><i class="fa fa-check"></i><b>9.2.3</b> Absolute and relative differences.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#reference-8"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
@@ -296,6 +333,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
 <li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
 </ul></li>
+<li class="chapter" data-level="10.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#summary"><i class="fa fa-check"></i><b>10.4</b> Summary</a></li>
 <li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#reference-9"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -329,13 +367,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a><ul>
 <li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
 <li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
+<li class="chapter" data-level="12.3.3" data-path="multilevel-models.html"><a href="multilevel-models.html#even-more-clusters."><i class="fa fa-check"></i><b>12.3.3</b> Even more clusters.</a></li>
 </ul></li>
 <li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a><ul>
 <li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
-<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
 <li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
 <li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
 <li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
@@ -356,6 +395,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
 <li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
 <li class="chapter" data-level="13.2.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#model-comparison.-1"><i class="fa fa-check"></i><b>13.2.4</b> Model comparison.</a></li>
+<li class="chapter" data-level="13.2.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#more-slopes."><i class="fa fa-check"></i><b>13.2.5</b> More slopes.</a></li>
 </ul></li>
 <li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
 <li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a><ul>
@@ -383,13 +423,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
 <li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
 <li class="chapter" data-level="15.4" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#look-at-your-data"><i class="fa fa-check"></i><b>15.4</b> Look at your data</a></li>
-<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + intercept</code> syntax</a></li>
+<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + Intercept</code> syntax</a></li>
 <li class="chapter" data-level="15.6" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-workflow"><i class="fa fa-check"></i><b>15.6</b> Annotate your workflow</a></li>
 <li class="chapter" data-level="15.7" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-code"><i class="fa fa-check"></i><b>15.7</b> Annotate your code</a></li>
 <li class="chapter" data-level="15.8" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#break-up-your-workflow"><i class="fa fa-check"></i><b>15.8</b> Break up your workflow</a></li>
-<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.9</b> Read Gelman’s blog</a></li>
-<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.10</b> Check out other social media, too</a></li>
-<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.11</b> Parting wisdom</a></li>
+<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#code-in-public"><i class="fa fa-check"></i><b>15.9</b> Code in public</a></li>
+<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.10</b> Read Gelman’s blog</a></li>
+<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.11</b> Check out other social media, too</a></li>
+<li class="chapter" data-level="15.12" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.12</b> Parting wisdom</a></li>
 <li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#reference-14"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#session-info-14"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -412,102 +453,113 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="markov-chain-monte-carlo" class="section level1">
 <h1><span class="header-section-number">8</span> Markov Chain Monte Carlo</h1>
-<p>“This chapter introduces one of the more marvelous examples of how Fortuna and Minerva cooperate: the estimation of posterior probability distributions using a stochastic process known as Markov chain Monte Carlo (MCMC) estimation” (p. 241). Though we’ve been using MCMC via the brms package for chapters, now, this chapter should clarify some of the details.</p>
+<p>“This chapter introduces one of the more marvelous examples of how <a href="https://en.wikipedia.org/wiki/Rota_Fortunae#/media/File:Lydgate-siege-troy-wheel-fortune-detail.jpg">Fortuna</a> and <a href="https://en.wikipedia.org/wiki/Minerva#/media/File:Minerva-Vedder-Highsmith-detail-1.jpeg">Minerva</a> cooperate: the estimation of posterior probability distributions using a stochastic process known as Markov chain Monte Carlo (MCMC) estimation” (p. 241). Though we’ve been using MCMC via the brms package for chapters, now, this chapter should clarify some of the questions you might have about the details.</p>
 <div id="good-king-markov-and-his-island-kingdom" class="section level2">
 <h2><span class="header-section-number">8.1</span> Good King Markov and His island kingdom</h2>
-<p>In this version of the code, we’ve added <code>set.seed()</code>, which helps make the exact results reproducible.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">8</span>)
-
-num_weeks &lt;-<span class="st"> </span><span class="fl">1e5</span>
-positions &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, num_weeks)
-current   &lt;-<span class="st"> </span><span class="dv">10</span>
-<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>num_weeks) {
-  <span class="co"># record current position</span>
-  positions[i] &lt;-<span class="st"> </span>current
-  <span class="co"># flip coin to generate proposal</span>
-  proposal &lt;-<span class="st"> </span>current <span class="op">+</span><span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">size =</span> <span class="dv">1</span>)
-  <span class="co"># now make sure he loops around the archipelago</span>
-  <span class="cf">if</span> (proposal <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>) proposal &lt;-<span class="st"> </span><span class="dv">10</span>
-  <span class="cf">if</span> (proposal <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span>) proposal &lt;-<span class="st"> </span><span class="dv">1</span>
-  <span class="co"># move?</span>
-  prob_move &lt;-<span class="st"> </span>proposal <span class="op">/</span><span class="st"> </span>current
-  current   &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">runif</span>(<span class="dv">1</span>) <span class="op">&lt;</span><span class="st"> </span>prob_move, proposal, current)
-}</code></pre></div>
+<p>Here we simulate King Markov’s journey. In this version of the code, we’ve added <code>set.seed()</code>, which helps make the exact results reproducible.</p>
+<div class="sourceCode" id="cb771"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb771-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb771-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb771-3" data-line-number="3">num_weeks &lt;-<span class="st"> </span><span class="fl">1e5</span></a>
+<a class="sourceLine" id="cb771-4" data-line-number="4">positions &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, num_weeks)</a>
+<a class="sourceLine" id="cb771-5" data-line-number="5">current   &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb771-6" data-line-number="6"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>num_weeks) {</a>
+<a class="sourceLine" id="cb771-7" data-line-number="7">  <span class="co"># record current position</span></a>
+<a class="sourceLine" id="cb771-8" data-line-number="8">  positions[i] &lt;-<span class="st"> </span>current</a>
+<a class="sourceLine" id="cb771-9" data-line-number="9">  <span class="co"># flip coin to generate proposal</span></a>
+<a class="sourceLine" id="cb771-10" data-line-number="10">  proposal &lt;-<span class="st"> </span>current <span class="op">+</span><span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">size =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb771-11" data-line-number="11">  <span class="co"># now make sure he loops around the archipelago</span></a>
+<a class="sourceLine" id="cb771-12" data-line-number="12">  <span class="cf">if</span> (proposal <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>) proposal &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb771-13" data-line-number="13">  <span class="cf">if</span> (proposal <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span>) proposal &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb771-14" data-line-number="14">  <span class="co"># move?</span></a>
+<a class="sourceLine" id="cb771-15" data-line-number="15">  prob_move &lt;-<span class="st"> </span>proposal <span class="op">/</span><span class="st"> </span>current</a>
+<a class="sourceLine" id="cb771-16" data-line-number="16">  current   &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">runif</span>(<span class="dv">1</span>) <span class="op">&lt;</span><span class="st"> </span>prob_move, proposal, current)</a>
+<a class="sourceLine" id="cb771-17" data-line-number="17">}</a></code></pre></div>
 <p>In this chapter, we’ll borrow a theme, <code>theme_ipsum()</code>, from the <a href="https://cran.r-project.org/package=hrbrthemes">hrbrthemes package</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;hrbrthemes&quot;, dependencies = T)</span>
-<span class="kw">library</span>(hrbrthemes)</code></pre></div>
+<div class="sourceCode" id="cb772"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb772-1" data-line-number="1"><span class="co"># install.packages(&quot;hrbrthemes&quot;, dependencies = T)</span></a>
+<a class="sourceLine" id="cb772-2" data-line-number="2"><span class="kw">library</span>(hrbrthemes)</a></code></pre></div>
 <p>Figure 8.2.a.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
-
-<span class="kw">tibble</span>(<span class="dt">week   =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>,
-       <span class="dt">island =</span> positions) <span class="op">%&gt;%</span>
-
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> island)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">100</span>, <span class="dt">by =</span> <span class="dv">20</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">10</span>, <span class="dt">by =</span> <span class="dv">2</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">100</span>,
-                  <span class="dt">ylim =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Behold: The Metropolis algorithm in action!&quot;</span>,
-       <span class="dt">subtitle =</span> <span class="st">&quot;The dots show the king&#39;s path over the first 100 weeks.&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-4-1.png" width="528" /></p>
+<div class="sourceCode" id="cb773"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb773-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb773-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb773-3" data-line-number="3"><span class="kw">tibble</span>(<span class="dt">week   =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>,</a>
+<a class="sourceLine" id="cb773-4" data-line-number="4">       <span class="dt">island =</span> positions) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb773-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb773-6" data-line-number="6"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> island)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-8" data-line-number="8"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">100</span>, <span class="dt">by =</span> <span class="dv">20</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-9" data-line-number="9"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>, <span class="dt">to =</span> <span class="dv">10</span>, <span class="dt">by =</span> <span class="dv">2</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-10" data-line-number="10"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">100</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-11" data-line-number="11"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Behold: The Metropolis algorithm in action!&quot;</span>,</a>
+<a class="sourceLine" id="cb773-12" data-line-number="12">       <span class="dt">subtitle =</span> <span class="st">&quot;The dots show the king&#39;s path over the first 100 weeks.&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb773-13" data-line-number="13"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-5-1.png" width="528" /></p>
 <p>Figure 8.2.b.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">week   =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>,
-       <span class="dt">island =</span> positions) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">island =</span> <span class="kw">factor</span>(island)) <span class="op">%&gt;%</span>
-
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> island)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_bar</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Old Metropolis shines in the long run.&quot;</span>,
-       <span class="dt">subtitle =</span> <span class="st">&quot;Sure enough, the time the king spent on each island was</span><span class="ch">\n</span><span class="st">proportional to its population size.&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-5-1.png" width="528" /></p>
+<div class="sourceCode" id="cb774"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb774-1" data-line-number="1"><span class="kw">tibble</span>(<span class="dt">week   =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e5</span>,</a>
+<a class="sourceLine" id="cb774-2" data-line-number="2">       <span class="dt">island =</span> positions) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb774-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">island =</span> <span class="kw">factor</span>(island)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb774-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb774-5" data-line-number="5"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> island)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb774-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_bar</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb774-7" data-line-number="7"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Old Metropolis shines in the long run.&quot;</span>,</a>
+<a class="sourceLine" id="cb774-8" data-line-number="8">       <span class="dt">subtitle =</span> <span class="st">&quot;Sure enough, the time the king spent on each island was</span><span class="ch">\n</span><span class="st">proportional to its population size.&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb774-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-6-1.png" width="528" /></p>
 </div>
 <div id="markov-chain-monte-carlo-1" class="section level2">
 <h2><span class="header-section-number">8.2</span> Markov chain Monte Carlo</h2>
-<p>“The metropolis algorithm is the grandparent of several different strategies for getting samples from unknown posterior distributions” (p. 245). If you’re interested, Robert and Casells wrote a <a href="https://arxiv.org/pdf/0808.2902.pdf">good historical overview of MCMC</a>.</p>
+<p>“The metropolis algorithm is the grandparent of several different strategies for getting samples from unknown posterior distributions” (p. 245). If you’re interested, Robert and Casells (2011) wrote a <a href="https://arxiv.org/pdf/0808.2902.pdf">good historical overview of MCMC</a>.</p>
+<div id="gibbs-sampling." class="section level3">
+<h3><span class="header-section-number">8.2.1</span> Gibbs sampling.</h3>
+<p>The Gibbs sampler (<a href="https://ieeexplore.ieee.org/abstract/document/4767596">Geman &amp; Geman, 1984</a>; <a href="https://www.researchgate.net/publication/224839754_Explaning_the_Gibbs_Sampler/link/55b1085a08ae092e964fc20d/download">Casella &amp; George, 1992</a>) uses <em>conjugate</em> pairs (i.e., pairs of priors and likelihoods that have analytic solutions for the posterior of an individual parameter) to efficiently sample from the posterior. Gibbs was the workhorse algorithm during the rise of Bayesian computation in the 1990s. However, it’s limited in that (a) you might not want to use conjugate priors and (b) it can be quite inefficient with complex hierarchical models, which we’ll be fitting soon.</p>
+<p>We will not be using the Gibbs sampler in this project. It’s available for use in R. For an extensive applied introduction, check out <a href="https://sites.google.com/site/doingbayesiandataanalysis/">Kruschke’s (2015) text</a>.</p>
+</div>
+<div id="hamiltonian-monte-carlo." class="section level3">
+<h3><span class="header-section-number">8.2.2</span> Hamiltonian Monte Carlo.</h3>
+<p>Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath’s <a href="https://www.youtube.com/watch?v=v-j0UmWf3Us">lecture on the topic from January 2019</a> or one of these lectures (<a href="https://www.youtube.com/watch?v=jUSZboSq1zg">here</a>, <a href="https://www.youtube.com/watch?v=_fnDz2Bz3h8">here</a>, or <a href="https://www.youtube.com/watch?v=pHsuIaPbNbY">here</a>) by Michael Betancourt.</p>
+</div>
 </div>
 <div id="easy-hmc-map2stan-brm" class="section level2">
 <h2><span class="header-section-number">8.3</span> Easy HMC: <del>map2stan</del> <code>brm()</code></h2>
+<p>Much like McElreath’s rethinking package, brms provides a convenient interface to HMC via Stan. Other packages providing Stan interfaces include <a href="https://mc-stan.org/rstanarm/">rstanarm</a> and <a href="https://faculty.missouri.edu/~merklee/blavaan/">blavaan</a>. I’m not aware of any up-to-date comparisons across the packages. If you’re ever inclined to make one, <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues">let the rest of us know</a>!</p>
 <p>Here we load the <code>rugged</code> data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
-<span class="kw">data</span>(rugged)
-d &lt;-<span class="st"> </span>rugged</code></pre></div>
+<div class="sourceCode" id="cb775"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb775-1" data-line-number="1"><span class="kw">library</span>(rethinking)</a>
+<a class="sourceLine" id="cb775-2" data-line-number="2"><span class="kw">data</span>(rugged)</a>
+<a class="sourceLine" id="cb775-3" data-line-number="3">d &lt;-<span class="st"> </span>rugged</a></code></pre></div>
 <p>Switch from rethinking to brms.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">detach</span>(package<span class="op">:</span>rethinking)
-<span class="kw">library</span>(brms)
-<span class="kw">rm</span>(rugged)</code></pre></div>
+<div class="sourceCode" id="cb776"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb776-1" data-line-number="1"><span class="kw">detach</span>(package<span class="op">:</span>rethinking)</a>
+<a class="sourceLine" id="cb776-2" data-line-number="2"><span class="kw">library</span>(brms)</a>
+<a class="sourceLine" id="cb776-3" data-line-number="3"><span class="kw">rm</span>(rugged)</a></code></pre></div>
 <p>It takes just a sec to do a little data manipulation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span>
-<span class="st">  </span>d <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">log_gdp =</span> <span class="kw">log</span>(rgdppc_<span class="dv">2000</span>))
-
-dd &lt;-
-<span class="st">  </span>d <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">drop_na</span>(rgdppc_<span class="dv">2000</span>)</code></pre></div>
+<div class="sourceCode" id="cb777"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb777-1" data-line-number="1">d &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb777-2" data-line-number="2"><span class="st">  </span>d <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb777-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">log_gdp =</span> <span class="kw">log</span>(rgdppc_<span class="dv">2000</span>))</a>
+<a class="sourceLine" id="cb777-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb777-5" data-line-number="5">dd &lt;-</a>
+<a class="sourceLine" id="cb777-6" data-line-number="6"><span class="st">  </span>d <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb777-7" data-line-number="7"><span class="st">  </span><span class="kw">drop_na</span>(rgdppc_<span class="dv">2000</span>)</a></code></pre></div>
 <p>In the context of this chapter, it doesn’t make sense to translate McElreath’s m8.1 <code>map()</code> code to <code>brm()</code> code. Below, we’ll just go directly to the <code>brm()</code> variant of his <code>m8.1stan</code>.</p>
 <div id="preparation." class="section level3">
 <h3><span class="header-section-number">8.3.1</span> Preparation.</h3>
 <p>When working with brms, you don’t need to do the data processing McElreath did on pages 248 and 249. If you wanted to, however, here’s how you might do it within the tidyverse.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd.trim &lt;-
-<span class="st">  </span>dd <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(log_gdp, rugged, cont_africa)
-
-<span class="kw">str</span>(dd.trim)</code></pre></div>
+<div class="sourceCode" id="cb778"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb778-1" data-line-number="1">dd.trim &lt;-</a>
+<a class="sourceLine" id="cb778-2" data-line-number="2"><span class="st">  </span>dd <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb778-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(log_gdp, rugged, cont_africa)</a>
+<a class="sourceLine" id="cb778-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb778-5" data-line-number="5"><span class="kw">str</span>(dd.trim)</a></code></pre></div>
 </div>
 <div id="estimation." class="section level3">
 <h3><span class="header-section-number">8.3.2</span> Estimation.</h3>
-<p>Finally, we get to work that sweet HMC.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">1</span> &lt;-
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dd, <span class="dt">family =</span> gaussian,
-      log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged <span class="op">+</span><span class="st"> </span>cont_africa <span class="op">+</span><span class="st"> </span>rugged<span class="op">:</span>cont_africa,
-      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),
-                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
-                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">seed =</span> <span class="dv">8</span>)</code></pre></div>
-<p>Now we have officially ditched the uniform distribution for <span class="math inline">\(\sigma\)</span>. We’ll only see it again in special cases for pedagogical purposes. Here’s the posterior:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.<span class="dv">1</span>)</code></pre></div>
+<p>Finally, we get to work that sweet HMC via <code>brms::brm()</code>.</p>
+<div class="sourceCode" id="cb779"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb779-1" data-line-number="1">b8<span class="fl">.1</span> &lt;-</a>
+<a class="sourceLine" id="cb779-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> dd, </a>
+<a class="sourceLine" id="cb779-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb779-4" data-line-number="4">      log_gdp <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>rugged <span class="op">+</span><span class="st"> </span>cont_africa <span class="op">+</span><span class="st"> </span>rugged<span class="op">:</span>cont_africa,</a>
+<a class="sourceLine" id="cb779-5" data-line-number="5">      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="dt">class =</span> Intercept),</a>
+<a class="sourceLine" id="cb779-6" data-line-number="6">                <span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),</a>
+<a class="sourceLine" id="cb779-7" data-line-number="7">                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="dt">class =</span> sigma)),</a>
+<a class="sourceLine" id="cb779-8" data-line-number="8">      <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb779-9" data-line-number="9">      <span class="dt">file =</span> <span class="st">&quot;fits/b08.01&quot;</span>)</a></code></pre></div>
+<p>Now we have officially ditched the uniform distribution for <span class="math inline">\(\sigma\)</span>. Never again! Here’s the posterior:</p>
+<div class="sourceCode" id="cb780"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb780-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.1</span>)</a></code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
@@ -516,46 +568,53 @@ dd &lt;-
 ##          total post-warmup samples = 4000
 ## 
 ## Population-Level Effects: 
-##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              9.22      0.14     8.94     9.50       2792 1.00
-## rugged                -0.20      0.08    -0.35    -0.05       2782 1.00
-## cont_africa           -1.94      0.23    -2.39    -1.50       2900 1.00
-## rugged:cont_africa     0.39      0.13     0.12     0.65       2741 1.00
+##                    Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept              9.22      0.14     8.94     9.49 1.00     2632     2549
+## rugged                -0.20      0.08    -0.35    -0.05 1.00     2512     2526
+## cont_africa           -1.95      0.23    -2.40    -1.50 1.00     2137     2731
+## rugged:cont_africa     0.40      0.13     0.13     0.65 1.00     2154     2463
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.95      0.05     0.86     1.06       4183 1.00
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.95      0.05     0.85     1.06 1.00     3801     2537
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>Do note a couple things: If you look closely at the summary information at the top, you’ll see that the <code>brms::brm()</code> function defaults to <code>chains = 4</code>. If you check the manual, you’ll see it also defaults to <code>cores = 1</code>. You’ll also note it defaults to <code>iter = 2000, warmup = 1000</code>. Also of note, McElreath’s <code>rethinking::precis()</code> returns highest posterior density intervals (HPDIs) when summarizing <code>map2stan()</code> models. Not so with brms. If you want HPDIs, you’ll have to use the convenience functions from the tidybayes package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidybayes)
-
-post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">1</span>)
-
-post <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mean_hdi</span>(value, <span class="dt">.width =</span> .<span class="dv">89</span>)  <span class="co"># note our rare use of 89% intervals</span></code></pre></div>
+<p>Do note a couple things: If you look closely at the summary information at the top, you’ll see that the <code>brm()</code> function defaults to <code>chains = 4</code>. If you check the manual, you’ll see it also defaults to <code>cores = 1</code>, as well as <code>iter = 2000</code> and <code>warmup = 1000</code>. Also of note, McElreath’s <code>rethinking::precis()</code> returns highest posterior density intervals (HPDIs) when summarizing <code>map2stan()</code> models. Not so with brms. If you want HPDIs, you’ll have to use the convenience functions from the tidybayes package. Here’s an example.</p>
+<div class="sourceCode" id="cb782"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb782-1" data-line-number="1"><span class="kw">library</span>(tidybayes)</a>
+<a class="sourceLine" id="cb782-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb782-3" data-line-number="3">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.1</span>)</a>
+<a class="sourceLine" id="cb782-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb782-5" data-line-number="5">post <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb782-6" data-line-number="6"><span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb782-7" data-line-number="7"><span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb782-8" data-line-number="8"><span class="st">  </span><span class="kw">mean_hdi</span>(value, <span class="dt">.width =</span> <span class="fl">.89</span>)  <span class="co"># note our rare use of 89% intervals</span></a></code></pre></div>
 <pre><code>## # A tibble: 6 x 7
 ##   key                     value   .lower    .upper .width .point .interval
 ##   &lt;chr&gt;                   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
-## 1 b_cont_africa          -1.94    -2.30    -1.56     0.89 mean   hdi      
-## 2 b_Intercept             9.22     8.99     9.45     0.89 mean   hdi      
-## 3 b_rugged               -0.201   -0.330   -0.0809   0.89 mean   hdi      
-## 4 b_rugged:cont_africa    0.391    0.157    0.586    0.89 mean   hdi      
+## 1 b_cont_africa          -1.95    -2.32    -1.59     0.89 mean   hdi      
+## 2 b_Intercept             9.22     9.00     9.46     0.89 mean   hdi      
+## 3 b_rugged               -0.203   -0.328   -0.0831   0.89 mean   hdi      
+## 4 b_rugged:cont_africa    0.396    0.184    0.604    0.89 mean   hdi      
 ## 5 lp__                 -249.    -251.    -246.       0.89 mean   hdi      
-## 6 sigma                   0.952    0.868    1.03     0.89 mean   hdi</code></pre>
+## 6 sigma                   0.949    0.858    1.03     0.89 mean   hdi</code></pre>
+<p>There’s one more important difference in our brms summary output compared to McElreath’s <code>rethinking::precis()</code> output. In the text we learn <code>precis()</code> returns <code>n_eff</code> values for each parameter. Earlier versions of brms used to have a direct analogue named <code>Eff.Sample</code>. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: <code>Bulk_ESS</code> and <code>Tail_ESS</code>. These originate from a <a href="https://arxiv.org/abs/1903.08008?">(2019) paper</a> by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:</p>
+<blockquote>
+<p>If you plan to report quantile estimates or posterior intervals, we strongly suggest assessing the convergence of the chains for these quantiles. In Section 4.3 we show that convergence of Markov chains is not uniform across the parameter space and propose diagnostics and effective sample sizes specifically for extreme quantiles. This is <em>different</em> from the standard ESS estimate (which we refer to as the “bulk-ESS”), which mainly assesses how well the centre of the distribution is resolved. Instead, these “tail-ESS” measures allow the user to estimate the MCSE for interval estimates. (p. 5, <em>emphasis</em> in the original)</p>
+</blockquote>
+<p>For more technical details, see the paper. In short, <code>Bulk_ESS</code> in the output from brms 2.10.0+ is what was previously referred to as <code>Eff.Sample</code> in earlier versions. It’s also what corresponds to what McElreath calls <code>n_eff</code>. This indexed the number of effective samples in ‘the center of the’ posterior distribution (i.e., the posterior mean or median). But since we also care about uncertainty in our parameters, we care about stability in the 95% intervals and such. The new <code>Tail_ESS</code> in brms output allows us to gauge the effective sample size for those intervals.</p>
 </div>
 <div id="sampling-again-in-parallel." class="section level3">
 <h3><span class="header-section-number">8.3.3</span> Sampling again, in parallel.</h3>
 <p>Here we sample in parallel by adding <code>cores = 4</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.1_4chains_4cores &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">update</span>(b8.<span class="dv">1</span>, 
-         <span class="dt">cores =</span> <span class="dv">4</span>)</code></pre></div>
+<div class="sourceCode" id="cb784"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb784-1" data-line-number="1">b8<span class="fl">.1</span>b &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb784-2" data-line-number="2"><span class="st">  </span><span class="kw">update</span>(b8<span class="fl">.1</span>, </a>
+<a class="sourceLine" id="cb784-3" data-line-number="3">         <span class="dt">cores =</span> <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb784-4" data-line-number="4">         <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb784-5" data-line-number="5">         <span class="dt">file =</span> <span class="st">&quot;fits/b08.01b&quot;</span>)</a></code></pre></div>
 <p>This model sampled so fast that it really didn’t matter if we sampled in parallel or not. It will for others.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.1_4chains_4cores)</code></pre></div>
+<div class="sourceCode" id="cb785"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb785-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.1</span>b)</a></code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
@@ -564,67 +623,68 @@ post <span class="op">%&gt;%</span><span class="st"> </span>
 ##          total post-warmup samples = 4000
 ## 
 ## Population-Level Effects: 
-##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              9.22      0.14     8.95     9.49       2953 1.00
-## rugged                -0.20      0.08    -0.35    -0.05       2752 1.00
-## cont_africa           -1.95      0.23    -2.40    -1.50       2665 1.00
-## rugged:cont_africa     0.39      0.13     0.14     0.65       2498 1.00
+##                    Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept              9.22      0.14     8.94     9.49 1.00     2632     2549
+## rugged                -0.20      0.08    -0.35    -0.05 1.00     2512     2526
+## cont_africa           -1.95      0.23    -2.40    -1.50 1.00     2137     2731
+## rugged:cont_africa     0.40      0.13     0.13     0.65 1.00     2154     2463
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.95      0.05     0.86     1.05       3839 1.00
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.95      0.05     0.85     1.06 1.00     3801     2537
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 <div id="visualization." class="section level3">
 <h3><span class="header-section-number">8.3.4</span> Visualization.</h3>
 <p>Unlike the way rethinking’s <code>extract.samples()</code> yields a list, brms’s <code>posterior_samples()</code> returns a data frame.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">1</span>)
-<span class="kw">str</span>(post)</code></pre></div>
+<div class="sourceCode" id="cb787"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb787-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.1</span>)</a>
+<a class="sourceLine" id="cb787-2" data-line-number="2"><span class="kw">str</span>(post)</a></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    4000 obs. of  6 variables:
-##  $ b_Intercept         : num  9.48 9.19 9.2 9.2 9.39 ...
-##  $ b_rugged            : num  -0.349 -0.197 -0.143 -0.167 -0.305 ...
-##  $ b_cont_africa       : num  -2.52 -1.74 -1.92 -1.92 -2.2 ...
-##  $ b_rugged:cont_africa: num  0.719 0.287 0.421 0.328 0.524 ...
-##  $ sigma               : num  0.941 0.949 0.964 0.934 0.972 ...
-##  $ lp__                : num  -250 -247 -247 -246 -247 ...</code></pre>
+##  $ b_Intercept         : num  9.61 8.92 8.91 9.06 9.06 ...
+##  $ b_rugged            : num  -0.3236 -0.0398 -0.0492 -0.1258 -0.1269 ...
+##  $ b_cont_africa       : num  -2.56 -1.75 -1.84 -1.82 -1.88 ...
+##  $ b_rugged:cont_africa: num  0.575 0.0664 0.1911 0.2774 0.2858 ...
+##  $ sigma               : num  0.919 0.981 0.95 1.037 1.121 ...
+##  $ lp__                : num  -252 -252 -250 -248 -252 ...</code></pre>
 <p>As with McElreath’s rethinking, brms allows users to put the <code>post</code> data frame or the brmsfit object directly in <code>pairs()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(b8.<span class="dv">1</span>,
-      <span class="dt">off_diag_args =</span> <span class="kw">list</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>))</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-14-1.png" width="576" /></p>
+<div class="sourceCode" id="cb789"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb789-1" data-line-number="1"><span class="kw">pairs</span>(b8<span class="fl">.1</span>,</a>
+<a class="sourceLine" id="cb789-2" data-line-number="2">      <span class="dt">off_diag_args =</span> <span class="kw">list</span>(<span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">5</span>))</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-15-1.png" width="576" /></p>
 <p>Another nice way to customize your pairs plot is with the <a href="https://cran.r-project.org/package=GGally">GGally package</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GGally)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(b_Intercept<span class="op">:</span>sigma) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggpairs</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-16-1.png" width="768" /></p>
-<p>Since GGally returns a ggplot2 object, you can customize it as you please.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_diag &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...){
-  <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_density</span>(<span class="dt">fill =</span> <span class="st">&quot;grey50&quot;</span>)
-}
-
-my_lower &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...){
-  <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>)
-  }
-
-post <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(b_Intercept<span class="op">:</span>sigma) <span class="op">%&gt;%</span>
-
-<span class="st">  </span><span class="kw">ggpairs</span>(<span class="dt">diag  =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_diag),
-          <span class="dt">lower =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_lower)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;My custom pairs plot&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-17-1.png" width="768" /></p>
-<p>For more ideas on customizing a GGally pairs plot, go <a href="http://ggobi.github.io/ggally/#columns_and_mapping">here</a>.</p>
+<div class="sourceCode" id="cb790"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb790-1" data-line-number="1"><span class="kw">library</span>(GGally)</a></code></pre></div>
+<div class="sourceCode" id="cb791"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb791-1" data-line-number="1">post <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb791-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(b_Intercept<span class="op">:</span>sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb791-3" data-line-number="3"><span class="st">  </span><span class="kw">ggpairs</span>()</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Since <code>GGally::ggpairs()</code> returns a ggplot2 object, you can customize it as you please.</p>
+<div class="sourceCode" id="cb792"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb792-1" data-line-number="1">my_diag &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...) {</a>
+<a class="sourceLine" id="cb792-2" data-line-number="2">  <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb792-3" data-line-number="3"><span class="st">    </span><span class="kw">geom_density</span>(<span class="dt">fill =</span> <span class="st">&quot;grey50&quot;</span>)</a>
+<a class="sourceLine" id="cb792-4" data-line-number="4">}</a>
+<a class="sourceLine" id="cb792-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb792-6" data-line-number="6">my_lower &lt;-<span class="st"> </span><span class="cf">function</span>(data, mapping, ...) {</a>
+<a class="sourceLine" id="cb792-7" data-line-number="7">  <span class="kw">ggplot</span>(<span class="dt">data =</span> data, <span class="dt">mapping =</span> mapping) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb792-8" data-line-number="8"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb792-9" data-line-number="9">  }</a>
+<a class="sourceLine" id="cb792-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb792-11" data-line-number="11">post <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb792-12" data-line-number="12"><span class="st">  </span><span class="kw">select</span>(b_Intercept<span class="op">:</span>sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb792-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb792-14" data-line-number="14"><span class="st">  </span><span class="kw">ggpairs</span>(<span class="dt">diag  =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_diag),</a>
+<a class="sourceLine" id="cb792-15" data-line-number="15">          <span class="dt">lower =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> my_lower)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb792-16" data-line-number="16"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;My custom pairs plot&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb792-17" data-line-number="17"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb792-18" data-line-number="18"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">8</span>))</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-18-1.png" width="672" /></p>
+<p>For more ideas on customizing a <code>ggpairs()</code> plot, go <a href="https://ggobi.github.io/ggally/#columns_and_mapping">here</a>.</p>
 </div>
 <div id="using-the-samples." class="section level3">
 <h3><span class="header-section-number">8.3.5</span> Using the samples.</h3>
 <p>Older versions of brms allowed users to include information criteria as a part of the model summary by adding <code>loo = T</code> and/or <code>waic = T</code> in the <code>summary()</code> function (e.g., <code>summary(b8.1, loo = T, waic = T)</code>. However, this is no longer the case. E.g.,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(b8.<span class="dv">1</span>, <span class="dt">loo =</span> T, <span class="dt">waic =</span> T)</code></pre></div>
+<div class="sourceCode" id="cb793"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb793-1" data-line-number="1"><span class="kw">summary</span>(b8<span class="fl">.1</span>, <span class="dt">loo =</span> T, <span class="dt">waic =</span> T)</a></code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa 
@@ -633,77 +693,92 @@ post <span class="op">%&gt;%</span>
 ##          total post-warmup samples = 4000
 ## 
 ## Population-Level Effects: 
-##                    Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept              9.22      0.14     8.94     9.50       2792 1.00
-## rugged                -0.20      0.08    -0.35    -0.05       2782 1.00
-## cont_africa           -1.94      0.23    -2.39    -1.50       2900 1.00
-## rugged:cont_africa     0.39      0.13     0.12     0.65       2741 1.00
+##                    Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept              9.22      0.14     8.94     9.49 1.00     2632     2549
+## rugged                -0.20      0.08    -0.35    -0.05 1.00     2512     2526
+## cont_africa           -1.95      0.23    -2.40    -1.50 1.00     2137     2731
+## rugged:cont_africa     0.40      0.13     0.13     0.65 1.00     2154     2463
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     0.95      0.05     0.86     1.06       4183 1.00
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.95      0.05     0.85     1.06 1.00     3801     2537
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Although R didn’t bark at us for adding <code>loo = T, waic = T</code>, they didn’t do anything. Nowadays, if you want that information, you’ll have to use the <code>waic()</code> and/or <code>loo()</code> functions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">waic</span>(b8.<span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb795"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb795-1" data-line-number="1"><span class="kw">waic</span>(b8<span class="fl">.1</span>)</a></code></pre></div>
 <pre><code>## 
 ## Computed from 4000 by 170 log-likelihood matrix
 ## 
 ##           Estimate   SE
-## elpd_waic   -234.8  7.4
+## elpd_waic   -234.8  7.5
 ## p_waic         5.2  0.9
-## waic         469.5 14.8</code></pre>
-<pre><code>## Warning: 2 (1.2%) p_waic estimates greater than 0.4. We recommend trying
-## loo instead.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(l_b8.<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">loo</span>(b8.<span class="dv">1</span>))</code></pre></div>
+## waic         469.5 14.9
+## 
+## 2 (1.2%) p_waic estimates greater than 0.4. We recommend trying loo instead.</code></pre>
+<div class="sourceCode" id="cb797"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb797-1" data-line-number="1">(l_b8<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">loo</span>(b8<span class="fl">.1</span>))</a></code></pre></div>
 <pre><code>## 
 ## Computed from 4000 by 170 log-likelihood matrix
 ## 
 ##          Estimate   SE
-## elpd_loo   -234.8  7.4
+## elpd_loo   -234.8  7.5
 ## p_loo         5.3  0.9
-## looic       469.7 14.8
+## looic       469.7 14.9
 ## ------
-## Monte Carlo SE of elpd_loo is 0.0.
+## Monte Carlo SE of elpd_loo is 0.1.
 ## 
-## All Pareto k estimates are good (k &lt; 0.5).
+## Pareto k diagnostic values:
+##                          Count Pct.    Min. n_eff
+## (-Inf, 0.5]   (good)     169   99.4%   1242      
+##  (0.5, 0.7]   (ok)         1    0.6%   1127      
+##    (0.7, 1]   (bad)        0    0.0%   &lt;NA&gt;      
+##    (1, Inf)   (very bad)   0    0.0%   &lt;NA&gt;      
+## 
+## All Pareto k estimates are ok (k &lt; 0.7).
 ## See help(&#39;pareto-k-diagnostic&#39;) for details.</code></pre>
 <p>And the recommended workflow since brms version 2.8.0 is to save the information criteria information with your <code>brm()</code> fit objects with the <code>add_criterion()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b8.<span class="dv">1</span>, <span class="kw">c</span>(<span class="st">&quot;waic&quot;</span>, <span class="st">&quot;loo&quot;</span>))</code></pre></div>
-<p>You retrieve that information like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">1</span><span class="op">$</span>waic</code></pre></div>
+<div class="sourceCode" id="cb799"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb799-1" data-line-number="1">b8<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">add_criterion</span>(b8<span class="fl">.1</span>, <span class="kw">c</span>(<span class="st">&quot;waic&quot;</span>, <span class="st">&quot;loo&quot;</span>))</a></code></pre></div>
+<pre><code>## Automatically saving the model object in &#39;fits/b08.01.rds&#39;</code></pre>
+<p>You retrieve that information by subsetting the fit object.</p>
+<div class="sourceCode" id="cb801"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb801-1" data-line-number="1">b8<span class="fl">.1</span><span class="op">$</span>criteria<span class="op">$</span>waic</a></code></pre></div>
 <pre><code>## 
 ## Computed from 4000 by 170 log-likelihood matrix
 ## 
 ##           Estimate   SE
-## elpd_waic   -234.8  7.4
+## elpd_waic   -234.8  7.5
 ## p_waic         5.2  0.9
-## waic         469.5 14.8</code></pre>
-<pre><code>## Warning: 2 (1.2%) p_waic estimates greater than 0.4. We recommend trying
-## loo instead.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">1</span><span class="op">$</span>loo</code></pre></div>
+## waic         469.5 14.9
+## 
+## 2 (1.2%) p_waic estimates greater than 0.4. We recommend trying loo instead.</code></pre>
+<div class="sourceCode" id="cb803"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb803-1" data-line-number="1">b8<span class="fl">.1</span><span class="op">$</span>criteria<span class="op">$</span>loo</a></code></pre></div>
 <pre><code>## 
 ## Computed from 4000 by 170 log-likelihood matrix
 ## 
 ##          Estimate   SE
-## elpd_loo   -234.8  7.4
+## elpd_loo   -234.8  7.5
 ## p_loo         5.3  0.9
-## looic       469.7 14.8
+## looic       469.7 14.9
 ## ------
-## Monte Carlo SE of elpd_loo is 0.0.
+## Monte Carlo SE of elpd_loo is 0.1.
 ## 
-## All Pareto k estimates are good (k &lt; 0.5).
+## Pareto k diagnostic values:
+##                          Count Pct.    Min. n_eff
+## (-Inf, 0.5]   (good)     169   99.4%   1242      
+##  (0.5, 0.7]   (ok)         1    0.6%   1127      
+##    (0.7, 1]   (bad)        0    0.0%   &lt;NA&gt;      
+##    (1, Inf)   (very bad)   0    0.0%   &lt;NA&gt;      
+## 
+## All Pareto k estimates are ok (k &lt; 0.7).
 ## See help(&#39;pareto-k-diagnostic&#39;) for details.</code></pre>
-<p>In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we’ve been bantering on about the <span class="math inline">\(\text{elpd}\)</span> and its relation to the WAIC and the LOO since Chapter 6. This is a fine place to go into some detail.</p>
+<p>In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we’ve been bantering on about the <span class="math inline">\(\text{elpd}\)</span> and its relation to the WAIC and the LOO since <a href="overfitting-regularization-and-information-criteria.html#information-criteria">Chapter 6</a>. This is a fine place to go into some detail.</p>
 <p>The <code>elpd</code> values returned by <code>loo()</code> and <code>waic()</code> are the expected log pointwise predictive density for new data. It follows the formula</p>
-<p><span class="math display">\[\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde{y}_i) \text{log} p (\tilde{y}_i | y) d \tilde{y}_i,\]</span></p>
+<p><span class="math display">\[\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde y_i) \log p (\tilde y_i | y) d \tilde y_i,\]</span></p>
 <blockquote>
-<p>where <span class="math inline">\(p_t (\tilde{y}_i)\)</span> is the distribution representing the true data-generating process for <span class="math inline">\(\tilde{y}_i\)</span>. The <span class="math inline">\(p_t (\tilde{y}_i)\)</span>’s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. (<a href="https://arxiv.org/abs/1507.04544">Vehtari, Gelman, &amp; Gabry, 2016, p. 2</a>).</p>
+<p>where <span class="math inline">\(p_t (\tilde y_i)\)</span> is the distribution representing the true data-generating process for <span class="math inline">\(\tilde y_i\)</span>. The <span class="math inline">\(p_t (\tilde y_i)\)</span>’s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. (<a href="https://arxiv.org/abs/1507.04544">Vehtari, Gelman, &amp; Gabry, 2016, p. 2</a>).</p>
 </blockquote>
 <p>Later in the paper, we learn the <code>elpd_loo</code> (i.e., the Bayesian LOO estimate of out-of-sample predictive fit) is defined as</p>
-<p><span class="math display">\[\text{elpd}_{\text{loo}} = \sum_{i = 1}^n \text{log } p (y_i | y - _i),\]</span></p>
+<p><span class="math display">\[\text{elpd}_\text{loo} = \sum_{i = 1}^n \log p (y_i | y - _i),\]</span></p>
 <p>where</p>
 <p><span class="math display">\[p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta\]</span></p>
 <p>“is the leave-one-out predictive density given the data without the <span class="math inline">\(i\)</span>th data point” (p. 3). And recall, you can convert the <span class="math inline">\(\text{elpd}\)</span> to the conventional information criteria metric by multiplying it by -2.</p>
@@ -712,34 +787,89 @@ post <span class="op">%&gt;%</span>
 <div id="checking-the-chain." class="section level3">
 <h3><span class="header-section-number">8.3.6</span> Checking the chain.</h3>
 <p>Using <code>plot()</code> for a <code>brm()</code> fit returns both density and trace lots for the parameters.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(b8.<span class="dv">1</span>)</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-22-1.png" width="768" /></p>
-<p>The bayesplot package allows a little more control. Here, we use <a href="https://cran.r-project.org/package=bayesplot">bayesplot’s</a> <code>mcmc_trace()</code> to show only trace plots with our custom theme. Note that <code>mcmc_trace()</code> works with data frames, not brmfit objects. There’s a further complication. Recall how we made <code>post</code> (i.e., <code>post &lt;- posterior_samples(b8.1)</code>). Our <code>post</code> data frame carries no information on chains. To retain that information, we’ll need to add an <code>add_chain = T</code> argument to our <code>posterior_samples()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bayesplot)
-
-post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">1</span>, <span class="dt">add_chain =</span> T)
-
-<span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span>)],  <span class="co"># we need to include column 7 because it contains the chain info </span>
-           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">ncol =</span> <span class="dv">3</span>), 
-           <span class="dt">size =</span> .<span class="dv">15</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;My custom trace plots&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">95</span>, .<span class="dv">2</span>))</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<div class="sourceCode" id="cb805"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb805-1" data-line-number="1"><span class="kw">plot</span>(b8<span class="fl">.1</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-23-1.png" width="768" /></p>
+<p>The <a href="(https://cran.r-project.org/package=bayesplot)">bayesplot</a> package allows a little more control. Here, we use bayesplot’s <code>mcmc_trace()</code> to show only trace plots with our custom theme. Note that <code>mcmc_trace()</code> works with data frames, not brmfit objects. There’s a further complication. Recall how we made <code>post</code> (i.e., <code>post &lt;- posterior_samples(b8.1)</code>). Our <code>post</code> data frame carries no information on chains. To retain that information, we’ll need to add an <code>add_chain = T</code> argument to our <code>posterior_samples()</code> function.</p>
+<div class="sourceCode" id="cb806"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb806-1" data-line-number="1"><span class="kw">library</span>(bayesplot)</a>
+<a class="sourceLine" id="cb806-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb806-3" data-line-number="3">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.1</span>, <span class="dt">add_chain =</span> T)</a>
+<a class="sourceLine" id="cb806-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb806-5" data-line-number="5"><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span>)],  <span class="co"># we need to include column 7 because it contains the chain info </span></a>
+<a class="sourceLine" id="cb806-6" data-line-number="6">           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">ncol =</span> <span class="dv">3</span>), </a>
+<a class="sourceLine" id="cb806-7" data-line-number="7">           <span class="dt">size =</span> <span class="fl">.15</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb806-8" data-line-number="8"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb806-9" data-line-number="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;My custom trace plots&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb806-10" data-line-number="10"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb806-11" data-line-number="11"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">95</span>, <span class="fl">.2</span>))</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-24-1.png" width="768" /></p>
 <p>The bayesplot package offers a variety of diagnostic plots. Here we make autocorrelation plots for all model parameters, one for each HMC chain.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_acf</span>(post, 
-         <span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;b_Intercept&quot;</span>, <span class="st">&quot;b_rugged&quot;</span>, <span class="st">&quot;b_cont_africa&quot;</span>, <span class="st">&quot;b_rugged:cont_africa&quot;</span>, <span class="st">&quot;sigma&quot;</span>),
-         <span class="dt">lags =</span> <span class="dv">5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-24-1.png" width="768" /></p>
-<p>That’s just what we like to see–nice L-shaped autocorrelation plots. Those are the kinds of shapes you’d expect when you have reasonably large effective samples. Anyway…</p>
+<div class="sourceCode" id="cb807"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb807-1" data-line-number="1"><span class="kw">mcmc_acf</span>(post, </a>
+<a class="sourceLine" id="cb807-2" data-line-number="2">         <span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;b_Intercept&quot;</span>, <span class="st">&quot;b_rugged&quot;</span>, <span class="st">&quot;b_cont_africa&quot;</span>, <span class="st">&quot;b_rugged:cont_africa&quot;</span>, <span class="st">&quot;sigma&quot;</span>),</a>
+<a class="sourceLine" id="cb807-3" data-line-number="3">         <span class="dt">lags =</span> <span class="dv">5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb807-4" data-line-number="4"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb807-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-25-1.png" width="768" /></p>
+<p>That’s just what we like to see–nice L-shaped autocorrelation plots. Those are the kinds of shapes you’d expect when you have reasonably large effective samples.</p>
+<p>Before we move on, there’s an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath’s trace plots include the warmup iterations. Ours did not. That’s why his x-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the <code>brms::plot()</code> nor the <code>bayesplot::mcmc_trace()</code> functions support including warmups in their trace plots. One quick way to get them is with the <a href="https://cran.rstudio.com/package=ggmcmc">ggmcmc package</a>.</p>
+<div class="sourceCode" id="cb808"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb808-1" data-line-number="1"><span class="co"># install.packages(&quot;ggmcmc&quot;, dependencies = T)</span></a>
+<a class="sourceLine" id="cb808-2" data-line-number="2"><span class="kw">library</span>(ggmcmc)</a></code></pre></div>
+<p>The ggmcmc package has a variety of convenience functions for working with MCMC chains. The <code>ggs()</code> function extracts the posterior draws, including <code>warmup</code>, and arranges them in a tidy tibble.</p>
+<div class="sourceCode" id="cb809"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb809-1" data-line-number="1"><span class="kw">ggs</span>(b8<span class="fl">.1</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb809-2" data-line-number="2"><span class="st">  </span><span class="kw">str</span>()</a></code></pre></div>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    40000 obs. of  4 variables:
+##  $ Iteration: int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Chain    : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Parameter: Factor w/ 5 levels &quot;b_cont_africa&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ value    : num  0.815 0.815 0.815 0.815 0.871 ...
+##  - attr(*, &quot;nChains&quot;)= int 4
+##  - attr(*, &quot;nParameters&quot;)= int 5
+##  - attr(*, &quot;nIterations&quot;)= int 2000
+##  - attr(*, &quot;nBurnin&quot;)= num 1000
+##  - attr(*, &quot;nThin&quot;)= num 1
+##  - attr(*, &quot;description&quot;)= chr &quot;7800258486a6dfd09b501505ab8f8544&quot;</code></pre>
+<p>With this in hand, we can now include those warmup draws in our trace plots. Here’s how to do so without convenience functions like <code>bayesplot::mcmc_trace()</code>.</p>
+<div class="sourceCode" id="cb811"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb811-1" data-line-number="1"><span class="kw">ggs</span>(b8<span class="fl">.1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb811-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">chain =</span> <span class="kw">factor</span>(Chain)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb811-3" data-line-number="3"><span class="st">  </span></a>
+<a class="sourceLine" id="cb811-4" data-line-number="4"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Iteration, <span class="dt">y =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-5" data-line-number="5"><span class="st">  </span><span class="co"># this marks off the warmups</span></a>
+<a class="sourceLine" id="cb811-6" data-line-number="6"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;rect&quot;</span>, </a>
+<a class="sourceLine" id="cb811-7" data-line-number="7">           <span class="dt">xmin =</span> <span class="dv">0</span>, <span class="dt">xmax =</span> <span class="dv">1000</span>, <span class="dt">ymin =</span> <span class="op">-</span><span class="ot">Inf</span>, <span class="dt">ymax =</span> <span class="ot">Inf</span>,</a>
+<a class="sourceLine" id="cb811-8" data-line-number="8">           <span class="dt">fill =</span> <span class="st">&quot;grey80&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">size =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color =</span> chain),</a>
+<a class="sourceLine" id="cb811-10" data-line-number="10">            <span class="dt">size =</span> <span class="fl">.15</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-11" data-line-number="11"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-12" data-line-number="12"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;My custom trace plots with warmups via ggmcmc::ggs()&quot;</span>,</a>
+<a class="sourceLine" id="cb811-13" data-line-number="13">       <span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-14" data-line-number="14"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-15" data-line-number="15"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">95</span>, <span class="fl">.2</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb811-16" data-line-number="16"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>Parameter, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-28-1.png" width="768" /></p>
+<p>Following brms defaults, we won’t include warmup iterations in the trace plots for other models in this book. A nice thing about plots that do contain them, though, is they reveal how quickly our HMC chains transition away from their start values into the posterior. To get a better sense of this, let’s make those trace plots once more, but this time zooming in on the first 100 iterations.</p>
+<div class="sourceCode" id="cb812"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb812-1" data-line-number="1"><span class="kw">ggs</span>(b8<span class="fl">.1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb812-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">chain =</span> <span class="kw">factor</span>(Chain)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb812-3" data-line-number="3"><span class="st">  </span></a>
+<a class="sourceLine" id="cb812-4" data-line-number="4"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Iteration, <span class="dt">y =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-5" data-line-number="5"><span class="st">  </span><span class="co"># this marks off the warmups</span></a>
+<a class="sourceLine" id="cb812-6" data-line-number="6"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;rect&quot;</span>, </a>
+<a class="sourceLine" id="cb812-7" data-line-number="7">           <span class="dt">xmin =</span> <span class="dv">0</span>, <span class="dt">xmax =</span> <span class="dv">1000</span>, <span class="dt">ymin =</span> <span class="op">-</span><span class="ot">Inf</span>, <span class="dt">ymax =</span> <span class="ot">Inf</span>,</a>
+<a class="sourceLine" id="cb812-8" data-line-number="8">           <span class="dt">fill =</span> <span class="st">&quot;grey80&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">size =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color =</span> chain),</a>
+<a class="sourceLine" id="cb812-10" data-line-number="10">            <span class="dt">size =</span> <span class="fl">.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-11" data-line-number="11"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-12" data-line-number="12"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;My custom trace plots with warmups via ggmcmc::ggs()&quot;</span>,</a>
+<a class="sourceLine" id="cb812-13" data-line-number="13">       <span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-14" data-line-number="14"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">100</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-15" data-line-number="15"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-16" data-line-number="16"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">95</span>, <span class="fl">.2</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb812-17" data-line-number="17"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>Parameter, <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-29-1.png" width="768" /></p>
+<p>For each parameter, the all four chains had moved away from their starting values to converge on the marginal posteriors by the 50<sup>th</sup> iteration or so.</p>
 <div id="overthinking-raw-stan-model-code." class="section level4">
 <h4><span class="header-section-number">8.3.6.1</span> Overthinking: Raw Stan model code.</h4>
 <p>The <code>stancode()</code> function works in brms much like it does in rethinking.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">brms<span class="op">::</span><span class="kw">stancode</span>(b8.<span class="dv">1</span>)</code></pre></div>
-<pre><code>## // generated with brms 2.8.8
+<div class="sourceCode" id="cb813"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb813-1" data-line-number="1">brms<span class="op">::</span><span class="kw">stancode</span>(b8<span class="fl">.1</span>)</a></code></pre></div>
+<pre><code>## // generated with brms 2.12.0
 ## functions {
 ## }
 ## data {
@@ -751,7 +881,7 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 ## }
 ## transformed data {
 ##   int Kc = K - 1;
-##   matrix[N, Kc] Xc;  // centered version of X
+##   matrix[N, Kc] Xc;  // centered version of X without an intercept
 ##   vector[Kc] means_X;  // column means of X before centering
 ##   for (i in 2:K) {
 ##     means_X[i - 1] = mean(X[, i]);
@@ -760,26 +890,25 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 ## }
 ## parameters {
 ##   vector[Kc] b;  // population-level effects
-##   real temp_Intercept;  // temporary intercept
+##   real Intercept;  // temporary intercept for centered predictors
 ##   real&lt;lower=0&gt; sigma;  // residual SD
 ## }
 ## transformed parameters {
 ## }
 ## model {
-##   vector[N] mu = temp_Intercept + Xc * b;
 ##   // priors including all constants
 ##   target += normal_lpdf(b | 0, 10);
-##   target += normal_lpdf(temp_Intercept | 0, 100);
+##   target += normal_lpdf(Intercept | 0, 100);
 ##   target += cauchy_lpdf(sigma | 0, 2)
 ##     - 1 * cauchy_lccdf(0 | 0, 2);
 ##   // likelihood including all constants
 ##   if (!prior_only) {
-##     target += normal_lpdf(Y | mu, sigma);
+##     target += normal_id_glm_lpdf(Y | Xc, Intercept, b, sigma);
 ##   }
 ## }
 ## generated quantities {
 ##   // actual population-level intercept
-##   real b_Intercept = temp_Intercept - dot_product(means_X, b);
+##   real b_Intercept = Intercept - dot_product(means_X, b);
 ## }</code></pre>
 <p>You can also get that information with <code>b8.1$model</code> or <code>b8.1$fit@stanmodel</code>.</p>
 </div>
@@ -797,48 +926,53 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 <blockquote>
 <p>If all you want are posterior means, it doesn’t take many samples at all to get very good estimates. Even a couple hundred samples will do. But if you care about the exact shape in the extreme tails of the posterior, the 99th percentile or so, then you’ll need many many more. So there is no universally useful number of samples to aim for. In most typical regression applications, you can get a very good estimate of the posterior mean with as few as 200 effective samples. And if the posterior is approximately Gaussian, then all you need in addition is a good estimate of the variance, which can be had with one order of magnitude more, in most cases. For highly skewed posteriors, you’ll have to think more about which region of the distribution interests you. (p. 255)</p>
 </blockquote>
+<p>And remember, with changes from brms version 2.10.0, we now have both <code>Bulk_ESS</code> and <code>Tail_ESS</code> to consult when thinking about the effective sample size.</p>
 </div>
 <div id="how-many-chains-do-you-need" class="section level3">
 <h3><span class="header-section-number">8.4.2</span> How many chains do you need?</h3>
 <p>“Using 3 or 4 chains is conventional, and quite often more than enough to reassure us that the sampling is working properly” (p. 257).</p>
 <div id="convergence-diagnostics." class="section level4">
 <h4><span class="header-section-number">8.4.2.1</span> Convergence diagnostics.</h4>
+<p>Times have changed. In the text, we read:</p>
 <blockquote>
-<p>The default diagnostic output from Stan includes two metrics, <code>n_eff</code> and <code>Rhat</code>. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, <span class="math inline">\(\hat{R}\)</span>. When <code>n_eff</code> is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When <code>Rhat</code> is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the <a href="http://mc-stan.org/users/documentation/index.html">Stan user manual</a> for more details. It’s important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)</p>
+<p>The default diagnostic output from Stan includes two metrics, <code>n_eff</code> and <code>Rhat</code>. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, <span class="math inline">\(\hat R\)</span>. When <code>n_eff</code> is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When <code>Rhat</code> is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the <a href="https://mc-stan.org/users/documentation/index.html">Stan user manual</a> for more details. It’s important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)</p>
 </blockquote>
-<p>For more on <code>n_eff</code> and <code>Rhat</code>, you might also check out Gabry and Modrák’s vignette, <a href="https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics"><em>Visual MCMC diagnostics using the bayesplot package</em></a>.</p>
-<p>The <span class="math inline">\(\hat{R}\)</span> has been our friend for many years. But times are changing. As it turns out, the Stan team has found some deficiencies with the <span class="math inline">\(\hat{R}\)</span>, for which they’ve made recommendations that will be implemented in the Stan ecosystem sometime soon. In the meantime, you can read all about it in their <a href="https://arxiv.org/abs/1903.08008">preprint</a> and in one of Dan Simpson’s <a href="https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/">blogs</a>. If you learn best by sassy twitter banter, <a href="https://twitter.com/betanalpha/status/1108185746870030336">click through this interchange</a> among some of our Stan team all-stars.</p>
+<p>We’ve already covered how brms has expanded the traditional notion of effective samples (i.e., <code>n_eff</code>) to <code>Bulk_ESS</code> and <code>Tail_ESS</code>. Times are changing for the <span class="math inline">\(\hat R\)</span>, too. As it turns out, the Stan team has found some deficiencies with the <span class="math inline">\(\hat R\)</span>, for which they’ve made recommendations that will be implemented in the Stan ecosystem sometime soon (see <a href="https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165">here</a> for a related thread on the Stan Forums). In the meantime, you can read all about it in their <a href="https://arxiv.org/abs/1903.08008">preprint</a> and in one of Dan Simpson’s <a href="https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/">blogs</a>. If you learn best by sassy twitter banter, <a href="https://twitter.com/betanalpha/status/1108185746870030336">click through this interchange</a> among some of our Stan team all-stars.</p>
+<p>For more on these topics, you might also check out Gabry and Modrák’s vignette, <a href="https://cran.r-project.org/package=bayesplot/vignettes/visual-mcmc-diagnostics.html#general-mcmc-diagnostics"><em>Visual MCMC diagnostics using the bayesplot package</em></a>.</p>
 </div>
 </div>
 <div id="taming-a-wild-chain." class="section level3">
 <h3><span class="header-section-number">8.4.3</span> Taming a wild chain.</h3>
 <p>As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an <code>inits</code> argument rather than with <code>start</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">2</span> &lt;-
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)), 
-      <span class="dt">family =</span> gaussian,
-      y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
-      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="op">-</span><span class="fl">1e10</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> Intercept),
-                <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),
-                   <span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),
-      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,
-      <span class="dt">seed =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode" id="cb815"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb815-1" data-line-number="1">b8<span class="fl">.2</span> &lt;-</a>
+<a class="sourceLine" id="cb815-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)), </a>
+<a class="sourceLine" id="cb815-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb815-4" data-line-number="4">      y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb815-5" data-line-number="5">      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="op">-</span><span class="fl">1e10</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> Intercept),</a>
+<a class="sourceLine" id="cb815-6" data-line-number="6">                <span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> sigma)),</a>
+<a class="sourceLine" id="cb815-7" data-line-number="7">      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb815-8" data-line-number="8">                   <span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb815-9" data-line-number="9">      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb815-10" data-line-number="10">      <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb815-11" data-line-number="11">      <span class="dt">file =</span> <span class="st">&quot;fits/b08.02&quot;</span>)</a></code></pre></div>
 <p>Those were some silly flat priors. Check the damage.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">2</span>, <span class="dt">add_chain =</span> T)
-
-<span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">4</span>)],
-           <span class="dt">size =</span> .<span class="dv">25</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;My version of Figure 8.5.a.&quot;</span>,
-       <span class="dt">subtitle =</span> <span class="st">&quot;These trace plots do not look like the fuzzy caterpillars we usually hope for.&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),
-        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-26-1.png" width="624" /></p>
+<div class="sourceCode" id="cb816"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb816-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.2</span>, <span class="dt">add_chain =</span> T)</a>
+<a class="sourceLine" id="cb816-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb816-3" data-line-number="3"><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">4</span>)],</a>
+<a class="sourceLine" id="cb816-4" data-line-number="4">           <span class="dt">size =</span> <span class="fl">.25</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb816-5" data-line-number="5"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;My version of Figure 8.5.a.&quot;</span>,</a>
+<a class="sourceLine" id="cb816-6" data-line-number="6">       <span class="dt">subtitle =</span> <span class="st">&quot;These trace plots do not look like the fuzzy caterpillars we usually hope for.&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb816-7" data-line-number="7"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb816-8" data-line-number="8"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb816-9" data-line-number="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),</a>
+<a class="sourceLine" id="cb816-10" data-line-number="10">        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-31-1.png" width="624" /></p>
 <p>Let’s peek at the summary.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.<span class="dv">2</span>)</code></pre></div>
-<pre><code>## Warning: There were 609 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help.
-## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<div class="sourceCode" id="cb817"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb817-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.2</span>)</a></code></pre></div>
+<pre><code>## Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be careful when analysing
+## the results! We recommend running more iterations and/or setting stronger priors.</code></pre>
+<pre><code>## Warning: There were 122 divergent transitions after warmup. Increasing adapt_delta above 0.8 may
+## help. See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 1 
@@ -847,28 +981,29 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##              Estimate   Est.Error     l-95% CI    u-95% CI Eff.Sample Rhat
-## Intercept -3865553.82 35800459.25 -74287051.02 24607826.73        105 1.04
+##              Estimate   Est.Error    l-95% CI     u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept 12353449.01 32582754.90 -8996475.21 111009346.70 1.23       11       23
 ## 
 ## Family Specific Parameters: 
-##          Estimate    Est.Error l-95% CI     u-95% CI Eff.Sample Rhat
-## sigma 40602239.10 188456908.77  3167.70 376813947.39        266 1.01
+##          Estimate    Est.Error l-95% CI     u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma 65329608.35 339797572.81  2516.98 488637001.70 1.25        7       18
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>Holy smokes, those parameters are a mess! Plus we got a nasty warning message, too. Watch our reasonable priors save the day.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">3</span> &lt;-
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)), 
-      <span class="dt">family =</span> gaussian,
-      y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,
-      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),
-                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),
-                   <span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),
-      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,
-      <span class="dt">seed =</span> <span class="dv">8</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.<span class="dv">3</span>)</code></pre></div>
+<p>Holy smokes, those parameters are a mess! Plus we got nasty warning messages, too. Watch our reasonable priors save the day.</p>
+<div class="sourceCode" id="cb821"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb821-1" data-line-number="1">b8<span class="fl">.3</span> &lt;-</a>
+<a class="sourceLine" id="cb821-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)), </a>
+<a class="sourceLine" id="cb821-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb821-4" data-line-number="4">      y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb821-5" data-line-number="5">      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> Intercept),</a>
+<a class="sourceLine" id="cb821-6" data-line-number="6">                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),</a>
+<a class="sourceLine" id="cb821-7" data-line-number="7">      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb821-8" data-line-number="8">                   <span class="kw">list</span>(<span class="dt">Intercept =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb821-9" data-line-number="9">      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb821-10" data-line-number="10">      <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb821-11" data-line-number="11">      <span class="dt">file =</span> <span class="st">&quot;fits/b08.03&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb822"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb822-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.3</span>)</a></code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 1 
@@ -877,120 +1012,132 @@ post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## Intercept    -0.01      1.61    -3.38     3.46       1408 1.01
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     0.06      1.82    -3.60     4.03 1.00     1045      822
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     2.01      2.21     0.60     6.66       1668 1.00
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     2.13      2.04     0.62     7.61 1.00     1166     1233
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>As in the text, no more warning signs and no more silly estimates. The trace plots look great, too.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">3</span>, <span class="dt">add_chain =</span> T)
-
-<span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">4</span>)],
-           <span class="dt">size =</span> .<span class="dv">25</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title     =</span> <span class="st">&quot;My version of Figure 8.5.b&quot;</span>,
-       <span class="dt">subtitle  =</span> <span class="st">&quot;Oh man. This looks so much better.&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),
-        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-29-1.png" width="624" /></p>
-<p>Now behold our version of Figure 8.6.a.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(b_Intercept) <span class="op">%&gt;%</span>
-<span class="st">  </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_Intercept)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_density</span>(<span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="kw">min</span>(post<span class="op">$</span>b_Intercept),
-                                      <span class="dt">to =</span> <span class="kw">max</span>(post<span class="op">$</span>b_Intercept),
-                                      <span class="dt">length.out =</span> <span class="dv">50</span>)),
-            <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">dnorm</span>(<span class="dt">x =</span> x, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">10</span>)),
-            <span class="dt">color =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">1</span>), <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-30-1.png" width="336" /></p>
-<p>Here’s our version of Figure 8.6.b.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(sigma) <span class="op">%&gt;%</span>
-<span class="st">  </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sigma)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">stat_density</span>(<span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>,
-                                      <span class="dt">to =</span> <span class="kw">max</span>(post<span class="op">$</span>sigma),
-                                      <span class="dt">length.out =</span> <span class="dv">50</span>)),
-            <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">dcauchy</span>(<span class="dt">x =</span> x, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">1</span>)<span class="op">*</span><span class="dv">2</span>),
-            <span class="dt">color =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">2</span>)[<span class="dv">2</span>], <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-31-1.png" width="336" /></p>
+<div class="sourceCode" id="cb824"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb824-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.3</span>, <span class="dt">add_chain =</span> T)</a>
+<a class="sourceLine" id="cb824-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb824-3" data-line-number="3"><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">4</span>)],</a>
+<a class="sourceLine" id="cb824-4" data-line-number="4">           <span class="dt">size =</span> <span class="fl">.25</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb824-5" data-line-number="5"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title     =</span> <span class="st">&quot;My version of Figure 8.5.b&quot;</span>,</a>
+<a class="sourceLine" id="cb824-6" data-line-number="6">       <span class="dt">subtitle  =</span> <span class="st">&quot;Oh man. This looks so much better.&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb824-7" data-line-number="7"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb824-8" data-line-number="8"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb824-9" data-line-number="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),</a>
+<a class="sourceLine" id="cb824-10" data-line-number="10">        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-34-1.png" width="624" /></p>
+<p>Now behold our version of Figure 8.6.</p>
+<div class="sourceCode" id="cb825"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb825-1" data-line-number="1"><span class="co"># left</span></a>
+<a class="sourceLine" id="cb825-2" data-line-number="2">p1 &lt;-</a>
+<a class="sourceLine" id="cb825-3" data-line-number="3"><span class="st">  </span>post <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb825-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(b_Intercept) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb825-5" data-line-number="5"><span class="st">  </span></a>
+<a class="sourceLine" id="cb825-6" data-line-number="6"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_Intercept)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-7" data-line-number="7"><span class="st">  </span><span class="kw">stat_density</span>(<span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="kw">min</span>(post<span class="op">$</span>b_Intercept),</a>
+<a class="sourceLine" id="cb825-9" data-line-number="9">                                      <span class="dt">to =</span> <span class="kw">max</span>(post<span class="op">$</span>b_Intercept),</a>
+<a class="sourceLine" id="cb825-10" data-line-number="10">                                      <span class="dt">length.out =</span> <span class="dv">50</span>)),</a>
+<a class="sourceLine" id="cb825-11" data-line-number="11">            <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">dnorm</span>(<span class="dt">x =</span> x, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">10</span>)),</a>
+<a class="sourceLine" id="cb825-12" data-line-number="12">            <span class="dt">color =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">1</span>), <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-13" data-line-number="13"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a>
+<a class="sourceLine" id="cb825-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb825-15" data-line-number="15"><span class="co"># right</span></a>
+<a class="sourceLine" id="cb825-16" data-line-number="16">p2 &lt;-</a>
+<a class="sourceLine" id="cb825-17" data-line-number="17"><span class="st">  </span>post <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb825-18" data-line-number="18"><span class="st">  </span><span class="kw">select</span>(sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb825-19" data-line-number="19"><span class="st">  </span></a>
+<a class="sourceLine" id="cb825-20" data-line-number="20"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-21" data-line-number="21"><span class="st">  </span><span class="kw">stat_density</span>(<span class="dt">geom =</span> <span class="st">&quot;line&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-22" data-line-number="22"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb825-23" data-line-number="23">                                      <span class="dt">to =</span> <span class="kw">max</span>(post<span class="op">$</span>sigma),</a>
+<a class="sourceLine" id="cb825-24" data-line-number="24">                                      <span class="dt">length.out =</span> <span class="dv">50</span>)),</a>
+<a class="sourceLine" id="cb825-25" data-line-number="25">            <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> <span class="kw">dcauchy</span>(<span class="dt">x =</span> x, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">1</span>)<span class="op">*</span><span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb825-26" data-line-number="26">            <span class="dt">color =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">2</span>)[<span class="dv">2</span>], <span class="dt">linetype =</span> <span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-27" data-line-number="27"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-28" data-line-number="28"><span class="st">  </span><span class="kw">ylab</span>(<span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb825-29" data-line-number="29"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a>
+<a class="sourceLine" id="cb825-30" data-line-number="30"></a>
+<a class="sourceLine" id="cb825-31" data-line-number="31"><span class="co"># combine the two</span></a>
+<a class="sourceLine" id="cb825-32" data-line-number="32"><span class="kw">library</span>(patchwork)</a>
+<a class="sourceLine" id="cb825-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb825-34" data-line-number="34">p1 <span class="op">+</span><span class="st"> </span>p2 <span class="op">+</span><span class="st"> </span><span class="kw">plot_annotation</span>(<span class="dt">title =</span> <span class="st">&quot;Prior (dashed) and posterior (solid) distributions for the</span><span class="ch">\n</span><span class="st">model with weakly-informative priors, b8.3&quot;</span>,</a>
+<a class="sourceLine" id="cb825-35" data-line-number="35">                          <span class="dt">theme =</span> <span class="kw">theme_ipsum</span>())</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-35-1.png" width="696" /></p>
 <div id="overthinking-cauchy-distribution." class="section level4">
 <h4><span class="header-section-number">8.4.3.1</span> Overthinking: Cauchy distribution.</h4>
 <p>Behold the beautiful Cauchy probability density:</p>
 <p><span class="math display">\[p(x|x_0, \gamma) = \Bigg ( \pi \gamma \Bigg [ 1 + \Big ( \frac{x - x_0}{\gamma} \Big ) ^2 \Bigg ] \Bigg ) ^{-1}\]</span></p>
 <p>The Cauchy has no mean and variance, but <span class="math inline">\(x_0\)</span> is the location and <span class="math inline">\(\gamma\)</span> is the scale. Here’s our version of the simulation. Note our use of the <code>cummean()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="fl">1e4</span>
-
-<span class="kw">set.seed</span>(<span class="dv">8</span>)
-<span class="kw">tibble</span>(<span class="dt">y     =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">mu    =</span> <span class="kw">cummean</span>(y),
-       <span class="dt">index =</span> <span class="dv">1</span><span class="op">:</span>n) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> index, <span class="dt">y =</span> mu)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>()</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-32-1.png" width="384" /></p>
-<p>The whole thing is quite remarkable. Just for kicks, here we do it again, this time with eight simulations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="fl">1e4</span>
-
-<span class="kw">set.seed</span>(<span class="dv">8</span>)
-<span class="kw">tibble</span>(<span class="dt">a =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">b =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">c =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">d =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">e =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">f =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">g =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),
-       <span class="dt">h =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mu =</span> <span class="kw">cummean</span>(value)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">index =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="dt">times =</span> <span class="dv">8</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
-
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> index, <span class="dt">y =</span> mu)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color =</span> key)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">8</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5000</span>, <span class="dv">10000</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">ncol =</span> <span class="dv">4</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-33-1.png" width="960" /></p>
+<div class="sourceCode" id="cb826"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb826-1" data-line-number="1">n &lt;-<span class="st"> </span><span class="fl">1e4</span></a>
+<a class="sourceLine" id="cb826-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb826-3" data-line-number="3"><span class="kw">set.seed</span>(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb826-4" data-line-number="4"><span class="kw">tibble</span>(<span class="dt">y     =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb826-5" data-line-number="5">       <span class="dt">mu    =</span> <span class="kw">cummean</span>(y),</a>
+<a class="sourceLine" id="cb826-6" data-line-number="6">       <span class="dt">index =</span> <span class="dv">1</span><span class="op">:</span>n) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb826-7" data-line-number="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb826-8" data-line-number="8"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> index, <span class="dt">y =</span> mu)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb826-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb826-10" data-line-number="10"><span class="st">  </span><span class="kw">theme_ipsum</span>()</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-36-1.png" width="384" /></p>
+<p>The whole thing is quite remarkable. Just for kicks, here we do it again with nine simulations.</p>
+<div class="sourceCode" id="cb827"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb827-1" data-line-number="1">n &lt;-<span class="st"> </span><span class="fl">1e4</span></a>
+<a class="sourceLine" id="cb827-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb827-3" data-line-number="3"><span class="kw">set.seed</span>(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb827-4" data-line-number="4"><span class="kw">tibble</span>(<span class="dt">a =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-5" data-line-number="5">       <span class="dt">b =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-6" data-line-number="6">       <span class="dt">c =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-7" data-line-number="7">       <span class="dt">d =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-8" data-line-number="8">       <span class="dt">e =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-9" data-line-number="9">       <span class="dt">f =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-10" data-line-number="10">       <span class="dt">g =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-11" data-line-number="11">       <span class="dt">h =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb827-12" data-line-number="12">       <span class="dt">i =</span> <span class="kw">rcauchy</span>(n, <span class="dt">location =</span> <span class="dv">0</span>, <span class="dt">scale =</span> <span class="dv">5</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-13" data-line-number="13"><span class="st">  </span><span class="kw">gather</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-14" data-line-number="14"><span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-15" data-line-number="15"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mu =</span> <span class="kw">cummean</span>(value)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-16" data-line-number="16"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-17" data-line-number="17"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">index =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="dt">times =</span> <span class="dv">9</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb827-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb827-19" data-line-number="19"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> index, <span class="dt">y =</span> mu)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-20" data-line-number="20"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">color =</span> key)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-21" data-line-number="21"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">ipsum_pal</span>()(<span class="dv">9</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-22" data-line-number="22"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">5000</span>, <span class="dv">10000</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-23" data-line-number="23"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-24" data-line-number="24"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb827-25" data-line-number="25"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>key, <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-37-1.png" width="768" /></p>
 </div>
 </div>
 <div id="non-identifiable-parameters." class="section level3">
 <h3><span class="header-section-number">8.4.4</span> Non-identifiable parameters.</h3>
 <p>It appears that the <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/3">only way</a> to get a brms version of McElreath’s <code>m8.4</code> and <code>m8.5</code> is to augment the data. In addition to the Gaussian <code>y</code> vector, we’ll add two constants to the data, <code>intercept_1 = 1</code> and <code>intercept_2 = 1</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">8</span>)
-y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">4</span> &lt;-
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y           =</span> y,
-                  <span class="dt">intercept_1 =</span> <span class="dv">1</span>,
-                  <span class="dt">intercept_2 =</span> <span class="dv">1</span>), 
-      <span class="dt">family =</span> gaussian,
-      y <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">2</span>,
-      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="op">-</span><span class="fl">1e10</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> b),
-                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),
-                   <span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),
-      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,
-      <span class="dt">seed =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode" id="cb828"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb828-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb828-2" data-line-number="2">y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb829"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb829-1" data-line-number="1">b8<span class="fl">.4</span> &lt;-</a>
+<a class="sourceLine" id="cb829-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y           =</span> y,</a>
+<a class="sourceLine" id="cb829-3" data-line-number="3">                  <span class="dt">intercept_1 =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb829-4" data-line-number="4">                  <span class="dt">intercept_2 =</span> <span class="dv">1</span>), </a>
+<a class="sourceLine" id="cb829-5" data-line-number="5">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb829-6" data-line-number="6">      y <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb829-7" data-line-number="7">      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">uniform</span>(<span class="op">-</span><span class="fl">1e10</span>, <span class="fl">1e10</span>), <span class="dt">class =</span> b),</a>
+<a class="sourceLine" id="cb829-8" data-line-number="8">                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),</a>
+<a class="sourceLine" id="cb829-9" data-line-number="9">      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb829-10" data-line-number="10">                   <span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb829-11" data-line-number="11">      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb829-12" data-line-number="12">      <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb829-13" data-line-number="13">      <span class="dt">file =</span> <span class="st">&quot;fits/b08.04&quot;</span>)</a></code></pre></div>
 <p>Our model results don’t perfectly mirror McElreath’s, but they’re identical in spirit.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.<span class="dv">4</span>)</code></pre></div>
-<pre><code>## Warning: The model has not converged (some Rhats are &gt; 1.1). Do not analyse the results! 
-## We recommend running more iterations and/or setting stronger priors.</code></pre>
+<div class="sourceCode" id="cb830"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb830-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.4</span>)</a></code></pre></div>
+<pre><code>## Warning: Parts of the model have not converged (some Rhats are &gt; 1.05). Be careful when analysing
+## the results! We recommend running more iterations and/or setting stronger priors.</code></pre>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 0 + intercept_1 + intercept_2 
@@ -999,31 +1146,32 @@ y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##             Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept_1  1116.48    944.73  -762.62  2439.62          2 2.50
-## intercept_2 -1116.57    944.74 -2439.65   762.38          2 2.50
+##             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## intercept_1  -307.39   1584.08 -2458.98  3110.09 2.12        3       11
+## intercept_2   307.29   1584.08 -3110.19  2458.81 2.12        3       11
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.06      0.08     0.91     1.22          9 1.16
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     1.08      0.07     0.95     1.23 1.07       54      183
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Note the frightening warning message. Those results are a mess! Let’s try again.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b8.<span class="dv">5</span> &lt;-
-<span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y           =</span> y,
-                  <span class="dt">intercept_1 =</span> <span class="dv">1</span>,
-                  <span class="dt">intercept_2 =</span> <span class="dv">1</span>),
-      <span class="dt">family =</span> gaussian,
-      y <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">2</span>,
-      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),
-                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),
-      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),
-                   <span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),
-      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,
-      <span class="dt">seed =</span> <span class="dv">8</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(b8.<span class="dv">5</span>)</code></pre></div>
+<div class="sourceCode" id="cb833"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb833-1" data-line-number="1">b8<span class="fl">.5</span> &lt;-</a>
+<a class="sourceLine" id="cb833-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> <span class="kw">list</span>(<span class="dt">y           =</span> y,</a>
+<a class="sourceLine" id="cb833-3" data-line-number="3">                  <span class="dt">intercept_1 =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb833-4" data-line-number="4">                  <span class="dt">intercept_2 =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb833-5" data-line-number="5">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb833-6" data-line-number="6">      y <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>intercept_<span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb833-7" data-line-number="7">      <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">prior</span>(<span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="dt">class =</span> b),</a>
+<a class="sourceLine" id="cb833-8" data-line-number="8">                <span class="kw">prior</span>(<span class="kw">cauchy</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="dt">class =</span> sigma)),</a>
+<a class="sourceLine" id="cb833-9" data-line-number="9">      <span class="dt">inits =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb833-10" data-line-number="10">                   <span class="kw">list</span>(<span class="dt">intercept_1 =</span> <span class="dv">0</span>, <span class="dt">intercept_2 =</span> <span class="dv">0</span>, <span class="dt">sigma =</span> <span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb833-11" data-line-number="11">      <span class="dt">iter =</span> <span class="dv">4000</span>, <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">chains =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb833-12" data-line-number="12">      <span class="dt">seed =</span> <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb833-13" data-line-number="13">      <span class="dt">file =</span> <span class="st">&quot;fits/b08.05&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb834"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb834-1" data-line-number="1"><span class="kw">print</span>(b8<span class="fl">.5</span>)</a></code></pre></div>
 <pre><code>##  Family: gaussian 
 ##   Links: mu = identity; sigma = identity 
 ## Formula: y ~ 0 + intercept_1 + intercept_2 
@@ -1032,130 +1180,114 @@ y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1
 ##          total post-warmup samples = 6000
 ## 
 ## Population-Level Effects: 
-##             Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## intercept_1    -0.11      7.04   -14.32    13.56       1357 1.00
-## intercept_2     0.02      7.04   -13.59    14.26       1359 1.00
+##             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## intercept_1    -0.14      7.20   -14.39    13.82 1.00     1185     1294
+## intercept_2     0.05      7.20   -13.95    14.34 1.00     1184     1296
 ## 
 ## Family Specific Parameters: 
-##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
-## sigma     1.09      0.08     0.95     1.25       2086 1.00
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     1.09      0.08     0.95     1.25 1.00     2162     2252
 ## 
-## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
-## is a crude measure of effective sample size, and Rhat is the potential 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<p>Much better. Now we’ll do the preparatory work for Figure 8.7. Instead of showing the plots, here, we’ll save them as objects, <code>left_column</code> and <code>right_column</code>, in order to combine them below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">4</span>, <span class="dt">add_chain =</span> T)
-
-left_column &lt;-
-<span class="st">  </span><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">5</span>)],
-           <span class="dt">size =</span> .<span class="dv">25</span>,
-           <span class="dt">facet_args =</span> <span class="kw">c</span>(<span class="dt">ncol =</span> <span class="dv">1</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),
-        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)
-
-post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8.<span class="dv">5</span>, <span class="dt">add_chain =</span> T)
-
-right_column &lt;-
-<span class="st">  </span><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">5</span>)],
-             <span class="dt">size =</span> .<span class="dv">25</span>,
-             <span class="dt">facet_args =</span> <span class="kw">c</span>(<span class="dt">ncol =</span> <span class="dv">1</span>)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position  =</span> <span class="kw">c</span>(.<span class="dv">85</span>, <span class="fl">1.5</span>),
-        <span class="dt">legend.direction =</span> <span class="st">&quot;horizontal&quot;</span>)
-
-<span class="kw">library</span>(gridExtra)
-
-<span class="kw">grid.arrange</span>(left_column, right_column, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="08_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
-<p>The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">recommendations from the Stan team</a>. If you want to dive deeper, check out <a href="http://andrewgelman.com/2017/09/05/never-total-eclipse-prior/">Dan Simpson’s post on Gelman’s blog</a> and their <a href="https://arxiv.org/abs/1708.07487">corresponding paper with Michael Betancourt</a>.</p>
+<p>Much better. For our version of Figure 8.7, we’ll make the trace plots for the two models saparately and combine them with patchwork.</p>
+<div class="sourceCode" id="cb836"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb836-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.4</span>, <span class="dt">add_chain =</span> T)</a>
+<a class="sourceLine" id="cb836-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb836-3" data-line-number="3">p1 &lt;-</a>
+<a class="sourceLine" id="cb836-4" data-line-number="4"><span class="st">  </span><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">5</span>)],</a>
+<a class="sourceLine" id="cb836-5" data-line-number="5">           <span class="dt">size =</span> <span class="fl">.25</span>,</a>
+<a class="sourceLine" id="cb836-6" data-line-number="6">           <span class="dt">facet_args =</span> <span class="kw">c</span>(<span class="dt">ncol =</span> <span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-7" data-line-number="7"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-8" data-line-number="8"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;flat priors&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-10" data-line-number="10"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb836-11" data-line-number="11">        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb836-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb836-13" data-line-number="13">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b8<span class="fl">.5</span>, <span class="dt">add_chain =</span> T)</a>
+<a class="sourceLine" id="cb836-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb836-15" data-line-number="15">p2 &lt;-</a>
+<a class="sourceLine" id="cb836-16" data-line-number="16"><span class="st">  </span><span class="kw">mcmc_trace</span>(post[, <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">5</span>)],</a>
+<a class="sourceLine" id="cb836-17" data-line-number="17">             <span class="dt">size =</span> <span class="fl">.25</span>,</a>
+<a class="sourceLine" id="cb836-18" data-line-number="18">             <span class="dt">facet_args =</span> <span class="kw">c</span>(<span class="dt">ncol =</span> <span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-19" data-line-number="19"><span class="st">  </span><span class="kw">scale_color_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-20" data-line-number="20"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">subtitle =</span> <span class="st">&quot;weakly-informative priors&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-21" data-line-number="21"><span class="st">  </span><span class="kw">theme_ipsum</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb836-22" data-line-number="22"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb836-23" data-line-number="23">        <span class="dt">strip.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb836-24" data-line-number="24"></a>
+<a class="sourceLine" id="cb836-25" data-line-number="25">p1 <span class="op">+</span><span class="st"> </span>p2 <span class="op">+</span><span class="st"> </span><span class="kw">plot_annotation</span>(<span class="dt">title =</span> <span class="st">&quot;Prior strength matters&quot;</span>,</a>
+<a class="sourceLine" id="cb836-26" data-line-number="26">                          <span class="dt">theme =</span> <span class="kw">theme_ipsum</span>())</a></code></pre></div>
+<p><img src="08_files/figure-gfm/unnamed-chunk-41-1.png" width="672" /></p>
+<p>The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">recommendations from the Stan team</a>. If you want to dive deeper, check out <a href="https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/">Simpson’s post on Gelman’s blog</a> and their <a href="https://arxiv.org/abs/1708.07487">corresponding paper with Betancourt</a>.</p>
 </div>
 </div>
 <div id="reference-7" class="section level2 unnumbered">
 <h2>Reference</h2>
-<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2016). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
+<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2015). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
 </div>
 <div id="session-info-7" class="section level2 unnumbered">
 <h2>Session info</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
-<pre><code>## R version 3.5.1 (2018-07-02)
+<div class="sourceCode" id="cb837"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb837-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] gridExtra_2.3        bayesplot_1.6.0      GGally_1.4.0        
-##  [4] tidybayes_1.0.4      brms_2.8.8           Rcpp_1.0.1          
-##  [7] rstan_2.18.2         StanHeaders_2.18.0-1 forcats_0.3.0       
-## [10] stringr_1.4.0        dplyr_0.8.0.1        purrr_0.2.5         
-## [13] readr_1.1.1          tidyr_0.8.1          tibble_2.1.1        
-## [16] ggplot2_3.1.1        tidyverse_1.2.1      extrafont_0.17      
-## [19] hrbrthemes_0.6.0    
+##  [1] patchwork_1.0.0      ggmcmc_1.3           bayesplot_1.7.1      GGally_1.4.0        
+##  [5] tidybayes_2.0.1.9000 brms_2.12.0          Rcpp_1.0.3           rstan_2.19.2        
+##  [9] StanHeaders_2.19.0   forcats_0.4.0        stringr_1.4.0        dplyr_0.8.4         
+## [13] purrr_0.3.3          readr_1.3.1          tidyr_1.0.2          tibble_2.1.3        
+## [17] ggplot2_3.2.1        tidyverse_1.3.0      extrafont_0.17       hrbrthemes_0.6.0    
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] colorspace_1.3-2          ggridges_0.5.0           
-##   [3] rsconnect_0.8.8           rprojroot_1.3-2          
-##   [5] ggstance_0.3              markdown_0.8             
-##   [7] base64enc_0.1-3           rethinking_1.80          
-##   [9] rstudioapi_0.7            svUnit_0.7-12            
-##  [11] DT_0.4                    fansi_0.4.0              
-##  [13] mvtnorm_1.0-10            lubridate_1.7.4          
-##  [15] xml2_1.2.0                bridgesampling_0.6-0     
-##  [17] knitr_1.20                shinythemes_1.1.1        
-##  [19] jsonlite_1.5              broom_0.5.1              
-##  [21] Rttf2pt1_1.3.7            shiny_1.1.0              
-##  [23] compiler_3.5.1            httr_1.3.1               
-##  [25] backports_1.1.4           assertthat_0.2.0         
-##  [27] Matrix_1.2-14             lazyeval_0.2.2           
-##  [29] cli_1.0.1                 later_0.7.3              
-##  [31] htmltools_0.3.6           prettyunits_1.0.2        
-##  [33] tools_3.5.1               igraph_1.2.1             
-##  [35] coda_0.19-2               gtable_0.3.0             
-##  [37] glue_1.3.1.9000           reshape2_1.4.3           
-##  [39] cellranger_1.1.0          nlme_3.1-137             
-##  [41] extrafontdb_1.0           crosstalk_1.0.0          
-##  [43] xfun_0.3                  ps_1.2.1                 
-##  [45] rvest_0.3.2               mime_0.5                 
-##  [47] miniUI_0.1.1.1            gtools_3.8.1             
-##  [49] MASS_7.3-50               zoo_1.8-2                
-##  [51] scales_1.0.0              colourpicker_1.0         
-##  [53] hms_0.4.2                 promises_1.0.1           
-##  [55] Brobdingnag_1.2-6         inline_0.3.15            
-##  [57] RColorBrewer_1.1-2        shinystan_2.5.0          
-##  [59] yaml_2.1.19               gdtools_0.1.7            
-##  [61] loo_2.1.0                 reshape_0.8.7            
-##  [63] stringi_1.4.3             dygraphs_1.1.1.5         
-##  [65] pkgbuild_1.0.2            rlang_0.3.4              
-##  [67] pkgconfig_2.0.2           matrixStats_0.54.0       
-##  [69] HDInterval_0.2.0          evaluate_0.10.1          
-##  [71] lattice_0.20-35           rstantools_1.5.1         
-##  [73] htmlwidgets_1.2           labeling_0.3             
-##  [75] processx_3.2.1            tidyselect_0.2.5         
-##  [77] plyr_1.8.4                magrittr_1.5             
-##  [79] bookdown_0.9              R6_2.3.0                 
-##  [81] generics_0.0.2            pillar_1.3.1             
-##  [83] haven_1.1.2               withr_2.1.2              
-##  [85] xts_0.10-2                abind_1.4-5              
-##  [87] modelr_0.1.2              crayon_1.3.4             
-##  [89] arrayhelpers_1.0-20160527 utf8_1.1.4               
-##  [91] rmarkdown_1.10            grid_3.5.1               
-##  [93] readxl_1.1.0              callr_3.1.0              
-##  [95] threejs_0.3.1             digest_0.6.18            
-##  [97] xtable_1.8-2              httpuv_1.4.4.2           
-##  [99] stats4_3.5.1              munsell_0.5.0            
-## [101] shinyjs_1.0</code></pre>
+##   [1] colorspace_1.4-1          ellipsis_0.3.0            ggridges_0.5.2           
+##   [4] rsconnect_0.8.16          markdown_1.1              base64enc_0.1-3          
+##   [7] rethinking_1.59           fs_1.3.1                  rstudioapi_0.10          
+##  [10] farver_2.0.3              svUnit_0.7-12             DT_0.11                  
+##  [13] fansi_0.4.1               mvtnorm_1.0-12            lubridate_1.7.4          
+##  [16] xml2_1.2.2                bridgesampling_0.8-1      knitr_1.26               
+##  [19] shinythemes_1.1.2         jsonlite_1.6.1            broom_0.5.3              
+##  [22] Rttf2pt1_1.3.8            dbplyr_1.4.2              shiny_1.4.0              
+##  [25] compiler_3.6.2            httr_1.4.1                backports_1.1.5          
+##  [28] assertthat_0.2.1          Matrix_1.2-18             fastmap_1.0.1            
+##  [31] lazyeval_0.2.2            cli_2.0.1                 later_1.0.0              
+##  [34] htmltools_0.4.0           prettyunits_1.1.1         tools_3.6.2              
+##  [37] igraph_1.2.4.2            coda_0.19-3               gtable_0.3.0             
+##  [40] glue_1.3.1                reshape2_1.4.3            cellranger_1.1.0         
+##  [43] vctrs_0.2.2               nlme_3.1-142              extrafontdb_1.0          
+##  [46] crosstalk_1.0.0           xfun_0.12                 ps_1.3.0                 
+##  [49] rvest_0.3.5               miniUI_0.1.1.1            mime_0.8                 
+##  [52] lifecycle_0.1.0           gtools_3.8.1              MASS_7.3-51.4            
+##  [55] zoo_1.8-7                 scales_1.1.0              colourpicker_1.0         
+##  [58] hms_0.5.3                 promises_1.1.0            Brobdingnag_1.2-6        
+##  [61] inline_0.3.15             RColorBrewer_1.1-2        shinystan_2.5.0          
+##  [64] yaml_2.2.1                gridExtra_2.3             gdtools_0.2.1            
+##  [67] loo_2.2.0                 reshape_0.8.8             stringi_1.4.5            
+##  [70] dygraphs_1.1.1.6          pkgbuild_1.0.6            rlang_0.4.4              
+##  [73] pkgconfig_2.0.3           systemfonts_0.1.1         matrixStats_0.55.0       
+##  [76] HDInterval_0.2.0          evaluate_0.14             lattice_0.20-38          
+##  [79] rstantools_2.0.0          htmlwidgets_1.5.1         labeling_0.3             
+##  [82] processx_3.4.1            tidyselect_1.0.0          plyr_1.8.5               
+##  [85] magrittr_1.5              R6_2.4.1                  generics_0.0.2           
+##  [88] DBI_1.1.0                 pillar_1.4.3              haven_2.2.0              
+##  [91] withr_2.1.2               xts_0.12-0                abind_1.4-5              
+##  [94] modelr_0.1.5              crayon_1.3.4              arrayhelpers_1.0-20160527
+##  [97] utf8_1.1.4                rmarkdown_2.0             grid_3.6.2               
+## [100] readxl_1.3.1              callr_3.4.1               threejs_0.3.3            
+## [103] reprex_0.3.0              digest_0.6.23             xtable_1.8-4             
+## [106] httpuv_1.5.2              stats4_3.6.2              munsell_0.5.0            
+## [109] shinyjs_1.1</code></pre>
 
 </div>
 </div>
@@ -1170,11 +1302,13 @@ right_column &lt;-
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -1182,12 +1316,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -1199,6 +1332,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -1215,10 +1352,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

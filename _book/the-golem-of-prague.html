@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>1 The Golem of Prague | Statistical Rethinking with brms, ggplot2, and the tidyverse</title>
-  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style.">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="1 The Golem of Prague | Statistical Rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
@@ -22,18 +21,18 @@
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
 
-<meta name="author" content="A Solomon Kurz">
+<meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2019-05-05">
+<meta name="date" content="2020-02-29" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html">
-<link rel="next" href="small-worlds-and-large-worlds.html">
+<link rel="prev" href="index.html"/>
+<link rel="next" href="small-worlds-and-large-worlds.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -41,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -51,41 +53,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 </head>
@@ -105,7 +132,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-0.9.0."><i class="fa fa-check"></i>Version 0.9.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.0."><i class="fa fa-check"></i>Version 1.0.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.1."><i class="fa fa-check"></i>Version 1.0.1.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.1.0."><i class="fa fa-check"></i>Version 1.1.0.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#thank-yous-are-in-order"><i class="fa fa-check"></i>Thank-you’s are in order</a></li>
 </ul></li>
 <li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#reference"><i class="fa fa-check"></i>Reference</a></li>
@@ -166,11 +199,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
 <li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
 <li class="chapter" data-level="4.3.4" data-path="linear-models.html"><a href="linear-models.html#sampling-from-the-posterior."><i class="fa fa-check"></i><b>4.3.4</b> Sampling from the posterior.</a></li>
-<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map()</code></del> <code>brm()</code>.</a></li>
-<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map()</code></del> <code>brm()</code> fit.</a></li>
+<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map</code></del> <code>brm()</code>.</a></li>
+<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map</code></del> <code>brm()</code> fit.</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy"><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy</a></li>
+<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy."><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy.</a></li>
 <li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
 <li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
 </ul></li>
@@ -190,7 +223,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical varaibles</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical variables</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -244,13 +277,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.3.4" data-path="interactions.html"><a href="interactions.html#plotting-implied-predictions."><i class="fa fa-check"></i><b>7.3.4</b> Plotting implied predictions.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.4" data-path="interactions.html"><a href="interactions.html#interactions-in-design-formulas"><i class="fa fa-check"></i><b>7.4</b> Interactions in design formulas</a></li>
-<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code></a></li>
+<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effectsconditional_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code>/<code>conditional_effects()</code></a></li>
 <li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#reference-6"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a><ul>
 <li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
-<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a></li>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#gibbs-sampling."><i class="fa fa-check"></i><b>8.2.1</b> Gibbs sampling.</a></li>
+<li class="chapter" data-level="8.2.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#hamiltonian-monte-carlo."><i class="fa fa-check"></i><b>8.2.2</b> Hamiltonian Monte Carlo.</a></li>
+</ul></li>
 <li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a><ul>
 <li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
 <li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
@@ -276,6 +312,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a><ul>
 <li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
 <li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
+<li class="chapter" data-level="9.2.3" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#absolute-and-relative-differences."><i class="fa fa-check"></i><b>9.2.3</b> Absolute and relative differences.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#reference-8"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
@@ -296,6 +333,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
 <li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
 </ul></li>
+<li class="chapter" data-level="10.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#summary"><i class="fa fa-check"></i><b>10.4</b> Summary</a></li>
 <li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#reference-9"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -329,13 +367,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a><ul>
 <li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
 <li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
+<li class="chapter" data-level="12.3.3" data-path="multilevel-models.html"><a href="multilevel-models.html#even-more-clusters."><i class="fa fa-check"></i><b>12.3.3</b> Even more clusters.</a></li>
 </ul></li>
 <li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a><ul>
 <li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
-<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: <code>tidybayes::spread_draws()</code></a><ul>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
 <li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
 <li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
 <li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
@@ -356,6 +395,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
 <li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
 <li class="chapter" data-level="13.2.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#model-comparison.-1"><i class="fa fa-check"></i><b>13.2.4</b> Model comparison.</a></li>
+<li class="chapter" data-level="13.2.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#more-slopes."><i class="fa fa-check"></i><b>13.2.5</b> More slopes.</a></li>
 </ul></li>
 <li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
 <li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a><ul>
@@ -383,13 +423,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
 <li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
 <li class="chapter" data-level="15.4" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#look-at-your-data"><i class="fa fa-check"></i><b>15.4</b> Look at your data</a></li>
-<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + intercept</code> syntax</a></li>
+<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + Intercept</code> syntax</a></li>
 <li class="chapter" data-level="15.6" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-workflow"><i class="fa fa-check"></i><b>15.6</b> Annotate your workflow</a></li>
 <li class="chapter" data-level="15.7" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-code"><i class="fa fa-check"></i><b>15.7</b> Annotate your code</a></li>
 <li class="chapter" data-level="15.8" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#break-up-your-workflow"><i class="fa fa-check"></i><b>15.8</b> Break up your workflow</a></li>
-<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.9</b> Read Gelman’s blog</a></li>
-<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.10</b> Check out other social media, too</a></li>
-<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.11</b> Parting wisdom</a></li>
+<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#code-in-public"><i class="fa fa-check"></i><b>15.9</b> Code in public</a></li>
+<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.10</b> Read Gelman’s blog</a></li>
+<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.11</b> Check out other social media, too</a></li>
+<li class="chapter" data-level="15.12" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.12</b> Parting wisdom</a></li>
 <li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#reference-14"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#session-info-14"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
@@ -412,12 +453,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="the-golem-of-prague" class="section level1">
 <h1><span class="header-section-number">1</span> The Golem of Prague</h1>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-1"></span>
-<img src="Pictures/Golem_and_Loew.jpg" alt="Rabbi Loew and Golem by Mikoláš Aleš, 1899" width="20%" />
-<p class="caption">
-Figure 1.1: Rabbi Loew and Golem by Mikoláš Aleš, 1899
-</p>
-</div>
+<p><img src="Pictures/Golem_and_Loew.jpg" title="Rabbi Loew and Golem by Mikoláš Aleš, 1899" alt="Rabbi Loew and Golem by Mikoláš Aleš, 1899" width="20%" style="display: block; margin: auto;" /></p>
 <p>As he opened the chapter, McElreath told us that</p>
 <blockquote>
 <p>ultimately Judah was forced to destroy the golem, as its combination of extraordinary power with clumsiness eventually led to innocent deaths. Wiping away one letter from the inscription <em>emet</em> to spell instead <em>met</em>, “death,” Rabbi Judah decommissioned the robot.</p>
@@ -428,18 +464,18 @@ Figure 1.1: Rabbi Loew and Golem by Mikoláš Aleš, 1899
 <p>Anyway, McElreath left us no code or figures to translate in this chapter. But before you skip off to the next one, why not invest a little time soaking in this chapter’s material by watching <a href="https://www.youtube.com/watch?v=oy7Ks3YfbDg&amp;t=14s&amp;frags=pl%2Cwn">McElreath present it</a>? He’s an engaging speaker and the material in his online lectures does not entirely overlap with that in the text.</p>
 <div id="reference" class="section level2 unnumbered">
 <h2>Reference</h2>
-<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2016). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
+<p><a href="https://xcelab.net/rm/statistical-rethinking/">McElreath, R. (2015). <em>Statistical rethinking: A Bayesian course with examples in R and Stan.</em> Chapman &amp; Hall/CRC Press.</a></p>
 </div>
 <div id="session-info" class="section level2 unnumbered">
 <h2>Session info</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
-<pre><code>## R version 3.5.1 (2018-07-02)
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -448,11 +484,10 @@ Figure 1.1: Rabbi Loew and Golem by Mikoláš Aleš, 1899
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] compiler_3.5.1  backports_1.1.4 bookdown_0.9    magrittr_1.5   
-##  [5] rprojroot_1.3-2 tools_3.5.1     htmltools_0.3.6 yaml_2.1.19    
-##  [9] Rcpp_1.0.1      stringi_1.4.3   rmarkdown_1.10  highr_0.7      
-## [13] knitr_1.20      xfun_0.3        stringr_1.4.0   digest_0.6.18  
-## [17] evaluate_0.10.1</code></pre>
+##  [1] compiler_3.6.2  magrittr_1.5    tools_3.6.2     htmltools_0.4.0
+##  [5] yaml_2.2.1      Rcpp_1.0.3      stringi_1.4.5   rmarkdown_2.0  
+##  [9] highr_0.8       knitr_1.26      stringr_1.4.0   xfun_0.12      
+## [13] digest_0.6.23   rlang_0.4.4     evaluate_0.14</code></pre>
 
 </div>
 </div>
@@ -467,11 +502,13 @@ Figure 1.1: Rabbi Loew and Golem by Mikoláš Aleš, 1899
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -479,12 +516,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -496,6 +532,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -512,10 +552,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
