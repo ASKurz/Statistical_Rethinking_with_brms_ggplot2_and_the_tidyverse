@@ -210,12 +210,12 @@ post_mdn %>%
   geom_vline(xintercept = c(16.5, 32.5), size = 1/4) +
   geom_point(aes(y = propsurv), color = "orange2") +
   geom_point(aes(y = post_mdn), shape = 1) +
-  coord_cartesian(ylim = c(0, 1)) +
+  annotate(geom = "text", x = c(8, 16 + 8, 32 + 8), y = 0, 
+           label = c("small tanks", "medium tanks", "large tanks")) +
   scale_x_continuous(breaks = c(1, 16, 32, 48)) +
   labs(title = "Multilevel shrinkage!",
        subtitle = "The empirical proportions are in orange while the model-\nimplied proportions are the black circles. The dashed line is\nthe model-implied average survival proportion.") +
-  annotate(geom = "text", x = c(8, 16 + 8, 32 + 8), y = 0, 
-           label = c("small tanks", "medium tanks", "large tanks")) +
+  coord_cartesian(ylim = c(0, 1)) +
   theme_fivethirtyeight() +
   theme(panel.grid = element_blank())
 ```
@@ -235,9 +235,9 @@ p1 <-
   ggplot(aes(x = x, group = iter)) +
   geom_line(aes(y = dnorm(x, b_Intercept, sd_tank__Intercept)),
             alpha = .2, color = "orange2") +
+  scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Population survival distribution",
        subtitle = "log-odds scale") +
-  scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = c(-3, 4))
 ```
 
@@ -484,12 +484,12 @@ dsim %>%
                    y = mean_error, yend = mean_error),
                color = rep(c("orange2", "black"), each = 4),
                linetype = rep(1:2, each = 4)) +
-  scale_x_continuous(breaks = c(1, 10, 20, 30, 40, 50, 60)) +
   annotate("text", x = c(15 - 7.5, 30 - 7.5, 45 - 7.5, 60 - 7.5), y = .45, 
            label = c("tiny (5)", "small (10)", "medium (25)", "large (35)")) +
-  labs(title    = "Estimate error by model type",
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 40, 50, 60)) +
+  labs(title = "Estimate error by model type",
        subtitle = "The horizontal axis displays pond number. The vertical axis measures\nthe absolute error in the predicted proportion of survivors, compared to\nthe true value used in the simulation. The higher the point, the worse\nthe estimate. No-pooling shown in orange. Partial pooling shown in black.\nThe orange and dashed black lines show the average error for each kind\nof estimate, across each initial density of tadpoles (pond size). Smaller\nponds produce more error, but the partial pooling estimates are better\non average, especially in smaller ponds.",
-       y        = "absolute error") +
+       y = "absolute error") +
   theme_fivethirtyeight() +
   theme(panel.grid = element_blank(),
         plot.subtitle = element_text(size = 10))
@@ -810,11 +810,11 @@ post %>%
   geom_density(size = 0, fill = "orange1", alpha = 3/4) +
   geom_density(aes(x = sd_block__Intercept), 
                size = 0, fill = "orange4", alpha = 3/4)  +
-  scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = c(0, 4)) +
-  ggtitle(expression(sigma["[x]"])) +
   annotate(geom = "text", x = 2/3, y = 2, label = "block", color = "orange4") +
   annotate(geom = "text", x = 2, y = 3/4, label = "actor", color = "orange1") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  ggtitle(expression(sigma["[x]"])) +
+  coord_cartesian(xlim = c(0, 4)) +
   theme_fivethirtyeight()
 ```
 
@@ -1058,7 +1058,7 @@ fix_ef <-
 ran_and_fix_ef <-
   bind_cols(ran_ef, fix_ef) %>%
   mutate(intercept = fixed_effect + random_effect) %>%
-  mutate(prob      = inv_logit_scaled(intercept))
+  mutate(prob = inv_logit_scaled(intercept))
 
 # to simplify things, we'll reduce them to summaries
 (
@@ -1096,9 +1096,9 @@ p3 <-
   filter(iter %in% c(1:50)) %>%
   
   ggplot(aes(x = condition, y = prob, group = iter)) +
+  geom_line(alpha = 1/2, color = "orange3") +
   ggtitle("50 simulated actors") +
   coord_cartesian(ylim = 0:1) +
-  geom_line(alpha = 1/2, color = "orange3") +
   theme_fivethirtyeight() +
   theme(plot.title = element_text(size = 14, hjust = .5))
 
@@ -1341,7 +1341,7 @@ and we've been grappling with the relation between the grand mean $\alpha$ and t
 
 For our first step, we'll introduce the models.
 
-### Intercepts-only models with one or two grouping variables
+### Intercepts-only models with one or two grouping variables.
 
 If you recall, `b12.4` was our first multilevel model with the chimps data. We can retrieve the model formula like so.
 
@@ -1435,22 +1435,22 @@ print(b12.8)
 
 Now we've fit our two intercepts-only models, let's get to the heart of this section. We are going to practice four methods for working with the posterior samples. Each method will revolve around a different primary function. In order, they are
 
-* `brms::posterior_samples()`
-* `brms::coef()`
-* `brms::fitted()`
-* `tidybayes::spread_draws()`
+* `brms::posterior_samples()`,
+* `brms::coef()`,
+* `brms::fitted()`, and
+* `tidybayes::spread_draws()`.
 
 We've already had some practice with the first three, but I hope this section will make them even more clear. The `tidybayes::spread_draws()` method will be new, to us. I think you'll find it's a handy alternative.
 
-With each of the four methods, we'll practice three different model summaries.
+With each of the four methods, we'll practice three different model summaries:
 
-* Getting the posterior draws for the `actor`-level estimates from the `b12.7` model
-* Getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`
-* Getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, based on `block == 1`
+* getting the posterior draws for the `actor`-level estimates from the `b12.7` model;
+* getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`; and
+* getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, based on `block == 1`.
 
 So to be clear, our goal is to accomplish those three tasks with four methods, each of which should yield equivalent results.
 
-### `brms::posterior_samples()`
+### `brms::posterior_samples()`.
 
 To warm up, let's take a look at the structure of the `posterior_samples()` output for the simple `b12.7` model.
 
@@ -1521,7 +1521,7 @@ str(p3)
 
 Again, I like this method because of how close the wrangling code within `transmute()` is to the statistical model formula. I wrote a lot of code like this in my early days of working with these kinds of models, and I think the pedagogical insights were helpful. But this method has its limitations. It works fine if you're working with some small number of groups. But that's a lot of repetitious code and it would be utterly un-scalable to situations where you have 50 or 500 levels in your grouping variable. We need alternatives. 
 
-### `brms::coef()`
+### `brms::coef()`.
 
 First, let's review what the `coef()` function returns. 
 
@@ -1598,7 +1598,7 @@ $$10 + \operatorname{Normal}(0, 1).$$
 
 Conversely, it can be a little abstract. Let's keep expanding our options. 
 
-### `brms::fitted()`
+### `brms::fitted()`.
 
 As is often the case, we're going to want to define our predictor values for `fitted()`.
 
@@ -1684,7 +1684,7 @@ str(f3)
 
 Let's learn one more option.
 
-### `tidybayes::spread_draws()`
+### `tidybayes::spread_draws()`.
 
 Up till this point, we've really only used the tidybayes package for plotting (e.g., with `geom_halfeyeh()`) and summarizing (e.g., with `median_qi()`). But tidybayes is more general; it offers a handful of convenience functions for wrangling posterior draws from a tidyverse perspective. One such function is `spread_draws()`, which you can learn all about in Matthew Kay's vignette, [*Extracting and visualizing tidy draws from brms models*](https://mjskay.github.io/tidybayes/articles/tidy-brms.html). Let's take a look at how we'll be using it.
 
