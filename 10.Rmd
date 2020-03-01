@@ -1155,8 +1155,8 @@ ppa %>%
               stat = "identity",
               alpha = 1/4, size = 1/2) +
   geom_text(data = d, 
-             aes(y = total_tools, label = total_tools),
-             size = 3.5) +
+            aes(y = total_tools, label = total_tools),
+            size = 3.5) +
   labs(subtitle = "Blue is the high contact rate; black is the low.",
        x = "log population",
        y = "total tools") +
@@ -1226,6 +1226,7 @@ my_upper <- function(data, mapping, ...) {
     mapping = aes(),
     size = 4,
     color = wes_palette("Moonrise2")[4], 
+    alpha = 4/5,
     family = "Times") +
     theme_void()
 }
@@ -1444,8 +1445,6 @@ library(brms)
 ```
 
 Before we fit the model, we might take a quick look at the prior structure with `brms::get_prior()`.
-
-Here's our multinomial model in brms. Do note the specification `family = categorical(link = logit)`.
 
 ```{r}
 get_prior(data = list(career = career), 
