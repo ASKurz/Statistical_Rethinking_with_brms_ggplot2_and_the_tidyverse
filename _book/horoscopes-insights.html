@@ -24,7 +24,7 @@
 <meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2020-02-29" />
+<meta name="date" content="2020-03-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -375,11 +375,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
 <li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
-<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
-<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
-<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
-<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
-<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables."><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables.</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code>.</a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef."><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code>.</a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted."><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code>.</a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws."><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code>.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
@@ -470,23 +470,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>It hasn’t been that way, for me.</p>
 <p>Most of my data have a complicated multilevel structure and often aren’t very well behaved. It’s normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it’s not enough to document my code in a nice R Notebook file. I need to save my <code>brm()</code> fit objects in external files.</p>
 <p>Consider this model. It’s taken from Bürkner’s vignette, <a href="https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html"><em>Estimating Multivariate Models with brms</em></a>. It took about five minutes for my several-year-old laptop to fit.</p>
-<div class="sourceCode" id="cb1670"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1670-1" data-line-number="1"><span class="kw">library</span>(brms)</a>
-<a class="sourceLine" id="cb1670-2" data-line-number="2"><span class="kw">data</span>(<span class="st">&quot;BTdata&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MCMCglmm&quot;</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb1671"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1671-1" data-line-number="1">b15<span class="fl">.1</span> &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb1671-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
-<a class="sourceLine" id="cb1671-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
-<a class="sourceLine" id="cb1671-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
-<a class="sourceLine" id="cb1671-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb1671-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1671"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1671-1" data-line-number="1"><span class="kw">library</span>(brms)</a>
+<a class="sourceLine" id="cb1671-2" data-line-number="2"><span class="kw">data</span>(<span class="st">&quot;BTdata&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MCMCglmm&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1672"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1672-1" data-line-number="1">b15<span class="fl">.1</span> &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb1672-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
+<a class="sourceLine" id="cb1672-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb1672-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
+<a class="sourceLine" id="cb1672-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb1672-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>)</a></code></pre></div>
 <p>Five minutes isn’t terribly long to wait, but still. I’d prefer to never have to wait for another five minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I’ll save my <code>b15.1</code> object outside of R with the <code>save()</code> function.</p>
-<div class="sourceCode" id="cb1672"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1672-1" data-line-number="1"><span class="kw">save</span>(b15<span class="fl">.1</span>, <span class="dt">file =</span> <span class="st">&quot;fits/b15.01.rda&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1673"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1673-1" data-line-number="1"><span class="kw">save</span>(b15<span class="fl">.1</span>, <span class="dt">file =</span> <span class="st">&quot;fits/b15.01.rda&quot;</span>)</a></code></pre></div>
 <p>Hopefully y’all are savvy Bayesian R users and find this insultingly remedial. But if it’s new to you like it was me, you can learn more about <code>.rda</code> files <a href="https://www.r-bloggers.com/load-save-and-rda-files/">here</a>.</p>
 <p>Now <code>b15.1</code> is saved outside of R, I can safely remove it and then reload it.</p>
-<div class="sourceCode" id="cb1673"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1673-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.1</span>)</a>
-<a class="sourceLine" id="cb1673-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1673-3" data-line-number="3"><span class="kw">load</span>(<span class="st">&quot;fits/b15.01.rda&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1674"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1674-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.1</span>)</a>
+<a class="sourceLine" id="cb1674-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1674-3" data-line-number="3"><span class="kw">load</span>(<span class="st">&quot;fits/b15.01.rda&quot;</span>)</a></code></pre></div>
 <p>The file took a fraction of a second to reload. Once reloaded, I can perform typical operations, like examine summaries of the model parameters or refreshing my memory on what data I used.</p>
-<div class="sourceCode" id="cb1674"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1674-1" data-line-number="1"><span class="kw">print</span>(b15<span class="fl">.1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1675"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1675-1" data-line-number="1"><span class="kw">print</span>(b15<span class="fl">.1</span>)</a></code></pre></div>
 <pre><code>##  Family: MV(gaussian, gaussian) 
 ##   Links: mu = identity; sigma = identity
 ##          mu = identity; sigma = identity 
@@ -532,7 +532,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
 ## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
-<div class="sourceCode" id="cb1676"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1676-1" data-line-number="1"><span class="kw">head</span>(b15<span class="fl">.1</span><span class="op">$</span>data)</a></code></pre></div>
+<div class="sourceCode" id="cb1677"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1677-1" data-line-number="1"><span class="kw">head</span>(b15<span class="fl">.1</span><span class="op">$</span>data)</a></code></pre></div>
 <pre><code>##        tarsus  sex  hatchdate fosternest     dam       back
 ## 1 -1.89229718  Fem -0.6874021      F2102 R187557  1.1464212
 ## 2  1.13610981 Male -0.6874021      F1902 R187559 -0.7596521
@@ -541,19 +541,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5 -0.07525299  Fem -1.4656641      A2602 R187528 -0.3006992
 ## 6 -1.13519543  Fem  0.3502805      C2302 R187945  1.5577219</code></pre>
 <p>The other option, which we’ve been using extensively throughout the earlier chapters, is to use <code>file</code> argument within the <code>brms::brm()</code> function. You can read about the origins of the argument in <a href="https://github.com/paul-buerkner/brms/issues/472">issue #472 on the brms GitHub repo</a>. To make use of the <code>file</code> argument, specify a character string. <code>brm()</code> will then save your fitted model object in an external <code>.rds</code> file via the <code>saveRDS()</code> function. Let’s give it a whirl, this time with an interaction.</p>
-<div class="sourceCode" id="cb1678"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1678-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb1678-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
-<a class="sourceLine" id="cb1678-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
-<a class="sourceLine" id="cb1678-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex<span class="op">*</span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
-<a class="sourceLine" id="cb1678-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb1678-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>,</a>
-<a class="sourceLine" id="cb1678-7" data-line-number="7">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.02&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1679"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1679-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb1679-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
+<a class="sourceLine" id="cb1679-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb1679-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex<span class="op">*</span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
+<a class="sourceLine" id="cb1679-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb1679-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>,</a>
+<a class="sourceLine" id="cb1679-7" data-line-number="7">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.02&quot;</span>)</a></code></pre></div>
 <p>Now <code>b15.2</code> is saved outside of R, I can safely remove it and then reload it.</p>
-<div class="sourceCode" id="cb1679"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1679-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1680"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1680-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
 <p>We might load <code>b15.2</code> with the <code>readRDS()</code> function.</p>
-<div class="sourceCode" id="cb1680"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1680-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;fits/b15.02.rds&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1681"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1681-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;fits/b15.02.rds&quot;</span>)</a></code></pre></div>
 <p>Now we can work with <code>b15.2</code> as desired.</p>
-<div class="sourceCode" id="cb1681"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1681-1" data-line-number="1"><span class="kw">fixef</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1682"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1682-1" data-line-number="1"><span class="kw">fixef</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
 <pre><code>##                              Estimate  Est.Error       Q2.5       Q97.5
 ## tarsus_Intercept         -0.409058221 0.07000115 -0.5465915 -0.26824807
 ## back_Intercept           -0.010715306 0.06687225 -0.1435934  0.11329108
@@ -568,21 +568,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## back_sexMale:hatchdate   -0.078568190 0.06879491 -0.2087758  0.05303484
 ## back_sexUNK:hatchdate    -0.033029373 0.14295086 -0.3210653  0.25294364</code></pre>
 <p>The <code>file</code> method has another handy feature. Let’s remove <code>b15.2</code> one more time to see.</p>
-<div class="sourceCode" id="cb1683"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1683-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1684"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1684-1" data-line-number="1"><span class="kw">rm</span>(b15<span class="fl">.2</span>)</a></code></pre></div>
 <p>If you’ve fit a <code>brm()</code> model once and saved the results with <code>file</code>, executing the same <code>brm()</code> code will not re-fit the model. Rather, it will just load and return the model from the <code>.rds</code> file.</p>
-<div class="sourceCode" id="cb1684"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1684-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb1684-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
-<a class="sourceLine" id="cb1684-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
-<a class="sourceLine" id="cb1684-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex<span class="op">*</span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
-<a class="sourceLine" id="cb1684-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb1684-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>,</a>
-<a class="sourceLine" id="cb1684-7" data-line-number="7">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.02&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1685"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1685-1" data-line-number="1">b15<span class="fl">.2</span> &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb1685-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="dt">data =</span> BTdata,</a>
+<a class="sourceLine" id="cb1685-3" data-line-number="3">      <span class="dt">family =</span> gaussian,</a>
+<a class="sourceLine" id="cb1685-4" data-line-number="4">      <span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span>sex<span class="op">*</span>hatchdate <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>p<span class="op">|</span>fosternest) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>q<span class="op">|</span>dam), </a>
+<a class="sourceLine" id="cb1685-5" data-line-number="5">      <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb1685-6" data-line-number="6">      <span class="dt">seed =</span> <span class="dv">15</span>,</a>
+<a class="sourceLine" id="cb1685-7" data-line-number="7">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.02&quot;</span>)</a></code></pre></div>
 <p>It takes just a fraction of a second. Once again, we’re ready to work with <code>b15.2</code>.</p>
-<div class="sourceCode" id="cb1685"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1685-1" data-line-number="1">b15<span class="fl">.2</span><span class="op">$</span>formula</a></code></pre></div>
+<div class="sourceCode" id="cb1686"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1686-1" data-line-number="1">b15<span class="fl">.2</span><span class="op">$</span>formula</a></code></pre></div>
 <pre><code>## tarsus ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam) 
 ## back ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam)</code></pre>
 <p>And if you’d like to remind yourself what the name of that external file was or what subfolder you saved it in, you can extract it from the <code>brm()</code> fit object.</p>
-<div class="sourceCode" id="cb1687"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1687-1" data-line-number="1">b15<span class="fl">.2</span><span class="op">$</span>file</a></code></pre></div>
+<div class="sourceCode" id="cb1688"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1688-1" data-line-number="1">b15<span class="fl">.2</span><span class="op">$</span>file</a></code></pre></div>
 <pre><code>## [1] &quot;fits/b15.02.rds&quot;</code></pre>
 <p>Also, see <a href="https://twitter.com/ucfagls">Gavin Simpson</a>’s blog post, <a href="https://www.fromthebottomoftheheap.net/2012/04/01/saving-and-loading-r-objects/"><em>A better way of saving and loading objects in R</em></a>, for a discussion on the distinction between <code>.rda</code> and <code>.rds</code> files.</p>
 </div>
@@ -590,13 +590,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">15.3</span> Build your models slowly</h2>
 <p>The model from Bürkner’s vignette, <code>b15.1</code>, was no joke. If you wanted to be verbose about it, it was a multilevel, multivariate, multivariable model. It had a cross-classified multilevel structure, two predictors (for each criterion), and two criteria. Not only is that a lot to keep track of, there’s a whole lot of places for things to go wrong.</p>
 <p>Even if that was the final model I was interested in as a scientist, I still wouldn’t start with it. I’d build up incrementally, just to make sure nothing looked fishy. One place to start would be a simple intercepts-only model.</p>
-<div class="sourceCode" id="cb1689"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1689-1" data-line-number="1">b15<span class="fl">.0</span> &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb1689-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb1689-3" data-line-number="3">      <span class="dt">data =</span> BTdata, <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb1689-4" data-line-number="4">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.00&quot;</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb1690"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1690-1" data-line-number="1"><span class="kw">plot</span>(b15<span class="fl">.0</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1690"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1690-1" data-line-number="1">b15<span class="fl">.0</span> &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb1690-2" data-line-number="2"><span class="st">  </span><span class="kw">brm</span>(<span class="kw">mvbind</span>(tarsus, back) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb1690-3" data-line-number="3">      <span class="dt">data =</span> BTdata, <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb1690-4" data-line-number="4">      <span class="dt">file =</span> <span class="st">&quot;fits/b15.00&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1691"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1691-1" data-line-number="1"><span class="kw">plot</span>(b15<span class="fl">.0</span>)</a></code></pre></div>
 <p><img src="15_files/figure-gfm/unnamed-chunk-13-1.png" width="624" /></p>
-<div class="sourceCode" id="cb1691"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1691-1" data-line-number="1"><span class="kw">print</span>(b15<span class="fl">.0</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1692"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1692-1" data-line-number="1"><span class="kw">print</span>(b15<span class="fl">.0</span>)</a></code></pre></div>
 <pre><code>##  Family: MV(gaussian, gaussian) 
 ##   Links: mu = identity; sigma = identity
 ##          mu = identity; sigma = identity 
@@ -729,7 +729,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="session-info-14" class="section level2 unnumbered">
 <h2>Session info</h2>
-<div class="sourceCode" id="cb1693"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1693-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1694"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1694-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS High Sierra 10.13.6

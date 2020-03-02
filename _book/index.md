@@ -2,7 +2,7 @@
 title: "*Statistical Rethinking* with brms, ggplot2, and the tidyverse"
 subtitle: "version 1.1.0"
 author: ["A Solomon Kurz"]
-date: "2020-02-29"
+date: "2020-03-01"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book

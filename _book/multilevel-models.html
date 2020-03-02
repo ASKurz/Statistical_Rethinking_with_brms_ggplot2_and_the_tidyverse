@@ -24,7 +24,7 @@
 <meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2020-02-29" />
+<meta name="date" content="2020-03-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -375,11 +375,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
 <li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
-<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
-<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
-<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
-<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
-<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables."><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables.</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code>.</a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef."><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code>.</a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted."><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code>.</a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws."><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code>.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
@@ -699,12 +699,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1259-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="kw">c</span>(<span class="fl">16.5</span>, <span class="fl">32.5</span>), <span class="dt">size =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1259-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> propsurv), <span class="dt">color =</span> <span class="st">&quot;orange2&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1259-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> post_mdn), <span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1259-7" data-line-number="7"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1259-8" data-line-number="8"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">48</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1259-9" data-line-number="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Multilevel shrinkage!&quot;</span>,</a>
-<a class="sourceLine" id="cb1259-10" data-line-number="10">       <span class="dt">subtitle =</span> <span class="st">&quot;The empirical proportions are in orange while the model-</span><span class="ch">\n</span><span class="st">implied proportions are the black circles. The dashed line is</span><span class="ch">\n</span><span class="st">the model-implied average survival proportion.&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1259-11" data-line-number="11"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">8</span>, <span class="dv">16</span> <span class="op">+</span><span class="st"> </span><span class="dv">8</span>, <span class="dv">32</span> <span class="op">+</span><span class="st"> </span><span class="dv">8</span>), <span class="dt">y =</span> <span class="dv">0</span>, </a>
-<a class="sourceLine" id="cb1259-12" data-line-number="12">           <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;small tanks&quot;</span>, <span class="st">&quot;medium tanks&quot;</span>, <span class="st">&quot;large tanks&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1259-7" data-line-number="7"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">8</span>, <span class="dv">16</span> <span class="op">+</span><span class="st"> </span><span class="dv">8</span>, <span class="dv">32</span> <span class="op">+</span><span class="st"> </span><span class="dv">8</span>), <span class="dt">y =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb1259-8" data-line-number="8">           <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;small tanks&quot;</span>, <span class="st">&quot;medium tanks&quot;</span>, <span class="st">&quot;large tanks&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1259-9" data-line-number="9"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">48</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1259-10" data-line-number="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Multilevel shrinkage!&quot;</span>,</a>
+<a class="sourceLine" id="cb1259-11" data-line-number="11">       <span class="dt">subtitle =</span> <span class="st">&quot;The empirical proportions are in orange while the model-</span><span class="ch">\n</span><span class="st">implied proportions are the black circles. The dashed line is</span><span class="ch">\n</span><span class="st">the model-implied average survival proportion.&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1259-12" data-line-number="12"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1259-13" data-line-number="13"><span class="st">  </span><span class="kw">theme_fivethirtyeight</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb1259-14" data-line-number="14"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>())</a></code></pre></div>
 <p><img src="12_files/figure-gfm/unnamed-chunk-15-1.png" width="480" /></p>
@@ -721,9 +721,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1260-10" data-line-number="10"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">group =</span> iter)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1260-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">dnorm</span>(x, b_Intercept, sd_tank__Intercept)),</a>
 <a class="sourceLine" id="cb1260-12" data-line-number="12">            <span class="dt">alpha =</span> <span class="fl">.2</span>, <span class="dt">color =</span> <span class="st">&quot;orange2&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1260-13" data-line-number="13"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Population survival distribution&quot;</span>,</a>
-<a class="sourceLine" id="cb1260-14" data-line-number="14">       <span class="dt">subtitle =</span> <span class="st">&quot;log-odds scale&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1260-15" data-line-number="15"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1260-13" data-line-number="13"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1260-14" data-line-number="14"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Population survival distribution&quot;</span>,</a>
+<a class="sourceLine" id="cb1260-15" data-line-number="15">       <span class="dt">subtitle =</span> <span class="st">&quot;log-odds scale&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1260-16" data-line-number="16"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">3</span>, <span class="dv">4</span>))</a></code></pre></div>
 <p>Now we make our Figure 12.2.b and then bind the two subplots with patchwork.</p>
 <div class="sourceCode" id="cb1261"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1261-1" data-line-number="1">p2 &lt;-</a>
@@ -1080,12 +1080,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1282-18" data-line-number="18">                   <span class="dt">y =</span> mean_error, <span class="dt">yend =</span> mean_error),</a>
 <a class="sourceLine" id="cb1282-19" data-line-number="19">               <span class="dt">color =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;orange2&quot;</span>, <span class="st">&quot;black&quot;</span>), <span class="dt">each =</span> <span class="dv">4</span>),</a>
 <a class="sourceLine" id="cb1282-20" data-line-number="20">               <span class="dt">linetype =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">each =</span> <span class="dv">4</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1282-21" data-line-number="21"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1282-22" data-line-number="22"><span class="st">  </span><span class="kw">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">15</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">30</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">45</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">60</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>), <span class="dt">y =</span> <span class="fl">.45</span>, </a>
-<a class="sourceLine" id="cb1282-23" data-line-number="23">           <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;tiny (5)&quot;</span>, <span class="st">&quot;small (10)&quot;</span>, <span class="st">&quot;medium (25)&quot;</span>, <span class="st">&quot;large (35)&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1282-24" data-line-number="24"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title    =</span> <span class="st">&quot;Estimate error by model type&quot;</span>,</a>
+<a class="sourceLine" id="cb1282-21" data-line-number="21"><span class="st">  </span><span class="kw">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">15</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">30</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">45</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>, <span class="dv">60</span> <span class="op">-</span><span class="st"> </span><span class="fl">7.5</span>), <span class="dt">y =</span> <span class="fl">.45</span>, </a>
+<a class="sourceLine" id="cb1282-22" data-line-number="22">           <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;tiny (5)&quot;</span>, <span class="st">&quot;small (10)&quot;</span>, <span class="st">&quot;medium (25)&quot;</span>, <span class="st">&quot;large (35)&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1282-23" data-line-number="23"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1282-24" data-line-number="24"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Estimate error by model type&quot;</span>,</a>
 <a class="sourceLine" id="cb1282-25" data-line-number="25">       <span class="dt">subtitle =</span> <span class="st">&quot;The horizontal axis displays pond number. The vertical axis measures</span><span class="ch">\n</span><span class="st">the absolute error in the predicted proportion of survivors, compared to</span><span class="ch">\n</span><span class="st">the true value used in the simulation. The higher the point, the worse</span><span class="ch">\n</span><span class="st">the estimate. No-pooling shown in orange. Partial pooling shown in black.</span><span class="ch">\n</span><span class="st">The orange and dashed black lines show the average error for each kind</span><span class="ch">\n</span><span class="st">of estimate, across each initial density of tadpoles (pond size). Smaller</span><span class="ch">\n</span><span class="st">ponds produce more error, but the partial pooling estimates are better</span><span class="ch">\n</span><span class="st">on average, especially in smaller ponds.&quot;</span>,</a>
-<a class="sourceLine" id="cb1282-26" data-line-number="26">       <span class="dt">y        =</span> <span class="st">&quot;absolute error&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1282-26" data-line-number="26">       <span class="dt">y =</span> <span class="st">&quot;absolute error&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1282-27" data-line-number="27"><span class="st">  </span><span class="kw">theme_fivethirtyeight</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb1282-28" data-line-number="28"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">panel.grid =</span> <span class="kw">element_blank</span>(),</a>
 <a class="sourceLine" id="cb1282-29" data-line-number="29">        <span class="dt">plot.subtitle =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>))</a></code></pre></div>
@@ -1515,11 +1515,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1316-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">size =</span> <span class="dv">0</span>, <span class="dt">fill =</span> <span class="st">&quot;orange1&quot;</span>, <span class="dt">alpha =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1316-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_density</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sd_block__Intercept), </a>
 <a class="sourceLine" id="cb1316-5" data-line-number="5">               <span class="dt">size =</span> <span class="dv">0</span>, <span class="dt">fill =</span> <span class="st">&quot;orange4&quot;</span>, <span class="dt">alpha =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>)  <span class="op">+</span></a>
-<a class="sourceLine" id="cb1316-6" data-line-number="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1316-7" data-line-number="7"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1316-8" data-line-number="8"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">expression</span>(sigma[<span class="st">&quot;[x]&quot;</span>])) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1316-9" data-line-number="9"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">y =</span> <span class="dv">2</span>, <span class="dt">label =</span> <span class="st">&quot;block&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;orange4&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1316-10" data-line-number="10"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="dv">2</span>, <span class="dt">y =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">label =</span> <span class="st">&quot;actor&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;orange1&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1316-6" data-line-number="6"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dt">y =</span> <span class="dv">2</span>, <span class="dt">label =</span> <span class="st">&quot;block&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;orange4&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1316-7" data-line-number="7"><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="dv">2</span>, <span class="dt">y =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>, <span class="dt">label =</span> <span class="st">&quot;actor&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;orange1&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1316-8" data-line-number="8"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1316-9" data-line-number="9"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw">expression</span>(sigma[<span class="st">&quot;[x]&quot;</span>])) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1316-10" data-line-number="10"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1316-11" data-line-number="11"><span class="st">  </span><span class="kw">theme_fivethirtyeight</span>()</a></code></pre></div>
 <p><img src="12_files/figure-gfm/unnamed-chunk-48-1.png" width="288" /></p>
 <p>We might compare our models by their PSIS-LOO values.</p>
@@ -1774,7 +1774,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1337-22" data-line-number="22">ran_and_fix_ef &lt;-</a>
 <a class="sourceLine" id="cb1337-23" data-line-number="23"><span class="st">  </span><span class="kw">bind_cols</span>(ran_ef, fix_ef) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb1337-24" data-line-number="24"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">intercept =</span> fixed_effect <span class="op">+</span><span class="st"> </span>random_effect) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1337-25" data-line-number="25"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob      =</span> <span class="kw">inv_logit_scaled</span>(intercept))</a>
+<a class="sourceLine" id="cb1337-25" data-line-number="25"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">prob =</span> <span class="kw">inv_logit_scaled</span>(intercept))</a>
 <a class="sourceLine" id="cb1337-26" data-line-number="26"></a>
 <a class="sourceLine" id="cb1337-27" data-line-number="27"><span class="co"># to simplify things, we&#39;ll reduce them to summaries</span></a>
 <a class="sourceLine" id="cb1337-28" data-line-number="28">(</a>
@@ -1812,9 +1812,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1340-4" data-line-number="4"><span class="st">  </span><span class="kw">filter</span>(iter <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">50</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb1340-5" data-line-number="5"><span class="st">  </span></a>
 <a class="sourceLine" id="cb1340-6" data-line-number="6"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> condition, <span class="dt">y =</span> prob, <span class="dt">group =</span> iter)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1340-7" data-line-number="7"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;50 simulated actors&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1340-8" data-line-number="8"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb1340-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;orange3&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1340-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;orange3&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1340-8" data-line-number="8"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;50 simulated actors&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1340-9" data-line-number="9"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb1340-10" data-line-number="10"><span class="st">  </span><span class="kw">theme_fivethirtyeight</span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb1340-11" data-line-number="11"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">hjust =</span> <span class="fl">.5</span>))</a>
 <a class="sourceLine" id="cb1340-12" data-line-number="12"></a>
@@ -2048,8 +2048,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 \end{align*}\]</span></p>
 <p>and we’ve been grappling with the relation between the grand mean <span class="math inline">\(\alpha\)</span> and the group-level deviations <span class="math inline">\(\alpha_{\text{grouping variable}}\)</span>. For situations where we have the <code>brms::brm()</code> model fit in hand, we’ve been playing with various ways to use the iterations, particularly with either the <code>posterior_samples()</code> method and the <code>fitted()/predict()</code> method. Both are great. But (a) we have other options, which I’d like to share, and (b) if you’re like me, you probably need more practice than following along with the examples in the text. In this bonus section, we are going to introduce two simplified models and then practice working with combining the grand mean various combinations of the random effects.</p>
 <p>For our first step, we’ll introduce the models.</p>
-<div id="intercepts-only-models-with-one-or-two-grouping-variables" class="section level3">
-<h3><span class="header-section-number">12.5.1</span> Intercepts-only models with one or two grouping variables</h3>
+<div id="intercepts-only-models-with-one-or-two-grouping-variables." class="section level3">
+<h3><span class="header-section-number">12.5.1</span> Intercepts-only models with one or two grouping variables.</h3>
 <p>If you recall, <code>b12.4</code> was our first multilevel model with the chimps data. We can retrieve the model formula like so.</p>
 <div class="sourceCode" id="cb1358"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1358-1" data-line-number="1">b12<span class="fl">.4</span><span class="op">$</span>formula</a></code></pre></div>
 <pre><code>## pulled_left | trials(1) ~ 1 + prosoc_left + prosoc_left:condition + (1 | actor)</code></pre>
@@ -2163,22 +2163,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 <p>Now we’ve fit our two intercepts-only models, let’s get to the heart of this section. We are going to practice four methods for working with the posterior samples. Each method will revolve around a different primary function. In order, they are</p>
 <ul>
-<li><code>brms::posterior_samples()</code></li>
-<li><code>brms::coef()</code></li>
-<li><code>brms::fitted()</code></li>
-<li><code>tidybayes::spread_draws()</code></li>
+<li><code>brms::posterior_samples()</code>,</li>
+<li><code>brms::coef()</code>,</li>
+<li><code>brms::fitted()</code>, and</li>
+<li><code>tidybayes::spread_draws()</code>.</li>
 </ul>
 <p>We’ve already had some practice with the first three, but I hope this section will make them even more clear. The <code>tidybayes::spread_draws()</code> method will be new, to us. I think you’ll find it’s a handy alternative.</p>
-<p>With each of the four methods, we’ll practice three different model summaries.</p>
+<p>With each of the four methods, we’ll practice three different model summaries:</p>
 <ul>
-<li>Getting the posterior draws for the <code>actor</code>-level estimates from the <code>b12.7</code> model</li>
-<li>Getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, averaging over the levels of <code>block</code></li>
-<li>Getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, based on <code>block == 1</code></li>
+<li>getting the posterior draws for the <code>actor</code>-level estimates from the <code>b12.7</code> model;</li>
+<li>getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, averaging over the levels of <code>block</code>; and</li>
+<li>getting the posterior draws for the <code>actor</code>-level estimates from the cross-classified <code>b12.8</code> model, based on <code>block == 1</code>.</li>
 </ul>
 <p>So to be clear, our goal is to accomplish those three tasks with four methods, each of which should yield equivalent results.</p>
 </div>
-<div id="brmsposterior_samples" class="section level3">
-<h3><span class="header-section-number">12.5.2</span> <code>brms::posterior_samples()</code></h3>
+<div id="brmsposterior_samples." class="section level3">
+<h3><span class="header-section-number">12.5.2</span> <code>brms::posterior_samples()</code>.</h3>
 <p>To warm up, let’s take a look at the structure of the <code>posterior_samples()</code> output for the simple <code>b12.7</code> model.</p>
 <div class="sourceCode" id="cb1372"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1372-1" data-line-number="1"><span class="kw">posterior_samples</span>(b12<span class="fl">.7</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str</span>()</a></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    16000 obs. of  10 variables:
@@ -2269,8 +2269,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ chimp 7&#39;s average probability of pulling left: num  0.903 0.875 0.817 0.895 0.913 ...</code></pre>
 <p>Again, I like this method because of how close the wrangling code within <code>transmute()</code> is to the statistical model formula. I wrote a lot of code like this in my early days of working with these kinds of models, and I think the pedagogical insights were helpful. But this method has its limitations. It works fine if you’re working with some small number of groups. But that’s a lot of repetitious code and it would be utterly un-scalable to situations where you have 50 or 500 levels in your grouping variable. We need alternatives.</p>
 </div>
-<div id="brmscoef" class="section level3">
-<h3><span class="header-section-number">12.5.3</span> <code>brms::coef()</code></h3>
+<div id="brmscoef." class="section level3">
+<h3><span class="header-section-number">12.5.3</span> <code>brms::coef()</code>.</h3>
 <p>First, let’s review what the <code>coef()</code> function returns.</p>
 <div class="sourceCode" id="cb1382"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1382-1" data-line-number="1"><span class="kw">coef</span>(b12<span class="fl">.7</span>)</a></code></pre></div>
 <pre><code>## $actor
@@ -2403,8 +2403,8 @@ and</p>
 <p><span class="math display">\[10 + \operatorname{Normal}(0, 1).\]</span></p>
 <p>Conversely, it can be a little abstract. Let’s keep expanding our options.</p>
 </div>
-<div id="brmsfitted" class="section level3">
-<h3><span class="header-section-number">12.5.4</span> <code>brms::fitted()</code></h3>
+<div id="brmsfitted." class="section level3">
+<h3><span class="header-section-number">12.5.4</span> <code>brms::fitted()</code>.</h3>
 <p>As is often the case, we’re going to want to define our predictor values for <code>fitted()</code>.</p>
 <div class="sourceCode" id="cb1394"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1394-1" data-line-number="1">(nd &lt;-<span class="st"> </span>b12<span class="fl">.7</span><span class="op">$</span>data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>(actor))</a></code></pre></div>
 <pre><code>##   actor
@@ -2514,8 +2514,8 @@ and</p>
 ##  $ chimp 7&#39;s average probability of pulling left: num  0.903 0.875 0.817 0.895 0.913 ...</code></pre>
 <p>Let’s learn one more option.</p>
 </div>
-<div id="tidybayesspread_draws" class="section level3">
-<h3><span class="header-section-number">12.5.5</span> <code>tidybayes::spread_draws()</code></h3>
+<div id="tidybayesspread_draws." class="section level3">
+<h3><span class="header-section-number">12.5.5</span> <code>tidybayes::spread_draws()</code>.</h3>
 <p>Up till this point, we’ve really only used the tidybayes package for plotting (e.g., with <code>geom_halfeyeh()</code>) and summarizing (e.g., with <code>median_qi()</code>). But tidybayes is more general; it offers a handful of convenience functions for wrangling posterior draws from a tidyverse perspective. One such function is <code>spread_draws()</code>, which you can learn all about in Matthew Kay’s vignette, <a href="https://mjskay.github.io/tidybayes/articles/tidy-brms.html"><em>Extracting and visualizing tidy draws from brms models</em></a>. Let’s take a look at how we’ll be using it.</p>
 <div class="sourceCode" id="cb1406"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1406-1" data-line-number="1">b12<span class="fl">.7</span> <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb1406-2" data-line-number="2"><span class="st">  </span><span class="kw">spread_draws</span>(b_Intercept, r_actor[actor,])</a></code></pre></div>

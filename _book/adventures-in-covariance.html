@@ -24,7 +24,7 @@
 <meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2020-02-29" />
+<meta name="date" content="2020-03-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -375,11 +375,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
 <li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
-<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables"><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables</a></li>
-<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples"><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code></a></li>
-<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef"><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code></a></li>
-<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted"><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code></a></li>
-<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws"><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code></a></li>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables."><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables.</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code>.</a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef."><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code>.</a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted."><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code>.</a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws."><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code>.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#reference-11"><i class="fa fa-check"></i>Reference</a></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
@@ -1161,7 +1161,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="shrinkage." class="section level3">
 <h3><span class="header-section-number">13.2.3</span> Shrinkage.</h3>
 <p>Figure 13.6.a depicts the correlation between the full UCB model’s varying intercepts and slopes.</p>
-<div class="sourceCode" id="cb1477"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1477-1" data-line-number="1">lost &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b13<span class="fl">.3</span>)</a>
+<div class="sourceCode" id="cb1477"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1477-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">posterior_samples</span>(b13<span class="fl">.3</span>)</a>
 <a class="sourceLine" id="cb1477-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb1477-3" data-line-number="3">post <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb1477-4" data-line-number="4"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> cor_dept_id__Intercept__male, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span></a>
@@ -1554,8 +1554,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## zgp_gplatlon2[9]      0.40      0.93  -1.55   2.13
 ## zgp_gplatlon2[10]    -0.30      0.82  -1.94   1.32
 ## lp__                -51.55      3.19 -58.81 -46.38</code></pre>
-<p>Our Gaussian process parameters are different than McElreath’s. From the <code>gp</code> section of the <a href="https://cran.r-project.org/package=brms/brms.pdf">brms reference manual</a>, here’s the brms parameterization:</p>
-<p><span class="math display">\[k(x_{i},x_{j}) = sdgp^2 \exp \big (-||x_i - x_j||^2 / (2 lscale^2) \big )\]</span></p>
+<p>Our Gaussian process parameters are different than McElreath’s. From the <code>gp</code> section of the <a href="https://cran.r-project.org/package=brms/brms.pdf">brms reference manual</a>, we learn the brms parameterization follows the form</p>
+<p><span class="math display">\[k(x_{i},x_{j}) = sdgp^2 \exp \big (-||x_i - x_j||^2 / (2 lscale^2) \big ).\]</span></p>
 <p>What McElreath called <span class="math inline">\(\eta\)</span>, Bürkner called <span class="math inline">\(sdgp\)</span>. While McElreath estimated <span class="math inline">\(\eta^2\)</span>, brms simply estimated <span class="math inline">\(sdgp\)</span>. So we’ll have to square our <code>sdgp_gplatlon2</code> before it’s on the same scale as <code>etasq</code> in the text. Here it is.</p>
 <div class="sourceCode" id="cb1515"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1515-1" data-line-number="1"><span class="kw">posterior_samples</span>(b13<span class="fl">.7</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb1515-2" data-line-number="2"><span class="st">  </span><span class="kw">transmute</span>(<span class="dt">sdgp_squared =</span> sdgp_gplatlon2<span class="op">^</span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -1981,11 +1981,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>##          term estimate std.error lower upper
 ## 1 b_Intercept    -1.63      0.14 -1.85 -1.38
 ## 2      b_male     0.15      0.17 -0.13  0.42</code></pre>
-<p>And if you wanted a one-sided Bayesian <span class="math inline">\(p\)</span>-value for the <code>male</code> dummy for the full model, you might execute this.</p>
+<p>And if you wanted a one-sided Bayesian <span class="math inline">\(p\)</span>-value for the <code>male</code> dummy for the full model, you execute something like this.</p>
 <div class="sourceCode" id="cb1556"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1556-1" data-line-number="1"><span class="kw">posterior_samples</span>(b13<span class="fl">.10</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb1556-2" data-line-number="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">one_sided_Bayesian_p_value =</span> <span class="kw">mean</span>(b_male <span class="op">&lt;=</span><span class="st"> </span><span class="dv">0</span>))</a></code></pre></div>
 <pre><code>##   one_sided_Bayesian_p_value
 ## 1                  0.1725625</code></pre>
+<p>Here’s a fuller look at the posterior.</p>
+<div class="sourceCode" id="cb1558"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1558-1" data-line-number="1"><span class="kw">posterior_samples</span>(b13<span class="fl">.10</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1558-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> b_male, <span class="dt">y =</span> <span class="dv">0</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;#E8DCCF&quot;</span>, <span class="dt">alpha =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_halfeyeh</span>(<span class="dt">.width =</span> <span class="kw">c</span>(.<span class="dv">5</span>, <span class="fl">.95</span>),</a>
+<a class="sourceLine" id="cb1558-5" data-line-number="5">                <span class="dt">color =</span> <span class="st">&quot;#80A0C7&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;#394165&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-6" data-line-number="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="ot">NULL</span>, <span class="dt">breaks =</span> <span class="ot">NULL</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-7" data-line-number="7"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;b_male (i.e., the population estimate for gender bias)&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-8" data-line-number="8"><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1558-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_pearl_earring</span>()</a></code></pre></div>
+<p><img src="13_files/figure-gfm/unnamed-chunk-86-1.png" width="576" /></p>
 <p>So, the estimate of the gender bias is small and consistent with the null hypothesis. Which is good! We want gender equality for things like funding success.</p>
 </div>
 <div id="reference-12" class="section level2 unnumbered">
@@ -1994,7 +2005,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="session-info-12" class="section level2 unnumbered">
 <h2>Session info</h2>
-<div class="sourceCode" id="cb1558"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1558-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1559"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1559-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
 <pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS High Sierra 10.13.6
