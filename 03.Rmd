@@ -41,7 +41,7 @@ tibble(pr_vampire          = 100 / 100000,
   glimpse()
 ```
 
-> The posterior distribution is a probability distribution. And like all probability distributions, we can imagine drawing *samples* form it. The sampled events in this case are parameter values. Most parameters have no exact empirical realization. The Bayesian formalism treats parameter distributions as relative plausibility, not as any physical random process. In any event, randomness is always a property of information, never of the real world. But inside the computer, parameters are just as empirical as the outcome of a coin flip or a die toss or an agricultural experiment. The posterior defines the expected frequency that different parameter values will appear, once we start plucking parameters out of it. (p. 50, *emphasis* in the original)
+> The posterior distribution is a probability distribution. And like all probability distributions, we can imagine drawing *samples* form it. The sampled events in this case are parameter values. Most parameters have no exact empirical realization. The Bayesian formalism treats parameter distributions as relative plausibility, not as any physical random process. In any event, randomness is always a property of information, never of the real world. But inside the computer, parameters are just as empirical as the outcome of a coin flip or a die toss or an agricultural experiment. The posterior defines the expected frequency that different parameter values will appear, once we start plucking parameters out of it. [@mcelreathStatisticalRethinkingBayesian2015, p. 50, *emphasis* in the original]
 
 ## Sampling from a grid-like approximate posterior
 
@@ -128,7 +128,7 @@ d %>%
   summarise(sum = sum(posterior))
 ```
 
-To learn more about `dplyr::summarise()` and related functions, check out Baert's [*Data Wrangling Part 4: Summarizing and slicing your data*](https://suzan.rbind.io/2018/04/dplyr-tutorial-4/) and [Chapter 5.6](https://r4ds.had.co.nz/transform.html#grouped-summaries-with-summarise) of *R4DS*.
+To learn more about `dplyr::summarise()` and related functions, check out Baert's [*Data wrangling part 4: Summarizing and slicing your data*](https://suzan.rbind.io/2018/04/dplyr-tutorial-4/) and [Shapter 5.6](https://r4ds.had.co.nz/transform.html#grouped-summaries-with-summarise) of *R4DS* [@grolemundDataScience2017].
 
 If what you want is a frequency based on filtering by `samples`, then you might use `n()` within `summarise()`.
 
@@ -146,7 +146,7 @@ samples %>%
   mutate(probability = n / sum(n))
 ```
 
-And an even trickier approach for the same is to insert the logical statement `p_grid < .5` within the `mean()` function.
+An even trickier approach for the same is to insert the logical statement `p_grid < .5` within the `mean()` function.
 
 ```{r}
 samples %>%
@@ -155,7 +155,7 @@ samples %>%
 
 Much like McElreath discussed in the **Overthinking: Counting with** `sum` box, this works "because R internally converts a logical expression, like `samples < 0/5`, to a vector of `TRUE` and `FALSE` results, one for each element of `samples`, saying whether or not each element matches the criterion" (p. 54). When we inserted that vector of `TRUE` and `FALSE` values within the `mean()` function, they were then internally converted to a vector of 1s and 0s, the mean of which was the probability. Tricky!
 
-To determine the posterior probability between 0.5 and 0.75, you can use `&` within `filter()`.
+To determine the posterior probability between .5 and .75, you can use `&` within `filter()`.
 
 ```{r}
 samples %>% 
@@ -233,7 +233,7 @@ samples %>%
   summarise(`80th percentile` = quantile(p_grid, p = .8))
 ```
 
-Here's the `summarise()` approach with two probabilities:
+Here's the `summarise()` approach with two probabilities.
 
 ```{r}
 samples %>% 
@@ -241,7 +241,7 @@ samples %>%
             `90th percentile` = quantile(p_grid, p = .9))
 ```
 
-The tydiverse approach is nice in that that family of functions typically returns a data frame. But sometimes you just want your values in a numeric vector for the sake of quick indexing. In that case, base R `quantile()` shines.
+The tidyverse approach is nice in that that family of functions typically returns a data frame. But sometimes you just want your values in a numeric vector for the sake of quick indexing. In that case, base R `quantile()` shines.
 
 ```{r}
 (q_10_and_90 <- quantile(samples$p_grid, prob = c(.1, .9)))
@@ -311,7 +311,7 @@ quantile(samples$p_grid, prob = c(.25, .75))
 rethinking::PI(samples$p_grid, prob = .5)
 ```
 
-Now's a good time to introduce Matthew Kay's [tidybayes package](https://mjskay.github.io/tidybayes/), which offers an [array of convenience functions](https://cran.r-project.org/package=tidybayes/vignettes/tidy-brms.html) for summarizing Bayesian models of the type we'll be working with in this project.
+Now's a good time to introduce Matthew Kay's [-@R-tidybayes] [**tidybayes** package](https://mjskay.github.io/tidybayes/), which offers an array of convenience functions for summarizing Bayesian models of the type we'll be working with in this ebook. For all the brms-related deets, see Kay's [-@kayExtractingVisualizingTidy2020] vignette, [*Extracting and visualizing tidy draws from brms models*](https://mjskay.github.io/tidybayes/articles/tidy-brms.html). Here we start simple.
 
 ```{r, message = F, warning = F}
 library(tidybayes)
@@ -319,7 +319,7 @@ library(tidybayes)
 median_qi(samples$p_grid, .width = .5)
 ```
 
-The tidybayes package offers a [family of functions](https://cran.r-project.org/package=tidybayes/vignettes/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
+The tidybayes package offers a [family of functions](https://mjskay.github.io/tidybayes/articles/tidybayes.html#point-summaries-and-intervals-with-the-point_interval-functions-medianmeanmode_qihdi) that make it easy to summarize a distribution with a measure of central tendency accompanied by intervals. With `median_qi()`, we asked for the median and quantile-based intervals--just like we've been doing with `quantile()`. Note how the `.width` argument within `median_qi()` worked the same way the `prob` argument did within `rethinking::PI()`. With `.width = .5`, we indicated we wanted a quantile-based 50% interval, which was returned in the `ymin` and `ymax` columns. The tidybayes framework makes it easy to request multiple types of intervals. E.g., here we'll request 50%, 80%, and 99% intervals.
 
 ```{r}
 median_qi(samples$p_grid, .width = c(.5, .8, .99))
@@ -341,7 +341,7 @@ mode_hdi(samples$p_grid, .width = .5)
 
 This time we used the mode as the measure of central tendency. With this family of tidybayes functions, you specify the measure of central tendency in the prefix (i.e., `mean`, `median`, or `mode`) and then the type of interval you'd like (i.e., `qi` or `hdi`).
 
-If all you want are the intervals without the measure of central tendency or all that other technical information, tidybayes also offers the handy `qi()` and `hdi()` functions. 
+If all you want are the intervals without the measure of central tendency or all that other technical information, tidybayes also offers the handy `qi()` and `hdi()` functions.
 
 ```{r}
 qi(samples$p_grid, .width = .5)
@@ -386,7 +386,7 @@ In the `geom_ribbon()` line for the HPDI plot, did you notice how we replaced `d
 
 > The HPDI has some advantages over the PI. But in most cases, these two types of interval are very similar. They only look so different in this case because the posterior distribution is highly skewed. If we instead used samples from the posterior distribution for six waters in nine tosses, these intervals would be nearly identical. Try it for yourself, using different probability masses, such as `prob=0.8` and `prob=0.95`. When the posterior is bell shaped, it hardly matters when type of interval you use. (p. 57)
 
-Let's try it out. First we'll update the simulation for six waters in nine tosses. 
+Let's try it out. First we'll update the simulation for six waters in nine tosses.
 
 ```{r}
 n_success <- 6
@@ -512,7 +512,7 @@ d %>%
   summarise(`expected loss` = sum(loss))
 ```
 
-What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-named functions (e.g., `map2()`) from the [purrr package](https://purrr.tidyverse.org), which is itself part of the [tidyverse](https://www.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base R framework. You can learn more about how to use the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
+What McElreath did with `sapply()`, we'll do with `purrr::map()`. If you haven't used it, `map()` is part of a family of similarly-named functions (e.g., `map2()`) from the [purrr package](https://purrr.tidyverse.org). The `map()` family is the tidyverse alternative to the family of `apply()` functions from the base-R framework. You can learn more about how to use the `map()` family [here](https://purrr.tidyverse.org/reference/map.html) or [here](https://jennybc.github.io/purrr-tutorial/ls01_map-name-position-shortcuts.html) or [here](https://data.library.virginia.edu/getting-started-with-the-purrr-package-in-r/).
 
 ```{r}
 make_loss <- function(our_d) {
@@ -561,7 +561,7 @@ samples %>%
 The quadratic loss $(d - p)^2$ suggests we should use the mean instead. Let's investigate.
 
 ```{r, fig.width = 3.5, fig.height = 3}
-# ammend our loss function
+# amend our loss function
 make_loss <- function(our_d) {
   d %>% 
     mutate(loss = posterior * (our_d - p_grid)^2) %>% 
@@ -617,9 +617,9 @@ McElreath's four good reasons for posterior simulation were
 
 Dummy data for the globe tossing model arise from the binomial likelihood. If you let $w$ be a count of water and $n$ be the number of tosses, the binomial likelihood is
 
-$$\text{Pr} (w|n, p) = \frac{n!}{w!(n - w)!} p^w (1 - p)^{n - w}$$
+$$\text{Pr}(w|n, p) = \frac{n!}{w!(n - w)!} p^w (1 - p)^{n - w}$$
 
-Letting $n = 2$, $p(w) = .7$, and $w_\text{observed} = 0 \text{ through }2$, the denisties are:
+Letting $n = 2$, $p(w) = .7$, and $w_\text{observed} = 0 \text{ through }2$, the densities are as follows.
 
 ```{r}
 tibble(n           = 2,
@@ -669,10 +669,9 @@ d %>%
   ggplot(aes(x = draws)) +
   geom_histogram(binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
-  scale_x_continuous("dummy water count",
-                     breaks = seq(from = 0, to = 9, by = 2)) +
+  scale_x_continuous("dummy water count", breaks = 0:4 * 2) +
   ylab("frequency") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(panel.grid = element_blank())
 ```
 
@@ -708,7 +707,7 @@ d %>%
   scale_x_continuous("dummy water count",
                      breaks = seq(from = 0, to = 9, by = 2)) +
   ylab("frequency") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(panel.grid = element_blank()) +
   facet_grid(n ~ probability)
 ```
@@ -721,7 +720,7 @@ If you're new to applied statistics, you might be surprised how often mistakes a
 
 Let this haunt your dreams: "There is no way to really be sure that software works correctly" (p. 64).
 
-If you'd like to dive deeper into these dark waters, check out one my favorite talks from StanCon 2018, [*Esther Williams in the Harold Holt Memorial Swimming Pool*](https://youtu.be/pKZLJPrZLhU?t=26285), by the ineffable [Dan Simpson](https://twitter.com/dan_p_simpson). If Simpson doesn't end up drowning you, see Gabry and Simpson's talk at the Royal Statistical Society 2018, [*Visualization in Bayesian workflow*](https://www.youtube.com/watch?v=E8vdXoJId8M), a follow-up blog [*Maybe it's time to let the old ways die; or We broke R-hat so now we have to fix it*](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/), and that blog's associated pre-print by Vehtari, Gelman, Simpson, Carpenter, and Bürkner [*Rank-normalization, folding, and localization: An improved $\hat R$ for assessing convergence of MCMC*](https://arxiv.org/abs/1903.08008).
+If you'd like to dive deeper into these dark waters, check out one my favorite talks from StanCon 2018, [*Esther Williams in the Harold Holt Memorial Swimming Pool*](https://youtu.be/pKZLJPrZLhU?t=26285), by the ineffable [Dan Simpson](https://twitter.com/dan_p_simpson). If Simpson doesn't end up drowning you, see Gabry and Simpson's talk at the Royal Statistical Society 2018, [*Visualization in Bayesian workflow*](https://www.youtube.com/watch?v=E8vdXoJId8M), a follow-up blog [*Maybe it's time to let the old ways die; or We broke R-hat so now we have to fix it*](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/), and that blog's associated pre-print by @vehtariRanknormalizationFoldingLocalization2019, [*Rank-normalization, folding, and localization: An improved $\widehat R$ for assessing convergence of MCMC*](https://arxiv.org/abs/1903.08008).
 
 #### Is the model adequate?
 
@@ -805,7 +804,7 @@ d_small %>%
   scale_x_continuous(NULL, breaks = seq(from = 0, to = 9, by = 3)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "Sampling distributions") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(panel.grid = element_blank()) +
   facet_wrap(~ label, ncol = 9) 
 ```
@@ -838,12 +837,12 @@ samples %>%
                      breaks = seq(from = 0, to = 9, by = 3)) +
   scale_y_continuous(NULL, breaks = NULL) +
   ggtitle("Posterior predictive distribution") +
-  coord_cartesian(xlim = 0:9,
-                  ylim = 0:3000) +
+  coord_cartesian(xlim = c(0, 9),
+                  ylim = c(0, 3000)) +
   theme(panel.grid = element_blank())
 ```
 
-In Figure 3.7, McElreath considered the longst sequence of the sampe values. We've been using `rbinom()` with the size parameter set to 9 for our simulations. E.g.,
+In Figure 3.7, McElreath considered the longest sequence of the sample values. We've been using `rbinom()` with the size parameter set to 9 for our simulations. E.g.,
 
 ```{r}
 rbinom(10, size = 9, prob = .6)
@@ -892,7 +891,7 @@ rle(tosses)$lengths %>% max()
 
 Now let's apply our method to the data and plot.
 
-```{r, fig.width = 3.5, fig.height = 3}
+```{r, fig.width = 3.5, fig.height = 3, message = F}
 samples %>% 
   group_by(iter) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% max()) %>% 
@@ -902,10 +901,9 @@ samples %>%
                  binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
   scale_fill_viridis_d(option = "D", end = .9) +
-  scale_x_continuous("longest run length",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
+  scale_x_continuous("longest run length", breaks = 0:3 * 3) +
   ylab("frequency") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(legend.position = "none",
         panel.grid = element_blank())
 ```
@@ -916,7 +914,7 @@ Let's look at `rle()` again.
 rle(tosses)
 ```
 
-We can use the length of the output (i.e., 7 in this example) as the numbers of switches from, in this case, "w" and "l". 
+We can use the length of the output (i.e., 7 in this example) as the numbers of switches from, in this case, "w" and "l".
 
 ```{r}
 rle(tosses)$lengths %>% length()
@@ -924,7 +922,7 @@ rle(tosses)$lengths %>% length()
 
 With that new trick, we're ready to make the right panel of Figure 3.7.
 
-```{r, fig.width = 3.5, fig.height = 3}
+```{r, fig.width = 3.5, fig.height = 3, message = F}
 samples %>% 
   group_by(iter) %>% 
   summarise(longest_run_length = rle(draws)$lengths %>% length()) %>% 
@@ -934,15 +932,14 @@ samples %>%
                  binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
   scale_fill_viridis_d(option = "D", end = .9) +
-  scale_x_continuous("number of switches",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
+  scale_x_continuous("number of switches", breaks = 0:3 * 3) +
   ylab("frequency") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(legend.position = "none",
         panel.grid = element_blank())
 ```
 
-## ~~Summary~~ Let's practice in brms
+## ~~Summary~~ Let's practice with brms
 
 Open brms.
 
@@ -950,28 +947,27 @@ Open brms.
 library(brms)
 ```
 
-With brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did at the end of the project for Chapter 2.
+With brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did in [Section 2.4.3][Markov chain Monte Carlo.].
 
 ```{r b3.1}
 b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
-      w | trials(9) ~ 1,
+      w | trials(9) ~ 0 + Intercept,
       # this is a flat prior
-      prior(beta(1, 1), class = Intercept),
-      control = list(adapt_delta = .999),
+      prior(beta(1, 1), class = b, lb = 0, ub = 1),
       seed = 3,
       file = "fits/b03.01")
 ```
 
-We'll learn more about the beta distribution in Chapter 11. But for now, here's the posterior summary for `b_Intercept`, the probability of a "w".
+We'll learn more about the beta distribution in [Chapter 11][Monsters and Mixtures]. For now, here's the posterior summary for `b_Intercept`, the probability of a "w".
 
 ```{r}
 posterior_summary(b3.1)["b_Intercept", ] %>% 
   round(digits = 2)
 ```
 
-As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the two `Q` columns are the quantile-based 95% intervals, and `Est.Error` is the posterior standard deviation. 
+As we'll fully cover in the next chapter, `Estimate` is the posterior mean, the two `Q` columns are the quantile-based 95% intervals, and `Est.Error` is the posterior standard deviation.
 
 Much like the way we used the `samples()` function to simulate probability values, above, we can do so with the `brms::fitted()` function. But we will have to specify `scale = "linear"` in order to return results in the probability metric. By default, `brms::fitted()` will return summary information. Since we want actual simulation draws, we'll specify `summary = F`.
 
@@ -1016,19 +1012,14 @@ f %>%
   ggplot(aes(x = w)) +
   geom_histogram(binwidth = 1, center = 0,
                  color = "grey92", size = 1/10) +
-  scale_x_continuous("number of water samples",
-                     breaks = seq(from = 0, to = 9, by = 3)) +
+  scale_x_continuous("number of water samples", breaks = 0:3 * 3) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, 1200)) +
   ggtitle("Posterior predictive distribution") +
-  coord_cartesian(xlim = 0:9) +
+  coord_cartesian(xlim = c(0, 9)) +
   theme(panel.grid = element_blank())
 ```
 
-As you might imagine, we can use the output from `fitted()` to return disaggregated batches of 0s and 1s, too. And we could even use those disaggregated 0s and 1s to examine longest run lengths and numbers of switches as in the analyses for Figure 3.7. I’ll leave those as exercises for the interested reader.
-
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
+As you might imagine, we can use the output from `fitted()` to return disaggregated batches of 0's and 1's, too. And we could even use those disaggregated 0's and 1's to examine longest run lengths and numbers of switches as in the analyses for Figure 3.7. I'll leave those as exercises for the interested reader.
 
 ## Session info {-}
 
