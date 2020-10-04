@@ -13,7 +13,7 @@ options(width = 100)
 
 # Linear Models
 
-> Linear regression is the geocentric model of applied statistics. By "linear regression", we will mean a family of simple statistical golems that attempt to learn about the mean and variance of some measurement, using an additive combination of other measurements. Like geocentrism, linear regression can usefully describe a very large variety of natural phenomena. Like geocentrism, linear is a descriptive model that corresponds to many different process models. If we read its structure too literally, we’re likely to make mistakes. But used wisely, these little linear golems continue to be useful. (p. 71)
+> Linear regression is the geocentric model of applied statistics. By "linear regression", we will mean a family of simple statistical golems that attempt to learn about the mean and variance of some measurement, using an additive combination of other measurements. Like geocentrism, linear regression can usefully describe a very large variety of natural phenomena. Like geocentrism, linear is a descriptive model that corresponds to many different process models. If we read its structure too literally, we’re likely to make mistakes. But used wisely, these little linear golems continue to be useful. [@mcelreathStatisticalRethinkingBayesian2015, p. 71]
 
 ## Why normal distributions are normal
 
@@ -73,7 +73,7 @@ p1 <-
   filter(step == 4) %>%
   ggplot(aes(x = position)) +
   geom_line(stat = "density", color = "dodgerblue1") +
-  coord_cartesian(xlim = -6:6) +
+  coord_cartesian(xlim = c(-6, 6)) +
   labs(title = "4 steps")
 
 # Figure 4.2.b.
@@ -82,7 +82,7 @@ p2 <-
   filter(step == 8) %>%
   ggplot(aes(x = position)) +
   geom_density(color = "dodgerblue2") +
-  coord_cartesian(xlim = -6:6) +
+  coord_cartesian(xlim = c(-6, 6)) +
   labs(title = "8 steps")
 
 # this is an intermediary step to get an SD value
@@ -99,7 +99,7 @@ p3 <-
                 args = list(mean = 0, sd = 2.180408),
                 linetype = 2) +  # 2.180408 came from the previous code block
   geom_density(color = "transparent", fill = "dodgerblue3", alpha = 1/2) +
-  coord_cartesian(xlim = -6:6) +
+  coord_cartesian(xlim = c(-6, 6)) +
   labs(title = "16 steps",
        y = "density")
 
@@ -212,7 +212,7 @@ But they can still be useful.
 
 Let $y$ be the criterion, $\mu$ be the mean, and $\sigma$ be the standard deviation. Then the probability density of some Gaussian value $y$ is
 
-$$p(y|\mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \Bigg (- \frac{(y - \mu)^2}{2 \sigma^2} \Bigg).$$
+$$p(y|\mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left (- \frac{(y - \mu)^2}{2 \sigma^2} \right).$$
 
 McElreath's right. "This looks monstrous" (p. 76). Why not demystify that monster with a little R code? For simplicity, we'll look at $p(y)$ over a series of $y$ values ranging from -4 to 4, holding $\mu = 0$ and $\sigma = 1$. Then we'll plot.
 
@@ -221,7 +221,7 @@ McElreath's right. "This looks monstrous" (p. 76). Why not demystify that monste
 tibble(y     = seq(from = -4, to = 4, by = .1),
        mu    = 0,
        sigma = 1) %>% 
-  # compute p(y) using a hand-made gaussian likelihood
+  # compute p(y) using a hand-made Gaussian likelihood
   mutate(p_y = (1 / sqrt(2 * pi * sigma^2)) * exp(-(y - mu)^2 / (2 * sigma^2))) %>% 
   
   # plot!
@@ -237,10 +237,10 @@ You get the same results is you switch out that mutate line with `mutate(p_y = d
 Our mathy ways of summarizing models will be something like
 
 \begin{align*}
-\text{criterion}_i & \sim \text{Normal}(\mu_i, \sigma) \\
+\text{criterion}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i  & = \beta \times \text{predictor}_i \\
-\beta  & \sim \text{Normal}(0, 10) \\
-\sigma & \sim \text{HalfCauchy}(0, 1).
+\beta  & \sim \operatorname{Normal}(0, 10) \\
+\sigma & \sim \operatorname{HalfCauchy}(0, 1).
 \end{align*}
 
 And as McElreath then followed up with, "If that doesn't make much sense, good. That indicates that you are holding the right textbook" (p. 77). Welcome applied statistics!
@@ -250,8 +250,8 @@ And as McElreath then followed up with, "If that doesn't make much sense, good. 
 For the globe tossing model, the probability $p$ of a count of water $w$ based on $n$ trials was
 
 \begin{align*}
-w & \sim \text{Binomial}(n, p) \\
-p & \sim \text{Uniform}(0, 1).
+w & \sim \operatorname{Binomial}(n, p) \\
+p & \sim \operatorname{Uniform}(0, 1).
 \end{align*}
 
 We can break McElreath's R code 4.6 down a little bit with a tibble like so.
@@ -296,7 +296,7 @@ The posterior is a combination of the prior and the likelihood. When the prior i
 
 ### The data.
 
-Let's get the Howell ([2000](https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490), [2010](https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung)) data from McElreath's [rethinking package](https://xcelab.net/rm/statistical-rethinking/).
+Let's get the Howell [-@howell2001demography; -@howell2010life] data from McElreath's [-@R-rethinking] [**rethinking** package](https://xcelab.net/rm/software/).
 
 ```{r, message = F}
 library(rethinking)
@@ -348,7 +348,7 @@ This probably reflects my training history, but the structure of a data frame se
 
 #### Overthinking: Index magic.
 
-For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Roger Peng's *R Programming for Data Science* or even the [Subsetting](https://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
+For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Peng's [-@pengProgrammingDataScience2019] *R programming for data science* or even the [Subsetting](http://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
 
 ### The model. 
 
@@ -404,9 +404,9 @@ tibble(sample_mu    = rnorm(n, mean = 178,       sd  = 20),
 
 As McElreath wrote, we've made a "vaguely bell-shaped density with thick tails. It is the expected distribution of heights, averaged over the prior" (p. 83).
 
-### Grid approximation of the posterior distribution. 
+### Grid approximation of the posterior distribution.
 
-As McElreath explained, you'll never use this for practical data analysis. But I found this helped me better understanding what exactly we're doing with Bayesian estimation. So let's play along. This is our version of the first three lines in McElreath's R code 4.14.
+As McElreath explained, you'll never use the grid approximation approach for practical data analysis. But I found this helped me better understanding what exactly we're doing with Bayesian estimation. So let's play along. This is our version of the first three lines in McElreath's R code 4.14.
 
 ```{r}
 n <- 200
@@ -562,7 +562,7 @@ d_grid <-
   mutate(probability = exp(product - max(product)))
 ```
 
-Did you catch our use of `purrr::map2_dbl()`, there, in place of `purrr::map2()`? It turns out that `purrr::map()` and `purrr::map2()` always return a list (see [here](https://purrr.tidyverse.org/reference/map.html) and [here](https://purrr.tidyverse.org/reference/map2.html)). But as [Phil Straforelli](https://twitter.com/PStrafo) kindly [pointed out](https://twitter.com/PStrafo/status/1046853175917961217), we can add the `_dbl` suffix to those functions, which will instruct the purrr package to return a double vector (i.e., a [common kind of numeric vector](https://r4ds.had.co.nz/vectors.html#important-types-of-atomic-vector)). The advantage of that approach is we no longer need to follow our `map()` or `map2()` lines with `unnest()`. To learn more about the ins and outs of the `map()` family, check out [this section](https://r4ds.had.co.nz/iteration.html#the-map-functions) from *R4DS* or Jenny Bryan's [*purrr tutorial*](https://jennybc.github.io/purrr-tutorial/).
+Did you catch our use of `purrr::map2_dbl()`, there, in place of `purrr::map2()`? It turns out that `purrr::map()` and `purrr::map2()` always return a list (see [here](https://purrr.tidyverse.org/reference/map.html) and [here](https://purrr.tidyverse.org/reference/map2.html)). However, we can add the `_dbl` suffix to those functions, which will instruct the purrr package to return a double vector (i.e., a [common kind of numeric vector](https://r4ds.had.co.nz/vectors.html#important-types-of-atomic-vector)). The advantage of that approach is we no longer need to follow our `map()` or `map2()` lines with `unnest()`. To learn more about the ins and outs of the `map()` family, check out [this section](https://r4ds.had.co.nz/iteration.html#the-map-functions) from *R4DS* or Jenny Bryan's [*purrr tutorial*](https://jennybc.github.io/purrr-tutorial/).
 
 Next we'll `sample_n()` and plot.
 
@@ -598,12 +598,12 @@ d_grid_samples %>%
 
 That `labeller = label_parsed` bit in the `facet_wrap()` function is what converted our subplot strip labels into Greek. Anyway, $\sigma$ is not so Gaussian with that small $n$.
 
-This is the point in the project where we hop off the grid-approximation train. On the one hand, I think this is a great idea. Most of y'all reading this will never use grid approximation in a real-world applied data analysis. On the other hand, there is some pedagogical utility in practicing with it. It can help you grasp what it is we're dong when we apply Bayes' theorem. If you'd like more practice, check out the first several chapters in [Kruschke's (2015) textbook](https://sites.google.com/site/doingbayesiandataanalysis/) and the corresponding chapters in [my project translating it into brms and tidyverse](https://bookdown.org/content/3686).
+This is the point in the project where we hop off the grid-approximation train. On the one hand, I think this is a great idea. Most of y'all reading this will never use grid approximation in a real-world applied data analysis. On the other hand, there is some pedagogical utility in practicing with it. It can help you grasp what it is we're dong when we apply Bayes' theorem. If you'd like more practice, check out the first several chapters in John Kruschke's [-@kruschkeDoingBayesianData2015] [textbook](https://sites.google.com/site/doingbayesiandataanalysis/) and the corresponding chapters in my [-@kurzDoingBayesianData2020] [ebook](https://bookdown.org/content/3686/) translating it into **brms** and **tidyverse**.
 
 ### Fitting the model with ~~`map`~~ `brm()`.
 
-We won't actually use `rethinking::map()`--which you should not conflate with `purrr::map()`--, but will jumpt straight to the primary brms modeling function, `brm()`. In the text, McElreath indexed his models with names like `m4.1`. I will largely follow that convention, but will replace the *m* with a *b* to stand for the brms package. Plus, once in a blue moon we will actually use the rethinking package to fit a model in order to contrast it to one fit with brms. On those occasions, we will index them using the *m* prefix. Here's the first model with `brm()`.
-
+We won't actually use `rethinking::map()`--which you should not conflate with `purrr::map()`--, but will jump straight to the primary brms modeling function, `brm()`. In the text, McElreath indexed his models with names like `m4.1`. I will largely follow that convention, but will replace the *m* with a *b* to stand for the brms package. Plus, once in a blue moon we will actually use the rethinking package to fit a model in order to contrast it to one fit with brms. On those occasions, we will index them using the *m* prefix. Here's the first model with `brm()`.
+      
 ```{r b4.1}
 b4.1 <- 
   brm(data = d2, 
@@ -630,7 +630,7 @@ b4.1_hc <-
       file = "fits/b04.01_hc")
 ```
 
-This leads to an important point. After running model with Hamiltonian Monte Carlo (HMC), it's a good idea to inspect the chains. As we'll see, McElreath coverd this in [Chapter 8][Checking the chain.]. Here's a typical way to do so in brms.
+This leads to an important point. After running model fit with HMC, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in [Chapter 8][Checking the chain.]. Here's a typical way to do so in brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 plot(b4.1_hc) 
@@ -675,7 +675,7 @@ Check the chains.
 plot(b4.2)
 ```
 
-I had to increase the `warmup` due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. And again, we will learn more about these technical details in [Chapter 8][Checking the chain.].
+I had to increase the `warmup` due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. Again, we will learn more about these technical details in [Chapter 8][Checking the chain.].
 
 Here's the model `summary()`.
 
@@ -715,7 +715,6 @@ select(post, b_Intercept:sigma) %>%
   cov()
 ```
 
-
 That was "(1) a vector of variances for the parameters and (2) a correlation matrix" for them (p. 90). Here are just the variances (i.e., the diagonal elements) and the correlation matrix.
 
 ```{r}
@@ -730,13 +729,13 @@ select(b_Intercept, sigma) %>%
   cor()
 ```
 
-With our `post <- posterior_samples(b4.1_hc)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS), in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- posterior_samples(b4.1_hc)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS) [@R-MASS; @MASS2002], in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 ```{r}
 str(post)
 ```
 
-Notice how our data frame, `post`, includes a third vector named `lp__`. That's the log posterior. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) or the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient) for details. The log posterior will largely be outside of our focus in this project.
+Notice how our data frame, `post`, includes a third vector named `lp__`. That's the log posterior. For more information on the log posterior, see the [brms reference manual](https://CRAN.R-project.org/package=brms/brms.pdf) [@brms2020RM], the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [-@RStanInterfaceStan] [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient), or [Stephen Martin](https://twitter.com/smartin2018)'s [nice explanation](https://discourse.mc-stan.org/t/basic-question-what-is-lp-in-posterior-samples-of-a-brms-regression/17567/2?u=solomon) in the Stan Forums. The log posterior will largely be outside of our focus in this project.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package. E.g.,
 
@@ -752,7 +751,7 @@ t(apply(post[, 1:2], 2, quantile, probs = c(.5, .025, .75)))
 
 The base R code is compact, but somewhat opaque. Here's how to do something similar with more explicit tidyverse code.
 
-```{r}
+```{r, message = F}
 post %>%
   select(sigma:b_Intercept) %>% 
   gather(parameter) %>%
@@ -782,7 +781,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath coverd all of this in [Chapter 8][Easy HMC: ~~map2stan~~ `brm()`] and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?posterior_samples`.
+Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath covered all of this in [Chapter 8][Easy HMC: ~~map2stan~~ `brm()`] and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?posterior_samples`.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -797,9 +796,9 @@ ggplot(data = post,
   theme(panel.grid = element_blank())
 ```
 
-See? HMC handled the mild skew just fine. 
+See? HMC handled the mild skew just fine.
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his vignette [*Estimating Distributional Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.]. Kruschke also covered several models of this kind in his (2015) text, [*Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), which I've translated into brms and tidyverse code. Check out [Section 16.3](https://bookdown.org/content/3686/metric-predicted-variable-on-one-or-two-groups.html#two-groups) for an example of modeling $\log \sigma$ with a grouping variable.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his [-@Bürkner2020Distributional] vignette [*Estimating distributional models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.]. Kruschke also covered several models of this kind in his (2015) text, [*Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), which I've translated into brms and tidyverse code. Check out [Section 16.3](https://bookdown.org/content/3686/metric-predicted-variable-on-one-or-two-groups.html#two-groups) for an example of modeling $\log \sigma$ with a grouping variable.
 
 ## Adding a predictor
 
@@ -826,16 +825,16 @@ ggplot(data = d2,
 Our new univariable model will follow the formula
 
 \begin{align*}
-h_i & \sim \text{Normal}(\mu_i, \sigma) \\
-\mu_i & = \alpha + \beta x_i \\
-\alpha & \sim \text{Normal}(178, 100) \\
-\beta & \sim \text{Normal}(0, 10) \\
-\sigma & \sim \text{Uniform}(0, 50).
+h_i    & \sim \operatorname{Normal}(\mu_i, \sigma) \\
+\mu_i  & = \alpha + \beta x_i \\
+\alpha & \sim \operatorname{Normal}(178, 100) \\
+\beta  & \sim \operatorname{Normal}(0, 10) \\
+\sigma & \sim \operatorname{Uniform}(0, 50).
 \end{align*}
 
 #### Likelihood.
 
-The likelihood for our model is $h_i \sim \text{Normal}(\mu_i, \sigma)$.
+The likelihood for our model is $h_i \sim \operatorname{Normal}(\mu_i, \sigma)$.
 
 #### Linear model.
 
@@ -849,12 +848,12 @@ Our linear model is $\mu_i = \alpha + \beta x_i$. The thing we're modeling is $\
 Our univariable model has three priors:
 
 \begin{align*}
-\alpha & \sim \text{Normal}(178, 100), \\
-\beta & \sim \text{Normal}(0, 10), \; \text{and} \\
-\sigma & \sim \text{Uniform}(0, 50).
+\alpha & \sim \operatorname{Normal}(178, 100), \\
+\beta  & \sim \operatorname{Normal}(0, 10), \; \text{and} \\
+\sigma & \sim \operatorname{Uniform}(0, 50).
 \end{align*}
 
-McElreath recommended we plot them. If you recall, we've already plotted $\text{Normal}(178, 100)$ and $\text{Uniform}(0, 50)$. Here's what the prior for our new $\beta$ parameter looks like.
+McElreath recommended we plot them. If you recall, we've already plotted $\operatorname{Normal}(178, 100)$ and $\operatorname{Uniform}(0, 50)$. Here's what the prior for our new $\beta$ parameter looks like.
 
 ```{r, fig.width = 3, fig.height = 3}
 tibble(beta = -40:40) %>% 
@@ -869,18 +868,18 @@ tibble(beta = -40:40) %>%
 
 ### Fitting the model.
 
-If you look closely at the statistical model and corresponding rethinking code at the bottom of page 95, you'll see they contradict each other on the prior for $\alpha$. Though we didn't note it at the time, there was similar contradiction in the middle of page 87 for `m4.1`. McElreath acknowledged this in his [Errata](https://github.com/rmcelreath/rethinking/blob/master/ERRATA.md), where he indicated the intended prior was $\alpha \sim \text{Normal}(178, 100)$. We will use that prior here, too.
+If you look closely at the statistical model and corresponding rethinking code at the bottom of page 95, you'll see they contradict each other on the prior for $\alpha$. Though we didn't note it at the time, there was similar contradiction in the middle of page 87 for `m4.1`. McElreath acknowledged this in his [Errata](https://github.com/rmcelreath/rethinking/blob/master/ERRATA.md), where he indicated the intended prior was $\alpha \sim \operatorname{Normal}(178, 100)$. We will use that prior here, too.
 
 Unlike with the rethinking package, our `brms::brm()` syntax won't perfectly mirror the formal statistical notation. But here are the analogues to the exposition at the bottom of page 95 (with the corrected $\alpha$ prior).
 
-* $h_i \sim \text{Normal}(\mu_i, \sigma)$: `family = gaussian`
+* $h_i \sim \operatorname{Normal}(\mu_i, \sigma)$: `family = gaussian`
 * $\mu_i = \alpha + \beta x_i$: `height ~ 1 + weight`
-* $\alpha \sim \text{Normal}(178, 100)$: `prior(normal(178, 100), class = Intercept`
-* $\beta \sim \text{Normal}(0, 10)$: ` prior(normal(0, 10), class = b)`
-* $\sigma \sim \text{Uniform}(0, 50)$: `prior(uniform(0, 50), class = sigma)`
+* $\alpha \sim \operatorname{Normal}(178, 100)$: `prior(normal(178, 100), class = Intercept`
+* $\beta \sim \operatorname{Normal}(0, 10)$: ` prior(normal(0, 10), class = b)`
+* $\sigma \sim \operatorname{Uniform}(0, 50)$: `prior(uniform(0, 50), class = sigma)`
 
 Thus, to add a predictor you just the `+` operator in the model `formula`.
-
+      
 ```{r b4.3}
 b4.3 <- 
   brm(data = d2, 
@@ -889,7 +888,7 @@ b4.3 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 50), class = sigma)),
-      iter = 41000, warmup = 40000, chains = 4, cores = 4,
+      iter = 31000, warmup = 30000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03")
 ```
@@ -905,10 +904,10 @@ plot(b4.3)
 I'm not aware that you can embed the linear model within the likelihood function within `brms::brm()` the way McElreath did in R code 4.39. However, it can be pedagogically useful to write out the statistical model that way:
 
 \begin{align*}
-h_i & \sim \text{Normal}(\alpha + \beta x_i, \sigma) \\
-\alpha & \sim \text{Normal}(178, 100) \\
-\beta & \sim \text{Normal}(0, 10) \\
-\sigma & \sim \text{Uniform}(0, 50)
+h_i    & \sim \operatorname{Normal}(\alpha + \beta x_i, \sigma) \\
+\alpha & \sim \operatorname{Normal}(178, 100) \\
+\beta  & \sim \operatorname{Normal}(0, 10) \\
+\sigma & \sim \operatorname{Uniform}(0, 50)
 \end{align*}
 
 *Whoah. What? Where did* $\mu_i$ *go?* It's still there. We just expressed it as $\alpha + \beta x_i$.
@@ -945,7 +944,7 @@ d2 <-
 ```
 
 Fit the `weight_c` model, `b4.4`.
-
+      
 ```{r b4.4}
 b4.4 <- 
   brm(data = d2, 
@@ -954,7 +953,7 @@ b4.4 <-
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 50), class = sigma)),
-      iter = 46000, warmup = 45000, chains = 4, cores = 4,
+      iter = 36000, warmup = 35000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.04")
 ```
@@ -1194,13 +1193,13 @@ We'll use `mean_hdi()` to get both 89% and 95% HPDIs along with the mean.
 mean_hdi(mu_at_50[,1], .width = c(.89, .95))
 ```
 
-If you wanted to express those sweet 95% HPDIs on your density plot, you might use the `tidybayes::geom_halfeyeh()` function. Since `geom_halfeyeh()` also returns a point estimate, we'll just throw in the mode.
+If you wanted to express those sweet 95% HPDIs on your density plot, you might use the `tidybayes::stat_halfeye()` function. Since `stat_halfeye()` also returns a point estimate, we'll just throw in the mode.
 
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
   ggplot(aes(x = mu_at_50, y = 0)) +
-  geom_halfeyeh(point_interval = mode_hdi, .width = .95,
-                fill = "royalblue") +
+  stat_halfeye(point_interval = mode_hdi, .width = .95,
+               fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(mu["height | weight = 50"])) +
   theme_classic()
@@ -1214,7 +1213,7 @@ mu <- fitted(b4.3, summary = F)
 str(mu)
 ```
 
-When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your data. Because we had 4,000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4,000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead. 
+When you specify `summary = F`, `fitted()` returns a matrix of values with as many rows as there were post-warmup iterations across your HMC chains and as many columns as there were cases in your data. Because we had 4,000 post-warmup iterations and $n$ = 352, `fitted()` returned a matrix of 4,000 rows and 352 vectors. If you omitted the `summary = F` argument, the default is `TRUE` and `fitted()` will return summary information instead.
 
 Much like rethinking's `link()`, `fitted()` can accommodate custom predictor values with its `newdata` argument.
 
@@ -1300,9 +1299,9 @@ Similar to `rethinking::link()`, `brms::fitted()` uses the formula from your mod
 
 Even though our full statistical model (omitting priors for the sake of simplicity) is
 
-$$h_i \sim \text{Normal}(\mu_i = \alpha + \beta x_i, \sigma),$$
+$$h_i \sim \operatorname{Normal}(\mu_i = \alpha + \beta x_i, \sigma),$$
 
-we've only been plotting the $\mu_i$ part. In order to bring in the variability expressed by $\sigma$, we'll have to switch to the `predict()` function. Much as `brms::fitted()` was our analogue to `rethinking::link()`, `brms::predict()` is our analogue to `rethinking::sim()`. 
+we've only been plotting the $\mu_i$ part. In order to bring in the variability expressed by $\sigma$, we'll have to switch to the `predict()` function. Much as `brms::fitted()` was our analogue to `rethinking::link()`, `brms::predict()` is our analogue to `rethinking::sim()`.
 
 We can reuse our `weight_seq` data from before. But in case you forgot, here's that code again.
 
@@ -1545,10 +1544,6 @@ ggplot(data = d,
                      labels = round(at * sd(d$weight) + mean(d$weight), 1))
 ```
 
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
-
 ## Session info {-}
 
 ```{r}
@@ -1561,9 +1556,5 @@ rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_sampl
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
 pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
-
-ggplot2::theme_set(ggplot2::theme_grey())
-
-bayesplot::color_scheme_set("blue")
 ```
 
