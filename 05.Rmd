@@ -23,9 +23,7 @@ We'll approach the first two in this chapter. Interactions are reserved for [Cha
 
 #### Rethinking: Causal inference.
 
-"Despite its central importance, there is no unified approach to causal inference yet in the sciences or in statistics" (p. 120). 
-
-McElreath didn't cover this much in this edition of the text. However, it appears his second edition will cover it more extensively. He announced as much in [this blog post](https://elevanth.org/blog/2018/07/14/statistical-rethinking-edition-2-eta-2020/) and experimented in mixing it in with the material in during his [Statistical Rethinking Winter 2019](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) lecture series. To dip in, you might check out the recent blog post by Finn Lattimore and David Rohde, [*Causal Inference with Bayes Rule*](https://gradientinstitute.org/blog/6/).
+"Despite its central importance, there is no unified approach to causal inference yet in the sciences or in statistics" [@mcelreathStatisticalRethinkingBayesian2015, p. 120]. McElreath didn't cover this much in this edition of the text. However, he peppered causal inference throughout his second edition [@mcelreathStatisticalRethinkingBayesian2020]. To dip into the topic, you might check out the recent blog post by Finn Lattimore and David Rohde, [*Causal inference with Bayes rule*](https://gradientinstitute.org/blog/6/).
 
 ## Spurious associations
 
@@ -53,10 +51,10 @@ head(d)
 glimpse(d)
 ```
 
-Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://cran.r-project.org/package=ggrepel). But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we'll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
+Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://CRAN.R-project.org/package=ggrepel) [@R-ggrepel]. But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we'll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
-```{r, fig.width = 3, fig.height = 3}
-# install.packages("ggrepel", depencencies = T)
+```{r, fig.width = 3, fig.height = 3, message = F}
+# install.packages("ggrepel", dependencies = T)
 library(ggrepel)
 
 d %>%
@@ -69,12 +67,12 @@ d %>%
                   size = 3, seed = 1042) +  # this makes it reproducible
   scale_x_continuous("Waffle Houses per million", limits = c(0, 55)) +
   ylab("Divorce rate") +
-  coord_cartesian(xlim = 0:50, ylim = 5:15) +
+  coord_cartesian(xlim = c(0, 50), ylim = c(5, 15)) +
   theme_bw() +
   theme(panel.grid = element_blank())  
 ```
 
-Since these are geographically-based data, we might plot our three major variables in a map format. The [urbnmapr package](https://github.com/UrbanInstitute/urbnmapr) provides latitude and longitude data for the 50 states and the `geom_sf()` function for plotting them. We'll use the `left_join()` function to combine those data with our primary data `d`.
+Since these are geographically-based data, we might plot our three major variables in a map format. The [urbnmapr package](https://github.com/UrbanInstitute/urbnmapr) [@R-urbnmapr] provides latitude and longitude data for the 50 states and the `geom_sf()` function for plotting them. We'll use the `left_join()` function to combine those data with our primary data `d`.
 
 ```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
 # devtools::install_github("UrbanInstitute/urbnmapr")
@@ -103,7 +101,7 @@ left_join(
           size = 0) +
   scale_fill_gradient(low = "#f8eaea", high = "firebrick4") +
   theme_void() +
-  theme(legend.position  = "none",
+  theme(legend.position = "none",
         strip.text = element_text(margin = margin(0, 0, .5, 0))) +
   facet_wrap(~name) 
 ```
@@ -373,7 +371,7 @@ We get the residuals with the well-named `residuals()` function. Much like with 
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
-```{r, fig.width = 3, fig.height = 3}
+```{r, fig.width = 3, fig.height = 3, message = F}
 r <- 
   residuals(b5.4) %>%
   # to use this in ggplot2, we need to make it a tibble or data frame
@@ -420,7 +418,7 @@ b5.4b <-
 
 And now we'll get the new batch of residuals, do a little data processing, and make a plot corresponding to Figure 5.4.b.
 
-```{r, fig.width = 3, fig.height = 3}
+```{r, fig.width = 3, fig.height = 3, message = F}
 # redefine the annotation data
 text <-
   tibble(Estimate = c(- 0.7, 0.5),
@@ -529,7 +527,7 @@ fitted(b5.3, newdata = nd) %>%
   theme(panel.grid = element_blank())   
 ```
 
-> A tension with such plots, however, lies in their counterfactual nature. In the small world of the model, it is possible to change median age of marriage without also changing the marriage rate. But is this also possible in the large world of reality? Probably not...
+> A tension with such plots, however, lies in their counterfactual nature. In the small world of the model, it is possible to change median age of marriage without also changing the marriage rate. But is this also possible in the large world of reality? Probably not....
 >
 > ...If our goal is to intervene in the world, there may not be any realistic way to manipulate each predictor without also manipulating the others. This is a serious obstacle to applied science, whether you are an ecologist, an economist, or an epidemiologist [or a psychologist] (p. 131)
 
@@ -645,7 +643,7 @@ p3
 
 For the sake of good practice, let’s use patchwork syntax to combine those three subplots like they appear in the text.
 
-```{r, fig.width = 6.25, fig.height = 6.25}
+```{r, fig.width = 6.25, fig.height = 6.25, message = F}
 library(patchwork)
 
 ((p1 / p3) | p2) + plot_annotation(tag_levels = "a",
@@ -653,7 +651,7 @@ library(patchwork)
                                    tag_suffix = ")")
 ```
 
-More McElreath inspiration: "No matter how many predictors you've already included in a regression, it's still possible to find spurious correlations with the remaining variation" (p. 134). 
+More McElreath inspiration: "No matter how many predictors you've already included in a regression, it's still possible to find spurious correlations with the remaining variation" (p. 134).
 
 ##### Rethinking: Stats, huh, yeah what is it good for?
 
@@ -705,7 +703,7 @@ fixef(b5.0_spur) %>%
 
 > A second reason to use more than one predictor variable is to measure the direct influences of multiple factors on an outcome, when none of those influences is apparent from bivariate relationships. This kind of problem tends to arise when there are two predictor variables that are correlated with one another. However, one of these is positively correlated with the outcome and the other is negatively correlated with it. (p. 134)
 
-Let's load the [Hindle and Milligan (2011)](https://www.researchgate.net/publication/51751742_Primate_milk_Proximate_mechanisms_and_ultimate_perspectives) `milk` data.
+Let's load the @hindePrimateMilkProximate2011 milk data.
 
 ```{r, message = F}
 library(rethinking)
@@ -746,7 +744,7 @@ b5.5 <-
       file = "fits/b05.05")
 ```
 
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better. 
+The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better.
 
 To compliment how McElreath removed cases with missing values on our variables of interest with base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
 
@@ -808,7 +806,7 @@ dcc <-
 ```
 
 Now we use `log_mass` as the new sole predictor.
-
+      
 ```{r b5.6}
 b5.6 <- 
   brm(data = dcc, 
@@ -818,7 +816,6 @@ b5.6 <-
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 1), class = sigma)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.9),
       seed = 5,
       file = "fits/b05.06")
 ```
@@ -865,7 +862,7 @@ Finally, we're ready to fit with both predictors included in the "joint model." 
 \sigma  & \sim \operatorname{Uniform}(0, 1).
 \end{align*}
 
-Note, the HMC chains required a longer `warmup` period and a higher `adapt_delta` setting for the model to converge properly. Life will be much better once we ditch the uniform prior for good.
+Fit the model.
 
 ```{r b5.7}
 b5.7 <- 
@@ -875,8 +872,8 @@ b5.7 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
                 prior(uniform(0, 1), class = sigma)),
-      iter = 4000, warmup = 2000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.999),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      control = list(adapt_delta = .9),
       seed = 5,
       file = "fits/b05.07")
 ```
@@ -962,7 +959,7 @@ d <-
          y     = rnorm(n, x_pos - x_neg))                 # y equally associated with x_pos and x_neg
 ```
 
-Here are the quick `pairs()` plots. 
+Here are the quick `pairs()` plots.
 
 ```{r, fig.width = 4.5, fig.height = 4.5}
 pairs(d, col = "firebrick4")
@@ -1068,10 +1065,10 @@ Here's our coefficient plot using `brms::mcmc_plot()`.
 
 ```{r, message = F, fig.width = 6.5, fig.height = 1.75}
 mcmc_plot(b5.8, 
-         type = "intervals", 
-         prob = .5, 
-         prob_outer = .95,
-         point_est = "median") +
+          type = "intervals", 
+          prob = .5, 
+          prob_outer = .95,
+          point_est = "median") +
   labs(title = "The coefficient plot for the two-leg model",
        subtitle = "Holy smokes; look at the widths of those betas!") +
   theme_bw() +
@@ -1125,15 +1122,15 @@ y_i   & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i & = \alpha + (\beta_1 + \beta_2) x_i.
 \end{align*}
 
-Accordingly, here's the posterior of the sum of the two regression coefficients, Figure 6.2.b. We'll use `tidybayes::geom_halfeyeh()` to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.
+Accordingly, here's the posterior of the sum of the two regression coefficients, Figure 6.2.b. We'll use `tidybayes::stat_halfeye()` to both plot the density and mark off the posterior median and percentile-based 95% probability intervals at its base.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 library(tidybayes)
 
 post %>% 
   ggplot(aes(x = b_leg_left + b_leg_right, y = 0)) +
-  geom_halfeyeh(point_interval = median_qi, .width = .95,
-                fill = "firebrick") +
+  stat_halfeye(point_interval = median_qi, .width = .95,
+               fill = "firebrick") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Sum the multicollinear coefficients",
        subtitle = "Marked by the median and 95% PIs") +
@@ -1166,8 +1163,8 @@ That posterior $SD$ looks much better. Compare this density to the one in Figure
 posterior_samples(b5.9) %>% 
   
   ggplot(aes(x = b_leg_left, y = 0)) +
-  geom_halfeyeh(point_interval = median_qi, .width = .95,
-                fill = "firebrick") +
+  stat_halfeye(point_interval = median_qi, .width = .95,
+               fill = "firebrick") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Just one coefficient needed",
        subtitle = "Marked by the median and 95% PIs",
@@ -1176,7 +1173,7 @@ posterior_samples(b5.9) %>%
   theme(panel.grid = element_blank())
 ```
 
-We might also use `tidybayes::stat_pointintervalh()` to compare the posterior of `b_leg_left` from `b5.9` to the joint posterior `b_leg_left + b_leg_right` from `b5.8`. For kicks, we'll depict the posteriors with `tidybayes::stat_gradientintervalh()` and use three levels of posterior intervals.
+We might also use `tidybayes::stat_pointinterval()` to compare the posterior of `b_leg_left` from `b5.9` to the joint posterior `b_leg_left + b_leg_right` from `b5.8`. For kicks, we'll depict the posteriors with `tidybayes::stat_gradientinterval()` and use three levels of posterior intervals.
 
 ```{r, fig.width = 6, fig.height = 1, warning = F, message = F}
 bind_cols(post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_right),
@@ -1184,8 +1181,8 @@ bind_cols(post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_rig
   gather() %>% 
 
   ggplot(aes(x = value, y = key)) +
-  stat_gradientintervalh(.width = c(.5, .8, .95),
-                         fill = "firebrick") +
+  stat_gradientinterval(.width = c(.5, .8, .95),
+                        fill = "firebrick") +
   labs(x = NULL, y = NULL) +
   theme_bw() +
   theme(axis.text.y = element_text(hjust = 0),
@@ -1256,7 +1253,7 @@ posterior_interval(b5.11)[2, ] %>% round(digits = 3)
 
 Now "watch what happens when we place both predictor variables in the same regression model" (p. 146).
 
-```{r b5.12}
+```{r b5.12, warning = F}
 b5.12 <- 
   update(b5.11,
          newdata = d,
@@ -1272,7 +1269,7 @@ The posteriors for coefficients, especially for `perc.fat`, shrank to zero.
 posterior_summary(b5.12)[1:4, ] %>% round(digits = 3)
 ```
 
-You can make also pairs plots with [GGally](https://cran.r-project.org/package=GGally), which will also compute the point estimates for the bivariate correlations. Here's a default plot.
+You can make also pairs plots with [GGally](https://CRAN.R-project.org/package=GGally) [@R-GGally], which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
@@ -1284,7 +1281,7 @@ ggpairs(data = d, columns = c(3:4, 6)) +
 
 But you can customize [these](https://ggobi.github.io/ggally/#ggallyggpairs), too. E.g.,
 
-```{r, fig.width = 3, fig.height = 3}
+```{r, fig.width = 3, fig.height = 3, message = F}
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
     geom_density(fill = "firebrick4", size = 0)
@@ -1394,7 +1391,7 @@ d %>%
   head()
 ```
 
-These data + the model were rough on Stan, at first, which spat out warnings about divergent transitions. The model ran fine after setting `warmup = 1000` and `adapt_delta = 0.99`.
+Fit the model containing `fungus` as a predictor.
 
 ```{r b5.13}
 b5.13 <- 
@@ -1404,8 +1401,7 @@ b5.13 <-
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
                 prior(uniform(0, 10), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.99),
+      iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.13")
 ```
@@ -1416,7 +1412,7 @@ print(b5.13)
 
 Now fit the model after excluding `fungus`, our post-treatment variable.
 
-```{r b5.14}
+```{r b5.14, warning = F}
 b5.14 <- 
   update(b5.13, 
          formula = h1 ~ 1 + h0 + treatment,
@@ -1460,10 +1456,10 @@ d %>%
   glimpse()
 ```
 
-Let's fit the first `height` model with the `male` dummy. 
+Let's fit the first `height` model with the `male` dummy.
 
 Note. The uniform prior McElreath used in the text in conjunction with the `brms::brm()` function seemed to cause problems for the HMC chains, here. After experimenting with start values, increasing `warmup`, and increasing `adapt_delta`, switching out the uniform prior did the trick. Anticipating [Chapter 8][Estimation.], I recommend you use a weakly-regularizing half Cauchy for $\sigma$.
-
+      
 ```{r b5.15}
 b5.15 <- 
   brm(data = d, 
@@ -1511,8 +1507,8 @@ fitted(b5.15,
   as_tibble() %>% 
   
   ggplot(aes(x = V1, y = 0)) +
-  geom_halfeyeh(point_interval = median_qi, .width = .95,
-                fill = "firebrick4") +
+  stat_halfeye(point_interval = median_qi, .width = .95,
+               fill = "firebrick4") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "Model-implied male heights",
        x = expression(alpha + beta["male"])) +
@@ -1562,8 +1558,8 @@ posterior_samples(b5.15b) %>%
   transmute(dif = b_male - b_female) %>% 
   
   ggplot(aes(x = dif, y = 0)) +
-  geom_halfeyeh(point_interval = median_qi, .width = .95,
-                fill = "firebrick4") +
+  stat_halfeye(point_interval = median_qi, .width = .95,
+               fill = "firebrick4") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = "Model-implied difference score",
        x = expression(alpha["male"] - alpha["female"])) +
@@ -1680,8 +1676,8 @@ fitted(b5.16,
                        each = n() / 4)) %>% 
   
   ggplot(aes(x = value, y = reorder(primate, value))) +
-  geom_halfeyeh(fill = "firebrick4", 
-                point_interval = median_qi, .width = .95) +
+  stat_halfeye(point_interval = median_qi, .width = .95,
+               fill = "firebrick4") +
   labs(x = "kcal.per.g",
        y = NULL) +
   theme_bw() +
@@ -1736,13 +1732,9 @@ See? This is much easier than trying to remember which one was which in an arbit
 
 ## ~~Ordinary least squares and `lm()`~~
 
-Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) syntax for multilevel models.
+Since this section centers on the frequentist `lm()` function, I'm going to largely ignore it. A couple things, though. You'll note how the brms package uses the `lm()`-like design formula syntax. Although not as pedagogical as the more formal rethinking syntax, it has the advantage of cohering with the popular [lme4](https://cran.r-project.org/package=lme4) [@R-lme4; @batesFittingLinearMixedeffects2015] syntax for multilevel models.
 
 Also, on page 161 McElreath clarified that one cannot use the `I()` syntax with his rethinking package. Not so with brms. The `I()` syntax works just fine with `brms::brm()`. We've already made use of it in the ["Polynomial regression"][Polynomial regression] section of Chapter 4.
-
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
@@ -1755,10 +1747,8 @@ rm(d, b5.1, nd, f, b5.2, b5.3, post, b5.4, r, text, b5.4b, n, p1, p2, p3, b5.0_s
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
-pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
-
 ggplot2::theme_set(ggplot2::theme_grey())
-
 bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
 ```
 
