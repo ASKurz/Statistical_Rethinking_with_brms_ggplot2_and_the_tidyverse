@@ -13,11 +13,11 @@ options(width = 100)
 
 # Interactions
 
-> Every model so far in [McElreath's text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?... To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. (p. 210)
+> Every model so far in [McElreath's text] has assumed that each predictor has an independent association with the mean of the outcome. What if we want to allow the association to be conditional?... To model deeper conditionality—where the importance of one predictor depends upon another predictor—we need interaction. Interaction is a kind of conditioning, a way of allowing parameters (really their posterior distributions) to be conditional on further aspects of the data. [@mcelreathStatisticalRethinkingBayesian2015, p. 210]
 
 ## Building an interaction.
 
-"Africa is special" (p. 211). Let's load the `rugged` data ([Nunn & Puga, 2011](https://scholar.harvard.edu/files/nunn/files/ruggedness.pdf)) to see one of the reasons why.
+"Africa is special" (p. 211). Let's load the `rugged` data [@nunn2012ruggedness] to see one of the reasons why.
 
 ```{r, message = F}
 library(rethinking)
@@ -98,7 +98,7 @@ f <-
   mutate(cont_africa = rep(c("Africa", "not Africa"), each = 30))
 ```
 
-For this chapter, we'll take our plot theme from the [ggthemes package](https://cran.r-project.org/package=ggthemes).
+For this chapter, we'll take our plot theme from the [ggthemes package](https://cran.r-project.org/package=ggthemes) [@R-ggthemes].
 
 ```{r, message = F}
 # install.packages("ggthemes", dependencies = T)
@@ -130,10 +130,10 @@ dd %>%
 
 It's generally not a good idea to split up your data and run separate analyses, like this. McElreath listed four reasons why:
 
-1. "There are usually some parameters, such as $\sigma$, that the model says do not depend in any way upon an African identity for each nation. By splitting the data table, you are hurting the accuracy f the estimates for these parameters" (p. 213).
+1. "There are usually some parameters, such as $\sigma$, that the model says do not depend in any way upon an African identity for each nation. By splitting the data table, you are hurting the accuracy of the estimates for these parameters" (p. 213).
 2. "In order to acquire probability statements about the variable you used to split the data, `cont_africa`, in this case, you need to include it in the model" (p. 213).
 3. "We many want to use information criteria or another method to compare models" (p. 214).
-4. "Once you begin using multilevel models ([Chapter 12][Multilevel Models]), you'll see that there are advantages to borrowing information across categories like 'Africa' and 'not Africa'" (p. 214). 
+4. "Once you begin using multilevel models ([Chapter 12][Multilevel Models]), you'll see that there are advantages to borrowing information across categories like 'Africa' and 'not Africa'" (p. 214).
 
 ### Adding a dummy variable doesn't work.
 
@@ -218,6 +218,7 @@ ggplot(aes(x = rugged, fill = cont_africa, color = cont_africa)) +
   ylab("log GDP from year 2000") +
   theme_pander() + 
   theme(text = element_text(family = "Times"),
+        legend.background = element_blank(),
         legend.direction = "horizontal",
         legend.position = c(.69, .94),
         legend.title = element_blank())
@@ -228,12 +229,12 @@ ggplot(aes(x = rugged, fill = cont_africa, color = cont_africa)) +
 Yes, it sure does. But before we fit, here's the equation:
 
 \begin{align*}
-\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{log_gdp}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
 \gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i \\
-\alpha & \sim \text{Normal}(8, 100) \\
-\beta_1, \beta_2, \text{ and } \beta_3 & \sim \text{Normal}(0, 1) \\
-\sigma & \sim \text{Uniform}(0, 10).
+\alpha   & \sim \operatorname{Normal}(8, 100) \\
+\beta_1, \beta_2, \text{ and } \beta_3 & \sim \operatorname{Normal}(0, 1) \\
+\sigma   & \sim \operatorname{Uniform}(0, 10).
 \end{align*}
 
 Because $\gamma_i$ is just a placeholder for a second linear model, we can just substitute that second linear model in for $\gamma_i$. If we did, here's what the composite linear model would look like:
@@ -282,7 +283,7 @@ model_weights(b7.3, b7.4, b7.5,
 The conventional equation for the interaction model might look like:
 
 \begin{align*}
-\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{log_gdp}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i & = \alpha + \beta_1 \text{rugged}_i + \beta_2 \text{cont_africa}_i + \beta_3 \text{rugged}_i \times \text{cont_africa}_i.
 \end{align*}
 
@@ -355,7 +356,7 @@ dd %>%
 
 #### Parameters change meaning.
 
-> In a simple linear regression with no interactions, each coefficient says how much the average outcome, $\mu$, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there's no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable's influence. 
+> In a simple linear regression with no interactions, each coefficient says how much the average outcome, $\mu$, changes when the predictor changes by one unit. And since all of the parameters have independent influences on the outcome, there's no trouble in interpreting each parameter separately. Each slope parameter gives us a direct measure of each predictor variable's influence.
 >
 > Interaction models ruin this paradise. (p. 220)
 
@@ -381,7 +382,7 @@ fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 0
 
 Like McElreath, we'll avoid integral calcus in favor of working with the `posterior_samples()`.
 
-```{r}
+```{r, message = F}
 post <- posterior_samples(b7.5) 
 
 post %>%
@@ -460,7 +461,7 @@ post %>%
 Recall the original equation,
 
 \begin{align*}
-\text{log_gdp}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{log_gdp}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i    & = \alpha + \gamma_i \text{rugged}_i + \beta_2 \text{cont_africa}_i \\
 \gamma_i & = \beta_1 + \beta_3 \text{cont_africa}_i.
 \end{align*}
@@ -526,11 +527,11 @@ dd %>%
 
 ## Continuous interactions
 
-Though continuous interactions can be more challenging to interpret, they're just as easy to fit as interactions including dummies. 
+Though continuous interactions can be more challenging to interpret, they're just as easy to fit as interactions including dummies.
 
 ### The data.
 
-Look at the `tulips` (adapted from [Grafen & Hails, 2000](https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?cc=us&lang=en&)).
+Look at the `tulips` (adapted from @grafenModernStatisticsLife2002).
 
 ```{r, message = F, warning = F}
 library(rethinking)
@@ -544,24 +545,24 @@ str(d)
 The equations for the next two models are
 
 \begin{align*}
-\text{blooms}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{blooms}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i   & = \alpha + \beta_1 \text{water}_i + \beta_2 \text{shade}_i \\
-\alpha  & \sim \text{Normal} (0, 100) \\
-\beta_1 & \sim \text{Normal} (0, 100) \\
-\beta_2 & \sim \text{Normal} (0, 100) \\
-\sigma  & \sim \text{Uniform} (0, 100)
+\alpha  & \sim \operatorname{Normal}(0, 100) \\
+\beta_1 & \sim \operatorname{Normal}(0, 100) \\
+\beta_2 & \sim \operatorname{Normal}(0, 100) \\
+\sigma  & \sim \operatorname{Uniform}(0, 100)
 \end{align*}
 
 and
 
 \begin{align*}
-\text{blooms}_i & \sim \text{Normal} (\mu_i, \sigma) \\
+\text{blooms}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i   & = \alpha + \beta_1 \text{water} + \beta_2 \text{shade}_i + \beta_3 \text{water}_i \times \text{shade}_i \\
-\alpha  & \sim \text{Normal} (0, 100) \\
-\beta_1 & \sim \text{Normal} (0, 100) \\
-\beta_2 & \sim \text{Normal} (0, 100) \\
-\beta_3 & \sim \text{Normal} (0, 100) \\
-\sigma  & \sim \text{Uniform} (0, 100).
+\alpha  & \sim \operatorname{Normal}(0, 100) \\
+\beta_1 & \sim \operatorname{Normal}(0, 100) \\
+\beta_2 & \sim \operatorname{Normal}(0, 100) \\
+\beta_3 & \sim \operatorname{Normal}(0, 100) \\
+\sigma  & \sim \operatorname{Uniform}(0, 100).
 \end{align*}
 
 Load brms.
@@ -574,7 +575,7 @@ rm(tulips)
 
 Here we continue with McElreath's very-flat priors for the multivariable and interaction models.
 
-```{r }
+```{r}
 b7.6 <-
   brm(data = d, family = gaussian,
       blooms ~ 1 + water + shade,
@@ -718,7 +719,7 @@ Nothing to add, here.
 
 On page 231, we read:
 
-> The interaction parameter always factors into generating a prediction. Consider for example a tulip at the average moisture and shade levels, 2 in each case. The expected blooms for such a tulip is: 
+> The interaction parameter always factors into generating a prediction. Consider for example a tulip at the average moisture and shade levels, 2 in each case. The expected blooms for such a tulip is:
 
 $$\mu_i | \text{shade}_{i = 2}, \text{water}_{i = 2} = \alpha + \beta_\text{water} (2) + \beta_\text{shade} (2) + \beta_{\text{water} \times \text{shade}} (2 \times 2)$$
 
@@ -748,7 +749,7 @@ print(b7.9)
 
 ### Plotting implied predictions.
 
-Now we're ready for the bottom row of Figure 7.7. Here's our variation on McElreath's tryptych loop code, adjusted for brms and ggplot2.
+Now we're ready for the bottom row of Figure 7.7. Here's our variation on McElreath's triptych loop code, adjusted for brms and ggplot2.
 
 ```{r, fig.height = 2, fig.width = 2.3}
 # loop over values of `water_c` and plot predictions
@@ -814,10 +815,10 @@ fitted(b7.8) %>%
               fill = "#CC79A7", color = "#CC79A7", alpha = 1/5, size = 1/2) +
   geom_point(aes(y = blooms, group = x_grid), 
              shape = 1, color = "#CC79A7") +
-  coord_cartesian(xlim = range(d$shade_c), 
-                  ylim = range(d$blooms)) +
   scale_x_continuous("Shade (centered)", breaks = c(-1, 0, 1)) +
   ylab("Blooms") +
+  coord_cartesian(xlim = range(d$shade_c), 
+                  ylim = range(d$blooms)) +
   theme_pander() + 
   theme(text = element_text(family = "Times"),
         panel.background = element_rect(color = "black")) +
@@ -963,10 +964,6 @@ conditional_effects(b7.9,
   plot(points = T)
 ```
 
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
-
 ## Session info {-}
 
 ```{r}
@@ -978,10 +975,7 @@ rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6,
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
-pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
-
 ggplot2::theme_set(ggplot2::theme_grey())
-
-bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
 ```
 
