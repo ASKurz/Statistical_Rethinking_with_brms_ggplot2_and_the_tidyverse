@@ -15,7 +15,7 @@ options(width = 110)
 
 > [Of these majestic creatures], we'll consider two common and useful examples. The first type is the **ordered categorical** model, useful for categorical outcomes with a fixed ordering. This model is built by merging a categorical likelihood function with a special kind of link function, usually a **cumulative link**. The second type is a family of **zero-inflated** and **zero-augmented** models, each of which mixes a binary event within an ordinary GLM likelihood like a Poisson or binomial.
 >
-> Both types of models help us transform our modeling to cope with the inconvenient realities of measurement, rather than transforming measurements to cope with the constraints of our models. (p. 331, **emphasis** in the original)
+> Both types of models help us transform our modeling to cope with the inconvenient realities of measurement, rather than transforming measurements to cope with the constraints of our models. [@mcelreathStatisticalRethinkingBayesian2015, p. 331, **emphasis** in the original]
 
 ## Ordered categorical outcomes
 
@@ -27,7 +27,7 @@ options(width = 110)
 
 ### Example: Moral intuition.
 
-Let's get the `Trolley` data from rethinking (see [Cushman, Young & Hauser, 2006](https://journals.sagepub.com/doi/pdf/10.1111/j.1467-9280.2006.01834.x)).
+Let's get the `Trolley` data from rethinking [see @cushmanRoleConsciousReasoning2006].
 
 ```{r, message = F}
 library(rethinking)
@@ -69,7 +69,7 @@ library(ggthemes)
 
 We'll take our basic theme settings from the `theme_hc()` function. We'll use the `Green fields` color palette, which we can inspect with the `canva_pal()` function and a little help from `scales::show_col()`.
 
-```{r, fig.height = 2.5}
+```{r, fig.height = 2.25}
 scales::show_col(canva_pal("Green fields")(4))
 
 canva_pal("Green fields")(4)
@@ -206,9 +206,9 @@ ggplot(data = d_plot,
 McElreath's convention for this first type of statistical model is
 
 \begin{align*} 
-R_i & \sim \text{Ordered} (\mathbf p) \\
-\text{logit} (p_k) & = \alpha_k \\
-\alpha_k           & \sim \text{Normal} (0, 10).
+R_i & \sim \operatorname{Ordered}(\mathbf p) \\
+\operatorname{logit}(p_k) & = \alpha_k \\
+\alpha_k                  & \sim \operatorname{Normal} (0, 10).
 \end{align*}
 
 > The Ordered distribution is really just a categorical distribution that takes a vector $\mathbf p = {p_1, p_2, p_3, p_4, p_5, p_6}$ of probabilities of each response value below the maximum response (7 in this example). Each response value $k$ in this vector is defined by its link to an intercept parameter, $\alpha_k$. Finally, some weakly regularizing priors are placed on these intercepts. (p. 335)
@@ -243,7 +243,7 @@ McElreath needed to include the `depth=2` argument in the `rethinking::precis()`
 print(b11.1)
 ```
 
-What McElreath's `m11.1stan` summary termed `cutpoints[k]`, our brms summary termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above (i.e., the thresholds). The summaries look like those in the text, the $\hat R$ values are great, and both measures of effective sample size are reasonably high. The model looks good.
+What McElreath's `m11.1stan` summary termed `cutpoints[k]`, our brms summary termed `Intercept[k]`. In both cases, these are the $\alpha_k$ parameters from the equations, above (i.e., the thresholds). The summaries look like those in the text, the $\widehat R$ values are great, and both measures of effective sample size are reasonably high. The model looks good.
 
 Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `logistic()` function to get these into the probability metric.
 
@@ -255,7 +255,7 @@ b11.1 %>%
 
 But recall that the posterior $SD$ (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `posterior_samples()`.
 
-```{r}
+```{r, message = F}
 posterior_samples(b11.1) %>% 
   select(starts_with("b_")) %>% 
   mutate_all(inv_logit_scaled) %>% 
@@ -279,7 +279,7 @@ d_plot %>%
 Now we define the linear model as $\phi_i = \beta x_i$. Accordingly, the formula for our cumulative logit model becomes
 
 \begin{align*}
-\text{log} \frac{\text{Pr} (y_i \leq k)}{1 - \text{Pr} (y_i \leq k)} & = \alpha_k - \phi_i \\
+\log \frac{\text{Pr}(y_i \leq k)}{1 - \text{Pr}(y_i \leq k)} & = \alpha_k - \phi_i \\
 \phi_i & = \beta x_i.
 \end{align*}
 
@@ -373,7 +373,7 @@ Now we'll try it by subtracting .5 from each.
 sum(pk * (1:7))
 ```
 
-So the rule is we *subtract the linear model from each interecept*. "This way, a positive $\beta$ value indicates that an increase in the predictor variable $x$ results in an increase in the average response" (p. 338). Let's fit our multivariable models.
+So the rule is we *subtract the linear model from each intercept*. "This way, a positive $\beta$ value indicates that an increase in the predictor variable $x$ results in an increase in the average response" (p. 338). Let's fit our multivariable models.
 
 ```{r b11.2}
 # start values for b11.2
@@ -440,7 +440,7 @@ tibble(model = str_c("b11.", 1:3)) %>%
 
 If you really wanted that last `nobs` row at the bottom, you could elaborate on this code: `b11.1$data %>% count()`. Also, if you want a proper `coeftab()` function for brms, McElreath's code lives [here](https://github.com/rmcelreath/rethinking/blob/a309712d904d1db7af1e08a76c521ab994006fd5/R/coeftab.r). Give it a whirl.
 
-Here we compute the WAIC.
+Here we compute the WAIC estimates.
 
 ```{r, warning = F, message = F}
 b11.1 <- add_criterion(b11.1, "waic")
@@ -511,11 +511,11 @@ fitted(b11.3,
   mutate(intention = intention -1) %>%
   # this step is based on McElreath's R code 11.10 on page 338
   mutate(`pk:rating` = pk * rating) %>% 
-  # I’m not sure how to succinctly explain this. you’re just going to have to trust me
+  # I'm not sure how to succinctly explain this. you’re just going to have to trust me
   group_by(iter, intention) %>% 
   # this is very important for the next step.
   arrange(iter, intention, rating) %>% 
-  # here we take our `pk` values and make culmulative sums. why? take a long hard look at Figure 11.2. 
+  # here we take our `pk` values and make cumulative sums. why? take a long hard look at Figure 11.2. 
   mutate(probability = cumsum(pk)) %>% 
   # `rating == 7` is unnecessary. these `probability` values are by definition 1
   filter(rating < 7) %>% 
@@ -536,9 +536,9 @@ fitted(b11.3,
                        high = canva_pal("Green fields")(4)[1]) +
   labs(subtitle = "action = 0,\ncontact = 0") +
   theme_hc() +
-  theme(plot.background = element_rect(fill = "grey92"),
+  theme(axis.ticks = element_blank(),
         legend.position = "none",
-        axis.ticks = element_blank())
+        plot.background = element_rect(fill = "grey92"))
 ```
 
 Boom!
@@ -660,7 +660,7 @@ p1 + p2 + p3 +
                   theme = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
-If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [*Ordinal Regression Models in Psychology: A Tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my sister project [*Doing Bayesian Data Analysis in brms and the tidyverse*](https://bookdown.org/content/3686/) were we model ordinal data with a series of cumulative probit models.
+If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [-@burknerOrdinalRegressionModels2019] [*Ordinal regression models in psychology: A tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my [-@kurzDoingBayesianData2020] sister project [*Doing Bayesian data analysis in brms and the tidyverse*](https://bookdown.org/content/3686/) were we model ordinal data with a series of cumulative probit models.
 
 ### Bonus: Figure 11.3 alternative.
 
@@ -709,8 +709,8 @@ geom_figure11.3 <- function(subtitle, ...) {
     labs(subtitle = subtitle),
     theme_hc(),
     theme(axis.ticks = element_blank(),
-        legend.position = "none",
-        plot.background = element_rect(fill = "grey92"))
+          legend.position = "none",
+          plot.background = element_rect(fill = "grey92"))
   )
   
 }
@@ -718,7 +718,7 @@ geom_figure11.3 <- function(subtitle, ...) {
 
 Now we'll use our two custom functions, `make_alternative_data()` to make the data and `geom_figure11.3()` to specify most of the ggplot2 components, to plot our alternative to Figure 11.3.
 
-```{r, fig.width = 7, fig.height = 4}
+```{r, fig.width = 7, fig.height = 4, message = F}
 # alternative to Figure 11.3.a
 p1 <-
   make_alternative_data(action   = 0, 
@@ -752,7 +752,7 @@ p1 + p2 + p3 +
 
 Finally; now those are plots I can sell in a clinical psychology journal! We did the right thing and used a sophisticated statistical model to treat the data appropriately, but we summarized the results in a way a substantive audience might understand them in.
 
-If your new to making functions with ggplot2 components, check out [Chapter 16](https://ggplot2-book.org/programming.html) of Wickham's [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org/index.html). He'll walk you through all the steps.
+If your new to making functions with ggplot2 components, check out [Chapter 18](https://ggplot2-book.org/programming.html) of Wickham's [-@wickhamGgplot2ElegantGraphics2016] [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/index.html). He'll walk you through all the steps.
 
 #### Rethinking: Staring into the abyss.
 
@@ -766,7 +766,7 @@ If your new to making functions with ggplot2 components, check out [Chapter 16](
 
 #### Rethinking: Breaking the law.
 
-McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's vignette, [*Define Custom Response Distributions with brms*](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
+McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's [-@Bürkner2020Define] vignette, [*Define custom response distributions with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
 
 ### Example: Zero-inflated Poisson.
 
@@ -814,21 +814,21 @@ d <-
 With these data, the likelihood of observing zero on `y`, (i.e., the likelihood zero manuscripts were completed on a given occasion) is
 
 \begin{align*}
-\text{Pr} (0 | p, \lambda) & = \text{Pr} (\text{drink} | p) + \text{Pr} (\text{work} | p) \times \text{Pr} (0 | \lambda) \\
-                           & = p + (1 - p) \text{ exp} (- \lambda).
+\text{Pr}(0 | p, \lambda) & = \text{Pr}(\text{drink} | p) + \text{Pr}(\text{work} | p) \times \text{Pr}(0 | \lambda) \\
+                           & = p + (1 - p) \; \exp (- \lambda).
 \end{align*}
 
 And 
 
-> since the Poisson likelihood of $y$ is $\text{Pr} (y | \lambda) = \lambda^y \text{exp} (- \lambda) / y!$, the likelihood of $y = 0$ is just $\text{exp} (- \lambda)$. The above is just the mathematics for:
+> since the Poisson likelihood of $y$ is $\text{Pr}(y | \lambda) = \lambda^y \exp (- \lambda) / y!$, the likelihood of $y = 0$ is just $\exp(- \lambda)$. The above is just the mathematics for:
 >
 >> *The probability of observing a zero is the probability that the monks didn't drink OR ($+$) the probability that the monks worked AND ($\times$) failed to finish anything*. 
 >
 > And the likelihood of a non-zero value $y$ is:
 >
 > \begin{align*}
-> \text{Pr} (y | p, \lambda) & = \text{Pr} (\text{drink} | p) (0) + \text{Pr} (\text{work} | p) \text{Pr} (y | \lambda) \\
->                            & = (1 - p) \frac {\lambda^y \text{ exp} (- \lambda)}{y!}
+> \text{Pr}(y | p, \lambda) & = \text{Pr}(\text{drink} | p) (0) + \text{Pr}(\text{work} | p) \text{Pr}(y | \lambda) \\
+>                            & = (1 - p) \frac {\lambda^y \; \exp (- \lambda)}{y!}
 > \end{align*}
 >
 > Since drinking monks never produce $y > 0$, the expression above is just the chance the monks both work $1 - p$, and finish $y$ manuscripts. (p. 344, *emphasis* in the original)
@@ -836,9 +836,9 @@ And
 So letting $p$ be the probability $y$ is zero and $\lambda$ be the shape of the distribution, the zero-inflated Poisson (ZIPoisson) regression model takes the basic form
 
 \begin{align*}
-y_i & \sim \text{ZIPoisson} (p_i, \lambda_i)\\
-\text{logit} (p_i)     & = \alpha_p + \beta_p x_i \\
-\text{log} (\lambda_i) & = \alpha_\lambda + \beta_\lambda x_i.
+y_i & \sim \operatorname{ZIPoisson}(p_i, \lambda_i)\\
+\operatorname{logit}(p_i) & = \alpha_p + \beta_p x_i \\
+\log (\lambda_i)          & = \alpha_\lambda + \beta_\lambda x_i.
 \end{align*}
 
 One last thing to note is that in brms, $p_i$ is denoted `zi`. To fit a zero-inflated Poisson model with brms, make sure to specify the correct likelihood with `family = zero_inflated_poisson`. To use a non-default prior for `zi`, make sure to indicate `class = zi` within the `prior()` function.
@@ -963,9 +963,9 @@ Unfortunately, we need to digress. As it turns out, there are multiple ways to p
 
 However, the beta density is often defined in terms of $\alpha$ and $\beta$. If you denote the data as $y$, this follows the form
 
-$$\text{Beta} (y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)},$$
+$$\operatorname{Beta}(y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)},$$
 
-which you can verify in the *Continuous Distributions on [0, 1]* section of the [Stan Functions Reference](https://mc-stan.org/docs/2_21/functions-reference/beta-distribution.html). In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the *Mathematical Functions* of the Stan reference manual. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()` function.
+which you can verify in the [*Continuous Distributions on [0, 1]* section](https://mc-stan.org/docs/2_24/functions-reference/continuous-distributions-on-0-1.html) of the [Stan Functions Reference](https://mc-stan.org/docs/2_24/functions-reference/index.html) [@standevelopmentteamStanFunctionsReference2020]. In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the [*Mathematical Functions* chapter](https://mc-stan.org/docs/2_24/functions-reference/math-functions.html) of the Stan Functions Reference. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()` function.
 
 McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use; the parameters in McElreath's `dbeta2()` are much nicer. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
 
@@ -996,7 +996,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 1, by = .01)),
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-In his 2015 text, [*Doing Bayesian Data Analysis*](https://sites.google.com/site/doingbayesiandataanalysis/), Kruschke provided code for a convenience function that will take `pbar` and `theta` as inputs and return the corresponding $\alpha$ and $\beta$ values. Here's the function:
+In his [-@kruschkeDoingBayesianData2015] text, [*Doing Bayesian data analysis*](https://sites.google.com/site/doingbayesiandataanalysis/), Kruschke provided code for a convenience function that will take `pbar` and `theta` as inputs and return the corresponding $\alpha$ and $\beta$ values. Here's the function:
 
 ```{r}
 betaABfromMeanKappa <- function(mean, kappa) {
@@ -1052,22 +1052,20 @@ crossing(pbar  = c(.25, .5, .75),
   facet_grid(kappa ~ mu, labeller = label_parsed)
 ```
 
-If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [Chapter 6](https://bookdown.org/content/3686/inferring-a-binomial-probability-via-exact-mathematical-analysis.html) of my project [recoding Kruschke's text into tidyverse and brms code](https://bookdown.org/content/3686/).
+If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [Chapter 6](https://bookdown.org/content/3686/inferring-a-binomial-probability-via-exact-mathematical-analysis.html) of my [-@kurzDoingBayesianData2020] ebook [translation of Kruschke's text into tidyverse and brms code](https://bookdown.org/content/3686/).
 
 But remember, we're not fitting a beta model. We're using the beta-binomial. "We're going to bind our linear model to $\bar p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
 
-$$
 \begin{align*}
-\text{admit}_i & \sim \operatorname{BetaBinomial} (n_i, \bar p_i, \theta)\\
-\text{logit} (\bar p_i) & = \alpha \\
-\alpha                       & \sim \operatorname{Normal} (0, 2) \\
-\theta                       & \sim \operatorname{Exponential} (1).
+\text{admit}_i & \sim \operatorname{BetaBinomial}(n_i, \bar p_i, \theta)\\
+\operatorname{logit}(\bar p_i) & = \alpha \\
+\alpha                         & \sim \operatorname{Normal}(0, 2) \\
+\theta                         & \sim \operatorname{Exponential}(1).
 \end{align*}
-$$
 
 Here the size $n = \text{applications}$. In case you're confused, yes, our statistical model is not the one McElreath presented at the top of page 348 in the text. If you look closely, the statistical formula he presented does not match up with the one implied by his R code 11.26. Our statistical formula and the `brm()` model we'll be fitting, below, correspond to his R code 11.26.
 
-Before we fit, we have an additional complication. The beta-binomial likelihood is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy [*Define Custom Response Distributions with brms* vignette here](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
+Before we fit, we have an additional complication. The beta-binomial likelihood is [not implemented in brms at this time](https://github.com/paul-buerkner/brms/issues/144). However, brms versions 2.2.0 and above allow users to define custom distributions. You can find the handy *Define custom response distributions with brms* vignette [here](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html). Happily, Bürkner even used the [beta-binomial distribution as the exemplar](https://cran.r-project.org/package=brms/vignettes/brms_customfamilies.html#the-beta-binomial-distribution) in the vignette.
 
 Before we get carried away, let's load the data.
 
@@ -1110,7 +1108,7 @@ With that out of the way, we're almost ready to test this baby out. Before we do
 
 First, what McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing: $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar p$, Bürkner simply called $\mu$.
 
-Second, we've become accustomed to using the `y | trials() ~ ...` syntax when defining our `formula` arguments for binomial models. Here we are replacing `trials()` with `vint()`. From Bürkner's *Define Custom Response Distributions with brms* vignette, we read:
+Second, we've become accustomed to using the `y | trials() ~ ...` syntax when defining our `formula` arguments for binomial models. Here we are replacing `trials()` with `vint()`. From Bürkner's *Define custom response distributions with brms* vignette, we read:
 
 > To provide information about the number of trials (an integer variable), we are going to use the addition argument `vint()`, which can only be used in custom families. Simiarily, if we needed to include additional vectors of real data, we would use `vreal()`. Actually, for this particular example, we could more elegantly apply the addition argument `trials()` instead of `vint()` as in the basic binomial model. However, since the present vignette is ment to give a general overview of the topic, we will go with the more general method.
 >
@@ -1162,7 +1160,7 @@ lines <-
          p_bar = inv_logit_scaled(b_Intercept)) %>% 
   sample_n(size = 100) %>% 
   expand(nesting(iter, p_bar, phi),
-         x = seq(from = 0, to = 1, by = .005)) %>% 
+         x = seq(from = 0, to = 1, by = .0025)) %>% 
   mutate(density = pmap_dbl(list(x, p_bar, phi), rethinking::dbeta2))
 
 str(lines)
@@ -1187,31 +1185,31 @@ lines %>%
 
 There are other ways to do this. For ideas, check out my blog post, [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/).
 
-Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `posterior_predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `pp_expect_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
+Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `posterior_predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `posterior_epred_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
 ```{r, results = 'hide', warning = F, message = F}
 expose_functions(b11.5, vectorize = TRUE)
 
 # required to use `predict()`
-log_lik_beta_binomial2 <- function(i, draws) {
-  mu  <- draws$dpars$mu[, i]
-  phi <- draws$dpars$phi
-  N   <- draws$data$trials[i]
-  y   <- draws$data$Y[i]
-  beta_binomial2_lpmf(y, mu, phi, N)
+log_lik_beta_binomial2 <- function(i, prep) {
+  mu     <- prep$dpars$mu[, i]
+  phi    <- prep$dpars$phi
+  trials <- prep$data$vint1[i]
+  y      <- prep$data$Y[i]
+  beta_binomial2_lpmf(y, mu, phi, trials)
 }
 
-posterior_predict_beta_binomial2 <- function(i, draws, ...) {
-  mu     <- draws$dpars$mu[, i]
-  phi    <- draws$dpars$phi
-  trials <- draws$data$vint1[i]
+posterior_predict_beta_binomial2 <- function(i, prep, ...) {
+  mu     <- prep$dpars$mu[, i]
+  phi    <- prep$dpars$phi
+  trials <- prep$data$vint1[i]
   beta_binomial2_rng(mu, phi, trials)
 }
 
 # required to use `fitted()`
-pp_expect_beta_binomial2 <- function(draws) {
-  mu     <- draws$dpars$mu
-  trials <- draws$data$vint1
+posterior_epred_beta_binomial2 <- function(prep) {
+  mu     <- prep$dpars$mu
+  trials <- prep$data$vint1
   trials <- matrix(trials, nrow = nrow(mu), ncol = ncol(mu), byrow = TRUE)
   mu * trials
 }
@@ -1277,7 +1275,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
   scale_x_continuous(NULL, breaks = c(0, mu, 10)) +
   scale_y_continuous(NULL, breaks = NULL) +
   ggtitle(expression(paste("Our sweet ", gamma, "(3, 1)"))) +
-  coord_cartesian(xlim = 0:10) +
+  coord_cartesian(xlim = c(0, 10)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
@@ -1304,7 +1302,7 @@ crossing(mu    = c(1, 5, 9),
   labs(title = "Gamma can take many shapes",
        subtitle = "(dotted vertical lines mark off the means)",
        x = "parameter space") +
-  coord_cartesian(xlim = 0:25) +
+  coord_cartesian(xlim = c(0, 25)) +
   theme_hc() +
   theme(axis.ticks.y = element_blank(),
         plot.background = element_rect(fill = "grey92")) +
@@ -1337,7 +1335,7 @@ ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
               fill = canva_pal("Green fields")(4)[2]) +
   scale_x_continuous(NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
-  coord_cartesian(xlim = 0:50) +
+  coord_cartesian(xlim = c(0, 50)) +
   ggtitle(expression(brms~default~gamma(0.01*", "*0.01)~shape~prior)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
@@ -1354,7 +1352,7 @@ p %>%
   str()
 ```
 
-Because we have 6,000 posterior iterations, we also get back 6,000 rows. We have 12 columns, which correspond to the 12 rows (i.e., cases) in the original data. In the next block, we’ll put convert that output to a data frame and wrangle a little before plotting the results.
+Because we have 6,000 posterior iterations, we also get back 6,000 rows. We have 12 columns, which correspond to the 12 rows (i.e., cases) in the original data. In the next block, we'll put convert that output to a data frame and wrangle a little before plotting the results.
 
 ```{r, fig.width = 7, fig.height = 3}
 p %>% 
@@ -1367,7 +1365,7 @@ p %>%
   geom_density(color = "transparent", fill = canva_pal("Green fields")(4)[2]) +
   scale_y_continuous(NULL, breaks = NULL) +
   scale_x_continuous(expression(lambda["[case]"]), breaks = c(0, 200, 400)) +
-  coord_cartesian(xlim = 0:500) +
+  coord_cartesian(xlim = c(0, 500)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92")) +
   facet_wrap(~case, nrow = 2)
@@ -1383,9 +1381,9 @@ And again, this is not a gamma distribution for our data. This is a gamma distri
 
 It turns out there are several ways to parameterize the gamma distribution. When we have the mean and shape parameters, we can define the gamma density for some variable $y$ as
 
-$$\text{Gamma} (y | \mu, \alpha) = \frac{(\frac{\alpha}{\mu})^\alpha}{\Gamma (\alpha)} y^{\alpha - 1} \exp (- \frac{\alpha y}{\mu}),$$
+$$\operatorname{Gamma}(y | \mu, \alpha) = \frac{\left (\frac{\alpha}{\mu} \right )^\alpha}{\Gamma (\alpha)} y^{\alpha - 1} \exp \left (- \frac{\alpha y}{\mu} \right ),$$
 
-where $\mu$ is the mean, $\alpha$ is the shape, and $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you look through Bürkner's [*Parameterization of Response Distributions in brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#survival-models), you'll see this is the way the gamma likelihood is parameterized in brms. Now let's finally take a look at the model output for `b11.6`.
+where $\mu$ is the mean, $\alpha$ is the shape, and $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you look through Bürkner's [-@Bürkner2020Parameterization] [*Parameterization of response distributions in brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#survival-models), you'll see this is the way the gamma likelihood is parameterized in brms. Now let's finally take a look at the model output for `b11.6`.
 
 ```{r}
 print(b11.6)
@@ -1451,7 +1449,7 @@ post %>%
                 size = 1.5, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(distribution~of~lambda~values)) +
-  coord_cartesian(xlim = 0:500,
+  coord_cartesian(xlim = c(0, 500),
                   ylim = c(0, 0.01)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
@@ -1459,13 +1457,13 @@ post %>%
 
 But what if you wanted to use the base R `dgamma()` function instead of McElreath's `rethinking::dgamma2()`? Well, the `dgamma()` function parameterizes the gamma density in terms of `shape` and `scale`, following the equation
 
-$$\text{Gamma} (y | \alpha, \theta) = \frac{y^{\alpha - 1} e^{-x /\theta}}{\theta^\alpha \Gamma (\alpha)},$$
+$$\operatorname{Gamma}(y | \alpha, \theta) = \frac{y^{\alpha - 1} e^{-x /\theta}}{\theta^\alpha \Gamma (\alpha)},$$
 
 where $\alpha$ is the shape, $\theta$ is the scale, $e$ is base of the natural logarithm, and $\Gamma$ is the gamma function. And just in case you were worried you life wasn't complicated enough, the base R `dgamma()` function will also allow you to define the gamma density with a `rate` parameter, rather than with `scale`. As it turns out, the "rate" in this context is just the inverse of the scale. When one parameterizes gamma this way, it follows the formula
 
-$$\text{Gamma} (y | \alpha, \beta) = \frac{\beta^\alpha y^{\alpha - 1} e^{-\beta y}}{\Gamma (\alpha)},$$
+$$\operatorname{Gamma}(y | \alpha, \beta) = \frac{\beta^\alpha y^{\alpha - 1} e^{-\beta y}}{\Gamma (\alpha)},$$
 
-where $\alpha$, $e$, and $\Gamma$ are all as they were before and $\beta$ is the rate parameter. Let's say we wanted to use the $\text{Gamma} (y | \alpha, \theta)$ parameterization with the `dgamma()` function. Here are the posterior means for our $\alpha$ and $\theta$ parameters.
+where $\alpha$, $e$, and $\Gamma$ are all as they were before and $\beta$ is the rate parameter. Let's say we wanted to use the $\operatorname{Gamma}(y | \alpha, \theta)$ parameterization with the `dgamma()` function. Here are the posterior means for our $\alpha$ and $\theta$ parameters.
 
 ```{r}
 (alpha <- mean(post$shape))
@@ -1497,13 +1495,13 @@ post %>%
                 size = 1.5, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(distribution~of~lambda~values)) +
-  coord_cartesian(xlim = 0:500,
+  coord_cartesian(xlim = c(0, 500),
                   ylim = c(0, 0.01)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-It turns out it's possible to get the variance of a gamma distribution with $\alpha \theta^2$. Here's that posterior. 
+It turns out it's possible to get the variance of a gamma distribution with $\alpha \theta^2$. Here's that posterior.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 post %>% 
@@ -1513,7 +1511,7 @@ post %>%
   geom_density(color = "transparent", fill = canva_pal("Green fields")(4)[2]) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression("the variance (i.e., "*alpha*theta^2*")")) +
-  coord_cartesian(xlim = 0:150000) +
+  coord_cartesian(xlim = c(0, 150000)) +
   theme_hc() +
   theme(plot.background = element_rect(fill = "grey92"))
 ```
@@ -1528,7 +1526,7 @@ post %>%
 
 And just to round things out, here are the mean and variance values for those 12 distributions of draws from the `predict()` output.
 
-```{r}
+```{r, message = F}
 p %>% 
   data.frame() %>% 
   set_names(c(str_c(0, 1:9), 10:12)) %>% 
@@ -1546,15 +1544,11 @@ d %>%
             variance = var(admit))
 ```
 
-If you'd like more practice with the negative-binomial model and some of the others models for categorical data we covered in this chapter and in [Chapter 10][Counting and Classification], Alan Agresti covered them extensively in his (2015) text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
+If you'd like more practice with the negative-binomial model and some of the others models for categorical data we covered in this chapter and in [Chapter 10][Counting and Classification], Alan Agresti covered them extensively in his [-@agrestiFoundationsLinearGeneralized2015] text, [*Foundations of linear and generalized linear models*](https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034).
 
 ### Over-dispersion, entropy, and information criteria.
 
 > Both the beta-binomial and the gamma-Poisson models are maximum entropy for the same constraints as the regular binomial and Poisson. They just try to account for unobserved heterogeneity in probabilities and rates. So while they can be a lot harder to fit to data, they can be usefully conceptualized much like ordinary binomial and Poisson GLMs. So in terms of model comparison using information criteria, a beta-binomial model is a binomial model, and a gamma-Poisson (negative-binomial) is a Poisson model. (pp. 350--351)
-
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
@@ -1563,14 +1557,12 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, pp_expect_beta_binomial2, post, mu, b11.6, p, alpha)
+rm(d, logit, d_plot, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, posterior_epred_beta_binomial2, post, mu, b11.6, p, alpha)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
-pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
-
 ggplot2::theme_set(ggplot2::theme_grey())
-
 bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
 ```
 
