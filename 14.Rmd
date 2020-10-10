@@ -157,7 +157,7 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-For the plots in this chapter, we'll use the dark themes from the [ggdark package](https://CRAN.R-project.org/package=ggdark) [@R-ggdark]. 
+For the plots in this chapter, we'll use the dark themes from the [ggdark package](https://CRAN.R-project.org/package=ggdark) [@R-ggdark].
 
 ```{r, message = F, warning = F}
 # install.packages("ggdark")
@@ -263,7 +263,7 @@ As in the text,
 > 
 > Here's how to define the distribution for each divorce rate. For each observed value $D_{\text{OBS},i}$, there will be one parameter, $D_{\text{EST},i}$, defined by:
 >
-> $$D_{\text{OBS},i} \sim \text{Normal} (D_{\text{EST},i}, D_{\text{SE},i})$$
+> $$D_{\text{OBS},i} \sim \operatorname{Normal} (D_{\text{EST},i}, D_{\text{SE},i})$$
 >
 > All this does is define the measurement $D_{\text{OBS},i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST},i}$. So the above defines a probability for each State $i$'s observed divorce rate, given a known measurement error. (pp. 426--427)
 
@@ -314,7 +314,7 @@ b14.1_mi <-
       file = "fits/b14.01_mi")
 ```
 
-Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `inits = inits_list` for both models, the differ by `fit@inits`. 
+Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `inits = inits_list` for both models, the differ by `fit@inits`.
 
 ```{r}
 b14.1_se$fit@inits
@@ -328,7 +328,7 @@ print(b14.1_se)
 print(b14.1_mi)
 ```
 
-Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `broom::tidy()` method. 
+Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `broom::tidy()` method.
 
 ```{r}
 library(broom)
@@ -655,7 +655,7 @@ Our statistical model follows the form
 \sigma_\text{neocortex} & \sim \operatorname{HalfCauchy}(0, 1).
 \end{align*}
 
-If you look closely, you'll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \operatorname{Normal} (0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter.
+If you look closely, you'll discover the prior McElreath reported in the model equation for the intercept, $\alpha \sim \operatorname{Normal}(0, 10)$, does not match up with the prior he used in R code 14.7, `a ~ dnorm(0,100)`. Here we use the latter.
 
 When writing a multivariate model in brms, I find it easier to save the model code by itself and then insert it into the `brm()` function. Otherwise, things get cluttered in a hurry.
 
@@ -1241,7 +1241,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(p_pancake, take_sample, sim_pancake, n_sim, d, theme_black, color, dlist, inits, inits_list, b14.1_se, b14.1_mi, p1, b14.1b, nd, f_error, f_no_error, color_y, color_r, p2, b14.2_se, b14.2_mi, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi, b14.2_mi_mi, spank, b14.5, b14.6, label, b14.7)
+rm(p_pancake, take_sample, sim_pancake, n_sim, d, color, dlist, inits, inits_list, b14.1_se, b14.1_mi, p1, b14.1b, nd, f_error, f_no_error, color_y, color_r, p2, b14.2_se, b14.2_mi, color_p, data_list, b_model, b14.3, b14.3cc, f_b14.3, f_b14.3_mi, b14.4, f_b14.4, f_b14.4_mi, b14.2_mi_mi, spank, b14.5, b14.6, label, b14.7)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
