@@ -13,7 +13,7 @@ options(width = 110)
 
 # ~~Horoscopes~~ Insights
 
-> Statistical inference is indeed critically important. But only as much as every other part of research. Scientific discovery is not an additive process, in which sin in one part can be atoned by virtue in another. Everything interacts. So equally when science works as intended as when it does not, every part of the process deserves attention. (p. 441)
+> Statistical inference is indeed critically important. But only as much as every other part of research. Scientific discovery is not an additive process, in which sin in one part can be atoned by virtue in another. Everything interacts. So equally when science works as intended as when it does not, every part of the process deserves attention. [@mcelreathStatisticalRethinkingBayesian2015, p. 441]
 
 In this final chapter, there are no models for us to fit and no figures for use to reimagine. McElreath took the opportunity to comment more broadly on the scientific process. He made a handful of great points, some of which I'll quote in a bit. But for the bulk of this chapter, I'd like to take the opportunity to pass on a few of my own insights about workflow. I hope they’re of use.
 
@@ -21,21 +21,21 @@ In this final chapter, there are no models for us to fit and no figures for use 
 
 OMG
 
-I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [R Studio](https://www.rstudio.com) environment. But within R Studio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything, including my scientific projects, this [bookdown](https://bookdown.org) project, and even my academic [webpage](https://solomonkurz.netlify.com) and [blog](https://solomonkurz.netlify.com/post/). Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
+I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [RStudio](https://www.rstudio.com) environment. But within RStudio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything, including my scientific projects, this [bookdown](https://bookdown.org) project, and even my academic [webpage](https://solomonkurz.netlify.com) and [blog](https://solomonkurz.netlify.com/post/). Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
 
-Do yourself a favor, adopt R Notebooks into your workflow. Do it today. If you prefer to learn with videos, here's a nice intro by [Kristine Yu](https://www.youtube.com/watch?v=TJmNvfhLCoI&t=195s) and another one by [JJ Allaire](https://www.youtube.com/watch?v=GG4pgtfDpWY&t=324s). Try it out for like one afternoon and you’ll be hooked.
+Do yourself a favor, adopt R Notebooks into your workflow. Do it today. If you prefer to learn with videos, here's a [nice intro](https://www.youtube.com/watch?v=TJmNvfhLCoI&t=195s) by [Kristine Yu](https://twitter.com/linguist_krisyu) and [another one](https://www.youtube.com/watch?v=GG4pgtfDpWY&t=324s) by [JJ Allaire](https://twitter.com/fly_upside_down). Try it out for like one afternoon and you’ll be hooked.
 
 ## Save your model fits
 
-It's embarrassing how long it took for this to dawn on me. 
+It's embarrassing how long it took for this to dawn on me.
 
-Unlike classical statistics, Bayesian models using MCMC take a while to compute. Most of the simple models in McElreath's text take 30 seconds up to a couple minutes. If your data are small, well-behaved and of a simple structure, you might have a lot of wait times in that range in your future. 
+Unlike classical statistics, Bayesian models using MCMC take a while to compute. Most of the simple models in McElreath's text take 30 seconds up to a couple minutes. If your data are small, well-behaved and of a simple structure, you might have a lot of wait times in that range in your future.
 
-It hasn't been that way, for me. 
+It hasn't been that way, for me.
 
-Most of my data have a complicated multilevel structure and often aren't very well behaved. It's normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it's not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files. 
+Most of my data have a complicated multilevel structure and often aren't very well behaved. It's normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it's not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files.
 
-Consider this model. It's taken from Bürkner's vignette, [*Estimating Multivariate Models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about five minutes for my several-year-old laptop to fit.
+Consider this model. It's taken from Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about four minutes for my personal laptop to fit.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -52,12 +52,12 @@ load("fits/b15.01.rda")
 b15.1 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex + hatchdate + (1|p|fosternest) + (1|q|dam), 
+      mvbind(tarsus, back) ~ sex + hatchdate + (1 | p | fosternest) + (1 | q | dam), 
       chains = 2, cores = 2,
       seed = 15)
 ```
 
-Five minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another five minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `b15.1` object outside of R with the `save()` function.
+Four minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another four minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `b15.1` object outside of R with the `save()` function.
 
 ```{r}
 save(b15.1, file = "fits/b15.01.rda")
@@ -87,7 +87,7 @@ The other option, which we’ve been using extensively throughout the earlier ch
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
+      mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam), 
       chains = 2, cores = 2,
       seed = 15,
       file = "fits/b15.02")
@@ -117,13 +117,13 @@ The `file` method has another handy feature. Let's remove `b15.2` one more time 
 rm(b15.2)
 ```
 
-If you've fit a `brm()` model once and saved the results with `file`, executing the same `brm()` code will not re-fit the model. Rather, it will just load and return the model from the `.rds` file. 
+If you've fit a `brm()` model once and saved the results with `file`, executing the same `brm()` code will not re-fit the model. Rather, it will just load and return the model from the `.rds` file.
 
 ```{r, message = F, results = "hide"}
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex*hatchdate + (1|p|fosternest) + (1|q|dam), 
+      mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam), 
       chains = 2, cores = 2,
       seed = 15,
       file = "fits/b15.02")
@@ -145,14 +145,15 @@ Also, see [Gavin Simpson](https://twitter.com/ucfagls)'s blog post, [*A better w
 
 ## Build your models slowly
 
-The model from Bürkner’s vignette, `b15.1`, was no joke. If you wanted to be verbose about it, it was a multilevel, multivariate, multivariable model. It had a cross-classified multilevel structure, two predictors (for each criterion), and two criteria. Not only is that a lot to keep track of, there's a whole lot of places for things to go wrong.
+The model from Bürkner's vignette, `b15.1`, was no joke. If you wanted to be verbose about it, it was a multilevel, multivariate, multivariable model. It had a cross-classified multilevel structure, two predictors (for each criterion), and two criteria. Not only is that a lot to keep track of, there's a whole lot of places for things to go wrong.
 
 Even if that was the final model I was interested in as a scientist, I still wouldn't start with it. I'd build up incrementally, just to make sure nothing looked fishy. One place to start would be a simple intercepts-only model.
 
 ```{r b15.0, message = F, results = "hide"}
 b15.0 <- 
   brm(mvbind(tarsus, back) ~ 1, 
-      data = BTdata, chains = 2, cores = 2,
+      data = BTdata, 
+      chains = 2, cores = 2,
       file = "fits/b15.00")
 ```
 
@@ -162,33 +163,33 @@ plot(b15.0)
 print(b15.0)
 ```
 
-If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$s at 1). If that wasn't what I intended, I'd rather catch it here than spend five minutes fitting the more complicated `b15.1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
+If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$s at 1). If that wasn't what I intended, I'd rather catch it here than spend four minutes fitting the more complicated `b15.1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
 
-Note, this is not the same as [$p$-hacking](https://journals.sagepub.com/doi/full/10.1177/0956797611417632) or [wandering aimlessly down the garden of forking paths](https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf). We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
+Note, this is not the same as $p$-hacking [@simmonsFalsepositivePsychologyUndisclosed2011] or wandering aimlessly down the garden of forking paths [@gelmanGardenForkingPaths2013]. We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
 
 So, when I'm working on a project, I fit one or a few simplified models before fitting my complicated model of theoretical interest. This is especially the case when I'm working with model types that are new to me or that I haven't worked with in a while. I document each step in my R Notebook files and I save the fit objects for each in external files. I have caught surprises this way. Hopefully this will help you catch your mistakes, too.
 
 ## Look at your data
 
-Relatedly, and perhaps even a precursor, you should always plot your data before fitting a model. There were plenty examples of this in the text, but it's worth of making explicit. Simple summary statistics are great, but they're not enough. For an entertaining exposition, check out [*Same Stats, Different Graphs: Generating Datasets with Varied Appearance and Identical Statistics through Simulated Annealing*](https://www.autodeskresearch.com/publications/samestats). Though it might make for a great cocktail party story, I'd hate to pollute the scientific literature with a linear model based on a set of dinosaur-shaped data.
+Relatedly, and perhaps even a precursor, you should always plot your data before fitting a model. There were plenty examples of this in the text, but it's worth of making explicit. Simple summary statistics are great, but they're not enough. For an entertaining exposition, check out Matejka and Fitzmaurice's [-@matejkaSameStats2017] [Same stats, different graphs: Generating datasets with varied appearance and identical statistics through simulated annealing*](https://www.autodeskresearch.com/publications/samestats). Though it might make for a great cocktail party story, I'd hate to pollute the scientific literature with a linear model based on a set of dinosaur-shaped data.
 
 ## Use the `0 + Intercept` syntax
 
-We covered this a little in the last couple chapters (e.g., section [12.4.3][Focus and multilevel prediction.]), but it's easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it's important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) (version 2.12.0), we read:
+We covered this a little in the last couple chapters (e.g., [Section 12.4.3][Focus and multilevel prediction.]), but it's easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it's important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM], we read:
 
-> Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 180)
+> Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 190)
 
 We get a little more information from the *Parameterization of the population-level intercept* subsection of the *`brmsformula`* section:
 
-> This behavior can be avoided by using the reserved (and internally generated) variable Intercept. Instead of `y ~ x`, you may write `y ~ 0 + Intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on b will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (pp. 38--39)
+> This behavior can be avoided by using the reserved (and internally generated) variable Intercept. Instead of `y ~ x,` you may write `y ~ 0 + Intercept + x`. This way, priors can be defined on the real intercept, directly. In addition, the intercept is just treated as an ordinary population-level effect and thus priors defined on b will also apply to it. Note that this parameterization may be less efficient than the default parameterization discussed above. (p. 40)
 
-We didn’t bother with this for most of the project because our priors on the `Intercept` were often vague and the predictors were often on small enough scales (e.g., the mean of a dummy variable is close to 0) that it just didn't matter. But this will not always be the case. Set your `Intercept` priors with care.
+We didn't bother with this for most of the project because our priors on the `Intercept` were often vague and the predictors were often on small enough scales (e.g., the mean of a dummy variable is close to 0) that it just didn't matter. But this will not always be the case. Set your `Intercept` priors with care.
 
 There's also the flip side of the issue. If you have no strong reason not to, consider mean-centering or even standardizing your predictors. Not only will that solve the `Intercept` prior issue, but it often results in more meaningful parameter estimates.
 
 ## Annotate your workflow
 
-In a typical model-fitting file, I'll load my data, perhaps transform the data a bit, fit several models, and examine the output of each with trace plots, model summaries, information criteria, and the like. In my early days, I just figured each of these steps were self-explanatory. 
+In a typical model-fitting file, I'll load my data, perhaps transform the data a bit, fit several models, and examine the output of each with trace plots, model summaries, information criteria, and the like. In my early days, I just figured each of these steps were self-explanatory.
 
 Nope.
 
@@ -198,35 +199,35 @@ My experience was that even a couple weeks between taking a break from a project
 
 ## Annotate your code
 
-This idea is implicit in McElreath's text, but it's easy to miss the message. I know I did, at first. I find this is especially important for data wrangling. I'm a tidyverse guy and, for me, the big-money verbs like `mutate()`, `gather()`, `select()`, `filter()`, `group_by()`, and `summarise()` take care of the bulk of my data wrangling. But every once and a while I need to do something less common, like with `str_extract()` or `case_when()`. And when I end up using a new or less familiar function, I typically annotate right in the code and even sometimes leave a hyperlink to some [R-bloggers](https://www.r-bloggers.com) post or [stackoverflow](https://stackoverflow.com) question that explained how to use it.
+This idea is implicit in McElreath's text, but it's easy to miss the message. I know I did, at first. I find this is especially important for data wrangling. I'm a tidyverse guy and, for me, the big-money verbs like `mutate()`, `gather()`, `select()`, `filter()`, `group_by()`, and `summarise()` take care of the bulk of my data wrangling. But every once and a while I need to do something less common, like with `str_extract()` or `case_when()`. When I end up using a new or less familiar function, I typically annotate right in the code and even sometimes leave a hyperlink to some [R-bloggers](https://www.r-bloggers.com) post or [stackoverflow](https://stackoverflow.com) question that explained how to use it.
 
 ## Break up your workflow
 
 I've also learned to break up my projects into multiple R Notebook files. If you have a small project for which you just want a quick and dirty plot, fine, do it all in one file. My typical project has:
 
-* A primary data cleaning file
-* A file with basic descriptive statistics and the like
-* At least one primary analysis file
-* Possible secondary and tertiary analysis files
-* A file or two for my major figures
-* A file explaining and depicting my priors, often accompanied by my posteriors, for comparison
+* a primary data cleaning file;
+* a file with basic descriptive statistics and the like;
+* at least one primary analysis file;
+* possible secondary and tertiary analysis files;
+* a file or two for my major figures; and
+* a file explaining and depicting my priors, often accompanied by my posteriors, for comparison.
 
 Putting all that information in one R Notebook file would be overwhelming. Your workflow might well look different, but hopefully you get the idea. You don't want working files with thousands of lines of code.
 
-And mainly to keep Jenny Bryan from [setting my computer on fire](https://www.tidyverse.org/articles/2017/12/workflow-vs-script/), I'm also getting into the habit of organizing all these interconnected files with help from [R Studio Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), which you can learn even more about from [this chapter](https://r4ds.had.co.nz/workflow-projects.html) in *R4DS*.
+And mainly to keep Jenny Bryan from [setting my computer on fire](https://www.tidyverse.org/articles/2017/12/workflow-vs-script/), I'm also getting into the habit of organizing all these interconnected files with help from [R Studio Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), which you can learn even more about from [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html) in *R4DS* @grolemundDataScience2017.
 
 ## Code in public
 
-If you would like to improve the code you write for data-wrangling, modeling, and/or visualizing, code in public. Yes, it can be intimidating. Yes, you will probably make mistakes. If you're lucky, [others will point them out](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/pulls?q=is%3Apr+is%3Aclosed) and you will revise and learn and grow. 
+If you would like to improve the code you write for data-wrangling, modeling, and/or visualizing, code in public. Yes, it can be intimidating. Yes, you will probably make mistakes. If you're lucky, [others will point them out](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/pulls?q=is%3Apr+is%3Aclosed) and you will revise and learn and grow.
 
-You can do this on any number of mediums, such as 
+You can do this on any number of mediums, such as
 
-* GitHub (e.g., [here](https://github.com/paul-buerkner/brms)), 
-* personal blogs (e.g., [here](https://dilshersinghdhillon.netlify.com/post/multiple_comparison/)), 
+* GitHub (e.g., [here](https://github.com/paul-buerkner/brms)),
+* personal blogs (e.g., [here](https://dilshersinghdhillon.netlify.com/post/multiple_comparison/)),
 * the Open Science Framework (e.g., [here](https://osf.io/dpzcb/)),
-* online books (e.g., [here](https://learningstatisticswithr.com/)), 
-* full-blown YouTube lectures (e.g., [here](https://www.youtube.com/watch?v=Vz71fglrgy0)), 
-* or even in brief Twitter gifs (e.g., [here](https://twitter.com/GuyProchilo/status/1207766623840604174)). 
+* online books (e.g., [here](https://learningstatisticswithr.com/)),
+* full-blown YouTube lectures (e.g., [here](https://www.youtube.com/watch?v=Vz71fglrgy0)),
+* or even in brief Twitter GIFs (e.g., [here](https://twitter.com/GuyProchilo/status/1207766623840604174)).
 
 I've found that just the possibility that others might look at my code makes it more likely I'll slow down, annotate, and try to use more consistent formatting. Hopefully it will benefit you, too.
 
@@ -234,11 +235,11 @@ I've found that just the possibility that others might look at my code makes it 
 
 Yes, [that Gelman](https://statmodeling.stat.columbia.edu/books/).
 
-Actually, I started reading [Gelman's blog](https://statmodeling.stat.columbia.edu/) around the same time I dove into [McElreath's text](https://xcelab.net/rm/statistical-rethinking/). But if this isn't the case for you, it's time to correct that evil. My graduate mentor often recalled how transformative his first academic conference was. He was an undergrad at the time and it was his first experience meeting and talking with the people whose names he'd seen in his text books. He learned that science was an ongoing conversation among living scientists and--at that time--the best place to take part in that conversation was at conferences. Times keep changing. Nowadays, the living conversation of science occurs online on social media and in blogs. One of the hottest places to find scientists conversing about Bayesian statistics and related methods is [Gelman's blog](https://statmodeling.stat.columbia.edu/). The posts are great. But a lot of the action is in the comments sections, too. 
+Actually, I started reading [Gelman's blog](https://statmodeling.stat.columbia.edu/) around the same time I dove into [McElreath's text](https://xcelab.net/rm/statistical-rethinking/). But if this isn't the case for you, it's time to correct that evil. My graduate mentor often recalled how transformative his first academic conference was. He was an undergrad at the time and it was his first experience meeting and talking with the people whose names he'd seen in his text books. He learned that science was an ongoing conversation among living scientists and--at that time--the best place to take part in that conversation was at conferences. Times keep changing. Nowadays, the living conversation of science occurs online on social media and in blogs. One of the hottest places to find scientists conversing about Bayesian statistics and related methods is [Gelman's blog](https://statmodeling.stat.columbia.edu/). The posts are great. But a lot of the action is in the comments sections, too.
 
 ## Check out other social media, too
 
-If you're not on it, consider joining academic [twitter](https://www.chronicle.com/blogs/profhacker/getting-started-on-academic-twitter-v2-0/63451). The word on the street is correct. Twitter can be rage-fueled [dumpster fire](https://media.giphy.com/media/l0IynvPneUpb7SnBe/giphy.gif). But if you're selective about who you follow, it's a great place to lean from and connect with your academic heroes. If you're a fan of this project, here's a list of some of the people you might want to follow:
+If you're not on it, consider joining academic (see the related blog posts by [Sarah Mojarad](https://medium.com/@smojarad/a-beginners-guide-to-academic-twitter-f483dae86597) and [Dan Quintana](https://www.dsquintana.blog/twitter-for-scientists/)). The word on the street is correct. Twitter can be rage-fueled [dumpster fire](https://media.giphy.com/media/l0IynvPneUpb7SnBe/giphy.gif). But if you're selective about who you follow, it's a great place to lean from and connect with your academic heroes. If you're a fan of this project, here's a list of some of the people you might want to follow:
 
 * [Mara Averick](https://twitter.com/dataandme?lang=en)
 * [Michael Bentacourt](https://twitter.com/betanalpha?lang=en)
@@ -270,15 +271,11 @@ But if you're new to the world of asking for help with your code online, you mig
 
 Okay, that's enough from me. Let's start wrapping this project up with some McElreath.
 
-> There is an aspect of science that you do personally control: openness. [Pre-plan your research together with the statistical analysis](https://mindhacks.com/2017/11/09/open-science-essentials-pre-registration/). Doing so will improve both the research design and the statistics. Document it in the form of a mock analysis that you would not be ashamed to share with a colleague. Register it publicly, perhaps in a simple repository, like [Github](https://github.com) or any other. But [your webpage](https://bookdown.org/yihui/blogdown/) will do just fine, as well. Then collect the data. Then analyze the data as planned. If you must change the plan, that’s fine. But document the changes and justify them. [Provide all of the data and scripts necessary to repeat your analysis](https://twitter.com/shravanvasishth/status/1043528112372375552). Do not provide scripts and data ["on request,"](https://twitter.com/robinnkok/status/1213011238294347776) but rather put them online so reviewers of your paper can access them without your interaction. There are of course cases in which full data cannot be released, due to privacy concerns. But the bulk of science is not of that sort.
+> There is an aspect of science that you do personally control: openness. [Pre-plan your research together with the statistical analysis](https://mindhacks.com/2017/11/09/open-science-essentials-pre-registration/). Doing so will improve both the research design and the statistics. Document it in the form of a mock analysis that you would not be ashamed to share with a colleague. Register it publicly, perhaps in a simple repository, like [Github](https://github.com) or any other. But [your webpage](https://bookdown.org/yihui/blogdown/) will do just fine, as well. Then collect the data. Then analyze the data as planned. If you must change the plan, that’s fine. But document the changes and justify them. Provide all of the data and scripts necessary to repeat your analysis. Do not provide scripts and data ["on request,"](https://twitter.com/robinnkok/status/1213011238294347776) but rather put them online so reviewers of your paper can access them without your interaction. There are of course cases in which full data cannot be released, due to privacy concerns. But the bulk of science is not of that sort.
 > 
 > The data and its analysis are the scientific product. The paper is just an advertisement. If you do your honest best to design, conduct, and document your research, so that others can build directly upon it, you can make a difference. (p. 443)
 
 Toward that end, also check out the [OSF](https://osf.io) and their YouTube channel, [here](https://www.youtube.com/channel/UCGPlVf8FsQ23BehDLFrQa-g). [Katie Corker](https://twitter.com/katiecorker) gets the last words: ["Open science is stronger because we’re doing this together."](https://cos.io/blog/open-science-is-a-behavior/)
-
-## Reference {-}
-
-[McElreath, R. (2015). *Statistical rethinking: A Bayesian course with examples in R and Stan.* Chapman & Hall/CRC Press.](https://xcelab.net/rm/statistical-rethinking/)
 
 ## Session info {-}
 
@@ -292,9 +289,5 @@ rm(BTdata, b15.1, b15.2, b15.0)
 
 ```{r, echo = F, warning = F, message = F, results = "hide"}
 pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
-
-ggplot2::theme_set(ggplot2::theme_grey())
-
-bayesplot::color_scheme_set("blue")
 ```
 
