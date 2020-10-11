@@ -71,7 +71,7 @@ You might use `fixef()` to get a focused summary of the intercept.
 
 ```{r, message = F, warning = F}
 library(tidyverse)
- 
+
 fixef(b10.1) %>%
   round(digits = 2)
 ```
@@ -321,10 +321,10 @@ post %>%
   ggplot(aes(x = b_factoractor2)) +
   geom_density(color = "transparent",
                fill = wes_palette("Moonrise2")[1]) +
+  scale_x_continuous(NULL, limits = c(0, NA)) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Actor 2's large and uncertain intercept",
-       subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.",
-       x = NULL)
+       subtitle = "Once your log-odds are above, like, 4, it's all\npretty much a probability of 1.")
 ```
 
 Figure 10.4. shows the idiographic trajectories for four of our chimps.
@@ -363,8 +363,7 @@ f %>%
   scale_y_continuous("proportion pulled left",
                      breaks = c(0, .5, 1), limits = c(0, 1)) +
   theme(axis.ticks.x = element_blank(),
-        # color came from: https://www.color-hex.com/color/ccc591
-        panel.background = element_rect(fill = "#d1ca9c",
+        panel.background = element_rect(fill = alpha("white", .075), 
                                         color = "transparent")) +
   facet_wrap(~actor)
 ```
@@ -1278,7 +1277,7 @@ posterior_samples(b10.10_c) %>%
   theme(strip.text = element_text(size = 11))
 ```
 
-In case you were wondering, it turns out you cannot combine `GGally::ggpairs()` plots with syntax from the patchwork package. Check out [issue #52 on the patchwork GitHub repo](https://github.com/thomasp85/patchwork/issues/52) to learn why.
+In case you were wondering, it turns out you cannot combine `GGally::ggpairs()` plots with syntax from the patchwork package. Check out [issue #52 from the patchwork GitHub repo](https://github.com/thomasp85/patchwork/issues/52) to learn why.
 
 ### Example: Exposure and the offset.
 
@@ -1328,7 +1327,7 @@ As we look at the model summary, keep in mind that the parameters are on the per
 print(b10.15)
 ```
 
-The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It's a fixed part of the model not unlike the $\nu$ parameter of the Student-$t$ distribution gets fixed to infinity when you use the Gaussian likelihood.
+The model summary helps clarify that when you use `offset()`, `brm()` fixes the value. Thus there is no parameter estimate for the `offset()`. It's a fixed part of the model not unlike how the $\nu$ parameter of Student's $t$ gets fixed to infinity when you use the Gaussian likelihood.
 
 To get the posterior distributions for average daily outputs for the old and new monasteries, respectively, we'll use use the formulas
 
@@ -1425,7 +1424,7 @@ tibble(income = 1:3) %>%
   mutate(p = exp(score) / sum(exp(score)))
 ```
 
-Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above:
+Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above,
 
 $$\text{Pr}(k |s_1, s_2,..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
 
@@ -1696,7 +1695,7 @@ rbind(f[, , 1],
 
 ##### The non-linear syntax is the solution.
 
-One of the things that differentiates this ebook with my [-@kurzStatisticalRethinkingSecondEd2020] [translation](https://bookdown.org/content/4857/) of McElreath's [-@mcelreathStatisticalRethinkingBayesian2020] 2nd edition is the non-linear syntax. Virtually all of the models in this book can be handled with what you might call the conventional brms syntax. However, brms offers another very flexible way of specifying models in what Bürkner calls the non-linear syntax. For a detailed introduction, see Bürkner's [-@Bürkner2020Non_linear] vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html). McElreath has peppered his 2nd edition with models that require this non-linear syntax, which means readers of my translation get a lot of practice using the non-linear syntax. But for this first edition, McElreath's `m10.16` is the only model requiring the non-linear syntax. In this section, I'll provide a brief introduction.
+One of the things that differentiates this ebook with my [-@kurzStatisticalRethinkingSecondEd2020] [translation](https://bookdown.org/content/4857/) of McElreath's [-@mcelreathStatisticalRethinkingBayesian2020] 2nd edition is the non-linear syntax. Virtually all of the models in this book can be handled with what you might call the conventional brms syntax. However, brms offers another very flexible way of specifying models with what Bürkner calls the non-linear syntax. For a detailed introduction, see Bürkner's [-@Bürkner2020Non_linear] vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html). McElreath has peppered his 2nd edition with models that require this non-linear syntax, which means readers of my translation of the 2nd edition get a lot of practice using the non-linear syntax. But for this first edition, McElreath's `m10.16` is the only model requiring the non-linear syntax. In this section, I'll provide a brief introduction.
 
 First, let's simulate the data from McElreath's R code 10.56 block again.
 
@@ -1835,7 +1834,7 @@ tibble(income = income,
   mutate(p = exp(score) / sum(exp(score)))
 ```
 
-I'm not going to dive any further into the brms non-linear syntax in this ebook. You want a deeper understanding, check out Bürkner's vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html) or [my translation](https://bookdown.org/content/4857/) of McElreath's 2nd edition. For more practice fitting multinomial models with brms, you might also check out my [translation of Chapter 22](https://bookdown.org/content/3686/nominal-predicted-variable.html) of Kruschke's [-@kruschkeDoingBayesianData2015] text.
+I'm not going to dive any further into the brms non-linear syntax in this ebook. You want a deeper understanding, check out Bürkner's vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html), or [my translation](https://bookdown.org/content/4857/) of McElreath's 2nd edition. For more practice fitting multinomial models with brms, you might also check out my [translation of Chapter 22](https://bookdown.org/content/3686/nominal-predicted-variable.html) of Kruschke's [-@kruschkeDoingBayesianData2015] text.
 
 #### Multinomial in disguise as Poisson.
 
