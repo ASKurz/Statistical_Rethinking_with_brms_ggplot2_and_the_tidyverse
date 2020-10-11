@@ -901,6 +901,7 @@ posterior_samples(b13.6) %>%
        x = NULL) +
   theme_pearl_earring()
 ```
+
 Did you notice those sweet-looking jittered dots? They came form the handy [ggbeeswarm package](https://cran.r-project.org/package=ggbeeswarm) [@R-ggbeeswarm] and its `geom_quasirandom()`.
 
 McElreath reported this model only has about 18 parameters. Let's compute the WAIC and check the `p_waic`.
@@ -1124,7 +1125,7 @@ post %>%
 
 This is just a touch higher than the `etasq` summary McElreath reported in the text. In our model `brm()` code, above, we just went with the flow and kept the `cauchy(0, 1)` prior on `sdgp`. The brms default would have been `student_t(3, 0, 2.5)`.
 
-Now look at the denominator of the inner part of Bürkner's equation, $2 lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Anyway, also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly, we might expect
+Now look at the denominator of the inner part of Bürkner's equation, $2 lscale^2$. This appears to be the brms equivalent to McElreath's $\rho^2$. Or at least it's what we've got. Also note that McElreath estimated $\rho^2$ directly as `rhosq`. If I'm doing the algebra correctly, we might expect
 
 \begin{align*}
 \rho^2 & = 1/(2 \cdot lscale^2) & \text{and thus} \\
