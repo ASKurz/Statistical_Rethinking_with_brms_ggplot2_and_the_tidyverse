@@ -286,9 +286,9 @@ mcmc_intervals(post[, 1:4],
         panel.grid = element_blank())
 ```
 
-Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out [this vignette](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
+Because bayesplot produces a ggplot2 object, the plot was adjustable with familiar ggplot2 syntax. For more ideas, check out Gabry's [-@gabryPlottingMCMCDraws2019] vignette, [*Plotting MCMC draws using the bayesplot package*](https://cran.r-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
-The `tidybaes::stat_pointintervalh()` function offers a third way, this time with a more ground-up ggplot2 workflow.
+The `tidybaes::stat_pointinterval()` function offers a third way, this time with a more ground-up ggplot2 workflow.
 
 ```{r, message = F, warning = F, fig.width = 6, fig.height = 1.5}
 library(tidybayes)
@@ -299,8 +299,8 @@ post %>%
   
   ggplot(aes(x = value, y = reorder(key, value))) +  # note how we used `reorder()` to arrange the coefficients
   geom_vline(xintercept = 0, color = "firebrick4", alpha = 1/10) +
-  stat_pointintervalh(point_interval = mode_hdi, .width = .95, 
-                      size = 3/4, color = "firebrick4") +
+  stat_pointinterval(point_interval = mode_hdi, .width = .95, 
+                     size = 3/4, color = "firebrick4") +
   labs(title = "My tidybayes-based coefficient plot",
        x = NULL, y = NULL) +
   theme_bw() +
@@ -367,7 +367,7 @@ f %>%
   theme(panel.grid = element_blank())     
 ```
 
-We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) for details.
+We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM] for details.
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
@@ -533,7 +533,7 @@ fitted(b5.3, newdata = nd) %>%
 
 #### Posterior prediction plots.
 
-"In addition to understanding the estimates, it's important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post, [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
+"In addition to understanding the estimates, it's important to check the model fit against the observed data" (p. 131). For more on the topic, check out Gabry and colleagues' [-@gabry2019visualization] [*Visualization in Bayesian workflow*](https://arxiv.org/abs/1709.01449) or Simpson's related blog post, [*Touch me, I want to feel your data*](https://statmodeling.stat.columbia.edu/2017/09/07/touch-want-feel-data/).
 
 In this version of Figure 5.6.a, the thin lines are the 95% intervals and the thicker lines are $\pm$ the posterior $SD$, both of which are returned when you use `fitted()`.
 
@@ -1214,7 +1214,7 @@ library(brms)
 
 We'll follow the text and fit the two univariable models, first. Note our use of the `update()` function.
 
-```{r b5.10}
+```{r b5.10, warning = F, message = F}
 # `kcal.per.g` regressed on `perc.fat`
 b5.10 <- 
   brm(data = d, 
@@ -1271,7 +1271,7 @@ posterior_summary(b5.12)[1:4, ] %>% round(digits = 3)
 
 You can make also pairs plots with [GGally](https://CRAN.R-project.org/package=GGally) [@R-GGally], which will also compute the point estimates for the bivariate correlations. Here's a default plot.
 
-```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
+```{r, fig.width = 3.5, fig.height = 3.5, warning = F, message = F}
 #install.packages("GGally", dependencies = T)
 library(GGally)
 
@@ -1281,7 +1281,7 @@ ggpairs(data = d, columns = c(3:4, 6)) +
 
 But you can customize [these](https://ggobi.github.io/ggally/#ggallyggpairs), too. E.g.,
 
-```{r, fig.width = 3, fig.height = 3, message = F}
+```{r, fig.width = 3.5, fig.height = 3.5, warning = F, message = F}
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
     geom_density(fill = "firebrick4", size = 0)
