@@ -367,7 +367,7 @@ mcmc_acf(post,
 
 That's just what we like to see--nice L-shaped autocorrelation plots. Those are the kinds of shapes you'd expect when you have reasonably large effective samples.
 
-Before we move on, there’s an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath’s trace plots include the warmup iterations. Ours did not. That’s why his x-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @fernandezGGMCMCAnalysisofMCMC2016].
+Before we move on, there's an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath's trace plots include the warmup iterations. Ours did not. That's why his $x$-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @fernandezGGMCMCAnalysisofMCMC2016].
 
 ```{r, message = F, warning = F}
 # install.packages("ggmcmc", dependencies = T)
@@ -376,7 +376,7 @@ library(ggmcmc)
 
 The ggmcmc package has a variety of convenience functions for working with MCMC chains. The `ggs()` function extracts the posterior draws, including `warmup`, and arranges them in a tidy tibble.
 
-```{r}
+```{r, warning = F, message = F}
 ggs(b8.1) %>% 
   str()
 ```
@@ -458,7 +458,7 @@ And remember, with changes from brms version 2.10.0, we now have both `Bulk_ESS`
 
 Times have changed. In the text, we read:
 
-> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\hat R$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
+> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\widehat R$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
 
 We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\widehat R$, too. As it turns out, the Stan team has found some deficiencies with the $\widehat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon (see [here](https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165) for a related thread on the Stan Forums). In the meantime, you can read all about it in @vehtariRanknormalizationFoldingLocalization2019 and in one of Dan Simpson's [blog posts](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/). If you learn best by sassy twitter banter, [click through this interchange](https://twitter.com/betanalpha/status/1108185746870030336) among some of our Stan team all-stars.
 
