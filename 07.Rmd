@@ -19,7 +19,7 @@ options(width = 100)
 
 "Africa is special" (p. 211). Let's load the `rugged` data [@nunn2012ruggedness] to see one of the reasons why.
 
-```{r, message = F}
+```{r, message = F, warning = F}
 library(rethinking)
 data(rugged)
 d <- rugged
@@ -550,12 +550,7 @@ The equations for the next two models are
 \alpha  & \sim \operatorname{Normal}(0, 100) \\
 \beta_1 & \sim \operatorname{Normal}(0, 100) \\
 \beta_2 & \sim \operatorname{Normal}(0, 100) \\
-\sigma  & \sim \operatorname{Uniform}(0, 100)
-\end{align*}
-
-and
-
-\begin{align*}
+\sigma  & \sim \operatorname{Uniform}(0, 100), \;\;\; \text{and} \\ \\
 \text{blooms}_i & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu_i   & = \alpha + \beta_1 \text{water} + \beta_2 \text{shade}_i + \beta_3 \text{water}_i \times \text{shade}_i \\
 \alpha  & \sim \operatorname{Normal}(0, 100) \\
