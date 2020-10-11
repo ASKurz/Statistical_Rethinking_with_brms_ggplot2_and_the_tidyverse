@@ -60,7 +60,7 @@ d.A0 <-
 
 The first two models predicting `log_gdp` are univariable.
 
-```{r b7.1}
+```{r b7.1, warning = F, message = F}
 b7.1 <-
   brm(data = d.A1, 
       family = gaussian,
@@ -139,7 +139,7 @@ It's generally not a good idea to split up your data and run separate analyses, 
 
 Here's our model with all the countries, but without the `cont_africa` dummy.
 
-```{r b7.3}
+```{r b7.3, warning = F, message = F}
 b7.3 <-
   update(b7.1,
          newdata = dd,
@@ -150,7 +150,7 @@ b7.3 <-
 
 Now we'll add the dummy.
 
-```{r b7.4}
+```{r b7.4, warning = F, message = F}
 b7.4 <-
   update(b7.3,
          newdata = dd,
@@ -243,7 +243,7 @@ $$\mu_i = \alpha + (\beta_1 + \beta_3 \text{cont_africa}_i) \text{rugged}_i + \b
 
 Fit the model.
 
-```{r b7.5}
+```{r b7.5, warning = F, message = F}
 b7.5 <-
   update(b7.4,
          formula = log_gdp ~ 1 + rugged*cont_africa,
@@ -289,7 +289,7 @@ The conventional equation for the interaction model might look like:
 
 Instead of the `y ~ 1 + x1*x2` approach, which will work fine with `brm()`, you can use this more explicit syntax.
 
-```{r b7.5b}
+```{r b7.5b, warning = F, message = F}
 b7.5b <-
   update(b7.5,
          formula = log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
@@ -877,7 +877,7 @@ b7.4$data %>%
 
 One way to fix that is to adjust the data set and refit the model.
 
-```{r b7.4_factor}
+```{r b7.4_factor, warning = F, message = F}
 d_factor <-
   b7.4$data %>% 
   mutate(cont_africa = factor(cont_africa))
@@ -906,7 +906,7 @@ conditional_effects(b7.5)
 
 The `conditional_effects()` function defaults to expressing interactions such that the first variable in the term--in this case, `rugged`--is on the x axis and the second variable in the term--`cont_africa`, treated as an integer--is depicted in three lines corresponding its mean and its mean $\pm$ one standard deviation. This is great for continuous variables, but incoherent for categorical ones. The fix is, you guessed it, to refit the model after adjusting the data.
 
-```{r b7.5_factor}
+```{r b7.5_factor, warning = F, message = F}
 d_factor <-
   b7.5$data %>% 
   mutate(cont_africa = factor(cont_africa))
