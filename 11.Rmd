@@ -29,7 +29,7 @@ options(width = 110)
 
 Let's get the `Trolley` data from rethinking [see @cushmanRoleConsciousReasoning2006].
 
-```{r, message = F}
+```{r, warning = F, message = F}
 library(rethinking)
 data(Trolley)
 d <- Trolley
@@ -37,7 +37,7 @@ d <- Trolley
 
 Unload rethinking and load brms.
 
-```{r, message = F}
+```{r, warning = F, message = F}
 rm(Trolley)
 detach(package:rethinking, unload = T)
 library(brms)
@@ -162,11 +162,19 @@ p1 | p2 | p3
 The code for Figure 11.2 is itself something of a monster.
 
 ```{r, fig.width = 3.5, fig.height = 3}
+# primary data
 d_plot <-
   d %>%
   count(response) %>%
   mutate(pr_k     = n / nrow(d),
-         cum_pr_k = cumsum(n / nrow(d))) 
+         cum_pr_k = cumsum(n / nrow(d))) %>% 
+  mutate(discrete_probability = ifelse(response == 1, cum_pr_k, cum_pr_k - pr_k))
+
+# annotation
+text <-
+  tibble(text     = 1:7,
+         response = seq(from = 1.25, to = 7.25, by = 1),
+         cum_pr_k = d_plot$cum_pr_k - .065)
 
 ggplot(data = d_plot,
        aes(x = response, y = cum_pr_k,
@@ -177,20 +185,14 @@ ggplot(data = d_plot,
   geom_linerange(aes(ymin = 0, ymax = cum_pr_k),
                  alpha = 1/2, color = canva_pal("Green fields")(4)[1]) +
   # there must be more elegant ways to do this part
-  geom_linerange(data = . %>% 
-                   mutate(discrete_probability =
-                            ifelse(response == 1, cum_pr_k,
-                                   cum_pr_k - pr_k)),
-                 aes(x = response + .025,
+  geom_linerange(aes(x = response + .025,
                      ymin = ifelse(response == 1, 0, discrete_probability), 
                      ymax = cum_pr_k),
                  color = "black") +
-  geom_text(data = tibble(
-    text     = 1:7,
-    response = seq(from = 1.25, to = 7.25, by = 1),
-    cum_pr_k = d_plot$cum_pr_k - .065
-  ), aes(label = text),
-  size = 4) +
+  # number annotation
+  geom_text(data = text, 
+            aes(label = text),
+            size = 4) +
   scale_x_continuous(breaks = 1:7) +
   scale_y_continuous("cumulative proportion", breaks = c(0, .5, 1), limits = c(0, 1)) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
@@ -359,7 +361,7 @@ Check the summary.
 print(b11.1b)
 ```
 
-This yielded a posterior mean of 4.2, much like our `average_outcome_value`, above. However, the lazy Gaussian model now has a $\sigma$ parameter, whereas $\sigma$ is a function of the probability estimate in the more-appropriate `b11.2` model (see section 11.3). If you only care about mean estimates, this won't matter much if you have a lot of data and the mean is far from the boundary. But when your posterior means get close to the upper or lower boundary, the lazy Gaussian model will yield silly estimates for the 95% intervals. Beware the lazy Gaussian model with data like this.
+This yielded a posterior mean of 4.2, much like our `average_outcome_value`, above. However, the lazy Gaussian model now has a $\sigma$ parameter, whereas $\sigma$ is a function of the probability estimate in the more-appropriate `b11.2` model (see [Section 11.3][Over-dispersed outcomes]). If you only care about mean estimates, this won't matter much if you have a lot of data and the mean is far from the boundary. But when your posterior means get close to the upper or lower boundary, the lazy Gaussian model will yield silly estimates for the 95% intervals. Beware the lazy Gaussian model with data like this.
 
 **End aside**
 
@@ -660,7 +662,7 @@ p1 + p2 + p3 +
                   theme = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
-If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [-@burknerOrdinalRegressionModels2019] [*Ordinal regression models in psychology: A tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my [-@kurzDoingBayesianData2020] sister project [*Doing Bayesian data analysis in brms and the tidyverse*](https://bookdown.org/content/3686/) were we model ordinal data with a series of cumulative probit models.
+If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [-@burknerOrdinalRegressionModels2019] [*Ordinal regression models in psychology: A tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my [-@kurzDoingBayesianData2020] sister project, [*Doing Bayesian data analysis in brms and the tidyverse*](https://bookdown.org/content/3686/), were we model ordinal data with a series of cumulative probit models.
 
 ### Bonus: Figure 11.3 alternative.
 
@@ -1557,7 +1559,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, posterior_epred_beta_binomial2, post, mu, b11.6, p, alpha)
+rm(d, logit, d_plot, text, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, posterior_epred_beta_binomial2, post, mu, b11.6, p, alpha)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
