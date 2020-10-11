@@ -346,7 +346,7 @@ Again, from `b_Intercept` to `sigma`, the output is about the same. But model `b
 \begin{align*}
 \text{Divorce}_{\text{estimated}, i} & \sim \operatorname{Normal}(\mu_i, \sigma) \\
 \mu     & = \alpha + \beta_1 \text A_i + \beta_2 \text R_i \\
-\text{Divorce}_{\text{observed}, i}  & \sim \text{Normal} (\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
+\text{Divorce}_{\text{observed}, i}  & \sim \operatorname{Normal}(\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
 \alpha  & \sim \operatorname{Normal}(0, 10) \\
 \beta_1 & \sim \operatorname{Normal}(0, 10) \\
 \beta_2 & \sim \operatorname{Normal}(0, 10) \\
@@ -464,6 +464,24 @@ p1 | p2
 In our plot on the right, it's the reddish regression line that accounts for measurement error.
 
 ### Error on both outcome and predictor.
+
+> What happens when there is measurement error on predictor variables as well? The approach is the same. Again, consider the problem generatively: Each observed predictor value is a draw from a distribution with an unknown mean, the true value, but known standard deviation. So we define a vector of parameters, one for each unknown true value, and then make those parameters the means of a family of Gaussian distributions with known standard deviations. (p. 429)
+
+We might express this model for our current example as
+
+\begin{align*}
+\text{Divorce}_{\text{estimated}, i} & \sim \operatorname{Normal}(\mu_i, \sigma) \\
+\mu     & = \alpha + \beta_1 \text A_i + \beta_2 \color{blue}{\text{Marriage_rate}_{\text{estimated}, i}} \\
+\text{Divorce}_{\text{observed}, i}  & \sim \operatorname{Normal}(\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
+
+\color{blue}{\text{Marriage_rate}_{\text{observed}, i}} & \color{blue}\sim \color{blue}{\operatorname{Normal}(\text{Marriage_rate}_{\text{estimated}, i}, \text{Marriage_rate}_{\text{standard error}, i})} \\
+
+
+\alpha  & \sim \operatorname{Normal}(0, 10) \\
+\beta_1 & \sim \operatorname{Normal}(0, 10) \\
+\beta_2 & \sim \operatorname{Normal}(0, 10) \\
+\sigma  & \sim \operatorname{HalfCauchy}(0, 2.5).
+\end{align*}
 
 In brms, you can specify error on predictors with an `me()` statement in the form of `me(predictor, sd_predictor)` where `sd_predictor` is a vector in the data denoting the size of the measurement error, presumed to be in a standard-deviation metric.
 
@@ -645,8 +663,8 @@ Our statistical model follows the form
 
 \begin{align*}
 \text{kcal}_i           & \sim \operatorname{Normal}(\mu_i, \sigma) \\
-\mu_i                   & = \alpha + \beta_1 \text{neocortex}_i + \beta_2 \text{logmass}_i \\
-\text{neocortex}_i      & \sim \operatorname{Normal}(\nu, \sigma_\text{neocortex}) \\
+\mu_i                   & = \alpha + \beta_1 \color{blue}{\text{neocortex}_i} + \beta_2 \text{logmass}_i \\
+\color{blue}{\text{neocortex}_i} & \color{blue}\sim \color{blue}{\operatorname{Normal}(\nu, \sigma_\text{neocortex})} \\
 \alpha                  & \sim \operatorname{Normal}(0, 100) \\
 \beta_1                 & \sim \operatorname{Normal}(0, 10) \\
 \beta_2                 & \sim \operatorname{Normal}(0, 10) \\
@@ -1073,7 +1091,7 @@ Now are data are ready, we can express our first Bayesian meta-analysis with the
 \tau       & \sim \operatorname{HalfCauchy}(0, 1).
 \end{align*}
 
-The last two lines, of course, spell out our priors. In psychology, it's pretty rare to see Cohen's $d$-values greater than the absolute value of $\pm 1$. So in the absence of more specific domain knowledge--which I don't have--, it seems like $\operatorname{Normal}(0, 1)$ is a reasonable place to start. And just like McElreath used $\operatorname{HalfCauchy}(0, 1)$ as the default prior for the group-level standard deviations, [it makes sense to use it here](https://psyarxiv.com/7tbrm/) for our meta-analytic $\tau$ parameter [@williamsBayesianMetaAnalysisWeakly2018].
+The last two lines, of course, spell out our priors. In psychology, it's pretty rare to see Cohen's $d$-values greater than the absolute value of $\pm 1$. So in the absence of more specific domain knowledge--which I don't have--, it seems like $\operatorname{Normal}(0, 1)$ is a reasonable place to start. And just like McElreath used $\operatorname{HalfCauchy}(0, 1)$ as the default prior for the group-level standard deviations, [it makes sense to use it here](https://psyarxiv.com/7tbrm/) for our meta-analytic $\tau$ parameter [@williamsBayesianMetaanalysisWeakly2018].
 
 Here's the code for the first model.
 
@@ -1232,7 +1250,7 @@ That difference isn't as large I'd expect it to be. But then again, I'm no spank
 
 There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we've gone far enough to get you started.
 
-If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with frequentist meta-analyses via the [metafor package](https://CRAN.R-project.org/package=metafor) [@R-metafor, @viechtbauerMetafor2010]. You might also check out Williams, Rast, and Bürkner's [-@williamsBayesianMetaAnalysisWeakly2018] manuscript, [*Bayesian meta-analysis with weakly informative prior distributions*](https://psyarxiv.com/7tbrm/)  to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
+If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with frequentist meta-analyses via the [metafor package](https://CRAN.R-project.org/package=metafor) [@R-metafor; @viechtbauerMetafor2010]. You might also check out Williams, Rast, and Bürkner's [-@williamsBayesianMetaAnalysisWeakly2018] manuscript, [*Bayesian meta-analysis with weakly informative prior distributions*](https://psyarxiv.com/7tbrm/)  to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
 
 ## Session info {-}
 
@@ -1246,6 +1264,7 @@ rm(p_pancake, take_sample, sim_pancake, n_sim, d, color, dlist, inits, inits_lis
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
 ggplot2::theme_set(ggplot2::theme_grey())
+ggdark::invert_geom_defaults()
 bayesplot::color_scheme_set("blue")
 pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
 ```
