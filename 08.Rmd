@@ -186,7 +186,7 @@ post %>%
   mean_hdi(value, .width = .89)  # note our rare use of 89% intervals
 ```
 
-There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. Earlier versions of brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [-@vehtariRanknormalizationFoldingLocalization2019.] [paper](https://arxiv.org/abs/1903.08008?) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
+There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. Earlier versions of brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [-@vehtariRanknormalizationFoldingLocalization2019] [paper](https://arxiv.org/abs/1903.08008?) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
 
 > If you plan to report quantile estimates or posterior intervals, we strongly suggest assessing the convergence of the chains for these quantiles. In Section 4.3 we show that convergence of Markov chains is not uniform across the parameter space and propose diagnostics and effective sample sizes specifically for extreme quantiles. This is *different* from the standard ESS estimate (which we refer to as the "bulk-ESS"), which mainly assesses how well the centre of the distribution is resolved. Instead, these "tail-ESS" measures allow the user to estimate the MCSE for interval estimates. (p. 5, *emphasis* in the original)
 
@@ -241,6 +241,25 @@ post %>%
 Since `GGally::ggpairs()` returns a ggplot2 object, you can customize it as you please.
 
 ```{r, fig.width = 7, fig.height = 6, message = F, warning = F}
+my_upper <- function(data, mapping, ...) {
+  
+  # get the x and y data to use the other code
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  r  <- unname(cor.test(x, y)$estimate)
+  rt <- format(r, digits = 2)[1]
+  tt <- as.character(rt)
+  
+  # plot the cor value
+  ggally_text(
+    label = tt, 
+    mapping = aes(),
+    size = 4,
+    color = "grey20") +
+    theme_void()
+}
+
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
     geom_density(fill = "grey50")
@@ -254,14 +273,15 @@ my_lower <- function(data, mapping, ...) {
 post %>%
   select(b_Intercept:sigma) %>%
 
-  ggpairs(diag  = list(continuous = my_diag),
+  ggpairs(upper = list(continuous = my_upper),
+          diag  = list(continuous = my_diag),
           lower = list(continuous = my_lower)) +
   labs(subtitle = "My custom pairs plot") +
   theme_ipsum() +
   theme(strip.text = element_text(size = 8))
 ```
 
-For more ideas on customizing a `ggpairs()` plot, go [here](https://ggobi.github.io/ggally/#columns_and_mapping).
+For more ideas on customizing a `ggpairs()` plot, go [here](https://ggobi.github.io/ggally/articles/ggpairs.html).
 
 ### Using the samples.
 
@@ -347,7 +367,7 @@ mcmc_acf(post,
 
 That's just what we like to see--nice L-shaped autocorrelation plots. Those are the kinds of shapes you'd expect when you have reasonably large effective samples.
 
-Before we move on, there’s an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath’s trace plots include the warmup iterations. Ours did not. That’s why his x-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @marinGgmcmcAnalysisMCMC2016].
+Before we move on, there’s an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath’s trace plots include the warmup iterations. Ours did not. That’s why his x-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @fernandezGGMCMCAnalysisofMCMC2016].
 
 ```{r, message = F, warning = F}
 # install.packages("ggmcmc", dependencies = T)
