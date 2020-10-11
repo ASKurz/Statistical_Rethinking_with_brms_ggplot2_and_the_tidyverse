@@ -689,7 +689,7 @@ glimpse(ll)
 
 Because we used HMC, deviance is a distribution rather than a single number. That is, we have a deviance $D(q)$ value for each row, for each HMC iteration.
 
-```{r, fig.width = 3.75, fig.height = 2.5, warning = F, message = F}
+```{r, fig.width = 4, fig.height = 2.5, warning = F, message = F}
 library(tidybayes)
 
 ll %>%
@@ -786,7 +786,7 @@ dev_text <-
   dev_tibble %>% 
   filter(n_par > 1.5, 
          n_par < 2.5) %>% 
-  mutate(n_par = ifelse(sample == "in", n_par - .2, n_par + .28))
+  mutate(n_par = ifelse(sample == "in", n_par - .25, n_par + .33))
   
 # the plot
 dev_tibble %>% 
@@ -1278,7 +1278,7 @@ library(brms)
 
 We're ready to fit the competing `kcal.per.g` models. Note our use of `update()` in the last two models.
 
-```{r b6.11}
+```{r b6.11, warning = F, message = F}
 inits <- list(Intercept = mean(d$kcal.per.g),
               sigma     = sd(d$kcal.per.g))
 
