@@ -1221,12 +1221,11 @@ my_upper <- function(data, mapping, ...) {
   y <- eval_data_col(data, mapping$y)
   
   r  <- unname(cor.test(x, y)$estimate)
-  rt <- format(r, digits = 2)[1]
-  tt <- as.character(rt)
+  rl <- formatC(r, format = 'f', digits = 2)
   
   # plot the cor value
   ggally_text(
-    label = tt, 
+    label = rl, 
     mapping = aes(),
     size = 4,
     color = wes_palette("Moonrise2")[4], 
