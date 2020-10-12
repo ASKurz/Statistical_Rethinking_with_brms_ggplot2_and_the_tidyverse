@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Statistical rethinking with brms, ggplot2, and the tidyverse</title>
+  <title>References | Statistical rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Statistical rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:title" content="References | Statistical rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Statistical rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:title" content="References | Statistical rethinking with brms, ggplot2, and the tidyverse" />
   <meta name="twitter:site" content="@SolomonKurz" />
   <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="horoscopes-insights.html"/>
 
-<link rel="next" href="the-golem-of-prague.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -443,262 +443,406 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title"><em>Statistical rethinking</em> with brms, ggplot2, and the tidyverse</h1>
-<h2 class="subtitle"><em>version 1.2.0</em></h2>
-<p class="author"><em>A Solomon Kurz</em></p>
-<p class="date"><em>2020-10-11</em></p>
-</div>
-<div id="this-is-a-love-letter" class="section level1 unnumbered">
-<h1>This is a love letter</h1>
-<p>I love McElreath’s <span class="citation">(<a href="#ref-mcelreathStatisticalRethinkingBayesian2015" role="doc-biblioref">2015</a>)</span> <a href="https://xcelab.net/rm/statistical-rethinking/"><em>Statistical rethinking</em> text</a>. It’s the entry-level textbook for applied researchers I spent years looking for. McElreath’s <a href="https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists">freely-available lectures</a> on the book are really great, too.</p>
-<p>However, I prefer using Bürkner’s <a href="https://github.com/paul-buerkner/brms">brms package</a> <span class="citation">(Bürkner, <a href="#ref-burknerBrmsPackageBayesian2017" role="doc-biblioref">2017</a>, <a href="#ref-burknerAdvancedBayesianMultilevel2018" role="doc-biblioref">2018</a>, <a href="#ref-R-brms" role="doc-biblioref">2020</a><a href="#ref-R-brms" role="doc-biblioref">a</a>)</span> when doing Bayesian regression in R. <a href="https://statmodeling.stat.columbia.edu/2017/01/10/r-packages-interfacing-stan-brms/">It’s just spectacular</a>. I also prefer plotting with <a href="https://ggplot2.tidyverse.org/">ggplot2</a> <span class="citation">(Wickham, <a href="#ref-wickhamGgplot2ElegantGraphics2016" role="doc-biblioref">2016</a>; Wickham, Chang, et al., <a href="#ref-R-ggplot2" role="doc-biblioref">2020</a>)</span>, and coding with functions and principles from the <a href="https://www.tidyverse.org/">tidyverse</a> <span class="citation">(Wickham, <a href="#ref-R-tidyverse" role="doc-biblioref">2019</a>; Wickham, Averick, et al., <a href="#ref-wickhamWelcomeTidyverse2019" role="doc-biblioref">2019</a>)</span>.</p>
-<p>This project is an attempt to reexpress the code in McElreath’s textbook. His models are re-fit with brms, the figures are reproduced or reimagined with ggplot2, and the general data wrangling code now predominantly follows the tidyverse style.</p>
-<div id="why-this" class="section level2 unnumbered">
-<h2>Why this?</h2>
-<p>I’m not a statistician and I have no formal background in computer science. Though I benefited from a suite of statistics courses in grad school, a large portion of my training has been outside of the classroom, working with messy real-world data, and searching online for help. One of the great resources I happened on was <a href="https://stats.idre.ucla.edu">idre, the UCLA Institute for Digital Education</a>, which offers an online portfolio of <a href="https://stats.idre.ucla.edu/other/examples/">richly annotated textbook examples</a>. Their online tutorials are among the earliest inspirations for this project. We need more resources like them.</p>
-<p>With that in mind, one of the strengths of McElreath’s text is its thorough integration with the <a href="https://github.com/rmcelreath/rethinking">rethinking package</a> <span class="citation">(McElreath, <a href="#ref-R-rethinking" role="doc-biblioref">2020</a><a href="#ref-R-rethinking" role="doc-biblioref">a</a>)</span>. The rethinking package is a part of the R ecosystem, which is great because R is free and open source <span class="citation">(R Core Team, <a href="#ref-R-base" role="doc-biblioref">2020</a>)</span>. McElreath has made the source code for rethinking <a href="https://github.com/rmcelreath/rethinking">publicly available</a>, too. Since he completed his text, <a href="https://www.youtube.com/watch?v=pKZLJPrZLhU&amp;t=29073s&amp;frags=pl%2Cwn">many other packages have been developed</a> to help users of the R ecosystem interface with <a href="https://mc-stan.org/">Stan</a> <span class="citation">(Carpenter et al., <a href="#ref-carpenterStanProbabilisticProgramming2017" role="doc-biblioref">2017</a>)</span>. Of those alternative packages, I think Bürkner’s <a href="https://github.com/paul-buerkner/brms">brms</a> is the best for general-purpose Bayesian data analysis. Its flexible, uses reasonably-approachable syntax, has sensible defaults, and offers a vast array of post-processing convenience functions. And brms has only gotten <a href="https://github.com/paul-buerkner/brms/blob/master/NEWS.md">better over time</a>. Yet at the time I released the first version of this ebook, there were no textbooks on the market that highlight the brms package, which seemed like an evil worth correcting.</p>
-<p>In addition, McElreath’s data wrangling code is based in the base R style and he made most of his figures with base R plots. Though there are benefits to sticking close to base R functions (e.g., less dependencies leading to a lower likelihood that your code will break in the future), there are downsides. <a href="http://varianceexplained.org/r/teach-tidyverse/">For beginners, base R functions can be difficult both to learn and to read</a>. Happily, in recent years Hadley Wickham and others have been developing a group of packages collectively called the <a href="https://www.tidyverse.org/">tidyverse</a>. These tidyverse packages, such as <a href="https://dplyr.tidyverse.org">dplyr</a> <span class="citation">(Wickham, François, et al., <a href="#ref-R-dplyr" role="doc-biblioref">2020</a>)</span> and <a href="https://purrr.tidyverse.org">purrr</a> <span class="citation">(Henry &amp; Wickham, <a href="#ref-R-purrr" role="doc-biblioref">2020</a>)</span>, were developed according to an <a href="https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html">underlying philosophy</a> and they are designed to work together coherently and seamlessly. Though <a href="https://github.com/matloff/TidyverseSkeptic">not all</a> within the R community share this opinion, I am among those who think the tidyverse style of coding is generally <a href="http://varianceexplained.org/r/teach-tidyverse/">easier to learn and sufficiently powerful</a> that these packages can accommodate the bulk of your wrangling data needs. I also find tidyverse-style syntax easier to read. And of course, the widely-used <a href="https://ggplot2.tidyverse.org">ggplot2 package</a> is part of the tidyverse, too.</p>
-<p>To be clear, students can get a great education in both Bayesian statistics and programming in R with McElreath’s text just the way it is. Just go slow, work through all the examples, and read the text closely. It’s a pedagogical boon. I could not have done better or even closely so. But what I can offer is a parallel introduction on how to fit the statistical models with the ever-improving and already-quite-impressive brms package. I can throw in examples of how to perform other operations according to the ethic of the tidyverse. And I can also offer glimpses of some of the other great packages in the R + Stan ecosystem, such as <a href="https://github.com/stan-dev/loo">loo</a> <span class="citation">(Vehtari, Gabry, et al., <a href="#ref-R-loo" role="doc-biblioref">2019</a>; Vehtari et al., <a href="#ref-vehtariPracticalBayesianModel2017" role="doc-biblioref">2017</a>; Yao et al., <a href="#ref-yaoUsingStackingAverage2018" role="doc-biblioref">2018</a>)</span>, <a href="https://github.com/stan-dev/bayesplot">bayesplot</a> <span class="citation">(Gabry et al., <a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>; Gabry &amp; Mahr, <a href="#ref-R-bayesplot" role="doc-biblioref">2019</a>)</span>, and <a href="https://github.com/mjskay/tidybayes">tidybayes</a> <span class="citation">(Kay, <a href="#ref-R-tidybayes" role="doc-biblioref">2020</a><a href="#ref-R-tidybayes" role="doc-biblioref">b</a>)</span>.</p>
-</div>
-<div id="my-assumptions-about-you" class="section level2 unnumbered">
-<h2>My assumptions about you</h2>
-<p>If you’re looking at this project, I’m guessing you’re either a graduate student, a post-graduate academic or a researcher of some sort, which suggests you have at least a 101-level foundation in statistics. If you’re rusty, consider checking out the free text books by <a href="https://bookdown.org/roback/bookdown-bysh/">Legler and Roback</a> <span class="citation">(<a href="#ref-leglerBroadeningYourStatistical2019" role="doc-biblioref">2019</a>)</span> or <a href="https://learningstatisticswithr.com/">Navarro</a> <span class="citation">(<a href="#ref-navarroLearningStatistics2019" role="doc-biblioref">2019</a>)</span> before diving into <em>Statistical rethinking</em>. I’m also assuming you understand the rudiments of R and have at least a vague idea about what the tidyverse is. If you’re totally new to R, consider starting with Peng’s <span class="citation">(<a href="#ref-pengProgrammingDataScience2019" role="doc-biblioref">2019</a>)</span> <a href="https://bookdown.org/rdpeng/rprogdatascience/"><em>R programming for data science</em></a>. For an introduction to the tidyvese-style of data analysis, the best source I’ve found is Grolemund and Wickham’s <span class="citation">(<a href="#ref-grolemundDataScience2017" role="doc-biblioref">2017</a>)</span> <a href="http://r4ds.had.co.nz"><em>R for data science</em></a> (<em>R4DS</em>), which I extensively link to throughout this project.</p>
-<p>That said, you do not need to be totally fluent in statistics or R. Otherwise why would you need this project, anyway? IMO, the most important things are curiosity, a willingness to try, and persistent tinkering. I love this stuff. Hopefully you will, too.</p>
-</div>
-<div id="how-to-use-and-understand-this-project" class="section level2 unnumbered">
-<h2>How to use and understand this project</h2>
-<p>This project is not meant to stand alone. It’s a supplement to the first edition of McElreath’s text. I follow the structure of his text, chapter by chapter, translating his analyses into brms and tidyverse code. However, some of the sections in the text are composed entirely of equations and prose, leaving us nothing to translate. When we run into those sections, the corresponding sections in this project will sometimes be blank or omitted, though I do highlight some of the important points in quotes and prose of my own. So I imagine students might reference this project as they progress through McElreath’s text. I also imagine working data analysts might use this project in conjunction with the text as they flip to the specific sections that seem relevant to solving their data challenges.</p>
-<p>I reproduce the bulk of the figures in the text, too. The plots in the first few chapters are the closest to those in the text. However, I’m passionate about data visualization and like to play around with <a href="https://github.com/EmilHvitfeldt/r-color-palettes">color palettes</a>, formatting templates, and other conventions quite a bit. As a result, the plots in each chapter have their own look and feel. For more on some of these topics, check out chapters <a href="https://r4ds.had.co.nz/data-visualisation.html">3</a>, <a href="https://r4ds.had.co.nz/exploratory-data-analysis.html">7</a>, and <a href="https://r4ds.had.co.nz/graphics-for-communication.html">28</a> in <em>R4DS</em>, Healy’s <span class="citation">(<a href="#ref-healyDataVisualization2018" role="doc-biblioref">2018</a>)</span> <a href="https://socviz.co"><em>Data visualization: A practical introduction</em></a>, Wilke’s <span class="citation">(<a href="#ref-wilkeFundamentalsDataVisualization2019" role="doc-biblioref">2019</a>)</span> <a href="https://serialmentor.com/dataviz/"><em>Fundamentals of data visualization</em></a> or Wickham’s <span class="citation">(<a href="#ref-wickhamGgplot2ElegantGraphics2016" role="doc-biblioref">2016</a>)</span> <a href="https://ggplot2-book.org/"><em>ggplot2: Elegant graphics for data analysis</em></a>.</p>
-<p>In this project, I use a handful of formatting conventions gleaned from <a href="https://r4ds.had.co.nz/introduction.html#running-r-code"><em>R4DS</em></a>, <a href="https://style.tidyverse.org/"><em>The tidyverse style guide</em></a> <span class="citation">(Wickham, <a href="#ref-wickhamTidyverseStyleGuide2020" role="doc-biblioref">2020</a>)</span>, and <a href="https://bookdown.org/yihui/rmarkdown/software-info.html"><em>R markdown: The definitive guide</em></a> <span class="citation">(Xie et al., <a href="#ref-xieMarkdownDefinitiveGuide2020" role="doc-biblioref">2020</a>)</span>.</p>
-<ul>
-<li>R code blocks and their output appear in a gray background. E.g.,</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="dv">2</span> <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">==</span><span class="st"> </span><span class="dv">5</span></span></code></pre></div>
-<pre><code>## [1] FALSE</code></pre>
-<ul>
-<li>Functions are in a typewriter font and followed by parentheses, all atop a gray background (e.g., <code>brm()</code>).</li>
-<li>When I want to make explicit the package a given function comes from, I insert the double-colon operator <code>::</code> between the package name and the function (e.g., <code>tidybayes::mode_hdi()</code>).</li>
-<li>R objects, such as data or function arguments, are in typewriter font atop gray backgrounds (e.g., <code>chimpanzees</code>, <code>.width = .5</code>).</li>
-<li>You can detect hyperlinks by their typical <a href="https://www.youtube.com/watch?v=40o0_0XTB6E&amp;t=15s&amp;frags=pl%2Cwn">blue-colored font</a>.</li>
-<li>In the text, McElreath indexed his models with names like <code>m4.1</code> (i.e., the first model of Chapter 4). I primarily followed that convention, but replaced the <code>m</code> with a <code>b</code> to stand for the brms package.</li>
-</ul>
-</div>
-<div id="you-can-do-this-too" class="section level2 unnumbered">
-<h2>You can do this, too</h2>
-<p>This project is powered by Yihui Xie’s <span class="citation">(<a href="#ref-R-bookdown" role="doc-biblioref">2020</a>)</span> <a href="https://bookdown.org">bookdown package</a>, which makes it easy to turn R markdown files into HTML, PDF, and EPUB. Go <a href="https://bookdown.org/yihui/bookdown/">here</a> to learn more about bookdown. While you’re at it, also check out Xie, Allaire, and Grolemund’s <a href="https://bookdown.org/yihui/rmarkdown/"><em>R markdown: The definitive guide</em></a>. And if you’re unacquainted with GitHub, check out Jenny Bryan’s <span class="citation">(<a href="#ref-bryanHappyGitGitHub2020" role="doc-biblioref">2020</a>)</span> <a href="https://happygitwithr.com/"><em>Happy Git and GitHub for the useR</em></a>. I’ve even <a href="https://solomonkurz.netlify.com/post/how-bookdown/">blogged</a> about what it was like putting together the first version of this project.</p>
-<p>The source code of the project is available on GitHub at <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse">https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse</a>.</p>
-</div>
-<div id="we-have-updates" class="section level2 unnumbered">
-<h2>We have updates</h2>
-<p>For a brief rundown of the version history, we have:</p>
-<div id="version-0.9.0." class="section level3 unnumbered">
-<h3>Version 0.9.0.</h3>
-<p>I released the initial 0.9.0 version of this project in September 26, 2018. It was a full first draft and set the stage for all others.</p>
-</div>
-<div id="version-1.0.0." class="section level3 unnumbered">
-<h3>Version 1.0.0.</h3>
-<p>In April 19, 2019 came the 1.0.0 version. Some of the major changes were:</p>
-<ul>
-<li>All models were refit with brms, 2.8.0.</li>
-<li>Adopting the <code>seed</code> argument within the <code>brm()</code> function made the model results more reproducible.</li>
-<li>The <a href="https://github.com/stan-dev/loo">loo package</a> was updated. As a consequence, our workflow for the WAIC and LOO changed, too.</li>
-<li>I improved the brms alternative to McElreath’s <code>coeftab()</code> function.</li>
-<li>I made better use of the tidyverse, especially some of the <a href="https://purrr.tidyverse.org/">purrr</a> functions.</li>
-<li>Particularly in the later chapters, there’s a
-greater emphasis on functions from the <a href="https://mjskay.github.io/tidybayes/">tidybayes package</a>.</li>
-<li>Chapter <a href="monsters-and-mixtures.html#beta-binomial.">11.3.1</a> contains the updated brms 2.8.0 workflow for making custom distributions, using the beta-binomial model as the example.</li>
-<li>Chapter 12 received a new <a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work">bonus section</a> contrasting different methods for working with multilevel posteriors.</li>
-<li>Chapter 14 received a new <a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis">bonus section</a> introducing Bayesian meta-analysis and linking it to multilevel and measurement-error models.</li>
-<li>With the help of others within the community, I corrected many typos and streamlined some of the code (e.g., <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/21">dropped an unnecessary use of the <code>mi()</code> function in Section 14.2.1</a>)</li>
-<li>And in some cases, I corrected sections that were just plain wrong (e.g., some of my initial attempts in section 3.3 were incorrect).</li>
-</ul>
-</div>
-<div id="version-1.0.1." class="section level3 unnumbered">
-<h3>Version 1.0.1.</h3>
-<p>In May 5, 2019 came the 1.0.1 version, which finally added a <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/blob/master/recoding_Statistical_Rethinking_1.0.1_PDF_version.pdf">PDF version</a> of the book. Other noteworthy changes included:</p>
-<ul>
-<li>Major revisions to the LaTeX syntax underlying many of the in-text equations (e.g., dropping the “eqnarray” environment for "align*")</li>
-<li>Adjusting some of the image syntax</li>
-<li>Updating the reference for the Bayesian <span class="math inline">\(R^2\)</span> <span class="citation">(Gelman et al., <a href="#ref-gelmanRsquaredBayesianRegression2019" role="doc-biblioref">2019</a>)</span></li>
-</ul>
-</div>
-<div id="version-1.1.0." class="section level3 unnumbered">
-<h3>Version 1.1.0.</h3>
-<p>In March 1, 2020 came the 1.1.0 version. Noteworthy changes were:</p>
-<ul>
-<li>substantial expansions to Sections <a href="counting-and-classification.html#multinomial.">10.3.1</a> (multinomial regression) and <a href="monsters-and-mixtures.html#negative-binomial-or-gamma-poisson.">11.3.2</a> (negative binomial regression),</li>
-<li>the addition of a new section in Chapter 15 (<a href="horoscopes-insights.html#code-in-public">15.9</a>) encouraging others to code in public,</li>
-<li>refitting all models with the current official version of brms, version 2.12.0,</li>
-<li>discussions (<a href="markov-chain-monte-carlo.html#estimation.">Section 8.3.2</a>) on the new <code>Bulk_ESS</code> and <code>Tail_ESS</code> summaries of HMC effective sample size <span class="citation">(Vehtari, Gelman, et al., <a href="#ref-vehtariRanknormalizationFoldingLocalization2019" role="doc-biblioref">2019</a>)</span>,</li>
-<li>saving all fits as external files in the new <a href="https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits">GitHub fits folder</a>, primarily with the <code>file</code> argument,</li>
-<li>extensive use of the <a href="https://patchwork.data-imaginist.com/">patchwork package</a> <span class="citation">(Pedersen, <a href="#ref-R-patchwork" role="doc-biblioref">2019</a>)</span> for combining ggplots,</li>
-<li>improving/updating some of the tidyverse code (e.g., using <code>tidyr::crossing()</code>),</li>
-<li>updates to the <code>brms::custom_family()</code>-related code in <a href="monsters-and-mixtures.html#beta-binomial.">Section 11.3.1</a> to match brms 2.11.0 updates,</li>
-<li>replacing the depreciated <code>brms::marginal_effects()</code> with <code>brms::conditional_effects()</code> (see <a href="https://github.com/paul-buerkner/brms/issues/735">issue #735</a>),</li>
-<li>replacing the depreciated <code>brms::stanplot()</code> with <code>brms::mcmc_plot()</code>,</li>
-<li>increased the plot resolution with <code>fig.retina = 2.5</code>,</li>
-<li>refreshed hyperlinks, and</li>
-<li>various typo corrections.</li>
-</ul>
-</div>
-<div id="version-1.2.0." class="section level3 unnumbered">
-<h3>Version 1.2.0.</h3>
-<p>Welcome to version 1.2.0! Noteworthy changes include:</p>
-<ul>
-<li>the correct solution to the first multinomial model in <a href="counting-and-classification.html#explicit-multinomial-models.">Section 10.16</a>;</li>
-<li>a coherent workflow for the Gaussian process model from <a href="adventures-in-covariance.html#example-spatial-autocorrelation-in-oceanic-tools.">Section 13.4</a>;</li>
-<li>corrections to some of the post-processing workflows for the measurement-error models in <a href="missing-data-and-other-opportunities.html#measurement-error">Section 14.1</a>;</li>
-<li>refitting all models with the current official version of brms, version 2.13.5;</li>
-<li>improved in-text citations and reference sections using <a href="http://www.bibtex.org/">BibTex</a> <span class="citation">(<em>BibTeX</em>, <a href="#ref-BibTeX2020" role="doc-biblioref">2020</a>)</span>, <a href="https://github.com/retorquere/zotero-better-bibtex">Better BibTeX</a> <span class="citation">(<em>Better BibTeX for Zotero</em>, <a href="#ref-BetterBibTeXZotero2020" role="doc-biblioref">2020</a>)</span>, and <a href="https://www.zotero.org/">zotero</a> <span class="citation">(<em>Zotero | Your Personal Research Assistant</em>, <a href="#ref-ZoteroYourPersonal2020" role="doc-biblioref">2020</a>)</span>; and</li>
-<li>minor prose, hyperlink, and code edits throughout.</li>
-</ul>
-</div>
-</div>
-<div id="is-this-material-obsolete" class="section level2 unnumbered">
-<h2>Is this material obsolete?</h2>
-<p>The first edition of McElreath’s text now has a successor, <em>Statistical rethinking: A Bayesian course with examples in R and Stan: Second Edition</em> <span class="citation">(McElreath, <a href="#ref-mcelreathStatisticalRethinkingBayesian2020" role="doc-biblioref">2020</a><a href="#ref-mcelreathStatisticalRethinkingBayesian2020" role="doc-biblioref">b</a>)</span>. Though the second edition kept a lot of the content from the first, it is a substantial revision and expansion. The book is longer and wildly ambitious in its scope. To be blunt, I believe McElreath moved to quickly in his revision and I suspect many applied readers might need to reference the first edition from time to time to time just to keep up with the content of the second. If McElreath ever releases a third edition, I hope he finds a happy compromise between the first two. So in the meantime, I believe there’s a place for both first and second editions of his text. Accordingly, I believe this ebook should not be considered outdated relative to my <a href="https://bookdown.org/content/4857/">ebook</a> translation of the second edition <span class="citation">(Kurz, <a href="#ref-kurzStatisticalRethinkingSecondEd2020" role="doc-biblioref">2020</a><a href="#ref-kurzStatisticalRethinkingSecondEd2020" role="doc-biblioref">b</a>)</span>. Use whatever you find helpful.</p>
-</div>
-<div id="thank-yous-are-in-order" class="section level2 unnumbered">
-<h2>Thank-you’s are in order</h2>
-<p>Before we move on, I’d like to thank the following for their helpful contributions:</p>
-<ul>
-<li>Shaan Amin (<a href="https://github.com/Shaan-Amin">@Shaan-Amin</a>),</li>
-<li>Louis Bliard (<a href="https://github.com/lbiard">@lbiard</a>),</li>
-<li>Paul-Christian Bürkner (<a href="https://github.com/paul-buerkner">@paul-buerkner</a>),</li>
-<li>Joseph V. Casillas (<a href="https://github.com/jvcasillas">@jvcasillas</a>),</li>
-<li>Andrew Collier (<a href="https://github.com/datawookie">@datawookie</a>),</li>
-<li>Marco Colombo (<a href="https://github.com/mcol">@mcol</a>),</li>
-<li>Jeff Hammerbacher (<a href="https://github.com/hammer">@hammer</a>),</li>
-<li>Matthew Kay (<a href="https://github.com/mjskay">@mjskay</a>),</li>
-<li>Katrin Leinweber (<a href="https://github.com/katrinleinweber">@katrinleinweber</a>),</li>
-<li>TJ Mahr (<a href="https://github.com/tjmahr">@tjmahr</a>),</li>
-<li>Federico Marini (<a href="https://github.com/federicomarini">@federicomarini</a>),</li>
-<li>Stijn Masschelein (<a href="https://github.com/stijnmasschelein">@stijnmasschelein</a>),</li>
-<li>JungSu Oh (<a href="https://github.com/js-oh">@js-oh</a>),</li>
-<li>Colin Quirk (<a href="https://github.com/colinquirk">@colinquirk</a>),</li>
-<li>Rishi Sadhir (<a href="https://github.com/RishiSadhir">@RishiSadhir</a>),</li>
-<li>Jon Spring (<a href="https://github.com/jonspring">@jonspring</a>),</li>
-<li>Phil Straforelli (<a href="https://github.com/pstraforelli">@pstraforelli</a>),</li>
-<li>Richard Torkar (<a href="https://github.com/torkar">@torkar</a>),</li>
-<li>Aki Vehtari (<a href="https://github.com/avehtari">@avehtari</a>), and</li>
-<li>Matti Vuorre (<a href="https://github.com/mvuorre">@mvuorre</a>).</li>
-</ul>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
 
-</div>
-</div>
-<h3>References</h3>
 <div id="refs" class="references">
-<div id="ref-BetterBibTeXZotero2020">
+<div>
+<p>Agresti, A. (2015). <em>Foundations of linear and generalized linear models</em>. John Wiley &amp; Sons. <a href="https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034">https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034</a></p>
+</div>
+<div>
+<p>Arnold, J. B. (2019). <em>ggthemes: Extra themes, scales and geoms for ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggthemes">https://CRAN.R-project.org/package=ggthemes</a></p>
+</div>
+<div>
+<p>Attali, D., &amp; Baker, C. (2019). <em>ggExtra: Add marginal histograms to ’ggplot2’, and more ’ggplot2’ enhancements</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggExtra">https://CRAN.R-project.org/package=ggExtra</a></p>
+</div>
+<div>
+<p>Barr, D. J., Levy, R., Scheepers, C., &amp; Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. <em>Journal of Memory and Language</em>, <em>68</em>(3), 255–278. <a href="https://doi.org/10.1016/j.jml.2012.11.001">https://doi.org/10.1016/j.jml.2012.11.001</a></p>
+</div>
+<div>
+<p>Bates, D., Maechler, M., Bolker, B., &amp; Walker, S. (2020). <em>lme4: Linear mixed-effects models using Eigen’ and S4</em>. <a href="https://CRAN.R-project.org/package=lme4">https://CRAN.R-project.org/package=lme4</a></p>
+</div>
+<div>
+<p>Bates, D., Mächler, M., Bolker, B., &amp; Walker, S. (2015). Fitting linear mixed-effects models using lme4. <em>Journal of Statistical Software</em>, <em>67</em>(1), 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a></p>
+</div>
+<div>
+<p>Betancourt, M. (2018). <em>Bayes sparse regression</em>. <a href="https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html">https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html</a></p>
+</div>
+<div>
 <p><em>Better BibTeX for zotero :: Better BibTeX for zotero</em>. (2020). <a href="https://retorque.re/zotero-better-bibtex/">https://retorque.re/zotero-better-bibtex/</a></p>
 </div>
-<div id="ref-BibTeX2020">
+<div>
 <p><em>BibTeX</em>. (2020). <a href="http://www.bibtex.org/">http://www.bibtex.org/</a></p>
 </div>
-<div id="ref-bryanHappyGitGitHub2020">
+<div>
+<p>Bickel, P. J., Hammel, E. A., &amp; O’Connell, J. W. (1975). Sex bias in graduate admissions: Data from Berkeley. <em>Science</em>, <em>187</em>(4175), 398–404. <a href="https://doi.org/10.1126/science.187.4175.398">https://doi.org/10.1126/science.187.4175.398</a></p>
+</div>
+<div>
+<p>Borges, JL. (1941). El jardin de senderos que se bifurcan. Buenos Aires: Sur. Translated by D. A. Yates (1964). In <em>Labyrinths: Selected Stories &amp; Other Writings</em> (pp. 19–29). New Directions.</p>
+</div>
+<div>
+<p>Brilleman, S., Crowther, M., Moreno-Betancur, M., Buros Novik, J., &amp; Wolfe, R. (2018). <em>Joint longitudinal and time-to-event models via Stan.</em> <a href="https://github.com/stan-dev/stancon_talks/">https://github.com/stan-dev/stancon_talks/</a></p>
+</div>
+<div>
 <p>Bryan, J., the STAT 545 TAs, &amp; Hester, J. (2020). <em>Happy Git and GitHub for the useR</em>. <a href="https://happygitwithr.com">https://happygitwithr.com</a></p>
 </div>
-<div id="ref-burknerBrmsPackageBayesian2017">
+<div>
 <p>Bürkner, P.-C. (2017). brms: An R package for Bayesian multilevel models using Stan. <em>Journal of Statistical Software</em>, <em>80</em>(1), 1–28. <a href="https://doi.org/10.18637/jss.v080.i01">https://doi.org/10.18637/jss.v080.i01</a></p>
 </div>
-<div id="ref-burknerAdvancedBayesianMultilevel2018">
+<div>
 <p>Bürkner, P.-C. (2018). Advanced Bayesian multilevel modeling with the R package brms. <em>The R Journal</em>, <em>10</em>(1), 395–411. <a href="https://doi.org/10.32614/RJ-2018-017">https://doi.org/10.32614/RJ-2018-017</a></p>
 </div>
-<div id="ref-R-brms">
+<div>
 <p>Bürkner, P.-C. (2020a). <em>brms: Bayesian regression models using ’Stan’</em>. <a href="https://CRAN.R-project.org/package=brms">https://CRAN.R-project.org/package=brms</a></p>
 </div>
-<div id="ref-carpenterStanProbabilisticProgramming2017">
+<div>
+<p>Bürkner, P.-C. (2020b). <em>brms reference manual, Version 2.13.5</em>. <a href="https://CRAN.R-project.org/package=brms/brms.pdf">https://CRAN.R-project.org/package=brms/brms.pdf</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020c). <em>Handle missing values with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html">https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020d). <em>Parameterization of response distributions in brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_families.html">https://CRAN.R-project.org/package=brms/vignettes/brms_families.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020e). <em>Define custom response distributions with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html">https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020f). <em>Estimating distributional models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html">https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020g). <em>Estimating multivariate models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html">https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020h). <em>Estimating non-linear models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html">https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C. (2020i). <em>Estimating phylogenetic multilevel models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html">https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C., Gabry, J., Kay, M., &amp; Vehtari, A. (2020). <em>posterior: Tools for working with posterior distributions</em>. <a href="https://mc-stan.org/posterior">https://mc-stan.org/posterior</a></p>
+</div>
+<div>
+<p>Bürkner, P.-C., &amp; Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. <em>Advances in Methods and Practices in Psychological Science</em>, <em>2</em>(1), 77–101. <a href="https://doi.org/10.1177/2515245918823199">https://doi.org/10.1177/2515245918823199</a></p>
+</div>
+<div>
 <p>Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., Brubaker, M., Guo, J., Li, P., &amp; Riddell, A. (2017). Stan: A probabilistic programming language. <em>Journal of Statistical Software</em>, <em>76</em>(1). <a href="https://doi.org/10.18637/jss.v076.i01">https://doi.org/10.18637/jss.v076.i01</a></p>
 </div>
-<div id="ref-R-bayesplot">
+<div>
+<p>Carvalho, C. M., Polson, N. G., &amp; Scott, J. G. (2009). Handling sparsity via the horseshoe. <em>Artificial Intelligence and Statistics</em>, 73–80. <a href="http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf">http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf</a></p>
+</div>
+<div>
+<p>Casella, G., &amp; George, E. I. (1992). Explaining the Gibbs sampler. <em>The American Statistician</em>, <em>46</em>(3), 167–174. <a href="https://doi.org/10.1080/00031305.1992.10475878">https://doi.org/10.1080/00031305.1992.10475878</a></p>
+</div>
+<div>
+<p>Clarke, E., &amp; Sherrill-Mix, S. (2017). <em>ggbeeswarm: Categorical scatter (violin point) plots</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggbeeswarm">https://CRAN.R-project.org/package=ggbeeswarm</a></p>
+</div>
+<div>
+<p>Cushman, F., Young, L., &amp; Hauser, M. (2006). The role of conscious reasoning and intuition in moral judgment: Testing three principles of harm. <em>Psychological Science</em>, <em>17</em>(12), 1082–1089. <a href="https://doi.org/10.1111/j.1467-9280.2006.01834.x">https://doi.org/10.1111/j.1467-9280.2006.01834.x</a></p>
+</div>
+<div>
+<p>Efron, B., &amp; Morris, C. (1977). Stein’s paradox in statistics. <em>Scientific American</em>, <em>236</em>(5), 119–127. <a href="https://doi.org/10.1038/scientificamerican0577-119">https://doi.org/10.1038/scientificamerican0577-119</a></p>
+</div>
+<div>
+<p>Enders, C. K. (2010). <em>Applied missing data analysis</em>. Guilford press. <a href="http://www.appliedmissingdata.com/">http://www.appliedmissingdata.com/</a></p>
+</div>
+<div>
+<p>Fernández i Marín, X. (2016). ggmcmc: Analysis of MCMC samples and Bayesian inference. <em>Journal of Statistical Software</em>, <em>70</em>(9), 1–20. <a href="https://doi.org/10.18637/jss.v070.i09">https://doi.org/10.18637/jss.v070.i09</a></p>
+</div>
+<div>
+<p>Fernández i Marín, X. (2020). <em>ggmcmc: Tools for analyzing MCMC simulations from Bayesian inference</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggmcmc">https://CRAN.R-project.org/package=ggmcmc</a></p>
+</div>
+<div>
+<p>Gabry, J. (2020a). <em>loo reference manual, Version 2.3.1</em>. <a href="https://CRAN.R-project.org/package=loo/loo.pdf">https://CRAN.R-project.org/package=loo/loo.pdf</a></p>
+</div>
+<div>
+<p>Gabry, J. (2020b). <em>Plotting MCMC draws using the bayesplot package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a></p>
+</div>
+<div>
+<p>Gabry, J., &amp; Goodrich, B. (2020). <em>rstanarm: Bayesian applied regression modeling via stan</em> [Manual]. <a href="https://CRAN.R-project.org/package=rstanarm">https://CRAN.R-project.org/package=rstanarm</a></p>
+</div>
+<div>
 <p>Gabry, J., &amp; Mahr, T. (2019). <em>bayesplot: Plotting for Bayesian models</em>. <a href="https://CRAN.R-project.org/package=bayesplot">https://CRAN.R-project.org/package=bayesplot</a></p>
 </div>
-<div id="ref-gabry2019visualization">
+<div>
+<p>Gabry, J., &amp; Modrák, M. (2020). <em>Visual MCMC diagnostics using the bayesplot package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a></p>
+</div>
+<div>
 <p>Gabry, J., Simpson, D., Vehtari, A., Betancourt, M., &amp; Gelman, A. (2019). Visualization in Bayesian workflow. <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em>, <em>182</em>(2), 389–402. <a href="https://doi.org/10.1111/rssa.12378">https://doi.org/10.1111/rssa.12378</a></p>
 </div>
-<div id="ref-gelmanRsquaredBayesianRegression2019">
+<div>
+<p>Garnier, S. (2018). <em>viridis: Default color maps from ’matplotlib’</em> [Manual]. <a href="https://CRAN.R-project.org/package=viridis">https://CRAN.R-project.org/package=viridis</a></p>
+</div>
+<div>
+<p>Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., &amp; Rubin, D. B. (2013). <em>Bayesian data analysis</em> (Third Edition). CRC press. <a href="https://stat.columbia.edu/~gelman/book/">https://stat.columbia.edu/~gelman/book/</a></p>
+</div>
+<div>
 <p>Gelman, A., Goodrich, B., Gabry, J., &amp; Vehtari, A. (2019). R-squared for Bayesian regression models. <em>The American Statistician</em>, <em>73</em>(3), 307–309. <a href="https://doi.org/10.1080/00031305.2018.1549100">https://doi.org/10.1080/00031305.2018.1549100</a></p>
 </div>
-<div id="ref-grolemundDataScience2017">
+<div>
+<p>Gelman, A., &amp; Loken, E. (2013). <em>The garden of forking paths: Why multiple comparisons can be a problem, even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time</em>. 17. <a href="https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf">https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf</a></p>
+</div>
+<div>
+<p>Gelman, A., Simpson, D., &amp; Betancourt, M. (2017). The prior can often only be understood in the context of the likelihood. <em>Entropy</em>, <em>19</em>(10), 555. <a href="https://doi.org/10.3390/e19100555">https://doi.org/10.3390/e19100555</a></p>
+</div>
+<div>
+<p>Geman, S., &amp; Geman, D. (1984). Stochastic relaxation, Gibbs distributions, and the Bayesian restoration of images. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, <em>PAMI-6</em>(6), 721–741. <a href="https://doi.org/10.1109/TPAMI.1984.4767596">https://doi.org/10.1109/TPAMI.1984.4767596</a></p>
+</div>
+<div>
+<p>Gershoff, E. T. (2013). Spanking and child development: We know enough now to stop hitting our children. <em>Child Development Perspectives</em>, <em>7</em>(3), 133–137. <a href="https://doi.org/10.1111/cdep.12038">https://doi.org/10.1111/cdep.12038</a></p>
+</div>
+<div>
+<p>Gershoff, E. T., &amp; Grogan-Kaylor, A. (2016). Spanking and child outcomes: Old controversies and new meta-analyses. <em>Journal of Family Psychology</em>, <em>30</em>(4), 453. <a href="https://doi.org/10.1037/fam0000191">https://doi.org/10.1037/fam0000191</a></p>
+</div>
+<div>
+<p>Grafen, A., &amp; Hails, R. (2002). <em>Modern statistics for the life sciences</em>. Oxford University Press. <a href="https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?">https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?</a></p>
+</div>
+<div>
+<p>Grantham, N. (2019). <em>ggdark: Dark mode for ’ggplot2’ themes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggdark">https://CRAN.R-project.org/package=ggdark</a></p>
+</div>
+<div>
 <p>Grolemund, G., &amp; Wickham, H. (2017). <em>R for data science</em>. O’Reilly. <a href="https://r4ds.had.co.nz">https://r4ds.had.co.nz</a></p>
 </div>
-<div id="ref-healyDataVisualization2018">
+<div>
 <p>Healy, K. (2018). <em>Data visualization: A practical introduction</em>. Princeton University Press. <a href="https://socviz.co/">https://socviz.co/</a></p>
 </div>
-<div id="ref-R-purrr">
+<div>
+<p>Henderson, E. (2020). <em>ghibli: Studio ghibli colour palettes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ghibli">https://CRAN.R-project.org/package=ghibli</a></p>
+</div>
+<div>
 <p>Henry, L., &amp; Wickham, H. (2020). <em>purrr: Functional programming tools</em>. <a href="https://CRAN.R-project.org/package=purrr">https://CRAN.R-project.org/package=purrr</a></p>
 </div>
-<div id="ref-R-tidybayes">
+<div>
+<p>Hinde, K., &amp; Milligan, L. A. (2011). Primate milk: Proximate mechanisms and ultimate perspectives. <em>Evolutionary Anthropology: Issues, News, and Reviews</em>, <em>20</em>(1), 9–23. <a href="https://doi.org/10.1002/evan.20289">https://doi.org/10.1002/evan.20289</a></p>
+</div>
+<div>
+<p>Howell, N. (2001). <em>Demography of the dobe! Kung</em> (2nd Edition). Routledge. <a href="https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490">https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490</a></p>
+</div>
+<div>
+<p>Howell, N. (2010). <em>Life histories of the Dobe! Kung: Food, fatness, and well-being over the life span</em> (Vol. 4). Univ of California Press. <a href="https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung">https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung</a></p>
+</div>
+<div>
+<p>Kahle, D., &amp; Stamey, J. (2017). <em>invgamma: The inverse gamma distribution</em> [Manual]. <a href="https://CRAN.R-project.org/package=invgamma">https://CRAN.R-project.org/package=invgamma</a></p>
+</div>
+<div>
+<p>Kay, M. (2020a). <em>Marginal distribution of a single correlation from an LKJ distribution</em>. <a href="https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html">https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html</a></p>
+</div>
+<div>
 <p>Kay, M. (2020b). <em>tidybayes: Tidy data and ’geoms’ for Bayesian models</em>. <a href="http://mjskay.github.io/tidybayes">http://mjskay.github.io/tidybayes</a></p>
 </div>
-<div id="ref-kurzStatisticalRethinkingSecondEd2020">
+<div>
+<p>Kay, M. (2020c). <em>Extracting and visualizing tidy draws from brms models</em>. <a href="https://mjskay.github.io/tidybayes/articles/tidy-brms.html">https://mjskay.github.io/tidybayes/articles/tidy-brms.html</a></p>
+</div>
+<div>
+<p>Kelley, K., &amp; Preacher, K. J. (2012). On effect size. <em>Psychological Methods</em>, <em>17</em>(2), 137. <a href="https://doi.org/10.1037/a0028086">https://doi.org/10.1037/a0028086</a></p>
+</div>
+<div>
+<p>Kievit, R., Frankenhuis, W. E., Waldorp, L., &amp; Borsboom, D. (2013). Simpson’s paradox in psychological science: A practical guide. <em>Frontiers in Psychology</em>, <em>4</em>. <a href="https://doi.org/10.3389/fpsyg.2013.00513">https://doi.org/10.3389/fpsyg.2013.00513</a></p>
+</div>
+<div>
+<p>Kline, M. A., &amp; Boyd, R. (2010). Population size predicts technological complexity in Oceania. <em>Proceedings of the Royal Society B: Biological Sciences</em>, <em>277</em>(1693), 2559–2564. <a href="https://doi.org/10.1098/rspb.2010.0452">https://doi.org/10.1098/rspb.2010.0452</a></p>
+</div>
+<div>
+<p>Kruschke, J. K. (2015). <em>Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan</em>. Academic Press. <a href="https://sites.google.com/site/doingbayesiandataanalysis/">https://sites.google.com/site/doingbayesiandataanalysis/</a></p>
+</div>
+<div>
+<p>Kullback, S., &amp; Leibler, R. A. (1951). On information and sufficiency. <em>Annals of Mathematical Statistics</em>, <em>22</em>(1), 79–86. <a href="https://doi.org/10.1214/aoms/1177729694">https://doi.org/10.1214/aoms/1177729694</a></p>
+</div>
+<div>
+<p>Kurz, A. S. (2020a). <em>Doing Bayesian data analysis in brms and the tidyverse</em> (version 0.3.0). <a href="https://bookdown.org/content/3686/">https://bookdown.org/content/3686/</a></p>
+</div>
+<div>
 <p>Kurz, A. S. (2020b). <em>Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition</em> (version 0.0.3). <a href="https://bookdown.org/content/4857/">https://bookdown.org/content/4857/</a></p>
 </div>
-<div id="ref-leglerBroadeningYourStatistical2019">
+<div>
 <p>Legler, J., &amp; Roback, P. (2019). <em>Broadening your statistical horizons: Generalized linear models and multilevel models</em>. <a href="https://bookdown.org/roback/bookdown-bysh/">https://bookdown.org/roback/bookdown-bysh/</a></p>
 </div>
-<div id="ref-mcelreathStatisticalRethinkingBayesian2015">
+<div>
+<p>Matejka, J., &amp; Fitzmaurice, G. (2017). <em>Same stats, different graphs: Generating datasets with varied appearance and identical statistics through simulated annealing</em>. <a href="https://www.autodesk.com/research/publications/same-stats-different-graphs">https://www.autodesk.com/research/publications/same-stats-different-graphs</a></p>
+</div>
+<div>
 <p>McElreath, R. (2015). <em>Statistical rethinking: A Bayesian course with examples in R and Stan</em>. CRC press. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a></p>
 </div>
-<div id="ref-R-rethinking">
+<div>
 <p>McElreath, R. (2020a). <em>rethinking R package</em>. <a href="https://xcelab.net/rm/software/">https://xcelab.net/rm/software/</a></p>
 </div>
-<div id="ref-mcelreathStatisticalRethinkingBayesian2020">
+<div>
 <p>McElreath, R. (2020b). <em>Statistical rethinking: A Bayesian course with examples in R and Stan</em> (Second Edition). CRC Press. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a></p>
 </div>
-<div id="ref-navarroLearningStatistics2019">
+<div>
+<p>McHenry, H. M., &amp; Coffing, K. (2000). Australopithecus to Homo: Transformations in body and mind. <em>Annual Review of Anthropology</em>, <em>29</em>(1), 125–146. <a href="https://doi.org/10.1146/annurev.anthro.29.1.125">https://doi.org/10.1146/annurev.anthro.29.1.125</a></p>
+</div>
+<div>
+<p>Merkle, E. C., &amp; Rosseel, Y. (2018). blavaan: Bayesian structural equation models via parameter expansion. <em>Journal of Statistical Software</em>, <em>85</em>(4), 1–30. <a href="https://doi.org/10.18637/jss.v085.i04">https://doi.org/10.18637/jss.v085.i04</a></p>
+</div>
+<div>
+<p>Merkle, E. C., Rosseel, Y., &amp; Goodrich, B. (2020). <em>blavaan: Bayesian latent variable analysis</em>. <a href="https://CRAN.R-project.org/package=blavaan">https://CRAN.R-project.org/package=blavaan</a></p>
+</div>
+<div>
+<p>Müller, K., &amp; Wickham, H. (2020). <em>tibble: Simple data frames</em>. <a href="https://CRAN.R-project.org/package=tibble">https://CRAN.R-project.org/package=tibble</a></p>
+</div>
+<div>
 <p>Navarro, D. (2019). <em>Learning statistics with R</em>. <a href="https://learningstatisticswithr.com">https://learningstatisticswithr.com</a></p>
 </div>
-<div id="ref-R-patchwork">
+<div>
+<p>Navarro, D. J. (2019). Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection. <em>Computational Brain &amp; Behavior</em>, <em>2</em>(1), 28–34. <a href="https://doi.org/10.1007/s42113-018-0019-z">https://doi.org/10.1007/s42113-018-0019-z</a></p>
+</div>
+<div>
+<p>Nowosad, J. (2019). <em>rcartocolor: ’CARTOColors’ palettes</em>. <a href="https://CRAN.R-project.org/package=rcartocolor">https://CRAN.R-project.org/package=rcartocolor</a></p>
+</div>
+<div>
+<p>Nunn, N., &amp; Puga, D. (2012). Ruggedness: The blessing of bad geography in Africa. <em>Review of Economics and Statistics</em>, <em>94</em>(1), 20–36. <a href="https://doi.org/10.1162/REST_a_00161">https://doi.org/10.1162/REST_a_00161</a></p>
+</div>
+<div>
 <p>Pedersen, T. L. (2019). <em>patchwork: The composer of plots</em>. <a href="https://CRAN.R-project.org/package=patchwork">https://CRAN.R-project.org/package=patchwork</a></p>
 </div>
-<div id="ref-pengProgrammingDataScience2019">
+<div>
 <p>Peng, R. D. (2019). <em>R programming for data science</em>. <a href="https://bookdown.org/rdpeng/rprogdatascience/">https://bookdown.org/rdpeng/rprogdatascience/</a></p>
 </div>
-<div id="ref-R-base">
+<div>
+<p>Peng, R. D., Kross, S., &amp; Anderson, B. (2017). <em>Mastering software development in {}R{}</em>. <a href="https://github.com/rdpeng/RProgDA">https://github.com/rdpeng/RProgDA</a></p>
+</div>
+<div>
+<p>Ram, K., &amp; Wickham, H. (2018). <em>wesanderson: A Wes Anderson palette generator</em> [Manual]. <a href="https://CRAN.R-project.org/package=wesanderson">https://CRAN.R-project.org/package=wesanderson</a></p>
+</div>
+<div>
 <p>R Core Team. (2020). <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a></p>
 </div>
-<div id="ref-R-loo">
+<div>
+<p>Ripley, B. (2019). <em>MASS: Support functions and datasets for venables and ripley’s MASS</em>. <a href="https://CRAN.R-project.org/package=MASS">https://CRAN.R-project.org/package=MASS</a></p>
+</div>
+<div>
+<p>Robert, C., &amp; Casella, G. (2011). A short history of Markov chain Monte Carlo: Subjective recollections from incomplete data. <em>Statistical Science</em>, <em>26</em>(1), 102–115. <a href="https://arxiv.org/pdf/0808.2902.pdf">https://arxiv.org/pdf/0808.2902.pdf</a></p>
+</div>
+<div>
+<p>Robinson, D., &amp; Hayes, A. (2020). <em>broom: Convert statistical analysis objects into tidy tibbles</em> [Manual]. <a href="https://CRAN.R-project.org/package=broom">https://CRAN.R-project.org/package=broom</a></p>
+</div>
+<div>
+<p>Rudis, B. (2020). <em>hrbrthemes: Additional themes, theme components and utilities for ’ggplot2’</em> [Manual]. <a href="https://CRAN.R-project.org/package=hrbrthemes">https://CRAN.R-project.org/package=hrbrthemes</a></p>
+</div>
+<div>
+<p>Rudis, B., Ross, N., &amp; Garnier, S. (2018). <em>The viridis color palettes</em>. <a href="https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html">https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html</a></p>
+</div>
+<div>
+<p>Schloerke, B., Crowley, J., Di Cook, Briatte, F., Marbach, M., Thoen, E., Elberg, A., &amp; Larmarange, J. (2020). <em>GGally: Extension to ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=GGally">https://CRAN.R-project.org/package=GGally</a></p>
+</div>
+<div>
+<p>Silk, J. B., Brosnan, S. F., Vonk, J., Henrich, J., Povinelli, D. J., Richardson, A. S., Lambeth, S. P., Mascaro, J., &amp; Schapiro, S. J. (2005). Chimpanzees are indifferent to the welfare of unrelated group members. <em>Nature</em>, <em>437</em>(7063), 1357–1359. <a href="https://doi.org/10.1038/nature04243">https://doi.org/10.1038/nature04243</a></p>
+</div>
+<div>
+<p>Simmons, J. P., Nelson, L. D., &amp; Simonsohn, U. (2011). False-positive psychology: Undisclosed flexibility in data collection and analysis allows presenting anything as significant. <em>Psychological Science</em>, <em>22</em>(11), 1359–1366. <a href="https://doi.org/10.1177/0956797611417632">https://doi.org/10.1177/0956797611417632</a></p>
+</div>
+<div>
+<p>Slowikowski, K. (2020). <em>ggrepel: Automatically position non-overlapping text labels with ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggrepel">https://CRAN.R-project.org/package=ggrepel</a></p>
+</div>
+<div>
+<p>Stan Development Team. (2020a). <em>Stan functions reference</em>. <a href="https://mc-stan.org/docs/2_24/functions-reference/index.html">https://mc-stan.org/docs/2_24/functions-reference/index.html</a></p>
+</div>
+<div>
+<p>Stan Development Team. (2020b). <em>RStan: The R interface to Stan</em>. <a href="https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html">https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html</a></p>
+</div>
+<div>
+<p>Subramanian, S. V., Kim, R., &amp; Christakis, N. A. (2018). The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright. <em>Social Science &amp; Medicine</em>, <em>210</em>, 77–82. <a href="https://doi.org/10.1016/j.socscimed.2018.04.027">https://doi.org/10.1016/j.socscimed.2018.04.027</a></p>
+</div>
+<div>
+<p>Thoen, E. (2019). <em>dutchmasters</em> [Manual]. <a href="https://github.com/EdwinTh/dutchmasters">https://github.com/EdwinTh/dutchmasters</a></p>
+</div>
+<div>
+<p>Tufte, E. R. (2001). <em>The visual display of quantitative information</em> (Second Edition). Graphics Press. <a href="https://www.edwardtufte.com/tufte/books_vdqi">https://www.edwardtufte.com/tufte/books_vdqi</a></p>
+</div>
+<div>
+<p>UNICEF. (2014). <em>Hidden in plain sight: A statistical analysis of violence against children</em>. <a href="https://www.unicef.org/publications/index_74865.html">https://www.unicef.org/publications/index_74865.html</a></p>
+</div>
+<div>
+<p>Urban Institute. (2020). <em>urbnmapr: State and county maps with Alaska and Hawaii</em>. <a href="https://github.com/UrbanInstitute/urbnmapr">https://github.com/UrbanInstitute/urbnmapr</a></p>
+</div>
+<div>
+<p>van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (Second Edition). CRC Press. <a href="https://stefvanbuuren.name/fimd/">https://stefvanbuuren.name/fimd/</a></p>
+</div>
+<div>
+<p>Van der Lee, R., &amp; Ellemers, N. (2015). Gender contributes to personal research funding success in The Netherlands. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(40), 12349–12353. <a href="https://doi.org/10.1073/pnas.1510159112">https://doi.org/10.1073/pnas.1510159112</a></p>
+</div>
+<div>
+<p>Vehtari, A., &amp; Gabry, J. (2020). <em>Using the loo package (version <span class="math inline">\(&gt;\)</span>= 2.0.0)</em>. <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html\#plotting-pareto-k-diagnostics">https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html\#plotting-pareto-k-diagnostics</a></p>
+</div>
+<div>
+<p>Vehtari, A., &amp; Gabry, J. (2019). <em>Bayesian stacking and pseudo-BMA weights using the loo package</em>. <a href="https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html">https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html</a></p>
+</div>
+<div>
 <p>Vehtari, A., Gabry, J., Magnusson, M., Yao, Y., &amp; Gelman, A. (2019). <em>loo: Efficient leave-one-out cross-validation and WAIC for bayesian models</em>. <a href="https://CRAN.R-project.org/package=loo">https://CRAN.R-project.org/package=loo</a></p>
 </div>
-<div id="ref-vehtariPracticalBayesianModel2017">
+<div>
 <p>Vehtari, A., Gelman, A., &amp; Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. <em>Statistics and Computing</em>, <em>27</em>(5), 1413–1432. <a href="https://doi.org/10.1007/s11222-016-9696-4">https://doi.org/10.1007/s11222-016-9696-4</a></p>
 </div>
-<div id="ref-vehtariRanknormalizationFoldingLocalization2019">
+<div>
 <p>Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., &amp; Bürkner, P.-C. (2019). Rank-normalization, folding, and localization: An improved <span class="math inline">\(\widehat{R}\)</span> for assessing convergence of MCMC. <em>arXiv Preprint arXiv:1903.08008</em>. <a href="https://arxiv.org/abs/1903.08008?">https://arxiv.org/abs/1903.08008?</a></p>
 </div>
-<div id="ref-wickhamGgplot2ElegantGraphics2016">
+<div>
+<p>Venables, W. N., &amp; Ripley, B. D. (2002). <em>Modern applied statistics with S</em> (Fourth Edition). Springer. <a href="http://www.stats.ox.ac.uk/pub/MASS4">http://www.stats.ox.ac.uk/pub/MASS4</a></p>
+</div>
+<div>
+<p>Vermeer, J. (1665). <em>Girl with a pearl earring</em>.</p>
+</div>
+<div>
+<p>Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. <em>Journal of Statistical Software</em>, <em>36</em>(3), 1–48. <a href="https://www.jstatsoft.org/v36/i03/">https://www.jstatsoft.org/v36/i03/</a></p>
+</div>
+<div>
+<p>Viechtbauer, W. (2020). <em>metafor: Meta-analysis package for R</em> [Manual]. <a href="https://CRAN.R-project.org/package=metafor">https://CRAN.R-project.org/package=metafor</a></p>
+</div>
+<div>
+<p>Volker, B., &amp; Steenbeek, W. (2015). No evidence that gender contributes to personal research funding success in The Netherlands: A reaction to van der Lee and Ellemers. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(51), E7036–E7037. <a href="https://doi.org/10.1073/pnas.1519046112">https://doi.org/10.1073/pnas.1519046112</a></p>
+</div>
+<div>
+<p>Vonesh, J. R., &amp; Bolker, B. M. (2005). Compensatory larval responses shift trade-offs associated with predator-induced hatching plasticity. <em>Ecology</em>, <em>86</em>(6), 1580–1591. <a href="https://doi.org/10.1890/04-0535">https://doi.org/10.1890/04-0535</a></p>
+</div>
+<div>
+<p>Wasserstein, R. L., &amp; Lazar, N. A. (2016). <em>The ASA statement on p-values: Context, process, and purpose</em>. <em>70</em>(2), 129–133. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a></p>
+</div>
+<div>
+<p>Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory. <em>Journal of Machine Learning Research</em>, <em>11</em>(116), 3571–3594. <a href="http://jmlr.org/papers/v11/watanabe10a.html">http://jmlr.org/papers/v11/watanabe10a.html</a></p>
+</div>
+<div>
 <p>Wickham, H. (2016). <em>ggplot2: Elegant graphics for data analysis</em>. Springer-Verlag New York. <a href="https://ggplot2-book.org/">https://ggplot2-book.org/</a></p>
 </div>
-<div id="ref-R-tidyverse">
+<div>
 <p>Wickham, H. (2019). <em>tidyverse: Easily install and load the ’tidyverse’</em>. <a href="https://CRAN.R-project.org/package=tidyverse">https://CRAN.R-project.org/package=tidyverse</a></p>
 </div>
-<div id="ref-wickhamTidyverseStyleGuide2020">
+<div>
 <p>Wickham, H. (2020). <em>The tidyverse style guide</em>. <a href="https://style.tidyverse.org/">https://style.tidyverse.org/</a></p>
 </div>
-<div id="ref-wickhamWelcomeTidyverse2019">
+<div>
 <p>Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., … Yutani, H. (2019). Welcome to the tidyverse. <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a></p>
 </div>
-<div id="ref-R-ggplot2">
+<div>
 <p>Wickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., &amp; Dunnington, D. (2020). <em>ggplot2: Create elegant data visualisations using the grammar of graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2">https://CRAN.R-project.org/package=ggplot2</a></p>
 </div>
-<div id="ref-R-dplyr">
+<div>
 <p>Wickham, H., François, R., Henry, L., &amp; Müller, K. (2020). <em>dplyr: A grammar of data manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a></p>
 </div>
-<div id="ref-wilkeFundamentalsDataVisualization2019">
+<div>
 <p>Wilke, C. O. (2019). <em>Fundamentals of data visualization</em>. <a href="https://clauswilke.com/dataviz/">https://clauswilke.com/dataviz/</a></p>
 </div>
-<div id="ref-R-bookdown">
+<div>
+<p>Williams, D. R., Liu, S., Martin, S. R., &amp; Rast, P. (2019). <em>Bayesian multivariate mixed-effects location scale modeling of longitudinal relations among affective traits, states, and physical activity</em>. <a href="https://doi.org/10.31234/osf.io/4kfjp">https://doi.org/10.31234/osf.io/4kfjp</a></p>
+</div>
+<div>
+<p>Williams, D. R., Rast, P., &amp; Bürkner, P.-C. (2018). <em>Bayesian meta-analysis with weakly informative prior distributions</em>. <a href="https://doi.org/10.31234/osf.io/7tbrm">https://doi.org/10.31234/osf.io/7tbrm</a></p>
+</div>
+<div>
+<p>Winerman, L. (2017). Trends report: Psychologists embrace open science. <em>Monitor on Psychology</em>, <em>48</em>(10). <a href="https://www.apa.org/monitor/2017/11/trends-open-science">https://www.apa.org/monitor/2017/11/trends-open-science</a></p>
+</div>
+<div>
 <p>Xie, Y. (2020). <em>bookdown: Authoring books and technical documents with R Markdown</em>. <a href="https://CRAN.R-project.org/package=bookdown">https://CRAN.R-project.org/package=bookdown</a></p>
 </div>
-<div id="ref-xieMarkdownDefinitiveGuide2020">
+<div>
 <p>Xie, Y., Allaire, J. J., &amp; Grolemund, G. (2020). <em>R markdown: The definitive guide</em>. Chapman and Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown/">https://bookdown.org/yihui/rmarkdown/</a></p>
 </div>
-<div id="ref-yaoUsingStackingAverage2018">
+<div>
 <p>Yao, Y., Vehtari, A., Simpson, D., Gelman, A., &amp; others. (2018). Using stacking to average Bayesian predictive distributions (with discussion). <em>Bayesian Analysis</em>, <em>13</em>(3), 917–1007. <a href="https://doi.org/10.1214/17-BA1091">https://doi.org/10.1214/17-BA1091</a></p>
 </div>
-<div id="ref-ZoteroYourPersonal2020">
+<div>
 <p><em>Zotero | Your personal research assistant</em>. (2020). <a href="https://www.zotero.org/">https://www.zotero.org/</a></p>
+</div>
 </div>
 </div>
             </section>
@@ -706,8 +850,8 @@ greater emphasis on functions from the <a href="https://mjskay.github.io/tidybay
           </div>
         </div>
       </div>
+<a href="horoscopes-insights.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="the-golem-of-prague.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
