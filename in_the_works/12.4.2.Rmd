@@ -1,0 +1,598 @@
+---
+title: "Section 12.4.1. Posterior prediction for same clusters"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  github_document
+---
+
+```{r, echo = FALSE, cache = FALSE}
+knitr::opts_chunk$set(fig.retina = 2.5)
+options(width = 100)
+```
+
+These packages will already have been loaded.
+
+```{r, warning = F, message = F}
+library(tidyverse)
+library(brms)
+library(ggthemes) 
+library(patchwork)
+library(tidybayes)
+library(bayesplot)
+library(posterior)
+```
+
+Now load the focal model, `b12.4`.
+
+```{r}
+b12.4 <- readRDS("/Users/solomonkurz/Dropbox/Recoding McElreath/fits/b12.04.rds")
+```
+
+Review the model.
+
+```{r}
+print(b12.4)
+```
+
+
+## 12.4 Multilevel posterior predictions
+
+### 12.4.1 Posterior prediction for same clusters.
+
+```{r}
+post <- posterior_samples(b12.4)
+
+glimpse(post)
+```
+
+### 12.4.2 Posterior prediction for new clusters.
+
+By average actor, McElreath referred to a chimp with an intercept exactly at the population mean $\alpha$. So this time we'll only be working with the population parameters, or what are also sometimes called the fixed effects. When using `brms::posterior_samples()` output, this would mean working with columns beginning with the `b_` prefix (i.e., `b_Intercept`, `b_prosoc_left`, and `b_prosoc_left:condition`).
+
+```{r, message = F}
+post_average_actor <-
+  post %>% 
+  # here we use the linear regression formula to get the log_odds for the 4 conditions
+  transmute(`0/0` = b_Intercept,
+            `1/0` = b_Intercept + b_prosoc_left,
+            `0/1` = b_Intercept,
+            `1/1` = b_Intercept + b_prosoc_left + `b_prosoc_left:condition`) %>%
+  # with `mutate_all()` we can convert the estimates to probabilities in one fell swoop
+  mutate_all(inv_logit_scaled) %>% 
+  # putting the data in the long format and grouping by condition (i.e., `key`)
+  gather() %>%
+  mutate(key = factor(key, level = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  group_by(key) %>%
+  # here we get the summary values for the plot
+  summarise(m  = mean(value),
+            # note we're using 80% intervals
+            ll = quantile(value, probs = .1),
+            ul = quantile(value, probs = .9))
+
+post_average_actor
+```
+
+Figure 12.5.a.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p1 <-
+  post_average_actor %>%
+  ggplot(aes(x = key, y = m, group = 1)) +
+  geom_ribbon(aes(ymin = ll, ymax = ul), fill = "orange1") +
+  geom_line(color = "blue") +
+  ggtitle("Average actor") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p1
+```
+
+If we want to depict the variability across the chimps, we need to include `sd_actor__Intercept` into the calculations. In the first block of code, below, we simulate a bundle of new intercepts defined by
+
+$$\alpha_\text{actor} \sim \operatorname{Normal}(0, \sigma_\text{actor}).$$
+
+```{r}
+# the random effects
+set.seed(12.42)
+ran_ef <-
+  tibble(random_effect = rnorm(n = 1000, mean = 0, sd = post$sd_actor__Intercept))
+
+glimpse(ran_ef)
+```
+
+To get a sense of what we've done, we'll plot these with a histogram.
+
+```{r, fig.width = 4, fig.height = 2.75}
+ran_ef %>% 
+  
+  ggplot(aes(x = random_effect)) +
+  geom_histogram(fill = "blue", binwidth = 1) +
+  scale_y_continuous(breaks = NULL) +
+  ggtitle("1,000 devations, representing\nnew actor effects") +
+  theme_fivethirtyeight()
+```
+
+Since they are deviations, they center around zero.
+
+
+```{r}
+fix_ef <-
+  post %>% 
+  slice(1:1000) %>%
+  transmute(`0/0` = b_Intercept,
+            `1/0` = b_Intercept + b_prosoc_left,
+            `0/1` = b_Intercept,
+            `1/1` = b_Intercept + b_prosoc_left + `b_prosoc_left:condition`)
+
+fix_ef
+```
+
+
+```{r}
+bind_cols(ran_ef, fix_ef) %>% 
+  gather(-random_effect, key = "condition", value = "fixed_effect") %>% 
+  mutate(condition = factor(condition, level = c("0/0", "1/0", "0/1", "1/1"))) %>%
+  mutate(intercept = fixed_effect + random_effect) %>%
+  mutate(prob = inv_logit_scaled(intercept)) %>%
+  group_by(condition) %>%
+  summarise(m  = mean(prob),
+            ll = quantile(prob, probs = .1),
+            ul = quantile(prob, probs = .9))
+```
+
+
+new version
+
+```{r, message = F}
+# arrange the fixed effects (i.e., the population parameters)
+fix_ef <-
+  post %>% 
+  slice(1:1000) %>%
+  transmute(`0/0` = b_Intercept,
+            `1/0` = b_Intercept + b_prosoc_left,
+            `0/1` = b_Intercept,
+            `1/1` = b_Intercept + b_prosoc_left + `b_prosoc_left:condition`)
+
+# combine `ran_ef` and `fix_ef`
+ran_and_fix_ef <-
+  bind_cols(ran_ef, fix_ef) %>% 
+  gather(-random_effect, key = "condition", value = "fixed_effect") %>% 
+  mutate(condition = factor(condition, level = c("0/0", "1/0", "0/1", "1/1"))) %>%
+  mutate(intercept = fixed_effect + random_effect) %>%
+  mutate(prob = inv_logit_scaled(intercept))
+
+# to simplify things, we'll reduce them to summaries
+(
+  marginal_effects <-
+  ran_and_fix_ef %>%
+  group_by(condition) %>%
+  summarise(m  = mean(prob),
+            ll = quantile(prob, probs = .1),
+            ul = quantile(prob, probs = .9))
+)
+```
+
+Behold Figure 12.5.b.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p2 <-
+  marginal_effects %>%
+  ggplot(aes(x = condition, y = m, group = 1)) +
+  geom_ribbon(aes(ymin = ll, ymax = ul), fill = "orange1") +
+  geom_line(color = "blue") +
+  ggtitle("Marginal of actor") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p2
+```
+
+Figure 12.5.c just takes a tiny bit more wrangling. 
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p3 <-
+  ran_and_fix_ef %>%
+  mutate(iter = rep(1:1000, times = 4)) %>%
+  filter(iter %in% c(1:50)) %>%
+  
+  ggplot(aes(x = condition, y = prob, group = iter)) +
+  geom_line(alpha = 1/2, color = "orange3") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p3
+```
+
+For the finale, we'll stitch the three plots together.
+
+```{r, fig.width = 7.5, fig.height = 3.25, message = F, warning = F}
+p1 | p2 | p3
+```
+
+
+#### Bonus: Let's use `fitted()` this time. 
+
+We just made those plots using various wrangled versions of `post`, the data frame returned by `posterior_samples(b.12.4)`. If you followed along closely, part of what made that a great exercise is that it forced you to consider what the various vectors in `post` meant with respect to the model formula. But it's also handy to see how to do that from a different perspective. So in this section, we'll repeat that process by relying on the `fitted()` function, instead. We'll go in the same order, starting with the average actor.
+
+```{r, warning = F, message = F}
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1))
+
+(
+  f <-
+  fitted(b12.4,
+         newdata = nd,
+         re_formula = NA,
+         probs = c(.1, .9)) %>% 
+  as_tibble() %>% 
+  bind_cols(nd) %>% 
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1")))
+)
+```
+
+You should notice a few things. Since `b12.4` is a multilevel model, it had three predictors: `prosoc_left`, `condition`, and `actor`. However, our `nd` data only included the first two of those predictors. The reason `fitted()` permitted that was because we set `re_formula = NA`. When you do that, you tell `fitted()` to ignore group-level effects (i.e., focus only on the fixed effects). This was our `fitted()` version of ignoring the `r_` vectors returned by `posterior_samples()`. Here's the plot.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p4 <-
+  f %>%
+  ggplot(aes(x = condition, y = Estimate, group = 1)) +
+  geom_ribbon(aes(ymin = Q10, ymax = Q90), fill = "blue") +
+  geom_line(color = "orange1") +
+  ggtitle("Average actor") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p4
+```
+
+For marginal of actor, we can continue using the same `nd` data. This time we'll be sticking with the default `re_formula` setting, which will accommodate the multilevel nature of the model. However, we'll also be adding `allow_new_levels = T` and `sample_new_levels = "gaussian"`. The former will allow us to marginalize across the specific actors in our data and the latter will instruct `fitted()` to use the multivariate normal distribution implied by the random effects. It'll make more sense why I say *multivariate* normal by the end of the [next chapter][Adventures in Covariance]. For now, just go with it.
+
+```{r, warning = F, message = F}
+(
+  f <-
+  fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian") %>% 
+  as_tibble() %>% 
+  bind_cols(nd) %>% 
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1")))
+  )
+```
+
+Here's our `fitted()`-based marginal of `actor` plot.
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p5 <-
+  f %>%
+  ggplot(aes(x = condition, y = Estimate, group = 1)) +
+  geom_ribbon(aes(ymin = Q10, ymax = Q90), fill = "blue") +
+  geom_line(color = "orange1") +
+  ggtitle("Marginal of actor") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p5
+```
+
+```{r}
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1)) %>% 
+  expand(actor = c(str_c("new0", 1:9), str_c("new", 10:50)),
+         nesting(prosoc_left, condition)) %>% 
+  # this adds a row number, which will come in handy, later
+  mutate(row = 1:n())
+
+glimpse(nd)
+```
+
+
+```{r}
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1)) %>% 
+  expand(actor = c(str_c("new0", 1:9), str_c("new", 10:50)),
+         nesting(prosoc_left, condition)) %>% 
+  # this adds a row number, which will come in handy, later
+  mutate(row = 1:n())
+
+fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F,
+         nsamples = 1) %>% 
+  # wrangle
+  as_tibble() %>% 
+  set_names(1:200) %>% 
+  gather() %>% 
+  mutate(row = as.double(key)) %>% 
+  # add the new data
+  left_join(nd, by = "row") %>%
+  # reformat `condition` for the plot
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  
+  # plot!
+  ggplot(aes(x = condition, y = value, group = actor)) +
+  geom_line(alpha = 1/2, color = "blue") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  # theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+```
+
+
+```{r, warning = F, message = F}
+(
+  f <-
+  fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F,
+         nsamples = 1) %>% 
+  as_tibble() %>% 
+  mutate(iter = 1:n_sim) %>% 
+  gather(key, value, -iter) %>% 
+  bind_cols(nd %>% 
+              transmute(condition = factor(str_c(prosoc_left, "/", condition), 
+                                           levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+              expand(condition, iter = 1:n_sim) %>% 
+              select(-iter))
+)
+```
+
+
+
+```{r, message = F}
+# extract the posterior draws
+post <- posterior_samples(b12.4)
+
+# arrange the fixed effects (i.e., the population parameters)
+fix_ef <-
+  post %>% 
+  # take only one posterior draw, the first row
+  slice(1) %>%
+  transmute(`0/0` = b_Intercept,
+            `1/0` = b_Intercept + b_prosoc_left,
+            `0/1` = b_Intercept,
+            `1/1` = b_Intercept + b_prosoc_left + `b_prosoc_left:condition`) %>% 
+  # duplicate the single posterior draw 1000 times
+  uncount(weights = 1000)
+
+# simulate 1000 unique random effects (actor-level intercept deviations)
+set.seed(12.42)
+ran_ef <-
+  tibble(random_effect = rnorm(n = 1000, mean = 0, sd = post$sd_actor__Intercept))
+
+# combine `ran_ef` and `fix_ef`
+bind_cols(ran_ef, fix_ef) %>% 
+  gather(-random_effect, key = "condition", value = "fixed_effect") %>% 
+  mutate(condition = factor(condition, level = c("0/0", "1/0", "0/1", "1/1"))) %>%
+  mutate(intercept = fixed_effect + random_effect) %>%
+  mutate(prob = inv_logit_scaled(intercept)) %>%
+  # make an iteration index
+  mutate(iter = rep(1:1000, times = 4)) %>%
+  # filter just the first 50
+  filter(iter %in% c(1:50)) %>%
+  
+  # plot
+  ggplot(aes(x = condition, y = prob, group = iter)) +
+  geom_line(alpha = 1/2, color = "orange3") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  # theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+
+```
+
+
+```{r, fig.width = 2.5, fig.height = 3.25}
+p3 <-
+  ran_and_fix_ef %>%
+  mutate(iter = rep(1:1000, times = 4)) %>%
+  filter(iter %in% c(1:50)) %>%
+  
+  ggplot(aes(x = condition, y = prob, group = iter)) +
+  geom_line(alpha = 1/2, color = "orange3") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+
+p3
+```
+
+
+## Session info {-}
+
+```{r}
+sessionInfo()
+```
+
+```{r, warning = F, echo = F}
+rm()
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+ggplot2::theme_set(ggplot2::theme_grey())
+bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+```
+
+# first 50
+
+```{r}
+# new data
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1)) %>% 
+  expand(actor = str_c("new", 1:50),
+         nesting(prosoc_left, condition)) %>% 
+  # this adds a row number, which will come in handy, later
+  mutate(row = 1:n())
+
+# fitted
+f <-
+  fitted(b12.4,
+         newdata = nd,
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F,
+         nsamples = 50)
+
+# make a tibble and change the names to match the `row` values in `nd`
+f %>% 
+  as_tibble() %>% 
+  set_names(1:200) %>% 
+  # add an iteration index
+  mutate(iter = 1:n()) %>% 
+  # make it long
+  gather(-iter, key = "row", value = "value") %>% 
+  mutate(row = as.double(row)) %>% 
+  # add the new data
+  left_join(nd, by = "row") %>% 
+  # extract the numbers from the names of the new actors
+  mutate(actor_number = str_extract(actor, "\\d+") %>% as.double()) %>% 
+  # only keep the posterior iterations that match the `actor_number` values
+  filter(actor_number == iter) %>%
+  # reformat `condition` for the plot
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  
+  # plot!
+  ggplot(aes(x = condition, y = value, group = actor)) +
+  geom_line(alpha = 1/2, color = "blue") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  # theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+```
+
+
+
+# full 16000
+```{r}
+f <-
+  fitted(b12.4,
+         newdata = nd,
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F)
+
+```
+
+```{r}
+# new data
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1)) %>% 
+  expand(actor = c(str_c("new0", 1:9), str_c("new", 10:50)),
+         nesting(prosoc_left, condition)) %>% 
+  # this adds a row number, which will come in handy, later
+  mutate(row = 1:n())
+
+# fitted
+f <-
+  fitted(b12.4,
+         newdata = nd,
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F)
+
+# this is terrible, but it works
+set.seed(12.42)
+f %>% 
+  # make a tibble
+  as_tibble() %>% 
+  set_names(1:200) %>% 
+  # add an iteration index
+  mutate(iter = 1:n()) %>% 
+  # make it long
+  gather(-iter, key = "row", value = "value") %>% 
+  mutate(row = as.double(row)) %>% 
+  # add the new data
+  left_join(nd, by = "row") %>% 
+  # nest the data within `actor`
+  nest(data = c(iter, row, value, prosoc_left, condition)) %>% 
+  # for each level of `actor`, randomly select a number 
+  # between 1 and 16,000 without replacement
+  mutate(random_iter = sample(1:16000, size = n(), replace = F)) %>% 
+  unnest(data) %>% 
+  # now filter only the HMC iterations matching the random `random_iter` numbers
+  filter(iter == random_iter) %>%
+  # reformat `condition` for the plot
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  
+  # plot!
+  ggplot(aes(x = condition, y = value, group = actor)) +
+  geom_line(alpha = 1/2, color = "blue") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  # theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+```
+
+
+
+
+```{r}
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1)) %>% 
+  expand(actor = c(str_c("new0", 1:9), str_c("new", 10:50)),
+         nesting(prosoc_left, condition)) %>% 
+  # this adds a row number, which will come in handy, later
+  mutate(row = 1:n())
+
+fitted(b12.4,
+         newdata = nd,
+         probs = c(.1, .9),
+         allow_new_levels = T,
+         sample_new_levels = "gaussian",
+         summary = F,
+         nsamples = 1) %>% 
+  # wrangle
+  as_tibble() %>% 
+  set_names(1:200) %>% 
+  gather() %>% 
+  mutate(row = as.double(key)) %>% 
+  # add the new data
+  left_join(nd, by = "row") %>%
+  # reformat `condition` for the plot
+  mutate(condition = factor(str_c(prosoc_left, "/", condition), 
+                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
+  
+  # plot!
+  ggplot(aes(x = condition, y = value, group = actor)) +
+  geom_line(alpha = 1/2, color = "blue") +
+  ggtitle("50 simulated actors") +
+  coord_cartesian(ylim = c(0, 1)) +
+  # theme_fivethirtyeight() +
+  theme(plot.title = element_text(size = 14, hjust = .5))
+```
+
+
+
+
+
+
+
+

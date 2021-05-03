@@ -1,0 +1,217 @@
+---
+title: "Ch. 10 Counting and Classification"
+author: "A Solomon Kurz"
+date: "`r format(Sys.Date())`"
+output:
+  github_document
+---
+
+```{r, echo = FALSE, cache = FALSE}
+knitr::opts_chunk$set(fig.retina = 2.5)
+options(width = 110)
+```
+
+# Counting and Classification
+
+## Binomial regression
+
+### Logistic regression: Prosocial chimpanzees.
+
+```{r, message = F, warning = F}
+library(brms)
+library(tidyverse)
+library(wesanderson)
+library(ggthemes)
+library(bayesplot)
+library(broom)
+library(loo)
+library(ggExtra)
+library(GGally)
+library(patchwork)
+library(tidybayes)
+
+theme_set(
+  theme_default() + 
+    theme_tufte() +
+    theme(plot.background = element_rect(fill  = wes_palette("Moonrise2")[3],
+                                         color = wes_palette("Moonrise2")[3]))
+)
+
+color_scheme_set(wes_palette("Moonrise2")[c(3, 1, 2, 2, 1, 1)])
+
+```
+
+### Overthinking: Using the ~~by~~ `group_by()` function.
+
+### Aggregated binomial: Chimpanzees again, condensed.
+
+### Aggregated binomial: Graduate school admissions.
+
+#### Rethinking: Simpson's paradox is not a paradox.
+
+#### Overthinking: WAIC and aggregated binomial models.
+
+### Fitting binomial regressions with `glm()`.
+
+## Poisson regression
+
+### Example: Oceanic tool complexity.
+
+### MCMC islands.
+
+### Example: Exposure and the offset.
+
+## Other count regressions
+
+### Multinomial.
+
+#### Explicit multinomial models.
+
+##### "Intercepts"-only.
+
+##### Add a predictor into the mix.
+
+##### The non-linear syntax is the solution.
+
+#### Multinomial in disguise as Poisson.
+
+### Geometric.
+
+> Sometimes a count variable is a number of events up until something happened. Call this "something" the terminating event. Often we want to model the probability of that event, a kind of analysis known as event history analysis or survival analysis. When the probability of the terminating event is constant through time (or distance), and the units of time (or distance) are discrete, a common likelihood function is the geometric distribution. This distribution has the form:
+>
+> $$\text{Pr}(y | p) = p (1 - p) ^{y - 1}$$
+>
+> where $y$ is the number of time steps (events) until the terminating event occurred and $p$ is the probability of that event in each time step. This distribution has maximum entropy for unbounded counts with constant expected value. (pp. 327--328)
+
+It turns out there are actually two popular ways to think about the geometric distribution. The one McElreath presented in the text is possibly the most common. Importantly, that version is valid for $y = 1, 2, 3, \dots$. The alternative is
+
+$$\text{Pr}(y | p) = p (1 - p) ^y,$$
+
+for $y = 0, 1, 2, \dots$. We'll come back to why I'd point this out in a little bit. In the mean time, here we simulate McElreath's exemplar data.
+
+```{r}
+# simulate
+n <- 100
+
+set.seed(10)
+x <- runif(n)
+
+set.seed(10)
+y <- rgeom(n, prob = inv_logit_scaled(-1 + 2 * x))
+```
+
+In case you're curious, here are the data.
+
+```{r, fig.width = 4, fig.height = 2.5}
+list(x = x, y = y) %>%
+  as_tibble() %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point(size = 3/5, alpha = 2/3)
+```
+
+We fit the geometric model using `family = geometric(link = log)`.
+
+```{r b10.18}
+b10.18 <-
+  brm(data = list(y = y, x = x), 
+      family = geometric(link = log),
+      y ~ 0 + Intercept + x,
+      prior = c(prior(normal(0, 10), class = b, coef = Intercept),
+                prior(normal(0, 1), class = b, coef = x)),
+      iter = 2500, warmup = 500, chains = 2, cores = 2,
+      seed = 10,
+      file = "/Users/solomonkurz/Dropbox/Recoding McElreath/fits/b10.18")
+```
+
+Inspect the results.
+
+```{r}
+print(b10.18, digits = 2)
+```
+
+It turns out brms uses a [different parameterization for the geometric distribution](https://cran.r-project.org/package=brms/vignettes/brms_families.html#binary-and-count-data-models) than rethinking does. As is typical of brms, the parameterization is based on the mean of the distribution. When using the version of the geometric distribution McElreath introduced in the text, we can define its mean as 
+
+$$\mu = \frac{1}{p}.$$
+
+Yet when using the other common version of the geometric distribution I introduced, above, the mean is defined as
+
+$$\mu = \frac{1 - p}{p},$$
+
+which implies that
+
+$$p = \frac{1}{\mu + 1}.$$
+
+I point this out because the brms parameterization is expressed in terms of the mean of this alternative version. If you start with our alternate form of the geometric distribution for $y = 0, 1, 2, \dots$, here's how to start with it put in terms of $p$ and use substitution to re-express it in terms of the mean:
+
+$$
+\begin{align*}
+f(y_i | p) & = p_i(1 - p_i)^{y_i} \\
+& = \left (\frac{1}{\mu_i + 1} \right ) \left (1 - \frac{1}{\mu_i + 1} \right )^{y_i} \\
+& = \left (\frac{1}{\mu_i + 1} \right ) \left (\frac{\mu_i + 1}{\mu_i + 1} - \frac{1}{\mu_i + 1} \right )^y \\
+& = \left (\frac{1}{\mu_i + 1} \right ) \left (\frac{\mu_i + 1 - 1}{\mu_i + 1} \right )^y \\
+& = \left (\frac{1}{\mu_i + 1} \right ) \left (\frac{\mu_i}{\mu_i + 1}  \right )^{y_i}.
+\end{align*}
+$$
+
+If you look in the [*Binary and count data models*](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#binary-and-count-data-models) section of Bürkner's [-@Bürkner2021Parameterization] vignette, [*Parameterization of response distributions in brms*](https://cran.r-project.org/package=brms/vignettes/brms_families.html#ordinal-and-categorical-models), you'll see this is the parameterization used in brms. This brms parameterization makes the geometric distribution a special case of the negative-binomial for which $\phi = 1$. We'll introduce the negative-binomial distribution in [Section 11.3.2][Negative-binomial or gamma-Poisson.]. Also note that, as with the Poisson and negative-binomial likelihoods, brms defaults to using the log link when one sets `family = geometric`.
+
+Even though the parameters brms yielded look different from those in the text, their predictions describe the data well. Here's the `conditional_effects()` plot.
+
+```{r, fig.width = 4, fig.height = 2.5}
+conditional_effects(b10.18) %>% 
+  plot(points = T,
+       point_args = c(size = 3/5, alpha = 2/3),
+       line_args = c(color = wes_palette("Moonrise2")[1],
+                     fill = wes_palette("Moonrise2")[1]))
+```
+
+It still might be unclear how our $\mu$-based parameters relate to McElreath's data-generating process: 
+
+$$p = \operatorname{logit}^{-1}(-1 + 2x).$$
+
+Here we'll work with the posterior draws, themselves, to first use the formula $\exp(\alpha + \beta x_i)$ to compute $\mu_i$ based on a sequence of $x$-values ranging from 0 to 1. Then we'll use our knowledge of $p = 1 / (\mu + 1)$ to convert those results into the $p$ metric. Finally, we'll compare those results to the true data-generating function.
+
+```{r, fig.width = 3.25, fig.height = 3}
+# extract the posterior draws
+posterior_samples(b10.18) %>%
+  # wrangle
+  mutate(iter = 1:n()) %>% 
+  expand(nesting(iter, b_Intercept, b_x),
+         x = seq(from = 0, to = 1, length.out = 50)) %>% 
+  # compute mu[i]
+  mutate(mu = exp(b_Intercept + b_x * x)) %>% 
+  # convert those results into p[i]
+  mutate(p = 1 / (1 + mu)) %>% 
+  
+  # plot!
+  ggplot(aes(x = x, y = p)) +
+  stat_lineribbon(.width = .95, fill = wes_palette("Moonrise2")[1], alpha = 1/3,
+                  size = 0) +
+  # this is McElreath's data-generating equation
+  stat_function(fun = function(x) inv_logit_scaled(-1 + 2 * x),
+                color = wes_palette("Moonrise2")[2], size = 3/2) +
+  scale_y_continuous(expression(italic(p)), limits = 0:1)
+```
+
+The 95% posterior interval is depicted by the semitransparent green ribbon. Mcelreath's data-generating function is the orange line.
+
+## Summary
+
+> This chapter described some of the most common generalized linear models, those used to model counts. It is important to never convert counts to proportions before analysis, because doing so destroys information about sample size. A fundamental difficulty with these models is that the parameters are on a different scale, typically log-odds (for binomial) or log-rate (for Poisson), than the outcome variable they describe. Therefore computing implied predictions is even more important than before. (pp. 328--329)
+
+## Session info {-}
+
+```{r}
+sessionInfo()
+```
+
+```{r, echo = F, eval = F}
+rm(d, b10.1, b10.2, b10.3, post, d_plot, b10.4, d_plot_4, f, d_aggregated, b10.5, b10.6, b10.7, l_b10.6, l_b10.7, l_b10.6_mm, l_b10.7_mm, p, text, b10.8, b10.9, l_b10.8_reloo, l_b10.9_reloo, w, y, x, b10.good, b10.10, point_tibble, line_tibble, b10.11, b10.12, b10.13, b10.14, nd, ppa, b10.10_c, my_upper, my_diag, my_lower, num_days, num_weeks, y_new, b10.15, n, income, score, career, i, b10.16, family_income, b, p1, p2, b10.17, k, b10.16_verbose, b10.16_nonlinear, b10.16_true, b10.binom, b10.pois, b10.18)
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+ggplot2::theme_set(ggplot2::theme_grey())
+bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+```
+
