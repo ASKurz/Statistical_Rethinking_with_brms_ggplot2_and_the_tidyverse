@@ -945,8 +945,8 @@ Here re-fit the last model from above, the one for which $w = 24$ and $n = 36$.
 b2.1 <-
   brm(data = list(w = 24), 
       family = binomial(link = "identity"),
-      w | trials(36) ~ 0 + Intercept,
-      prior(beta(1, 1), class = b, lb = 0, ub = 1),
+      w | trials(36) ~ 1,
+      prior(beta(1, 1), class = Intercept, lb = 0, ub = 1),
       seed = 2,
       file = "fits/b02.01")
 ```
@@ -962,7 +962,7 @@ There's a lot going on in that output, which we'll start to clarify in Chapter 4
 Let's plot the results of our model and compare them with those from `rethinking::map()`, above.
 
 ```{r, fig.width = 3, fig.height = 2.75}
-posterior_samples(b2.1) %>% 
+as_draws_df(b2.1) %>% 
   mutate(n = "n = 36") %>%
 
   ggplot(aes(x = b_Intercept)) +
