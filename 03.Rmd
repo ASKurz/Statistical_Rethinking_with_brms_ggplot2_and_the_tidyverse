@@ -109,7 +109,7 @@ d %>%
   sample_n(size = 1e6, weight = posterior, replace = T) %>% 
   ggplot(aes(x = p_grid)) +
   geom_density(fill = "black") +
-  scale_x_continuous("proportion of water (p)", limits = c(0, 1))
+  scale_x_continuous("proportion of water (p)", limits = 0:1)
 ```
 
 Yep, that's more ideal.
@@ -247,16 +247,15 @@ The tidyverse approach is nice in that that family of functions typically return
 (q_10_and_90 <- quantile(samples$p_grid, prob = c(.1, .9)))
 ```
 
-Now we have our cutoff values saved as `q_80` and `q_10_and_90`, we're ready to make the bottom panels of Figure 3.2.
+Now we have our cutoff values saved as `q_80` and `q_10_and_90`, we're ready to make the bottom panels of Figure 3.2. For these plots, we'll replace the `geom_ribbon()` approach from above with `geom_area()`.
 
 ```{r, fig.width = 6, fig.height = 2.5}
 # lower left panel
 p1 <-
   d %>% 
-  ggplot(aes(x = p_grid)) +
-  geom_line(aes(y = posterior)) +
-  geom_ribbon(data = d %>% filter(p_grid < q_80),
-              aes(ymin = 0, ymax = posterior)) +
+  ggplot(aes(x = p_grid, y = posterior)) +
+  geom_line() +
+  geom_area(data = d %>% filter(p_grid < q_80)) +
   annotate(geom = "text",
            x = .25, y = .0025,
            label = "lower 80%") +
@@ -266,10 +265,9 @@ p1 <-
 # lower right panel
 p2 <-
   d %>% 
-  ggplot(aes(x = p_grid)) +
-  geom_line(aes(y = posterior)) +
-  geom_ribbon(data = d %>% filter(p_grid > q_10_and_90[1] & p_grid < q_10_and_90[2]),
-              aes(ymin = 0, ymax = posterior)) +
+  ggplot(aes(x = p_grid, y = posterior)) +
+  geom_line() +
+  geom_area(data = d %>% filter(p_grid > q_10_and_90[1] & p_grid < q_10_and_90[2])) +
   annotate(geom = "text",
            x = .25, y = .0025,
            label = "middle 80%") +
@@ -368,12 +366,11 @@ p1 <-
 # lower right panel
 p2 <-
   d %>% 
-  ggplot(aes(x = p_grid)) +
-  geom_ribbon(data = . %>% filter(p_grid > hdi(samples$p_grid, .width = .5)[1] & 
+  ggplot(aes(x = p_grid, y = posterior)) +
+  geom_area(data = . %>% filter(p_grid > hdi(samples$p_grid, .width = .5)[1] & 
                                     p_grid < hdi(samples$p_grid, .width = .5)[2]),
-              aes(ymin = 0, ymax = posterior),
-              fill = "grey75") +
-  geom_line(aes(y = posterior)) +
+            fill = "grey75") +
+  geom_line() +
   labs(subtitle = "50% HPDI",
        x = "proportion of water (p)",
        y = "density")
@@ -382,7 +379,7 @@ p2 <-
 p1 | p2
 ```
 
-In the `geom_ribbon()` line for the HPDI plot, did you notice how we replaced `d` with `.`? When using the pipe (i.e., `%>%`), you can use the `.` as a placeholder for the original data object. It's an odd and handy trick to have. Go [here](https://magrittr.tidyverse.org/reference/pipe.html) to learn more.
+In the `geom_area()` line for the HPDI plot, did you notice how we replaced `d` with `.`? When using the pipe (i.e., `%>%`), you can use the `.` as a placeholder for the original data object. It's an odd and handy trick to have. Go [here](https://magrittr.tidyverse.org/reference/pipe.html) to learn more.
 
 > The HPDI has some advantages over the PI. But in most cases, these two types of interval are very similar. They only look so different in this case because the posterior distribution is highly skewed. If we instead used samples from the posterior distribution for six waters in nine tosses, these intervals would be nearly identical. Try it for yourself, using different probability masses, such as `prob=0.8` and `prob=0.95`. When the posterior is bell shaped, it hardly matters when type of interval you use. (p. 57)
 
@@ -491,8 +488,8 @@ The plot:
 ```{r, fig.width = 3.5, fig.height = 3}
 d %>% 
   ggplot(aes(x = p_grid)) +
-  geom_ribbon(aes(ymin = 0, ymax = posterior),
-              fill = "grey75") +
+  geom_area(aes(y = posterior),
+            fill = "grey75") +
   geom_vline(xintercept = point_estimates$p_grid) +
   geom_text(data = point_estimates,
             aes(x = x, y = y, label = .point),
@@ -542,9 +539,8 @@ min_loss <-
 
 # the plot
 l %>%   
-  ggplot(aes(x = decision)) +
-  geom_ribbon(aes(ymin = 0, ymax = weighted_average_loss),
-              fill = "grey75") +
+  ggplot(aes(x = decision, y = weighted_average_loss)) +
+  geom_area(fill = "grey75") +
   geom_vline(xintercept = min_loss[1], color = "white", linetype = 3) +
   geom_hline(yintercept = min_loss[2], color = "white", linetype = 3) +
   ylab("expected proportional loss") +
@@ -584,9 +580,8 @@ min_loss <-
 
 # update the plot
 l %>%   
-  ggplot(aes(x = decision)) +
-  geom_ribbon(aes(ymin = 0, ymax = weighted_average_loss),
-              fill = "grey75") +
+  ggplot(aes(x = decision, y = weighted_average_loss)) +
+  geom_area(fill = "grey75") +
   geom_vline(xintercept = min_loss[1], color = "white", linetype = 3) +
   geom_hline(yintercept = min_loss[2], color = "white", linetype = 3) +
   ylab("expected proportional loss") +
@@ -755,8 +750,8 @@ We can make our version of the top of Figure 3.6 with a little tricky `filter`in
 ```{r, fig.width = 7, fig.height = 2}
 d %>% 
   ggplot(aes(x = p_grid)) +
-  geom_ribbon(aes(ymin = 0, ymax = posterior),
-              color = "grey67", fill = "grey67") +
+  geom_area(aes(y = posterior),
+            color = "grey67", fill = "grey67") +
   geom_segment(data = . %>% 
                  filter(p_grid %in% c(seq(from = .1, to = .9, by = .1), 3 / 10)),
                aes(xend = p_grid,
@@ -953,9 +948,9 @@ With brms, we'll fit the primary model of $w = 6$ and $n = 9$ much like we did i
 b3.1 <-
   brm(data = list(w = 6), 
       family = binomial(link = "identity"),
-      w | trials(9) ~ 0 + Intercept,
+      w | trials(9) ~ 1,
       # this is a flat prior
-      prior(beta(1, 1), class = b, lb = 0, ub = 1),
+      prior(beta(1, 1), class = Intercept, lb = 0, ub = 1),
       seed = 3,
       file = "fits/b03.01")
 ```
