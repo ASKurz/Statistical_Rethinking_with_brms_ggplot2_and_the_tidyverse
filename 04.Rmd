@@ -280,8 +280,8 @@ d %>%
   # this line allows us to dictate the order the panels will appear in
   mutate(key = factor(key, levels = c("prior", "likelihood", "posterior"))) %>% 
   
-  ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
-  geom_ribbon() +
+  ggplot(aes(x = p_grid, y = value, fill = key)) +
+  geom_area() +
   scale_fill_manual(values = c("blue", "red", "purple")) +
   scale_y_continuous(NULL, breaks = NULL) +
   theme(legend.position = "none") +
@@ -344,7 +344,7 @@ d2 %>%
 
 #### Overthinking: Data frames.
 
-This probably reflects my training history, but the structure of a data frame seems natural and inherently appealing, to me. So I can't relate to the "annoying" comment. But if you're in the other camp, do check out either of these two data wrangling talks ([here](https://www.youtube.com/watch?v=4MfUCX_KpdE&t=23s&frags=pl%2Cwn) and [here](https://www.youtube.com/watch?v=GapSskrtUzU&t=1249s&frags=pl%2Cwn)) by the ineffable [Jenny Bryan](https://twitter.com/jennybryan?lang=en).
+This probably reflects my training history, but the structure of a data frame seems natural and inherently appealing, to me. So I can't relate to the "annoying" comment. But if you're in the other camp, do check out either of these two data wrangling talks ([here](https://www.youtube.com/watch?v=4MfUCX_KpdE) and [here](https://www.youtube.com/watch?v=GapSskrtUzU)) by the ineffable [Jenny Bryan](https://twitter.com/jennybryan).
 
 #### Overthinking: Index magic.
 
@@ -610,30 +610,16 @@ b4.1 <-
       family = gaussian,
       height ~ 1,
       prior = c(prior(normal(178, 20), class = Intercept),
-                prior(uniform(0, 50), class = sigma)),
-      iter = 31000, warmup = 30000, chains = 4, cores = 4,
+                prior(uniform(0, 50), class = sigma, ub = 50)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.01")
 ```
 
-McElreath's uniform prior for $\sigma$ was rough on brms. It took an unusually-large number of warmup iterations before the chains sampled properly. As McElreath covered in [Chapter 8][Estimation.], Hamiltonian Monte Carlo (HMC) tends to work better when you default to a half Cauchy for $\sigma$. We can do that like this.
-
-```{r b4.1_hc}
-b4.1_hc <- 
-  brm(data = d2, family = gaussian,
-      height ~ 1,
-      prior = c(prior(normal(178, 20), class = Intercept),
-                # the magic lives here
-                prior(cauchy(0, 1), class = sigma)),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      seed = 4,
-      file = "fits/b04.01_hc")
-```
-
-This leads to an important point. After running model fit with HMC, it's a good idea to inspect the chains. As we'll see, McElreath coverd this in [Chapter 8][Checking the chain.]. Here's a typical way to do so in brms.
+After running model fit with HMC, it's a good idea to inspect the chains. As we'll see, McElreath covered this in [Chapter 8][Checking the chain.]. Here's a typical way to do so with brms.
 
 ```{r, fig.width = 6, fig.height = 2.5}
-plot(b4.1_hc) 
+plot(b4.1) 
 ```
 
 If you want detailed diagnostics for the HMC chains, execute `launch_shinystan(b4.1)`. It'll keep you busy for a while. But anyway, the chains look good. We can reasonably trust the results.
@@ -641,19 +627,19 @@ If you want detailed diagnostics for the HMC chains, execute `launch_shinystan(b
 Here's how to get the model summary of our `brm()` object.
 
 ```{r}
-print(b4.1_hc)
+print(b4.1)
 ```
 
 The `summary()` function works in a similar way. You can also get a [Stan-like summary](https://cran.r-project.org/package=rstan/vignettes/rstan.html) like this.
 
 ```{r}
-b4.1_hc$fit
+b4.1$fit
 ```
 
 Whereas rethinking defaults to 89% intervals, using `print()` or `summary()` with brms models defaults to 95% intervals. Unless otherwise specified, I will stick with 95% intervals throughout. However, if you really want those 89% intervals, an easy way is with the `prob` argument within `brms::summary()` or `brms::print()`.
 
 ```{r}
-summary(b4.1_hc, prob = .89)
+summary(b4.1, prob = .89)
 ```
 
 Anyways, here's how to fit the model with the shockingly-narrow prior on $\mu$.
@@ -663,8 +649,8 @@ b4.2 <-
   brm(data = d2, family = gaussian,
       height ~ 1,
       prior = c(prior(normal(178, 0.1), class = Intercept),
-                prior(uniform(0, 50), class = sigma)),
-      iter = 3000, warmup = 2000, chains = 4, cores = 4,
+                prior(uniform(0, 50), class = sigma, ub = 50)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.02")
 ```
@@ -675,18 +661,16 @@ Check the chains.
 plot(b4.2)
 ```
 
-I had to increase the `warmup` due to convergence issues. After doing so, everything looks to be on the up and up. The chains look great. Again, we will learn more about these technical details in [Chapter 8][Checking the chain.].
-
-Here's the model `summary()`.
+The chains look great. Here's the model `summary()`.
 
 ```{r}
 summary(b4.2)
 ```
 
-Subsetting the `summary()` output with `$fixed` provides a convenient way to compare the `Intercept` summaries between `b4.1_hc` and `b4.2`.
+Subsetting the `summary()` output with `$fixed` provides a convenient way to compare the `Intercept` summaries between `b4.1` and `b4.2`.
 
 ```{r}
-summary(b4.1_hc)$fixed
+summary(b4.1)$fixed
 summary(b4.2)$fixed
 ```
 
@@ -695,29 +679,29 @@ summary(b4.2)$fixed
 brms doesn't seem to have a convenience function that works the way `vcov()` does for rethinking.
 
 ```{r}
-vcov(b4.1_hc)
+vcov(b4.1)
 ```
 
 This only returned the first element in the matrix it did for rethinking. That is, it appears the `brms::vcov()` function only returns the variance/covariance matrix for the single-level $\beta$ parameters (i.e., those used to model $\mu$).
 
-However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `posterior_samples()`, which we'll be using a lot of as we go along.
+However, if you really wanted this information, you could get it after putting the HMC chains in a data frame. We do that with the `as_draws_df()` function, which we'll be using a lot of as we go along.
 
 ```{r}
-post <- posterior_samples(b4.1_hc)
+post <- as_draws_df(b4.1)
 
 head(post)
 ```
 
 Now `select()` the columns containing the draws from the desired parameters and feed them into `cov()`.
 
-```{r}
+```{r, warning = F}
 select(post, b_Intercept:sigma) %>% 
   cov()
 ```
 
 That was "(1) a vector of variances for the parameters and (2) a correlation matrix" for them (p. 90). Here are just the variances (i.e., the diagonal elements) and the correlation matrix.
 
-```{r}
+```{r, warning = F}
 # variances
 select(post, b_Intercept:sigma) %>%
   cov() %>%
@@ -729,29 +713,31 @@ select(b_Intercept, sigma) %>%
   cor()
 ```
 
-With our `post <- posterior_samples(b4.1_hc)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS) [@R-MASS; @MASS2002], in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
+With our `post <- as_draws_df(b4.1)` code from a few lines above, we've already done the brms version of what McElreath did with `extract.samples()` on page 90. However, what happened under the hood was different. Whereas rethinking used the `mvnorm()` function from the [MASS package](https://cran.r-project.org/package=MASS) [@R-MASS; @MASS2002], in brms we just extracted the iterations of the HMC chains and put them in a data frame. 
 
 ```{r}
 str(post)
 ```
 
-Notice how our data frame, `post`, includes a third vector named `lp__`. That's the log posterior. For more information on the log posterior, see the [brms reference manual](https://CRAN.R-project.org/package=brms/brms.pdf) [@brms2020RM], the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [-@standevelopmentteamRStanInterfaceStan2020] [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient), or [Stephen Martin](https://twitter.com/smartin2018)'s [nice explanation](https://discourse.mc-stan.org/t/basic-question-what-is-lp-in-posterior-samples-of-a-brms-regression/17567/2?u=solomon) on the Stan Forums. The log posterior will largely be outside of our focus in this project.
+Notice how our data frame, `post`, includes a vector named `lp__`. That's the log posterior. For more information on the log posterior, see the [brms reference manual](https://CRAN.R-project.org/package=brms/brms.pdf) [@brms2020RM], the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [-@standevelopmentteamRStanInterfaceStan2020] [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient), or [Stephen Martin](https://twitter.com/smartin2018)'s [nice explanation](https://discourse.mc-stan.org/t/basic-question-what-is-lp-in-posterior-samples-of-a-brms-regression/17567/2?u=solomon) on the Stan Forums. The log posterior will largely be outside of our focus in this project.
+
+Our `post` also contains a vector named `lprior`. This is the log of the joint prior and is a new addition to the output based on brms version 2.17.0. It is related to functionality from the up-and-coming [priorsense package](https://github.com/n-kall/priorsense) [@R-priorsense], which is based on new work, such as @kallioinen2021DetectingAndDiagnosing. Though you'll see it pop up in our output from time to time, the `lprior` will be outside of our focus in this project.
 
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package. E.g.,
 
-```{r}
+```{r, warning = F}
 summary(post[, 1:2])
 ```
 
 Here's one option using the transpose of a `quantile()` call nested within `apply()`, which is a very general function you can learn more about [here](https://www.datacamp.com/community/tutorials/r-tutorial-apply-family#gs.f7fyw2s) or [here](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/).
 
-```{r}
+```{r, warning = F}
 t(apply(post[, 1:2], 2, quantile, probs = c(.5, .025, .75)))
 ```
 
 The base R code is compact, but somewhat opaque. Here's how to do something similar with more explicit tidyverse code.
 
-```{r, message = F}
+```{r, message = F, warning = F}
 post %>%
   select(sigma:b_Intercept) %>% 
   gather(parameter) %>%
@@ -766,10 +752,10 @@ post %>%
 You can always get pretty similar information by just putting the `brm()` fit object into `posterior_summary()`.
 
 ```{r}
-posterior_summary(b4.1_hc)
+posterior_summary(b4.1)
 ```
 
-And if you're willing to drop the posterior $SD$s, you can use `tidybayes::mean_qi()`, too.
+And if you're willing to drop the posterior $\textit{SD}$'s, you can use `tidybayes::mean_qi()`, too.
 
 ```{r, warning = F}
 post %>% 
@@ -781,7 +767,7 @@ post %>%
 
 #### Overthinking: Under the hood with multivariate sampling.
 
-Again, `brms::posterior_samples()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the iterations from the HMC chains. McElreath covered all of this in [Chapter 8][Easy HMC: ~~map2stan~~ `brm()`] and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?posterior_samples`.
+Again, `brms::as_draws_df()` is not the same as `rethinking::extract.samples()`. Rather than use the `MASS::mvnorm()`, brms takes the draws from the HMC chains. McElreath covered all of this in [Chapter 8][Easy HMC: ~~map2stan~~ `brm()`] and we will too. You might also look at the brms [reference manual](https://cran.r-project.org/package=brms/brms.pdf) or [GitHub page](https://github.com/paul-buerkner/brms) for details. To get documentation in a hurry, you could also just execute `?as_draws_df`.
 
 #### Overthinking: Getting $\sigma$ right.
 
@@ -859,8 +845,8 @@ McElreath recommended we plot them. If you recall, we've already plotted $\opera
 tibble(beta = -40:40) %>% 
   mutate(density = dnorm(beta, mean = 0, sd = 10)) %>% 
   
-  ggplot(aes(x = beta, ymin = 0, ymax = density)) +
-  geom_ribbon(size = 0, fill = "royalblue") +
+  ggplot(aes(x = beta, y = density)) +
+  geom_area(size = 0, fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(beta)) +
   theme(panel.grid = element_blank())
@@ -887,13 +873,13 @@ b4.3 <-
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(uniform(0, 50), class = sigma)),
-      iter = 31000, warmup = 30000, chains = 4, cores = 4,
+                prior(uniform(0, 50), class = sigma, ub = 50)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03")
 ```
 
-This was another example of how using a uniform prior for $\sigma$ required we use an unusually large number of `warmup` iterations before the HMC chains converged on the posterior. Change the prior to `cauchy(0, 1)` and the chains converge with no problem, resulting in much better effective samples, too. Here are the trace plots.
+Here are the trace plots.
 
 ```{r, fig.width = 6, fig.height = 3.5}
 plot(b4.3)
@@ -920,7 +906,7 @@ h_i    & \sim \operatorname{Normal}(\alpha + \beta x_i, \sigma) \\
 
 #### Tables of estimates.
 
-With a little `[]` subsetting we can exclude the log posterior from the `posterior_summary()` so we can fucus on the parameters.
+With a little `[]` subsetting we can exclude the log posterior from the `posterior_summary()` so we can focus on the parameters.
 
 ```{r}
 posterior_summary(b4.3)[1:3, ]
@@ -928,8 +914,8 @@ posterior_summary(b4.3)[1:3, ]
 
 Again, brms doesn't have a convenient `corr = TRUE` argument for `plot()` or `summary()`. But you can get that information after putting the chains in a data frame.
 
-```{r}
-posterior_samples(b4.3) %>%
+```{r, warning = F}
+as_draws_df(b4.3) %>%
   select(b_Intercept:sigma) %>%
   cor() %>%
   round(digits = 2)
@@ -952,8 +938,8 @@ b4.4 <-
       height ~ 1 + weight_c,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(uniform(0, 50), class = sigma)),
-      iter = 36000, warmup = 35000, chains = 4, cores = 4,
+                prior(uniform(0, 50), class = sigma, ub = 50)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.04")
 ```
@@ -963,10 +949,10 @@ plot(b4.4)
 posterior_summary(b4.4)[1:3, ]
 ```
 
-Like before, the uniform prior required extensive `warmup` iterations to produce a good posterior. This is easily fixed using a half Cauchy prior, instead. Anyways, the effective samples improved. Here's the parameter correlation info.
+Here's the parameter correlation info.
 
-```{r}
-posterior_samples(b4.4) %>%
+```{r, warning = F}
+as_draws_df(b4.4) %>%
   select(b_Intercept:sigma) %>%
   cor() %>%
   round(digits = 2)
@@ -1010,18 +996,18 @@ In the brms reference manual, Bürkner described the job of the`fixef()` functio
 
 #### Adding uncertainty around the mean.
 
-Be default, we extract all the posterior iterations with `posterior_samples()`. Because we had 4,000 posterior draws, our output will contain 4,000 rows.
+Be default, we extract all the posterior iterations with `as_draws_df()`. Because we had 4,000 posterior draws, our output will contain 4,000 rows.
 
 ```{r}
-post <- posterior_samples(b4.3)
+post <- as_draws_df(b4.3)
 
 post %>%
   glimpse()
 ```
 
-> Each row is a correlated random sample from the point posterior of all three parameters, using the covariances provided by [`cov(posterior_samples(b4.4)`]. The paired values of [`b_Intercept`] and [`b_weight`] on each row define the line. The average of very many of these lines is the MAP line. (p. 101)
+> Each row is a correlated random sample from the joint posterior of all three parameters, using the covariances provided by [`cov(as_draws_df(b4.4)[, 1:3])`]. The paired values of [`b_Intercept`] and [`b_weight`] on each row define the line. The average of very many of these lines is the MAP line. (p. 101)
 
-Here are the four models leading up to McElreath's Figure 4.5. To reduce my computation time, I used a `cauchy(0, 1)` prior on $\sigma$. If you are willing to wait for the warmups, switching that out for McElreath's uniform prior should work fine as well. With the exception of that $\sigma$ prior, these models are all variations on `b4.3` from above, which we'll reflect in our naming convention.
+Here are the four models leading up to McElreath's Figure 4.5. These models are all variations on `b4.3` from above, which we'll reflect in our naming convention.
 
 ```{r b4.3_010}
 n <- 10
@@ -1033,7 +1019,7 @@ b4.3_010 <-
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03_010")
@@ -1047,7 +1033,7 @@ b4.3_050 <-
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03_050")
@@ -1061,7 +1047,7 @@ b4.3_150 <-
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03_150")
@@ -1075,7 +1061,7 @@ b4.3_352 <-
       height ~ 1 + weight,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.03_352")
@@ -1100,20 +1086,20 @@ print(b4.3_352)
 We'll need to put the chains of each model into data frames.
 
 ```{r} 
-post010 <- posterior_samples(b4.3_010)
-post050 <- posterior_samples(b4.3_050)
-post150 <- posterior_samples(b4.3_150)
-post352 <- posterior_samples(b4.3_352)
+post010 <- as_draws_df(b4.3_010)
+post050 <- as_draws_df(b4.3_050)
+post150 <- as_draws_df(b4.3_150)
+post352 <- as_draws_df(b4.3_352)
 ```
 
 Here is the code for the four individual plots.
 
-```{r}
+```{r, warning = F}
 p1 <- 
-  ggplot(data =  d2[1:10 , ], 
+  ggplot(data = d2 %>% slice(1:10), 
          aes(x = weight, y = height)) +
-  geom_abline(intercept = post010[1:20, 1], 
-              slope     = post010[1:20, 2],
+  geom_abline(data = post010 %>% slice(1:20),
+              aes(intercept = b_Intercept, slope = b_weight, group = .draw),
               size = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
@@ -1121,10 +1107,10 @@ p1 <-
   labs(subtitle = "N = 10")
 
 p2 <-
-  ggplot(data =  d2[1:50 , ], 
+  ggplot(data = d2 %>% slice(1:50), 
          aes(x = weight, y = height)) +
-  geom_abline(intercept = post050[1:20, 1], 
-              slope     = post050[1:20, 2],
+  geom_abline(data = post050 %>% slice(1:20),
+              aes(intercept = b_Intercept, slope = b_weight, group = .draw),
               size = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
@@ -1132,10 +1118,10 @@ p2 <-
   labs(subtitle = "N = 50")
 
 p3 <-
-  ggplot(data =  d2[1:150 , ], 
+  ggplot(data = d2 %>% slice(1:150), 
          aes(x = weight, y = height)) +
-  geom_abline(intercept = post150[1:20, 1], 
-              slope     = post150[1:20, 2],
+  geom_abline(data = post150 %>% slice(1:20),
+              aes(intercept = b_Intercept, slope = b_weight, group = .draw),
               size = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
@@ -1143,18 +1129,16 @@ p3 <-
   labs(subtitle = "N = 150")
 
 p4 <- 
-  ggplot(data =  d2[1:352 , ], 
+  ggplot(data = d2, 
          aes(x = weight, y = height)) +
-  geom_abline(intercept = post352[1:20, 1], 
-              slope     = post352[1:20, 2],
+  geom_abline(data = post352 %>% slice(1:20),
+              aes(intercept = b_Intercept, slope = b_weight, group = .draw),
               size = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
   labs(subtitle = "N = 352")
 ```
-
-Note how we used the good old bracket syntax (e.g., ` d2[1:10 , ]`) to index rows from our `d2` data. With tidyverse-style syntax, we could have done `slice(d2, 1:10)` or `d2 %>% slice(1:10)` instead.
 
 Now we can combine the ggplots with patchwork syntax to make the full version of Figure 4.5.
 
@@ -1168,7 +1152,7 @@ Now we can combine the ggplots with patchwork syntax to make the full version of
 
 Remember, if you want to plot McElreath's `mu_at_50` with ggplot2, you'll need to save it as a data frame or a tibble.
 
-```{r}
+```{r, warning = F}
 mu_at_50 <- 
   post %>% 
   transmute(mu_at_50 = b_Intercept + b_weight * 50)
@@ -1373,7 +1357,7 @@ b4.5 <-
       height ~ 1 + weight_s + I(weight_s^2),
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.05")
@@ -1434,7 +1418,7 @@ b4.6 <-
       height ~ 1 + weight_s + I(weight_s^2) + I(weight_s^3),
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.06")
@@ -1448,7 +1432,7 @@ b4.7 <-
       height ~ 1 + weight_s,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 4,
       file = "fits/b04.07")
@@ -1551,7 +1535,7 @@ sessionInfo()
 ```
 
 ```{r, warning = F, echo = F}
-rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.1_hc, b4.2, post, b4.3, b4.4, b4.3_010, b4.3_050, b4.3_150, b4.3_352, post010, post050, post150, post352, p1, p2, p3, p4, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f, p, b4.6, b4.7, at)
+rm(pos, growth, samples, n_points, d, d2, n, d_grid, grid_function, d_grid_samples, d3, b4.1, b4.2, post, b4.3, b4.4, b4.3_010, b4.3_050, b4.3_150, b4.3_352, post010, post050, post150, post352, p1, p2, p3, p4, mu_at_50, mu, weight_seq, mu_summary, pred_height, b4.5, f, p, b4.6, b4.7, at)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
