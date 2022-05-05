@@ -748,7 +748,7 @@ dev_100 <-
 ```
 
 ```{r, echo = F}
-# that simulation takes 16.99808 mins to complete. Instead of completing it on the fly 
+# that simulation takes 20.11006 mins to complete. Instead of completing it on the fly 
 # for each update, I've saved the results in an external file. 
 
 # save(list = c("dev_100", "dev_20", "kseq", "n_sim", "n_cores"), file = "sims/06.sim_1.rda")
@@ -760,12 +760,8 @@ If you didn't quite catch it, the simulation yields `dev_20` and `dev_100`. We'l
 
 ```{r, message = F, warning = F}
 dev_tibble <-
-  dev_20 %>% 
+  rbind(dev_20, dev_100) %>% 
   as_tibble() %>% 
-  bind_rows(
-    dev_100 %>%
-      as_tibble()
-  ) %>% 
   mutate(n         = rep(c("n = 20", "n = 100"), each = 4),
          statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 2),
          sample    = rep(c("in", "out"), times = 2) %>% rep(., times = 2)) %>% 
@@ -822,9 +818,7 @@ Our simulation results matched up well with those in the text.
 In case you were curious, here's how you might do Figure 6.8 with ggplot2. All the action is in the `geom_ribbon()` portions.
 
 ```{r, fig.width = 3, fig.height = 3}
-tibble(x = seq(from = - 3.5, 
-               to   = 3.5, 
-               by   = .01)) %>%
+tibble(x = seq(from = -3.5, to = 3.5, by = 0.01)) %>%
   
   ggplot(aes(x = x, ymin = 0)) +
   geom_ribbon(aes(ymax = dnorm(x, mean = 0, sd = 0.2)), 
@@ -1057,7 +1051,7 @@ b6.0_waic <-
       dist ~ 1 + speed,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(uniform(0, 30), class = sigma)),
+                prior(uniform(0, 30), class = sigma, ub = 30)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 6,
       file = "fits/b06.00_waic")
@@ -1255,7 +1249,7 @@ data(milk)
 
 d <- 
   milk %>%
-  drop_na(ends_with("_s"))
+  drop_na(neocortex.perc)
 rm(milk)
 
 d <-
@@ -1289,7 +1283,7 @@ b6.11 <-
       family = gaussian,
       kcal.per.g ~ 1,
       prior = c(prior(uniform(-1000, 1000), class = Intercept),
-                prior(uniform(0, 100), class = sigma)),
+                prior(uniform(0, 100), class = sigma, ub = 100)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       inits = inits_list,
       seed = 6,
@@ -1306,7 +1300,7 @@ b6.12 <-
       kcal.per.g ~ 1 + neocortex,
       prior = c(prior(uniform(-1000, 1000), class = Intercept),
                 prior(uniform(-1000, 1000), class = b),
-                prior(uniform(0, 100), class = sigma)),
+                prior(uniform(0, 100), class = sigma, ub = 100)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       inits = inits_list,
       seed = 6,
@@ -1510,7 +1504,7 @@ diff %>%
 In case you're curious, this is a graphic version of what we just did.
 
 ```{r, fig.width = 3, fig.height = 2.25}
-tibble(diff = -20:30) %>% 
+tibble(diff = seq(from = -20, to = 30, by = 0.25)) %>% 
   ggplot(aes(x = diff, ymin = 0)) +
   geom_ribbon(aes(ymax = dnorm(diff, w[4, 1] * -2, w[4, 2] * 2)),
               fill = carto_pal(7, "BurgYl")[7]) +
@@ -1528,23 +1522,47 @@ tibble(diff = -20:30) %>%
 
 #### Comparing estimates.
 
-The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `broom::tidy()` function, which will save the summary statistics for our model parameters. For example, this is what it will produce for the full model, `b6.14`.
+The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `summarise_draws()` function from the [posterior package](https://mc-stan.org/posterior) [@R-posterior], which will compute the summary statistics for our model parameters. For example, this is what it returns for the full model, `b6.14`.
 
 ```{r}
-tidy(b6.14)
+summarise_draws(b6.14)
 ```
 
-Note, `tidy()` also grabs the log posterior (i.e., `lp__`), which we'll exclude for our purposes. With a little `purrr::map()` code, you can save the `brm()` fits and their `tidy()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
+You can compute a more focused summary like so.
 
-```{r my_coef_tab}
+```{r}
+summarise_draws(b6.14, mean, ~quantile2(.x, probs = c(0.025, 0.975))) %>%
+    filter(variable != "lprior") %>% 
+    filter(variable != "lp__")
+```
+
+To make it easier to iterate that workflow, we'll warp that into a custom function called `get_summary()`.
+
+```{r}
+get_summary <- function(fit) {
+  
+  fit %>% 
+    summarise_draws(mean, ~quantile2(.x, probs = c(0.025, 0.975))) %>%
+    filter(variable != "lprior") %>% 
+    filter(variable != "lp__")
+  
+}
+
+# how does it work?
+get_summary(b6.14)
+```
+
+With a little `purrr::map()` code, you can save the `brm()` fits and their `get_summary()` summaries into a nested tibble, and then `unnest()` the tibble for `coeftab()`-like use.
+
+```{r}
 my_coef_tab <-
   tibble(model = c("b6.11", "b6.12", "b6.13", "b6.14")) %>% 
   mutate(fit = purrr::map(model, get)) %>% 
-  mutate(tidy = purrr::map(fit, tidy)) %>% 
-  unnest(tidy) %>% 
-  filter(term != "lp__")
+  mutate(tidy = purrr::map(fit, get_summary)) %>% 
+  select(-fit) %>% 
+  unnest(tidy)
 
-head(my_coef_tab)
+my_coef_tab
 ```
 
 Just a little more work and we'll have a table analogous to the one McElreath produced with his `coef_tab()` function.
@@ -1552,40 +1570,37 @@ Just a little more work and we'll have a table analogous to the one McElreath pr
 ```{r}
 my_coef_tab %>%
   # learn more about `dplyr::complete()` here: https://rdrr.io/cran/tidyr/man/expand.html
-  complete(model, term) %>% 
-  select(model, term, estimate) %>%
-  mutate(estimate = round(estimate, digits = 2)) %>%
-  spread(key = model, value = estimate) %>% 
+  complete(model, variable) %>% 
+  select(model, variable, mean) %>%
+  mutate(mean = round(mean, digits = 2)) %>%
+  spread(key = model, value = mean) %>% 
   knitr::kable()
 ```
 
 I'm also not aware of an efficient way in brms to reproduce Figure 6.12 for which McElreath nested his `coeftab()` argument in a `plot()` argument. However, one can build something similar by hand with a little data wrangling.
 
 ```{r, message = F, warning = F, fig.height = 3, fig.width = 4}
-# data wrangling
 wrangled_my_coef_tab <-
-  my_coef_tab %>%
-  complete(model, term) %>% 
-  bind_rows(
-     tibble(
-       model     = NA,
-       term      = c("b_logmass", "b_neocortex", "sigma", "b_Intercept"),
-       fit       = NA,
-       estimate  = NA,
-       std.error = NA,
-       lower     = NA,
-       upper     = NA)) %>%
-  mutate(axis  = ifelse(is.na(model), term, model),
-         model = factor(model, levels = str_c("b6.1", 1:4)),
-         term  = factor(term, levels = c("b_logmass", "b_neocortex", "sigma", "b_Intercept", NA))) %>%
-  arrange(term, model) %>%
+  my_coef_tab %>% 
+  complete(model, variable) %>% 
+  bind_rows(tribble(
+    ~model, ~variable, ~mean, ~q2.5, ~q97.5,
+    NA, "b_logmass",   NA, NA, NA, 
+    NA, "b_neocortex", NA, NA, NA, 
+    NA, "sigma",       NA, NA, NA, 
+    NA, "b_Intercept", NA, NA, NA)
+  ) %>%
+  mutate(axis     = ifelse(is.na(model), variable, model),
+         model    = factor(model, levels = str_c("b6.1", 1:4)),
+         variable = factor(variable, levels = c("b_logmass", "b_neocortex", "sigma", "b_Intercept", NA))) %>%
+  arrange(variable, model) %>%
   mutate(axis_order = letters[1:20],
          axis = ifelse(str_detect(axis, "b6."), str_c("      ", axis), axis))
-  
+
 # plot
 ggplot(data = wrangled_my_coef_tab,
-       aes(x = axis_order, y = estimate,
-           ymin = lower, ymax = upper)) +
+       aes(x = axis_order, y = mean,
+           ymin = q2.5, ymax = q97.5)) +
   theme_classic() +
   geom_hline(yintercept = 0,  color = carto_pal(7, "BurgYl")[2]) +
   geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
@@ -1604,7 +1619,7 @@ However, if you’re willing to deviate just a bit from the format of McElreath'
 ```{r, message = F, warning = F, fig.height = 3.5, fig.width = 4}
 my_coef_tab %>% 
   
-  ggplot(aes(x = estimate, xmin = lower, xmax = upper, y = model)) +
+  ggplot(aes(x = mean, xmin = q2.5, xmax = q97.5, y = model)) +
   geom_vline(xintercept = 0,  color = carto_pal(7, "BurgYl")[2]) +
   geom_pointrange(shape = 21, color = carto_pal(7, "BurgYl")[7], fill = carto_pal(7, "BurgYl")[5]) +
   labs(x = NULL,
@@ -1616,7 +1631,7 @@ my_coef_tab %>%
         panel.background = element_rect(fill = alpha(carto_pal(7, "BurgYl")[3], 1/4)),
         panel.grid = element_blank(),
         strip.background = element_rect(color = "transparent")) +
-  facet_wrap(~term, ncol = 1)
+  facet_wrap(~variable, ncol = 1)
 ```
 
 #### Rethinking: Barplots suck.
@@ -1689,7 +1704,7 @@ rbind(bayes_R2(b6.11),
   select(model, r_square_posterior_mean)
 ```
 
-If you want the full distribution of the $R^2$, you’ll need to add a `summary = F` argument. Note how this returns a numeric vector.
+If you want the full distribution of the $R^2$, you'll need to add a `summary = F` argument. Note how this returns a numeric vector.
 
 ```{r}
 r2_b6.13 <- bayes_R2(b6.13, summary = F)
