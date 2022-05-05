@@ -53,7 +53,7 @@ glimpse(d)
 
 Now we have our data, we can reproduce Figure 5.1. One convenient way to get the handful of sate labels into the plot was with the `geom_text_repel()` function from the [ggrepel package](https://CRAN.R-project.org/package=ggrepel) [@R-ggrepel]. But first, we spent the last few chapters warming up with ggplot2. Going forward, each chapter will have its own plot theme. In this chapter, we'll characterize the plots with `theme_bw() + theme(panel.grid = element_rect())` and coloring based off of `"firebrick"`.
 
-```{r, fig.width = 3, fig.height = 3, message = F}
+```{r, fig.width = 3, fig.height = 3, message = F, warning = F}
 # install.packages("ggrepel", dependencies = T)
 library(ggrepel)
 
@@ -126,7 +126,7 @@ b5.1 <-
       Divorce ~ 1 + MedianAgeMarriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.01")
@@ -184,7 +184,7 @@ b5.2 <-
       Divorce ~ 1 + Marriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.02")
@@ -249,7 +249,7 @@ b5.3 <-
       Divorce ~ 1 + Marriage_s + MedianAgeMarriage_s,
       prior = c(prior(normal(10, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.03")
@@ -273,10 +273,10 @@ There are numerous ways to make a coefficient plot. Another is with the `mcmc_in
 # install.packages("bayesplot", dependencies = T)
 library(bayesplot)
 
-post <- posterior_samples(b5.3)
+post <- as_draws_df(b5.3)
 
 color_scheme_set("red")
-mcmc_intervals(post[, 1:4], 
+mcmc_intervals(post %>% select(b_Intercept:sigma), 
                prob = .5,
                point_est = "median") +
   ggtitle("My fancy bayesplot-based coefficient plot") +
@@ -331,7 +331,7 @@ b5.4 <-
       Marriage_s ~ 1 + MedianAgeMarriage_s,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.04")
@@ -410,7 +410,7 @@ b5.4b <-
       MedianAgeMarriage_s ~ 1 + Marriage_s,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.04b")
@@ -688,7 +688,7 @@ b5.0_spur <-
       y ~ 1 + x_real + x_spur,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.00_spur")
@@ -738,13 +738,13 @@ b5.5 <-
       kcal.per.g ~ 1 + neocortex.perc,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(cauchy(0, 1), class = sigma)),
+                prior(uniform(0, 1), class = sigma, ub = 1)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.05")
 ```
 
-The uniform prior was difficult on Stan. After playing around a bit, I just switched to a unit-scale half Cauchy. Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better.
+Similar to the rethinking example in the text, brms warned that "Rows containing NAs were excluded from the model." This isn't necessarily a problem; the model fit just fine. But we should be ashamed of ourselves and look eagerly forward to [Chapter 14][Missing Data and Other Opportunities] where we'll learn how to do better.
 
 To compliment how McElreath removed cases with missing values on our variables of interest with base R `complete.cases()`, here we'll do so with `tidyr::drop_na()` and a little help with `ends_with()`.
 
@@ -772,7 +772,7 @@ Yes, indeed, "that's less than 0.1 kilocalories" (p. 137).
 
 Just for kicks, we'll superimpose 50% intervals atop 95% intervals for the next few plots. Here's Figure 5.7, top left.
 
-```{r, fig.width = 3, fig.height = 2.75, message = F}
+```{r, fig.width = 3, fig.height = 2.75, message = F, warning = F}
 nd <- tibble(neocortex.perc = 54:80)
 
 fitted(b5.5, 
@@ -814,7 +814,7 @@ b5.6 <-
       kcal.per.g ~ 1 + log_mass,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 1), class = sigma)),
+                prior(uniform(0, 1), class = sigma, ub = 1)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.06")
@@ -871,9 +871,8 @@ b5.7 <-
       kcal.per.g ~ 1 + neocortex.perc + log_mass,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 1), class = sigma)),
+                prior(uniform(0, 1), class = sigma, ub = 1)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .9),
       seed = 5,
       file = "fits/b05.07")
 ```
@@ -1047,7 +1046,7 @@ b5.8 <-
       height ~ 1 + leg_left + leg_right,
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.08")
@@ -1084,10 +1083,10 @@ This is perhaps the simplest way to plot the bivariate posterior of our two pred
 pairs(b5.8, pars = parnames(b5.8)[2:3])
 ```
 
-If you'd like a nicer and more focused attempt, you might have to revert to the `posterior_samples()` function and a little ggplot2 code.
+If you'd like a nicer and more focused attempt, you might have to revert to the `as_draws_df()` function and a little ggplot2 code.
 
 ```{r, fig.width = 3, fig.height = 3}
-post <- posterior_samples(b5.8)
+post <- as_draws_df(b5.8)
   
 post %>% 
   ggplot(aes(x = b_leg_left, y = b_leg_right)) +
@@ -1109,7 +1108,7 @@ post %>%
 
 But wow, those coefficients look about as highly correlated as the predictors, just with the reversed sign.
 
-```{r}
+```{r, warning = F}
 post %>% 
   select(b_leg_left:b_leg_right) %>% 
   cor()
@@ -1147,7 +1146,7 @@ b5.9 <-
       height ~ 1 + leg_left,
       prior = c(prior(normal(10, 100), class = Intercept),
                 prior(normal(2, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.09")
@@ -1157,10 +1156,10 @@ b5.9 <-
 print(b5.9)
 ```
 
-That posterior $SD$ looks much better. Compare this density to the one in Figure 6.1.b.
+That posterior $\textit{SD}$ looks much better. Compare this density to the one in Figure 6.1.b.
 
-```{r, fig.width = 3, fig.height = 3}
-posterior_samples(b5.9) %>% 
+```{r, fig.width = 3, fig.height = 3, warning = F}
+as_draws_df(b5.9) %>% 
   
   ggplot(aes(x = b_leg_left, y = 0)) +
   stat_halfeye(point_interval = median_qi, .width = .95,
@@ -1177,7 +1176,7 @@ We might also use `tidybayes::stat_pointinterval()` to compare the posterior of 
 
 ```{r, fig.width = 6, fig.height = 1, warning = F, message = F}
 bind_cols(post %>% transmute(`b_leg_left + b_leg_right` = b_leg_left + b_leg_right),
-          posterior_samples(b5.9) %>% transmute(`only b_leg_left` = b_leg_left)) %>% 
+          as_draws_df(b5.9) %>% transmute(`only b_leg_left` = b_leg_left)) %>% 
   gather() %>% 
 
   ggplot(aes(x = value, y = key)) +
@@ -1222,7 +1221,7 @@ b5.10 <-
       kcal.per.g ~ 1 + perc.fat,
       prior = c(prior(normal(.6, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.10")
@@ -1305,7 +1304,7 @@ ggpairs(data = d, columns = c(3:4, 6),
         strip.background = element_rect(fill = "white", color = "white"))
 ```
 
-Our two predictor "variables are negatively correlated, and so strongly so that they are nearly redundant. Either helps in predicting `kcal.per.g`, but neither helps much *once you already know the other*" (p. 148, *emphasis* in the original). You can really see that on the lower two scatter plots. You'll note the `ggpairs()` plot also showed the Pearson's correlation coefficients, se we don't need to use the `cor()` function like McElreath did in the text.
+Our two predictor "variables are negatively correlated, and so strongly so that they are nearly redundant. Either helps in predicting `kcal.per.g`, but neither helps much *once you already know the other*" (p. 148, *emphasis* in the original). You can really see that on the lower two scatter plots. You'll note the `ggpairs()` plot also showed the Pearson's correlation coefficients, so we don't need to use the `cor()` function like McElreath did in the text.
 
 In the next section, we'll run the simulation necessary for our version of Figure 5.10.
 
@@ -1400,7 +1399,7 @@ b5.13 <-
       h1 ~ 1 + h0 + treatment + fungus,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.13")
@@ -1467,7 +1466,7 @@ b5.15 <-
       height ~ 1 + male,
       prior = c(prior(normal(178, 100), class = Intercept),
                 prior(normal(0, 10), class = b),
-                prior(cauchy(0, 2), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.15")
@@ -1482,7 +1481,7 @@ print(b5.15)
 Our samples from the posterior are already in the HMC iterations. All we need to do is put them in a data frame and we'll be well-positioned to compute the intervals for the average height among men.
 
 ```{r, warning = F}
-post <- posterior_samples(b5.15)
+post <- as_draws_df(b5.15)
 
 post %>%
   transmute(male_height = b_Intercept + b_male) %>% 
@@ -1541,7 +1540,7 @@ b5.15b <-
       family = gaussian,
       height ~ 0 + male + female,
       prior = c(prior(normal(178, 100), class = b),
-                prior(cauchy(0, 2), class = sigma)),
+                prior(uniform(0, 50), class = sigma, ub = 50)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.15b")
@@ -1553,8 +1552,8 @@ print(b5.15b)
 
 If we wanted the formal difference score from such a model, we'd subtract.
 
-```{r, fig.width = 3, fig.height = 3}
-posterior_samples(b5.15b) %>% 
+```{r, fig.width = 3, fig.height = 3, warning = F}
+as_draws_df(b5.15b) %>% 
   transmute(dif = b_male - b_female) %>% 
   
   ggplot(aes(x = dif, y = 0)) +
@@ -1614,7 +1613,7 @@ b5.16 <-
       kcal.per.g ~ 1 + clade_nwm + clade_owm + clade_s,
       prior = c(prior(normal(.6, 10), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.16")
@@ -1629,25 +1628,25 @@ Here we grab the chains, our draws from the posterior.
 ```{r}
 post <- 
   b5.16 %>%
-  posterior_samples()
+  as_draws_df()
 
 head(post)
 ```
 
 You might compute averages for each category and summarizing the results with the transpose of base R's `apply()` function, rounding to two digits of precision.
 
-```{r}
+```{r, warning = F}
 post$mu_ape <- post$b_Intercept
 post$mu_nwm <- post$b_Intercept + post$b_clade_nwm
 post$mu_owm <- post$b_Intercept + post$b_clade_owm
 post$mu_s   <- post$b_Intercept + post$b_clade_s
 
-round(t(apply(post[ ,7:10], 2, quantile, c(.5, .025, .975))), digits = 2)
+round(t(apply(post[, 11:14], 2, quantile, c(.5, .025, .975))), digits = 2)
 ```
 
 Here's a more tidyverse sort of way to get the same thing, but this time with means and HPDIs via the `tidybayes::mean_hdi()` function.
 
-```{r}
+```{r, warning = F}
 post %>%
   transmute(mu_ape = b_Intercept,
             mu_nwm = b_Intercept + b_clade_nwm,
@@ -1688,7 +1687,7 @@ fitted(b5.16,
 
 And there are multiple ways to compute summary statistics for the difference between `NWM` and `OWM`, too.
 
-```{r}
+```{r, warning = F}
 # base R
 quantile(post$mu_nwm - post$mu_owm, probs = c(.5, .025, .975))
 
@@ -1718,7 +1717,7 @@ b5.16_alt <-
       family = gaussian,
       kcal.per.g ~ 0 + clade,
       prior = c(prior(normal(.6, 10), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 500, chains = 4, cores = 4,
       seed = 5,
       file = "fits/b05.16_alt")
