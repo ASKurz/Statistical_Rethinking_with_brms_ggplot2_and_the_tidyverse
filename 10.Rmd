@@ -62,7 +62,7 @@ b10.1 <-
   brm(data = d, 
       family = binomial,
       pulled_left | trials(1) ~ 1,
-      prior(normal(0, 10), class = Intercept),
+      prior = prior(normal(0, 10), class = Intercept),
       seed = 10,
       file = "fits/b10.01")
 ```
@@ -86,7 +86,7 @@ c(.18, .46) %>%
 Here we use it to convert our `fixef()` output (which contains 95% intervals).
 
 ```{r}
-fixef(b10.1) %>%
+fixef(b10.1)[, -2] %>%
   inv_logit_scaled()
 ```
 
@@ -261,8 +261,8 @@ library(bayesplot)
 color_scheme_set(wes_palette("Moonrise2")[c(3, 1, 2, 2, 1, 1)])
 
 # the actual plot
-mcmc_pairs(x = posterior_samples(b10.3),
-           pars = c("b_Intercept", "b_prosoc_left", "b_prosoc_left:condition"),
+mcmc_pairs(x = as_draws_df(b10.3),
+           pars = vars(b_Intercept:`b_prosoc_left:condition`),
            off_diag_args = list(size = 1/10, alpha = 1/6),
            diag_fun = "dens")
 ```
@@ -305,10 +305,10 @@ With a single-level model like this, we have no need to use something like `dept
 print(b10.4)
 ```
 
-Correspondingly, `brms::posterior_samples()` returns an object for `b10.4` that doesn't quite follow the same structure as from `rethinking::extract.samples()`. We just have a typical 2-dimensional data frame.
+Correspondingly, `brms::as_draws_df()` returns an object for `b10.4` that doesn't quite follow the same structure as from `rethinking::extract.samples()`.
 
 ```{r}
-post <- posterior_samples(b10.4)
+post <- as_draws_df(b10.4)
  
 post %>%
   glimpse()
@@ -437,20 +437,21 @@ fixef(b10.5) %>% round(digits = 2)
 A coefficient plot can offer a complimentary perspective.
 
 ```{r, fig.width = 4.5, fig.height = 2.5, warning = F, message = F}
-library(broom)
-
 # wrangle
-tibble(model = str_c("b10.", c(3, 5))) %>% 
-  mutate(fit = map(model, get)) %>% 
-  mutate(tidy = map(fit, tidy)) %>% 
-  unnest(tidy) %>% 
-  filter(term != "lp__") %>% 
+bind_rows(
+  fixef(b10.3) %>% 
+    data.frame() %>% 
+    rownames_to_column("term"),
+  fixef(b10.5) %>%
+    data.frame() %>% 
+    rownames_to_column("term")
+) %>% 
+  mutate(fit = rep(c("b10.3", "b10.5"), each = n() / 2)) %>% 
   
   # plot
   ggplot() +
-  geom_pointrange(aes(x = model, y = estimate,
-                      ymin = lower,
-                      ymax = upper,
+  geom_pointrange(aes(x = fit, y = Estimate,
+                      ymin = Q2.5, ymax = Q97.5,
                       color = term),
                   shape = 16) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(1:2, 4)]) +
@@ -514,7 +515,7 @@ b10.6 <-
       seed = 10,
       # this line isn't usually necessary,
       # but it will help with our `loo_moment_match()` code below
-      save_all_pars = T,
+      save_pars = save_pars(all = T),
       file = "fits/b10.06") 
 
 b10.7 <-
@@ -524,7 +525,7 @@ b10.7 <-
       prior(normal(0, 10), class = Intercept),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
       seed = 10,
-      save_all_pars = T,
+      save_pars = save_pars(all = T),
       file = "fits/b10.07")
 ```
 
@@ -559,7 +560,7 @@ b10.6 <- add_criterion(b10.6, "loo")
 b10.7 <- add_criterion(b10.7, "loo")
 ```
 
-If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo/loo.pdf) [@loo2020RM]. As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics) [@vehtariUsingLooPackage2020]. Each case in the data gets its own $k$ value and we like it when those $k$s are low. The makers of the loo package get worried when those $k$s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
+If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo/loo.pdf) [@loo2020RM]. As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics) [@vehtariUsingLooPackage2020]. Each case in the data gets its own $k$ value and we like it when those $k$'s are low. The makers of the loo package get worried when those $k$'s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
 
 First things first, if you explicitly open the loo package, you'll have access to some handy diagnostic functions.
 
@@ -580,7 +581,7 @@ There are those warning messages, again. Using the loo-object for model `b10.6`,
 pareto_k_table(l_b10.6)
 ```
 
-You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like low $k$s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 0.7) %>% length()` in the "bad" to "very bad" $k$ ranges. We can take a closer look like this:
+You may have noticed that this same table pops out when you just do something like `loo(b10.6)`. Recall that this data set has 12 observations (i.e., execute `count(d)`). With `pareto_k_table()`, we see how the Pareto $k$ values have been categorized into bins ranging from "good" to "very bad". Clearly, we like low $k$'s. In this example, our observations are all over the place, with `r pareto_k_ids(l_b10.6, threshold = 0.7) %>% length()` in the "bad" to "very bad" $k$ ranges. We can take a closer look like this:
 
 ```{r, fig.width = 4.5, fig.height = 3.5}
 plot(l_b10.6)
@@ -604,7 +605,7 @@ Anyway, the implication of all this is these values suggest model `b10.6` isn't 
 
 Part of the warning message for model `b10.6` read:
 
-> It is recommended to set 'moment_match = TRUE' in order to perform moment matching for problematic observations. 
+> It is recommended to set 'moment_match = TRUE' in order to perform moment matching for problematic observations.
 
 Let's do that using the `brms::loo_moment_match()` function.
 
@@ -654,12 +655,12 @@ fixef(b10.6)[2] %>%
 And now we'll compute difference in admission probabilities.
 
 ```{r}
-post <- posterior_samples(b10.6)
+post <- as_draws_df(b10.6)
 
 post %>%
   mutate(p_admit_male   = inv_logit_scaled(b_Intercept + b_male),
-         p_admit_female = inv_logit_scaled(b_Intercept),
-         diff_admit     = p_admit_male - p_admit_female) %>%
+         p_admit_female = inv_logit_scaled(b_Intercept)) %>% 
+  mutate(diff_admit = p_admit_male - p_admit_female) %>%
   summarise(`2.5%`  = quantile(diff_admit, probs = .025),
             `50%`   = median(diff_admit),
             `97.5%` = quantile(diff_admit, probs = .975))
@@ -719,7 +720,7 @@ b10.8 <-
   brm(data = d, 
       family = binomial,
       admit | trials(applications) ~ 0 + dept,
-      prior(normal(0, 10), class = b),
+      prior = prior(normal(0, 10), class = b),
       iter = 2500, warmup = 500, cores = 2, chains = 2,
       seed = 10,
       file = "fits/b10.08") 
@@ -847,7 +848,7 @@ Our model summary will differ a bit from the one in the text. It seems this is b
 print(b10.good)
 ```
 
-You might experiment with different prior $SD$s to see how they influence the posterior $SD$s. Anyways, here's the `pairs()` plot McElreath excluded from the text.
+You might experiment with different prior $\textit{SD}$'s to see how they influence the posterior $\textit{SD}$'s. Anyways, here's the `pairs()` plot McElreath excluded from the text.
 
 ```{r, fig.width = 3.25, fig.height = 3}
 pairs(b10.good,
@@ -972,16 +973,17 @@ vcov(b10.10, cor = T) %>%
 And here's the coefficient plot via `bayesplot::mcmc_intervals()`.
 
 ```{r, fig.width = 7, fig.height = 1.25}
-post <- posterior_samples(b10.10)
+post <- as_draws_df(b10.10)
 
 # we'll set a renewed color theme
 color_scheme_set(wes_palette("Moonrise2")[c(2, 1, 4, 2, 1, 1)])
 
 post %>%
-  select(-lp__) %>% 
   rename(b_interaction = `b_log_pop:contact_high`) %>%
 
-  mcmc_intervals(prob = .5, prob_outer = .95) +
+  mcmc_intervals(pars = vars(starts_with("b_")),
+                 prob = .5, 
+                 prob_outer = .95) +
   theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank())
 ```
@@ -1254,8 +1256,8 @@ To learn more about the nature of the code for the `my_upper()` function, check 
 library(GGally)
 
 # left panel for `b10.10`
-posterior_samples(b10.10) %>% 
-  select(-lp__) %>% 
+as_draws_df(b10.10) %>% 
+  select(starts_with("b_")) %>% 
   set_names(c("alpha", "beta[log_pop]", "beta[contact_high]", "beta[interaction]")) %>%
   ggpairs(upper = list(continuous = my_upper),
           diag  = list(continuous = my_diag),
@@ -1265,8 +1267,8 @@ posterior_samples(b10.10) %>%
   theme(strip.text = element_text(size = 11))
 
 # right panel for `b10.10_c`
-posterior_samples(b10.10_c) %>% 
-  select(-lp__) %>% 
+as_draws_df(b10.10_c) %>% 
+  select(starts_with("b_")) %>% 
   set_names(c("alpha", "beta[log_pop_c]", "beta[contact_high]", "beta[interaction]")) %>%
   ggpairs(upper = list(continuous = my_upper),
           diag  = list(continuous = my_diag),
@@ -1340,7 +1342,7 @@ Following those transformations, we'll summarize the $\lambda$ distributions wit
 ```{r, message = F, warning = F}
 library(tidybayes)
 
-posterior_samples(b10.15) %>%
+as_draws_df(b10.15) %>%
   transmute(lambda_old = exp(b_Intercept),
             lambda_new = exp(b_Intercept + b_monastery)) %>%
   gather() %>%
@@ -1368,7 +1370,7 @@ Compare that equation with the simpler version in section 2.3.1 (page 33 in the 
 
 "The conventional and natural link is this context is the *multinomial logit*. This link function takes a vector of *scores*, one for each $K$ event types, and computed the probability of a particular type of event $K$ as" (p. 323, *emphasis* in the original)
 
-$$\text{Pr}(k | s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
+$$\text{Pr}(k | s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
 
 `r emo::ji('warning')`
 McElreath then went on to explain how multinomial logistic regression models are among the more difficult of the GLMs to master. He wasn't kidding. To get a grasp on these, we'll cover them in a little more detail than he did in the text. To fully flesh this out, our section headers will be more granular than those in the text. Whereas McElreath kept all of the material in Section 10.3.1.1 together, we will break things up into subsections 10.3.1.1.1 through 10.3.1.1.3.
@@ -1425,7 +1427,7 @@ tibble(income = 1:3) %>%
 
 Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above,
 
-$$\text{Pr}(k |s_1, s_2,..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
+$$\text{Pr}(k |s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
 
 What still might seem mysterious is what those $s$ values in the equation are. In the simulation and in the prose, McElreath called them *scores*. Another way to think about them is as weights. The thing to get is that their exact values aren't important so much as their difference one from another. You'll note that `score` for `income == 2` was 0.5 larger than that of `income == 1`. The same was true for `income == 3` and `income == 2`. So if we add an arbitrary constant to each of those `score` values, like 104, we'll get the same `p` values.
 
@@ -1484,7 +1486,7 @@ print(b10.16)
 `brms::brm()` referred to the $K$ categories as `mu1`, `mu2`, and `mu3`. Since `career == 1` is the reference category, the *score* for which was set to zero, there is no parameter for `mu1_Intercept`. That's a zero. Now notice how `mu2_Intercept` is about 0.5 and `mu3_Intercept` is about 1. That's just like those `score` values from our last tibble block! But these parameters are of *scores* or weights; they are not probabilities. This means just applying the `inv_logit_scaled()` function to them won't work.
 
 ```{r}
-fixef(b10.16) %>% inv_logit_scaled()
+fixef(b10.16)[, -2] %>% inv_logit_scaled()
 ```
 
 Those `Estimate` values are not the probability values we're looking for. Why? Because the weights are all relative to one another. The easiest way to get what we want, the probabilities for the three categories, is with `fitted()`. Since this model has no predictors, only intercepts, we won't specify any `newdata`. In such a case, `fitted()` will return fitted values for each case in the data. Going slow, let's take a look at the structure of the output.
@@ -1565,7 +1567,7 @@ We might examine what the `family_income` distributions look like across the thr
 ```{r, fig.width = 7, fig.height = 3}
 p1 <-
   tibble(career = as.factor(career),
-       family_income) %>% 
+         family_income) %>% 
   
   ggplot(aes(x = family_income, fill = career)) +
   geom_density(size = 0, alpha = 3/4) +
@@ -1575,7 +1577,7 @@ p1 <-
 
 p2 <-
   tibble(career = as.factor(career),
-       family_income) %>% 
+         family_income) %>% 
   mutate(fi = santoku::chop_width(family_income, width = .2, start = 0, labels = 1:5)) %>% 
   count(fi, career) %>% 
   group_by(fi) %>% 
@@ -1786,7 +1788,7 @@ This summary is probably even more difficult to interpret than the summary for `
 ```{r, warning = F, message = F}
 library(tidybayes)
 
-posterior_samples(b10.16_true) %>% 
+as_draws_df(b10.16_true) %>% 
   transmute(b = inv_logit_scaled(b_b_Intercept)) %>% 
   mean_qi(b) %>% 
   mutate_if(is.double, round, digits = 2)
@@ -1809,8 +1811,8 @@ $$\text{Pr}(k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)
 
 to return the posterior probabilities for each of the career choices based on their `income` values.
 
-```{r}
-posterior_samples(b10.16_true) %>% 
+```{r, warning = F}
+as_draws_df(b10.16_true) %>% 
   transmute(iter = 1:n(),
             s1   = inv_logit_scaled(b_b_Intercept) * income[1],
             s2   = inv_logit_scaled(b_b_Intercept) * income[2],
@@ -1837,7 +1839,7 @@ I'm not going to dive any further into the brms non-linear syntax in this ebook.
 
 #### Multinomial in disguise as Poisson.
 
-Here we fit a multinomial likelihood by refactoring it to a series of Poissons. Let's retrieve the Berkeley data.
+Here we fit a multinomial likelihood by refactoring it to a series of Poisson's. Let's retrieve the Berkeley data.
 
 ```{r, warning = F, message = F}
 library(rethinking)
@@ -1852,13 +1854,21 @@ library(brms)
 
 Fit the models.
 
+```{r}
+get_prior(data = d %>%
+        mutate(rej = reject),  # 'reject' is a reserved word
+      family = poisson,
+      mvbind(admit, rej) ~ 1)
+```
+
+
 ```{r b10.binom}
 # binomial model of overall admission probability
 b10.binom <-
   brm(data = d, 
       family = binomial,
       admit | trials(applications) ~ 1,
-      prior(normal(0, 100), class = Intercept),
+      prior = prior(normal(0, 100), class = Intercept),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
       seed = 10,
       file = "fits/b10.binom")
@@ -1869,7 +1879,8 @@ b10.pois <-
         mutate(rej = reject),  # 'reject' is a reserved word
       family = poisson,
       mvbind(admit, rej) ~ 1,
-      prior(normal(0, 100), class = Intercept),
+      prior = c(prior(normal(0, 100), class = Intercept, resp = admit),
+                prior(normal(0, 100), class = Intercept, resp = rej)),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
       seed = 10,
       file = "fits/b10.pois")
@@ -1877,9 +1888,9 @@ b10.pois <-
 
 Note, the `mvbind()` syntax made `b10.pois` a multivariate Poisson model. Starting with version 2.0.0, brms supports a variety of multivariate models, which you might learn al about in Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b10.pois`.
 
-```{r, fig.height = 2.5, fig.width = 6.5}
+```{r, fig.height = 2.5, fig.width = 6.5, warning = F}
 # extract the samples
-post <- posterior_samples(b10.pois)
+post <- as_draws_df(b10.pois)
 
 # wrangle
 post %>%
@@ -1910,7 +1921,7 @@ summary(b10.pois)$fixed
 Here's the posterior mean for the probability of admission, based on `b10.binom`.
 
 ```{r}
-fixef(b10.binom)[ ,"Estimate"] %>%
+fixef(b10.binom)[, "Estimate"] %>%
   inv_logit_scaled()
 ```
 
@@ -1930,15 +1941,15 @@ $$p_\text{admit} = \frac{\lambda_1}{\lambda_1 + \lambda_2} = \frac{\exp (\alpha_
 
 To get a better appreciation on how well the two model types converge on the same solution, we might plot the full poster for admissions probability from each.
 
-```{r, fig.width = 4.5, fig.height = 2.5, message = F}
+```{r, fig.width = 4.5, fig.height = 2.5, message = F , warning = F}
 # wrangle
 bind_cols(
-  posterior_samples(b10.pois) %>% 
-    mutate(`the Poisson`  = exp(b_admit_Intercept) / (exp(b_admit_Intercept) + exp(b_rej_Intercept))),
-  posterior_samples(b10.binom) %>% 
-    mutate(`the binomial` = inv_logit_scaled(b_Intercept))
+  as_draws_df(b10.pois) %>% 
+    transmute(`the Poisson`  = exp(b_admit_Intercept) / (exp(b_admit_Intercept) + exp(b_rej_Intercept))),
+  as_draws_df(b10.binom) %>% 
+    transmute(`the binomial` = inv_logit_scaled(b_Intercept))
   ) %>% 
-  pivot_longer(starts_with("the")) %>% 
+  pivot_longer(everything()) %>% 
 
   # plot
   ggplot(aes(x = value, y = name, fill = name)) +
@@ -1948,7 +1959,7 @@ bind_cols(
   labs(title = "Two models, same marginal posterior",
        x = "admissions probability",
        y = NULL) +
-  coord_cartesian(ylim = c(1.5, 2.25)) +
+  coord_cartesian(ylim = c(1.5, 2.35)) +
   theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
         legend.position = "none")
