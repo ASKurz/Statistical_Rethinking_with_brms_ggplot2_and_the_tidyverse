@@ -67,7 +67,7 @@ b7.1 <-
       log_gdp ~ 1 + rugged,
       prior = c(prior(normal(8, 100), class = Intercept),
                 prior(normal(0, 1), class = b),
-                prior(uniform(0, 10), class = sigma)),
+                prior(uniform(0, 10), class = sigma, ub = 10)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
       seed = 7,
       file = "fits/b07.01")
@@ -380,10 +380,10 @@ fixef(b7.5)[2, 1] + fixef(b7.5)[4, 1] * 0
 
 > To get some idea of the uncertainty around those $\gamma$ values, we'll need to use the whole posterior. Since $\gamma$ depends upon parameters, and those parameters have a posterior distribution, $\gamma$ must also have a posterior distribution. Read the previous sentence again a few times. It's one of the most important concepts in processing Bayesian model fits. *Anything calculated using parameters has a distribution*. (p. 212, *emphasis* added)
 
-Like McElreath, we'll avoid integral calcus in favor of working with the `posterior_samples()`.
+Like McElreath, we'll avoid integral calculus in favor of working with the posterior draws.
 
-```{r, message = F}
-post <- posterior_samples(b7.5) 
+```{r, message = F, warning = F}
+post <- as_draws_df(b7.5) 
 
 post %>%
   transmute(gamma_Africa    = b_rugged + `b_rugged:cont_africa` * 1,
@@ -395,7 +395,7 @@ post %>%
 
 And here is our version of Figure 7.5.
 
-```{r, fig.height = 2.5, fig.width = 3}
+```{r, fig.height = 2.5, fig.width = 3, warning = F}
 post %>%
   # this `transmute()` code returns the same thing as the one in the block above
   transmute(gamma_Africa    = b_rugged + `b_rugged:cont_africa`,
@@ -576,7 +576,7 @@ b7.6 <-
       blooms ~ 1 + water + shade,
       prior = c(prior(normal(0, 100), class = Intercept),
                 prior(normal(0, 100), class = b),
-                prior(uniform(0, 100), class = sigma)),
+                prior(uniform(0, 100), class = sigma, ub = 100)),
       iter = 2000, warmup = 1000, cores = 4, chains = 4,
       seed = 7,
       file = "fits/b07.06")
@@ -589,32 +589,13 @@ b7.7 <-
          file = "fits/b07.07")
 ```
 
-Much like in the text, these models yielded divergent transitions. Here, we'll try to combat them by following Stan's advice and "[increase] adapt_delta above 0.8." While we're at it, we'll put better priors on $\sigma$.
+Unlike in the text, these models fit without problem.
 
-```{r b7.6}
-b7.6 <-
-  update(b7.6,
-         prior = c(prior(normal(0, 100), class = Intercept),
-                   prior(normal(0, 100), class = b),
-                   prior(cauchy(0, 10), class = sigma)),
-         control = list(adapt_delta = 0.9),
-         iter = 2000, warmup = 1000, cores = 4, chains = 4,
-         seed = 7,
-         file = "fits/b07.06")
-
-b7.7 <- 
-  update(b7.6, 
-         formula = blooms ~ 1 + water + shade + water:shade,
-         iter = 2000, warmup = 1000, cores = 4, chains = 4,
-         seed = 7,
-         file = "fits/b07.07")
-```
-
-Increasing `adapt_delta` did the trick. Instead of `coeftab()`, we can also use the `posterior_summary()` function, which gets us most of the way there.
+Instead of `coeftab()`, we can use the `posterior_summary()` function, which gets us most of the way there.
 
 ```{r,}
-posterior_summary(b7.6) %>% round(digits = 2)
-posterior_summary(b7.7) %>% round(digits = 2)
+posterior_summary(b7.6)[1:4, ] %>% round(digits = 2)
+posterior_summary(b7.7)[1:5, ] %>% round(digits = 2)
 ```
 
 This is an example where HMC yielded point estimates notably different from MAP. However, look at the size of those posterior standard deviations (i.e., 'Est.Error' column)! The MAP estimates are well within a fraction of those $SD$s.
@@ -670,9 +651,8 @@ b7.8 <-
       blooms ~ 1 + water_c + shade_c,
       prior = c(prior(normal(130, 100), class = Intercept),
                 prior(normal(0, 100), class = b),
-                prior(cauchy(0, 10), class = sigma)),
+                prior(uniform(0, 100), class = sigma, ub = 100)),
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.9),
       seed = 7,
       file = "fits/b07.08")
 
@@ -687,20 +667,29 @@ b7.9 <-
 Check out the results.
 
 ```{r}
-posterior_summary(b7.8) %>% round(digits = 2)
-posterior_summary(b7.9) %>% round(digits = 2)
+posterior_summary(b7.8)[1:4, ] %>% round(digits = 2)
+posterior_summary(b7.9)[1:5, ] %>% round(digits = 2)
 ```
 
 And okay fine, if you really want a `coeftab()`-like summary, here's a way to do it.
 
 ```{r}
-tibble(model  = str_c("b7.", 8:9)) %>% 
-  mutate(fit  = purrr::map(model, get)) %>% 
-  mutate(tidy = purrr::map(fit, broom::tidy)) %>% 
-  unnest(tidy) %>% 
-  filter(term != "lp__") %>% 
-  select(term, estimate, model) %>% 
-  spread(key = model, value = estimate) %>% 
+get_summary <- function(fit) {
+  
+  fit %>% 
+    posterior::summarise_draws(mean) %>%
+    filter(variable != "lprior") %>% 
+    filter(variable != "lp__")
+  
+}
+
+tibble(model = str_c("b7.", 8:9)) %>% 
+  mutate(fit = purrr::map(model, get)) %>% 
+  mutate(mean = purrr::map(fit, get_summary)) %>% 
+  select(-fit) %>% 
+  unnest(mean) %>% 
+  select(variable, mean, model) %>% 
+  spread(key = model, value = mean) %>% 
   mutate_if(is.double, round, digits = 2)
 ```
 
@@ -850,7 +839,7 @@ We can further customize the plot. For example, we can replace the intervals wit
 ```{r, fig.height = 3, fig.width = 3.5}
 conditional_effects(b7.3,
                     spaghetti = T, 
-                    nsamples = 200) %>% 
+                    ndraws = 200) %>% 
   plot(points = T,
        point_args = c(alpha = 1/2, size = 1))
 ```
@@ -912,11 +901,10 @@ b7.5_factor <-
          file = "fits/b07.05_factor")
 ```
 
-Just for kicks, we'll use `probs = c(.25, .75)` to return [50% intervals](https://statmodeling.stat.columbia.edu/2016/11/05/why-i-prefer-50-to-95-intervals/), rather than the conventional 95%.
+Just for kicks, we'll use `prob = .5` to return [50% intervals](https://statmodeling.stat.columbia.edu/2016/11/05/why-i-prefer-50-to-95-intervals/), rather than the conventional 95%.
 
 ```{r, fig.height = 3, fig.width = 4}
-conditional_effects(b7.5_factor,
-                    probs = c(.25, .75))
+conditional_effects(b7.5_factor, prob = .5)
 ```
 
 With the `effects` argument, we can just return the interaction effect, which is where all the action's at. While we're at it, we'll use `plot()` to change some of the settings.
@@ -924,7 +912,8 @@ With the `effects` argument, we can just return the interaction effect, which is
 ```{r, fig.height = 3, fig.width = 4}
 conditional_effects(b7.5_factor,
                     effects = "rugged:cont_africa", 
-                    spaghetti = T, nsamples = 150) %>% 
+                    spaghetti = T, 
+                    ndraws = 150) %>% 
   plot(points = T,
        point_args = c(alpha = 2/3, size = 1), mean = F)
 ```
@@ -966,7 +955,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6, b7.7, w, b7.8, b7.9, k, shade_seq, fig, d_factor, b7.4_factor, b7.5_factor, dt, ic)
+rm(d, dd, d.A0, d.A1, b7.1, b7.2, nd, f, b7.3, b7.4, b7.5, l, b7.5b, post, b7.6, b7.7, w, b7.8, b7.9, get_summary, k, shade_seq, fig, d_factor, b7.4_factor, b7.5_factor, dt, ic)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
