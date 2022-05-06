@@ -61,7 +61,7 @@ hrbrthemes::import_roboto_condensed()
 
 Figure 8.2.a.
 
-```{r, warning = F, message = F, fig.width = 5.5, fig.height = 4.75}
+```{r, fig.width = 5.5, fig.height = 4.75, warning = F, message = F}
 library(tidyverse)
 
 tibble(week   = 1:1e5,
@@ -97,7 +97,7 @@ tibble(week   = 1:1e5,
 
 ### Gibbs sampling.
 
-The Gibbs sampler [@gemanStochasticRelaxationGibbs1984; @casellaExplainingGibbsSampler1992] uses *conjugate* pairs (i.e., pairs of priors and likelihoods that have analytic solutions for the posterior of an individual parameter) to efficiently sample from the posterior. Gibbs was the workhorse algorithm during the rise of Bayesian computation in the 1990s. However, it's limited in that (a) you might not want to use conjugate priors and (b) it can be quite inefficient with complex hierarchical models, which we'll be fitting soon. 
+The Gibbs sampler [@gemanStochasticRelaxationGibbs1984; @casellaExplainingGibbsSampler1992] uses *conjugate* pairs (i.e., pairs of priors and likelihoods that have analytic solutions for the posterior of an individual parameter) to efficiently sample from the posterior. Gibbs was the workhorse algorithm during the rise of Bayesian computation in the 1990s. However, it's limited in that (a) you might not want to use conjugate priors and (b) it can be quite inefficient with complex hierarchical models, which we'll be fitting soon.
 
 We will not be using the Gibbs sampler in this project. It's available for use in R. For an extensive applied introduction, check out Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/).
 
@@ -178,9 +178,10 @@ Do note a couple things: If you look closely at the summary information at the t
 ```{r, warning = F, message = F}
 library(tidybayes)
 
-post <- posterior_samples(b8.1)
+post <- as_draws_df(b8.1)
 
 post %>% 
+  select(b_Intercept:sigma) %>% 
   gather() %>% 
   group_by(key) %>% 
   mean_hdi(value, .width = .89)  # note our rare use of 89% intervals
@@ -212,10 +213,10 @@ print(b8.1b)
 
 ### Visualization.
 
-Unlike the way rethinking's `extract.samples()` yields a list, brms's `posterior_samples()` returns a data frame.
+Unlike the way rethinking's `extract.samples()` yields a list, brms's `as_draws_df()` returns a data frame.
 
 ```{r}
-post <- posterior_samples(b8.1)
+post <- as_draws_df(b8.1)
 str(post)
 ```
 
@@ -257,17 +258,19 @@ my_upper <- function(data, mapping, ...) {
     mapping = aes(),
     size = 4,
     color = "grey20") +
-    theme_void()
+    theme_void() 
 }
 
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
-    geom_density(fill = "grey50")
+    geom_density(fill = "grey50") +
+    theme_ipsum()
 }
 
 my_lower <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
-    geom_point(shape = 1, size = 1/2, alpha = 1/6)
+    geom_point(shape = 1, size = 1/2, alpha = 1/6) +
+    theme_ipsum()
   }
 
 post %>%
@@ -277,7 +280,6 @@ post %>%
           diag  = list(continuous = my_diag),
           lower = list(continuous = my_lower)) +
   labs(subtitle = "My custom pairs plot") +
-  theme_ipsum() +
   theme(strip.text = element_text(size = 8))
 ```
 
@@ -336,17 +338,18 @@ To learn more about the $\text{elpd}$, read the rest of the paper and the [other
 Using `plot()` for a `brm()` fit returns both density and trace lots for the parameters.
 
 ```{r, fig.width = 8, fig.height = 6}
-plot(b8.1)
+plot(b8.1, widths = c(2, 3))
 ```
 
-The [bayesplot](https://cran.r-project.org/package=bayesplot) package allows a little more control. Here, we use bayesplot's `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects. There's a further complication. Recall how we made `post` (i.e., `post <- posterior_samples(b8.1)`). Our `post` data frame carries no information on chains. To retain that information, we'll need to add an `add_chain = T` argument to our `posterior_samples()` function.
+The [bayesplot](https://cran.r-project.org/package=bayesplot) package allows a little more control. Here, we use bayesplot's `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects.
 
 ```{r, fig.width = 8, fig.height = 4, message = F, warning = F}
 library(bayesplot)
 
-post <- posterior_samples(b8.1, add_chain = T)
+post <- as_draws_df(b8.1)
 
-mcmc_trace(post[, c(1:5, 7)],  # we need to include column 7 because it contains the chain info 
+mcmc_trace(post, 
+           pars = vars(b_Intercept:sigma),
            facet_args = list(ncol = 3), 
            size = .15) +
   scale_color_ipsum() +
@@ -359,7 +362,7 @@ The bayesplot package offers a variety of diagnostic plots. Here we make autocor
 
 ```{r, fig.width = 8, fig.height = 4.5}
 mcmc_acf(post, 
-         pars = c("b_Intercept", "b_rugged", "b_cont_africa", "b_rugged:cont_africa", "sigma"),
+         pars = vars(b_Intercept:sigma),
          lags = 5) +
   scale_color_ipsum() +
   theme_ipsum()
@@ -385,6 +388,7 @@ With this in hand, we can now include those warmup draws in our trace plots. Her
 
 ```{r, fig.width = 8, fig.height = 4}
 ggs(b8.1) %>%
+  filter(Parameter != "lprior") %>% 
   mutate(chain = factor(Chain)) %>% 
   
   ggplot(aes(x = Iteration, y = value)) +
@@ -406,6 +410,7 @@ Following brms defaults, we won't include warmup iterations in the trace plots f
 
 ```{r, fig.width = 8, fig.height = 4}
 ggs(b8.1) %>%
+  filter(Parameter != "lprior") %>% 
   mutate(chain = factor(Chain)) %>% 
   
   ggplot(aes(x = Iteration, y = value)) +
@@ -460,7 +465,7 @@ Times have changed. In the text, we read:
 
 > The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\widehat R$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
 
-We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\widehat R$, too. As it turns out, the Stan team has found some deficiencies with the $\widehat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon (see [here](https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165) for a related thread on the Stan Forums). In the meantime, you can read all about it in @vehtariRanknormalizationFoldingLocalization2019 and in one of Dan Simpson's [blog posts](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/). If you learn best by sassy twitter banter, [click through this interchange](https://twitter.com/betanalpha/status/1108185746870030336) among some of our Stan team all-stars.
+We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\widehat R$, too. As it turns out, the Stan team has found some deficiencies with the $\widehat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon (see [here](https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165) for a related thread on the Stan Forums). In the meantime, you can read all about it in @vehtariRanknormalizationFoldingLocalization2019 and in one of Dan Simpson's [blog posts](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/).
 
 For more on these topics, you might also check out Gabry and Modrák's [-@gabryVisualMCMCDiagnostics2020] vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
@@ -474,7 +479,7 @@ b8.2 <-
       family = gaussian,
       y ~ 1,
       prior = c(prior(uniform(-1e10, 1e10), class = Intercept),
-                prior(uniform(0, 1e10), class = sigma)),
+                prior(uniform(0, 1e10), class = sigma, ub = 1e10)),
       inits = list(list(Intercept = 0, sigma = 1),
                    list(Intercept = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
@@ -485,16 +490,17 @@ b8.2 <-
 Those were some silly flat priors. Check the damage.
 
 ```{r, message = F, fig.width = 6.5, fig.height = 2.75}
-post <- posterior_samples(b8.2, add_chain = T)
+post <- as_draws_df(b8.2)
 
-mcmc_trace(post[, c(1:2, 4)],
+mcmc_trace(post,
+           pars = vars(b_Intercept:sigma),
            size = .25) +
-  labs(title    = "My version of Figure 8.5.a.",
+  labs(title = "My version of Figure 8.5.a.",
        subtitle = "These trace plots do not look like the fuzzy caterpillars we usually hope for.") +
   scale_color_ipsum() +
   theme_ipsum() +
-  theme(legend.position = c(.85, 1.5),
-        legend.direction = "horizontal")
+  theme(legend.direction = "horizontal",
+        legend.position = c(.85, 1.5))
 ```
 
 Let's peek at the summary.
@@ -526,16 +532,17 @@ print(b8.3)
 As in the text, no more warning signs and no more silly estimates. The trace plots look great, too.
 
 ```{r, message = F, fig.width = 6.5, fig.height = 2.75}
-post <- posterior_samples(b8.3, add_chain = T)
+post <- as_draws_df(b8.3)
 
-mcmc_trace(post[, c(1:2, 4)],
+mcmc_trace(post,
+           pars = vars(b_Intercept:sigma),
            size = .25) +
-  labs(title     = "My version of Figure 8.5.b",
-       subtitle  = "Oh man. This looks so much better.") +
+  labs(title = "My version of Figure 8.5.b",
+       subtitle = "Oh man. This looks so much better.") +
   scale_color_ipsum() +
   theme_ipsum() +
-  theme(legend.position = c(.85, 1.5),
-        legend.direction = "horizontal")
+  theme(legend.direction = "horizontal",
+        legend.position = c(.85, 1.5))
 ```
 
 Now behold our version of Figure 8.6.
@@ -682,25 +689,27 @@ b8.5 <-
 print(b8.5)
 ```
 
-Much better. For our version of Figure 8.7, we'll make the trace plots for the two models saparately and combine them with patchwork.
+Much better. For our version of Figure 8.7, we'll make the trace plots for the two models separately and combine them with patchwork.
 
 ```{r, fig.width = 7, fig.height = 6, warning = F, message = F}
-post <- posterior_samples(b8.4, add_chain = T)
+post <- as_draws_df(b8.4)
 
 p1 <-
-  mcmc_trace(post[, c(1:3, 5)],
-           size = .25,
-           facet_args = c(ncol = 1)) +
+  mcmc_trace(post,
+             pars = vars(b_intercept_1:sigma),
+             size = .25,
+             facet_args = c(ncol = 1)) +
   scale_color_ipsum() +
   labs(subtitle = "flat priors") +
   theme_ipsum() +
   theme(legend.position = "none",
         strip.text = element_text(size = 10))
 
-post <- posterior_samples(b8.5, add_chain = T)
+post <- as_draws_df(b8.5)
 
 p2 <-
-  mcmc_trace(post[, c(1:3, 5)],
+  mcmc_trace(post,
+             pars = vars(b_intercept_1:sigma),
              size = .25,
              facet_args = c(ncol = 1)) +
   scale_color_ipsum() +
