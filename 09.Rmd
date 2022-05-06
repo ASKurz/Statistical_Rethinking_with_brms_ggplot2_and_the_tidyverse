@@ -260,8 +260,8 @@ d %>%
   labs(x = NULL, y = NULL) +
   coord_cartesian(ylim = c(0, 1)) +
   theme(axis.ticks.x = element_blank(),
-        panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("PonyoMedium")[2]),
+        panel.grid = element_blank(),
         strip.background = element_rect(fill = ghibli_palette("PonyoMedium")[6])) +
   facet_wrap(~distribution)
 ```
@@ -334,7 +334,7 @@ sim_p(seed = 9.9, g = 1.4)
 So the next step is to determine how many replications we'd like, create a tibble with seed values ranging from 1 to that number, and then feed those `seed` values into `sim_p()` via `purrr::map2()`, which will return a nested tibble. We'll then `unnest()` and take a peek.
 
 ```{r, echo = F}
-# the sim took the better part of 10 minutes to run
+# the sim took1.549338 mins to run
 # save(list = c("n_rep", "d"), file = "sims/09.sim_1.rda")
 load("sims/09.sim_1.rda")
 ```
@@ -667,7 +667,7 @@ p1 | p2
 >
 > In this model, the mean $\mu$ is constant, but the standard deviation scales with the value $x_i$. (p. 268)
 
-This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's [-@Bürkner2020Distributional] vignette, [*Estimating distributional models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, we'll simulate some continuous data `y` for which the $SD$ is affected by a dummy variable `x`.
+This kind of model is trivial in the brms framework, which you can learn more about in Bürkner's [-@Bürkner2020Distributional] vignette, [*Estimating distributional models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). Before moving on with the text, let's detour and see how we might fit such a model. First, we'll simulate some continuous data `y` for which the $\textit{SD}$ is affected by a dummy variable `x`.
 
 ```{r}
 set.seed(9)
@@ -723,17 +723,17 @@ Do note our use of the `dpar` arguments in the `prior` statements. Here's the su
 print(b9.1)
 ```
 
-Now we get an intercept for both $\mu$ and $\sigma$, with the intercept for sigma identified as `sigma_Intercept`. And note the coefficient for $\sigma$ was named `sigma_x`. Also notice the scale the `sigma_i` coefficients are on. These are not in the original metric, but rather based on a logarithmic transformation of $\sigma$. You can confirm that by the second line of the `print()` output: `Links: mu = identity; sigma = log`. So if you want to get a sense of the effects of `x` on the $\sigma$ for `y`, you have to exponentiate the formula. Here we'll do so with the `posterior_samples()`.
+Now we get an intercept for both $\mu$ and $\sigma$, with the intercept for sigma identified as `sigma_Intercept`. And note the coefficient for $\sigma$ was named `sigma_x`. Also notice the scale the `sigma_i` coefficients are on. These are not in the original metric, but rather based on a logarithmic transformation of $\sigma$. You can confirm that by the second line of the `print()` output: `Links: mu = identity; sigma = log`. So if you want to get a sense of the effects of `x` on the $\sigma$ for `y`, you have to exponentiate the formula. Here we'll do so with the posterior draws.
 
 ```{r}
-post <- posterior_samples(b9.1)
+post <- as_draws_df(b9.1)
 
 head(post)
 ```
 
 With the samples in hand, we’ll use the model formula to compute the model-implied standard deviations of `y` based on the `x` dummy and then examine them in a plot.
 
-```{r, fig.width = 3.75, fig.height = 2.5}
+```{r, fig.width = 3.75, fig.height = 2.5, warning = F}
 post %>% 
   transmute(`x == 0` = exp(b_sigma_Intercept + b_sigma_x * 0),
             `x == 1` = exp(b_sigma_Intercept + b_sigma_x * 1)) %>% 
@@ -749,11 +749,11 @@ post %>%
   coord_cartesian(ylim = c(1.5, 2)) +
   theme(axis.ticks.y = element_blank(),
         legend.position = "none",
-        panel.grid = element_blank(),
-        panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]))
+        panel.background = element_rect(fill = ghibli_palette("KikiMedium")[7]),
+        panel.grid = element_blank())
 ```
 
-And if we looked back at the data, those $SD$ estimates are just what we'd expect.
+And if we looked back at the data, those $\textit{SD}$ estimates are just what we'd expect.
 
 ```{r, message = F}
 d %>% 
