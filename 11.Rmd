@@ -87,8 +87,8 @@ p1 <-
                       high = canva_pal("Green fields")(4)[1]) +
   theme_hc() +
   theme(axis.ticks = element_blank(),
-        plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
 
 p1
 ```
@@ -114,8 +114,8 @@ p2 <-
   coord_cartesian(ylim = c(0, 1)) +
   theme_hc() +
   theme(axis.ticks = element_blank(),
-        plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
 
 p2
 ```
@@ -145,8 +145,8 @@ p3 <-
   ylab("log-cumulative-odds") +
   theme_hc() +
   theme(axis.ticks = element_blank(),
-        plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
 
 p3
 ```
@@ -201,8 +201,8 @@ ggplot(data = d_plot,
                        high = canva_pal("Green fields")(4)[1]) +
   theme_hc() +
   theme(axis.ticks = element_blank(),
-        plot.background = element_rect(fill = "grey92"),
-        legend.position = "none")
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92"))
 ```
 
 McElreath's convention for this first type of statistical model is
@@ -234,7 +234,7 @@ b11.1 <-
       response ~ 1,
       prior(normal(0, 10), class = Intercept),
       iter = 2000, warmup = 1000, cores = 2, chains = 2,
-      inits = inits_list,  # here we add our start values
+      init = inits_list,  # here we add our start values
       seed = 11,
       file = "fits/b11.01")
 ```
@@ -250,15 +250,14 @@ What McElreath's `m11.1stan` summary termed `cutpoints[k]`, our brms summary ter
 Recall we use the `brms::inv_logit_scaled()` function in place of McElreath's `logistic()` function to get these into the probability metric.
 
 ```{r}
-b11.1 %>% 
-  fixef() %>% 
+fixef(b11.1)[, -2] %>% 
   inv_logit_scaled()
 ```
 
-But recall that the posterior $SD$ (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `posterior_samples()`.
+But recall that the posterior $\textit{SD}$ (i.e., the 'Est.Error' values) are not valid using that approach. If you really care about them, you'll need to work with the `as_draws_df()` function.
 
 ```{r, message = F}
-posterior_samples(b11.1) %>% 
+as_draws_df(b11.1) %>% 
   select(starts_with("b_")) %>% 
   mutate_all(inv_logit_scaled) %>% 
   gather() %>% 
@@ -345,7 +344,8 @@ This made me wonder how this would compare if we were lazy and ignored the categ
 
 ```{r b11.1b}
 b11.1b <-
-  brm(data = d, family = gaussian,
+  brm(data = d, 
+      family = gaussian,
       response ~ 1,
       # in this case, 4 (i.e., the middle response) seems to be the conservative place to put the mean
       prior = c(prior(normal(4, 10), class = Intercept),
@@ -396,7 +396,7 @@ b11.2 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(normal(0, 10), class = b)),
       iter = 2000, warmup = 1000, cores = 2, chains = 2,
-      inits = list(inits, inits),
+      init = list(inits, inits),
       seed = 11,
       file = "fits/b11.02")
 
@@ -417,25 +417,33 @@ b11.3 <-
   update(b11.2,
          formula = response ~ 1 + action + intention + contact + action:intention + contact:intention,
          iter = 2000, warmup = 1000, cores = 2, chains = 2,
-         inits = list(inits, inits),
+         init = list(inits, inits),
          seed = 11,
          file = "fits/b11.03")
 ```
 
-We don't have a `coeftab()` function in brms like for rethinking. But [as we did for Chapter 6][Comparing estimates.], we can reproduce it with help from the [broom package](https://cran.r-project.org/package=broom) and a bit of data wrangling.
+We don't have a `coeftab()` function in brms like for rethinking. But [as we did for Chapter 6][Comparing estimates.], we can reproduce it with help from the `posterior::summarise_draws()` function and a bit of data wrangling.
 
-```{r, message = F}
-library(broom)
+```{r}
+# make a custom helper function
+get_summary <- function(fit) {
+  
+  fit %>% 
+    posterior::summarise_draws(mean) %>%
+    filter(variable != "lprior") %>% 
+    filter(variable != "lp__")
+  
+}
 
+# wrangle
 tibble(model = str_c("b11.", 1:3)) %>% 
   mutate(fit = purrr::map(model, get)) %>% 
-  mutate(tidy = purrr::map(fit, tidy)) %>% 
-  unnest(tidy) %>% 
-  select(model, term, estimate) %>% 
-  filter(term != "lp__") %>% 
-  complete(term, model) %>% 
-  mutate(estimate = round(estimate, digits = 2)) %>%
-  spread(key = model, value = estimate) %>% 
+  mutate(mean = purrr::map(fit, get_summary)) %>% 
+  select(-fit) %>% 
+  unnest(mean) %>% 
+  select(variable, mean, model) %>% 
+  spread(key = model, value = mean) %>% 
+  mutate_if(is.double, round, digits = 2) %>% 
   # this last step isn't necessary, but it orders the rows to match the text
   slice(c(6:11, 1, 4, 3, 2, 5))
 ```
@@ -476,7 +484,53 @@ max_iter <- 100
 
 fitted(b11.3, 
        newdata = nd, 
-       subset = 1:max_iter,
+       fitted(b11.3,
+       newdata = nd, 
+       draw_ids = 1:max_iter,
+       summary = F) %>% 
+  as_tibble() %>%
+  # we need an variable to index which posterior iteration we're working with
+  mutate(iter = 1:max_iter) %>% 
+  # convert the data to the long format
+  gather(key, pk, -iter) %>%
+  # extract the `intention` and `response` information out of the `key` vector and 
+  # spread it into two vectors.
+  separate(key, into = c("intention", "rating")) %>% 
+  # that step produced two character vectors. they’ll be more useful as numbers
+  mutate(intention = intention %>% as.double(),
+         rating    = rating    %>% as.double()) %>%
+  # here we convert `intention` into its proper 0:1 metric
+  mutate(intention = intention -1) %>%
+  # this step is based on McElreath's R code 11.10 on page 338
+  mutate(`pk:rating` = pk * rating) %>% 
+  # I'm not sure how to succinctly explain this. you’re just going to have to trust me
+  group_by(iter, intention) %>% 
+  # this is very important for the next step.
+  arrange(iter, intention, rating) %>% 
+  # here we take our `pk` values and make cumulative sums. why? take a long hard look at Figure 11.2. 
+  mutate(probability = cumsum(pk)) %>% 
+  # `rating == 7` is unnecessary. these `probability` values are by definition 1
+  filter(rating < 7) %>% 
+  
+  ggplot(aes(x = intention, y = probability, 
+             color = probability)) +
+  geom_line(aes(group = interaction(iter, rating)),
+            alpha = 1/10) +
+  # note how we made a new data object for `geom_text()`
+  geom_text(data = tibble(text        = 1:7,
+                          intention   = seq(from = .9, to = .1, length.out = 7),
+                          probability = c(.05, .12, .20, .35, .53, .71, .87)),
+            aes(label = text),
+            size = 3) +
+  scale_x_continuous("intention", breaks = 0:1) +
+  scale_y_continuous(breaks = c(0, .5, 1), limits = c(0, 1)) +
+  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
+  labs(subtitle = "action = 0,\ncontact = 0") +
+  theme_hc() +
+  theme(axis.ticks = element_blank(),
+        legend.position = "none",
+        plot.background = element_rect(fill = "grey92")) = 1:max_iter,
        summary = F) %>% 
   as_tibble() %>% 
   glimpse()
@@ -496,7 +550,7 @@ max_iter <- 100
 
 fitted(b11.3,
        newdata = nd, 
-       subset = 1:max_iter,
+       draw_ids = 1:max_iter,
        summary = F) %>% 
   as_tibble() %>%
   # we need an variable to index which posterior iteration we're working with
@@ -559,7 +613,7 @@ make_Figure_11.3_data <- function(action, contact, max_iter) {
   
   fitted(b11.3, 
          newdata = nd, 
-         subset = 1:max_iter,
+         draw_ids = 1:max_iter,
          summary = F) %>% 
     as_tibble() %>%
     mutate(iter = 1:max_iter) %>% 
@@ -680,7 +734,7 @@ make_alternative_data <- function(action, contact, max_iter) {
   
   fitted(b11.3, 
          newdata = nd, 
-         subset = 1:max_iter,
+         draw_ids = 1:max_iter,
          summary = F) %>% 
     as_tibble() %>%
     mutate(iter = 1:max_iter) %>% 
@@ -934,11 +988,11 @@ We can do something similar with the `brms::pp_check()` function. By setting `ty
 
 ```{r, fig.width = 6, fig.height = 3, message = F}
 # this helps us set our custom color scheme
-bayesplot::color_scheme_set(canva_pal("Green fields")(4)[c(1, 1, 1, 1, 1, 4)])
+bayesplot::color_scheme_set(canva_pal("Green fields")(4)[c(1, 1, 1, 1, 4, 1)])
 
 set.seed(11)
 
-pp_check(b11.4, type = "bars", nsamples = 100) +
+pp_check(b11.4, type = "bars", ndraws = 100) +
   scale_x_continuous(breaks = 0:7) +
   theme_hc() +
   theme(axis.ticks = element_blank(),
@@ -977,7 +1031,7 @@ We can talk about the spread of the distribution, sometimes called $\kappa$, in 
 
 $$\kappa = \alpha + \beta$$
 
-With $\mu$ and $\kappa$ in hand, we can even find the $SD$ of a beta distribution with
+With $\mu$ and $\kappa$ in hand, we can even find the $\textit{SD}$ of a beta distribution with
 
 $$\sigma = \sqrt{\mu (1 - \mu) / (\kappa + 1)}$$
 
@@ -1135,10 +1189,10 @@ Success, our results look a lot like those in the text!
 print(b11.5)
 ```
 
-Here's what the corresponding `posterior_samples()` data object looks like.
+Here's what the corresponding `as_draws_df()` data object looks like.
 
 ```{r}
-post <- posterior_samples(b11.5)
+post <- as_draws_df(b11.5)
 
 head(post)
 ```
@@ -1151,19 +1205,18 @@ post %>%
   mutate_if(is.double, round, digits = 3)
 ```
 
-To stay within the tidyverse while making the many thin lines in Figure 11.5.a, we're going to need to do a bit of data processing. First, we'll want a variable to index the rows in `post` (i.e., to index the posterior draws). And we'll want to convert the `b_Intercept` to the $\bar p$ metric with the `inv_logit_scaled()` function. Then we'll use `sample_n()` to randomly draw a subset of the posterior draws. Then with the `expand()` function, we'll insert a tightly-spaced sequence of `x` values ranging between 0 and 1--the parameter space of beta distribution. Finally, we'll use `pmap_dbl()` to compute the density values for the `rethinking::dbeta2` distribution corresponding to the unique combination of `x`, `p_bar`, and `phi` values in each row.
+To stay within the tidyverse while making the many thin lines in Figure 11.5.a, we're going to need to do a bit of data processing. First, we'll want a variable to index the rows in `post` (i.e., to index the posterior draws). And we'll want to convert the `b_Intercept` to the $\bar p$ metric with the `inv_logit_scaled()` function. Then we'll use `slice_sample()` to randomly draw a subset of the posterior draws. Then with the `expand()` function, we'll insert a tightly-spaced sequence of `x` values ranging between 0 and 1--the parameter space of beta distribution. Finally, we'll use the `rethinking::dbeta2()` function to compute the density values for the unique combination of `x`, `p_bar`, and `phi` values in each row.
 
 ```{r}
 set.seed(11)
 
 lines <-
   post %>% 
-  mutate(iter  = 1:n(),
-         p_bar = inv_logit_scaled(b_Intercept)) %>% 
-  sample_n(size = 100) %>% 
-  expand(nesting(iter, p_bar, phi),
+  mutate(p_bar = inv_logit_scaled(b_Intercept)) %>% 
+  slice_sample(n = 100) %>% 
+  expand(nesting(.draw, p_bar, phi),
          x = seq(from = 0, to = 1, by = .0025)) %>% 
-  mutate(density = pmap_dbl(list(x, p_bar, phi), rethinking::dbeta2))
+  mutate(density = rethinking::dbeta2(x, prob = p_bar, theta = phi))
 
 str(lines)
 ```
@@ -1174,10 +1227,10 @@ All that was just for the thin lines. To make the thicker line for the posterior
 lines %>% 
   ggplot(aes(x = x, y = density)) + 
   stat_function(fun = rethinking::dbeta2,
-                args = list(prob  = mean(inv_logit_scaled(post[, 1])),
-                            theta = mean(post[, 2])),
+                args = list(prob = mean(inv_logit_scaled(post$b_Intercept)),
+                            theta = mean(post$phi)),
                 size = 1.5, color = canva_pal("Green fields")(4)[4]) +
-  geom_line(aes(group = iter),
+  geom_line(aes(group = .draw ),
             alpha = .2, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, 3)) +
   xlab("probability admit") +
@@ -1268,10 +1321,8 @@ mu    <- 3
 theta <- 1
 
 ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
-       aes(x = x)) +
-  geom_ribbon(aes(ymin = 0, ymax = rethinking::dgamma2(x, mu, theta)),
-              color = "transparent", 
-              fill = canva_pal("Green fields")(4)[4]) +
+       aes(x = x, y = rethinking::dgamma2(x, mu, theta))) +
+  geom_area(fill = canva_pal("Green fields")(4)[4]) +
   geom_vline(xintercept = mu, linetype = 3,
              color = canva_pal("Green fields")(4)[3]) +
   scale_x_continuous(NULL, breaks = c(0, mu, 10)) +
@@ -1296,8 +1347,8 @@ crossing(mu    = c(1, 5, 9),
 
   # plot
   ggplot() +
-  geom_ribbon(aes(x = x, ymin = 0, ymax = density),
-              fill = canva_pal("Green fields")(4)[4]) +
+  geom_area(aes(x = x, y = density),
+            fill = canva_pal("Green fields")(4)[4]) +
   geom_vline(aes(xintercept = mu),
              color = canva_pal("Green fields")(4)[2], linetype = 3) +
   scale_y_continuous(NULL, labels = NULL) +
@@ -1331,10 +1382,8 @@ You may have noticed we used the brms default `prior(gamma(0.01, 0.01), class = 
 
 ```{r, fig.width = 3.5, fig.height = 3}
 ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
-       aes(x = x)) +
-  geom_ribbon(aes(ymin = 0, ymax = dgamma(x, 0.01, 0.01)),
-              color = "transparent", 
-              fill = canva_pal("Green fields")(4)[2]) +
+       aes(x = x, y = dgamma(x, 0.01, 0.01))) +
+  geom_area(fill = canva_pal("Green fields")(4)[2]) +
   scale_x_continuous(NULL) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = c(0, 50)) +
@@ -1393,8 +1442,8 @@ print(b11.6)
 
 We have a shape (i.e., $\alpha$) and an intercept (i.e., $\log \mu$). After exponentiating the intercept parameter, here are the posterior distributions for those two gamma parameters.
 
-```{r, fig.width = 6, fig.height = 2.5}
-post <- posterior_samples(b11.6)
+```{r, fig.width = 6, fig.height = 2.5, warning = F}
+post <- as_draws_df(b11.6)
 
 post %>% 
   transmute(mu    = exp(b_Intercept),
@@ -1433,17 +1482,16 @@ set.seed(11)
 
 # wrangle to get the 100 draws
 post %>% 
-  mutate(iter  = 1:n(),
-         mu    = exp(b_Intercept),
+  mutate(mu    = exp(b_Intercept),
          theta = exp(b_Intercept) / shape) %>%
   sample_n(size = 100) %>% 
-  expand(nesting(iter, mu, theta),
+  expand(nesting(.draw, mu, theta),
          x = 1:550) %>% 
   mutate(density = rethinking::dgamma2(x, mu, theta)) %>% 
   
   # plot
   ggplot(aes(x = x, y = density)) +
-  geom_line(aes(group = iter),
+  geom_line(aes(group = .draw),
             alpha = .1, color = canva_pal("Green fields")(4)[4]) +
   stat_function(fun = rethinking::dgamma2,
                 args = list(mu    = mu,
@@ -1479,17 +1527,16 @@ set.seed(11)
 
 # wrangle to get the 100 draws
 post %>% 
-  mutate(iter  = 1:n(),
-         alpha = shape,
+  mutate(alpha = shape,
          theta = exp(b_Intercept) / shape) %>%
   sample_n(size = 100) %>% 
-  expand(nesting(iter, alpha, theta),
+  expand(nesting(.draw, alpha, theta),
          x = 1:550) %>% 
   mutate(density = dgamma(x, shape = alpha, scale = theta)) %>% 
   
   # plot
   ggplot(aes(x = x, y = density)) +
-  geom_line(aes(group = iter),
+  geom_line(aes(group = .draw),
             alpha = .1, color = canva_pal("Green fields")(4)[4]) +
   stat_function(fun = dgamma,
                 args = list(shape = alpha,
@@ -1507,7 +1554,7 @@ It turns out it's possible to get the variance of a gamma distribution with $\al
 
 ```{r, fig.width = 6, fig.height = 2.5}
 post %>% 
-  transmute(var = shape * (exp(b_Intercept) / shape)^2) %>%
+  mutate(var = shape * (exp(b_Intercept) / shape)^2) %>%
   
   ggplot(aes(x = var)) +
   geom_density(color = "transparent", fill = canva_pal("Green fields")(4)[2]) +
@@ -1522,7 +1569,7 @@ Here's the posterior mean for the gamma variance.
 
 ```{r}
 post %>% 
-  transmute(var = shape * (exp(b_Intercept) / shape)^2) %>% 
+  mutate(var = shape * (exp(b_Intercept) / shape)^2) %>% 
   summarise(mean = mean(var))
 ```
 
