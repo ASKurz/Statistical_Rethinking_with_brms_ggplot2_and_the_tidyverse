@@ -183,13 +183,12 @@ print(b12.2)
 This time we don't get a list of 48 separate `tank`-level parameters. However, we do get a description of their distribution interns of a mean (i.e., `Intercept`) and standard deviation (i.e., `sd(Intercept)`). If you'd like the actual `tank`-level parameters, don't worry; they're coming in Figure 12.1. We'll need to do a little prep work, though.
 
 ```{r}
-post <- posterior_samples(b12.2, add_chain = T)
+post <- as_draws_df(b12.2)
 
 post_mdn <- 
-  coef(b12.2, robust = T)$tank[, , ] %>% 
-  as_tibble() %>% 
-  bind_cols(d) %>%
-  mutate(post_mdn = inv_logit_scaled(Estimate))
+  tibble(Estimate = coef(b12.2, robust = T)$tank[, "Estimate", ]) %>%
+  mutate(post_mdn = inv_logit_scaled(Estimate)) %>% 
+  bind_cols(d)
 
 post_mdn
 ```
@@ -218,16 +217,16 @@ post_mdn %>%
 Here is the code for our version of Figure 12.2.a, where we visualize the model-implied population distribution of log-odds survival (i.e., the population distribution yielding all the `tank`-level intercepts).
 
 ```{r}
-# this makes the output of `sample_n()` reproducible
+# this makes the output of `slice_sample()` reproducible
 set.seed(12)
 
 p1 <-
   post %>% 
-  sample_n(100) %>% 
-  expand(nesting(iter, b_Intercept, sd_tank__Intercept),
+  slice_sample(n = 100) %>% 
+  expand(nesting(.draw, b_Intercept, sd_tank__Intercept),
          x = seq(from = -4, to = 5, length.out = 100)) %>% 
 
-  ggplot(aes(x = x, group = iter)) +
+  ggplot(aes(x = x, group = .draw)) +
   geom_line(aes(y = dnorm(x, b_Intercept, sd_tank__Intercept)),
             alpha = .2, color = "orange2") +
   scale_y_continuous(NULL, breaks = NULL) +
@@ -241,9 +240,9 @@ Now we make our Figure 12.2.b and then bind the two subplots with patchwork.
 ```{r, fig.width = 6, fig.height = 3.25}
 p2 <-
   ggplot(data = post, 
-         aes(x = rnorm(n    = nrow(post), 
+         aes(x = rnorm(n = nrow(post), 
                        mean = b_Intercept, 
-                       sd   = sd_tank__Intercept) %>% 
+                       sd = sd_tank__Intercept) %>% 
                inv_logit_scaled())) +
   geom_density(size = 0, fill = "orange2") +
   scale_y_continuous(NULL, breaks = NULL) +
@@ -265,9 +264,9 @@ The `aes()` code in that last block was a bit much. To get a sense of how it wor
 ```{r}
 set.seed(12)
 
-rnorm(n    = 1, 
+rnorm(n = 1, 
       mean = post$b_Intercept, 
-      sd   = post$sd_tank__Intercept) %>% 
+      sd = post$sd_tank__Intercept) %>% 
   inv_logit_scaled()
 ```
 
@@ -299,14 +298,13 @@ print(b12.2b)
 If you're curious how the exponential prior compares to the posterior, you might just plot.
 
 ```{r, fig.width = 3.75, fig.height = 3.25}
-tibble(x = seq(from = 0, to = 6, by = .01)) %>% 
-  
+tibble(x = seq(from = 0, to = 6, by = 0.01)) %>% 
   ggplot() +
   # the prior
-  geom_ribbon(aes(x = x, ymin = 0, ymax = dexp(x, rate = 1)),
-              fill = "orange2", alpha = 1/3) +
+  geom_area(aes(x = x, y = dexp(x, rate = 1)),
+            fill = "orange2", alpha = 1/3) +
   # the posterior
-  geom_density(data = posterior_samples(b12.2b),
+  geom_density(data = as_draws_df(b12.2b),
                aes(x = sd_tank__Intercept), 
                fill = "orange2", size = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
@@ -442,8 +440,7 @@ Let's get ready for the diagnostic plot of Figure 12.3. First we add the partial
 ```{r}
 # we could have included this step in the block of code below, if we wanted to
 p_partpool <- 
-  coef(b12.3)$pond[, , ] %>% 
-  as_tibble() %>%
+  tibble(Estimate = coef(b12.3)$pond[, "Estimate", ]) %>% 
   transmute(p_partpool = inv_logit_scaled(Estimate))
 
 dsim <- 
@@ -493,7 +490,7 @@ dsim %>%
 
 If you wanted to quantify the difference in simple summaries, you might do something like this.
 
-```{r, message = F}
+```{r, message = F, warning = F}
 dsim %>%
   select(ni, nopool_error:partpool_error) %>%
   gather(key, value, -ni) %>%
@@ -543,8 +540,8 @@ print(b12.3_new)
 Why not plot the first simulation versus the second one?
 
 ```{r, fig.width = 8, fig.height = 4.5}
-bind_rows(posterior_samples(b12.3),
-          posterior_samples(b12.3_new)) %>%
+bind_rows(as_draws_df(b12.3),
+          as_draws_df(b12.3_new)) %>%
   mutate(model = rep(c("b12.3", "b12.3_new"), each = n() / 2)) %>% 
 
   ggplot(aes(x = b_Intercept, y = sd_pond__Intercept)) +
@@ -657,12 +654,9 @@ b12.4 <-
                 prior(cauchy(0, 1), class = sd)),
       # I'm using 4 cores, instead of the `cores=3` in McElreath's code
       iter = 5000, warmup = 1000, chains = 4, cores = 4,  
-      control = list(adapt_delta = 0.95),
       seed = 12,
       file = "fits/b12.04")
 ```
-
-The initial solutions came with a few divergent transitions. Increasing `adapt_delta` to `0.95` solved the problem.
 
 McElreath encouraged us to inspect the trace plots. Here they are.
 
@@ -670,12 +664,12 @@ McElreath encouraged us to inspect the trace plots. Here they are.
 library(bayesplot)
 color_scheme_set("orange")
 
-post <- posterior_samples(b12.4, add_chain = T)
+post <- as_draws_df(b12.4)
 
 post %>% 
-  select(-lp__, -iter) %>% 
-  mcmc_trace(facet_args = list(ncol = 4)) +
-  scale_x_continuous(breaks = c(0, 2500, 5000)) +
+  mcmc_trace(pars = vars(b_Intercept:`r_actor[7,Intercept]`),
+             facet_args = list(ncol = 4)) +
+  scale_x_continuous(breaks = 0:2 * 2000) +
   theme_fivethirtyeight() +
   theme(legend.direction = "vertical",
         legend.key.size = unit(0.5, "cm"),
@@ -685,7 +679,7 @@ post %>%
 They look great. Here's the posterior distribution for $\sigma_\text{actor}$.
 
 ```{r, fig.width = 4, fig.height = 2.5}
-posterior_samples(b12.4) %>% 
+post %>% 
   ggplot(aes(x = sd_actor__Intercept, y = 0)) +
   stat_halfeye(.width = .95, fill = "orange2") +
   scale_y_continuous(NULL, breaks = NULL) +
@@ -699,31 +693,18 @@ We can inspect the $\widehat R$ and effective sample size values for all paramet
 data.frame(rhat = rhat(b12.4))
 ```
 
-I'm not aware that brms or bayesplot offer a convenient way to compute the `Bulk_ESS` or `Tail_ESS` values for arbitrary combinations of parameters in a data frame. However you can do so with help from the [posterior package](https://github.com/stan-dev/posterior) [@R-posterior], which has not made its way to CRAN, yet, but can be downloaded directly from GitHub.
-
-```{r, eval = F}
-# install the beta release with this
-install.packages("posterior", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-
-# install the latest development version with this instead
-install.packages("remotes")
-remotes::install_github("stan-dev/posterior")
-```
-
-For our purposes, the function of interest is `posterior::summarise_draws()`, which will take the output from `posterior_samples()` as input.
+I'm not aware that brms or bayesplot offer a convenient way to compute the `Bulk_ESS` or `Tail_ESS` values for arbitrary combinations of parameters in a data frame. However you can do so with the `posterior::summarise_draws()` function.
 
 ```{r, warning = F, message = F}
 library(posterior)
 
-posterior_samples(b12.4) %>% 
-  summarise_draws()
+summarise_draws(b12.4)
 ```
 
 Note how the last three columns are the `rhat`, the `ess_bulk`, and the `ess_tail`. Here we summarize those two effective sample size columns with histograms.
 
 ```{r, fig.width = 5, fig.height = 2.75, warning = F}
-posterior_samples(b12.4) %>% 
-  summarise_draws() %>% 
+summarise_draws(b12.4) %>% 
   select(starts_with("ess")) %>% 
   gather() %>% 
   
@@ -736,7 +717,7 @@ posterior_samples(b12.4) %>%
 
 McElreath pointed out it's important to understand the `actor`-level parameters, as in the summary above, are *deviations* from the grand mean. Here's one way to add them together.
 
-```{r, message = F}
+```{r, message = F, warning = F}
 post %>%
   select(starts_with("r_actor")) %>% 
   gather() %>%
@@ -794,22 +775,21 @@ b12.5 <-
 
 This time we increased the `adapt_delta` parameter to `.9` to avoid divergent transitions. We can look at the primary coefficients with `print()`. McElreath urged us again to inspect the trace plots.
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 7}
-post <- posterior_samples(b12.5, add_chain = T)
+```{r, fig.width = 8, fig.height = 7, message = F, warning = F}
+post <- as_draws_df(b12.5)
 
 post %>% 
-  select(-lp__, -iter) %>% 
-  mcmc_trace(facet_args = list(ncol = 4))+
-  scale_x_continuous(breaks = c(0, 2500, 5000)) +
+  mcmc_trace(pars = vars(b_Intercept:`r_block[6,Intercept]`),
+             facet_args = list(ncol = 4)) +
+  scale_x_continuous(breaks = 0:2 * 2500) +
   theme_fivethirtyeight() +
   theme(legend.position = c(.75, .06))
 ```
 
-The trace plots look great. Here are the other diagnostics along with the parameter summaries, once again using `posterior::summarise_draws()`.
+The trace plots look great. Here are the other diagnostics along with the parameter summaries, once again using `summarise_draws()`.
 
 ```{r}
-posterior_samples(b12.5) %>% 
-  summarise_draws() %>% 
+summarise_draws(b12.5) %>% 
   select(-median, -mad) %>% 
   mutate_if(is.double, round, digits = 2)
 ```
@@ -830,7 +810,7 @@ ranef(b12.5)$block[, , "Intercept"] %>%
 We might make the coefficient plot of Figure 12.4.a with `mcmc_plot()`.
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
-mcmc_plot(b12.5, pars = c("^r_", "^b_", "^sd_")) +
+mcmc_plot(b12.5, variable = c("^r_", "^b_", "^sd_"), regex = T) +
   theme_fivethirtyeight() +
   theme(axis.text.y = element_text(hjust = 0))
 ```
@@ -940,7 +920,7 @@ chimp_2_fitted %>%
 Do note how severely we've restricted the $y$-axis range. But okay, now let's do things by hand. We'll need to extract the posterior samples and look at the structure of the data.
 
 ```{r}
-post <- posterior_samples(b12.4)
+post <- as_draws_df(b12.4)
 
 glimpse(post)
 ```
@@ -949,7 +929,7 @@ McElreath didn't show what his R code 12.29 `dens( post$a_actor[,5] )` would loo
 
 ```{r, fig.width = 4, fig.height = 2.5}
 post %>%
-  transmute(actor_5 = `r_actor[5,Intercept]`) %>% 
+  mutate(actor_5 = `r_actor[5,Intercept]`) %>% 
   
   ggplot(aes(x = actor_5)) +
   geom_density(size = 0, fill = "blue") +
@@ -966,11 +946,12 @@ McElreath built his own `link()` function in R code 12.30. Here we'll build an a
 # our hand-made `brms::fitted()` alternative
 my_fitted <- function(prosoc_left, condition) {
   post %>%
-    transmute(fitted = (b_Intercept + 
-                          `r_actor[5,Intercept]` + 
-                          b_prosoc_left * prosoc_left + 
-                          `b_prosoc_left:condition` * prosoc_left * condition) %>% 
-                inv_logit_scaled())
+    mutate(fitted = (b_Intercept + 
+                       `r_actor[5,Intercept]` + 
+                       b_prosoc_left * prosoc_left + 
+                       `b_prosoc_left:condition` * prosoc_left * condition) %>% 
+             inv_logit_scaled()) %>% 
+    select(fitted)
 }
 
 # the posterior summaries
@@ -1021,9 +1002,9 @@ Not bad.
 
 ### Posterior prediction for new clusters.
 
-By average actor, McElreath referred to a chimp with an intercept exactly at the population mean $\alpha$. So this time we'll only be working with the population parameters, or what are also sometimes called the fixed effects. When using `brms::posterior_samples()` output, this would mean working with columns beginning with the `b_` prefix (i.e., `b_Intercept`, `b_prosoc_left`, and `b_prosoc_left:condition`).
+By average actor, McElreath referred to a chimp with an intercept exactly at the population mean $\alpha$. So this time we'll only be working with the population parameters, or what are also sometimes called the fixed effects. When using `brms::as_draws_df()` output, this would mean working with columns beginning with the `b_` prefix (i.e., `b_Intercept`, `b_prosoc_left`, and `b_prosoc_left:condition`).
 
-```{r, message = F}
+```{r, message = F, warning = F}
 post_average_actor <-
   post %>% 
   # here we use the linear regression formula to get the log_odds for the 4 conditions
@@ -1066,7 +1047,7 @@ If we want to depict the variability across the chimps, we need to include `sd_a
 
 $$\alpha_\text{actor} \sim \operatorname{Normal}(0, \sigma_\text{actor}).$$
 
-```{r, message = F}
+```{r, message = F, warning = F}
 # the random effects
 set.seed(12.42)
 ran_ef <-
@@ -1146,7 +1127,7 @@ p1 | p2 | p3
 
 #### Bonus: Let's use `fitted()` this time. 
 
-We just made those plots using various wrangled versions of `post`, the data frame returned by `posterior_samples(b.12.4)`. If you followed along closely, part of what made that a great exercise is that it forced you to consider what the various vectors in `post` meant with respect to the model formula. But it's also handy to see how to do that from a different perspective. So in this section, we'll repeat that process by relying on the `fitted()` function, instead. We'll go in the same order, starting with the average actor.
+We just made those plots using various wrangled versions of `post`, the data frame returned by `as_draws_df(b.12.4)`. If you followed along closely, part of what made that a great exercise is that it forced you to consider what the various vectors in `post` meant with respect to the model formula. But it's also handy to see how to do that from a different perspective. So in this section, we'll repeat that process by relying on the `fitted()` function, instead. We'll go in the same order, starting with the average actor.
 
 ```{r, warning = F, message = F}
 nd <-
@@ -1166,7 +1147,7 @@ nd <-
 )
 ```
 
-You should notice a few things. Since `b12.4` is a multilevel model, it had three predictors: `prosoc_left`, `condition`, and `actor`. However, our `nd` data only included the first two of those predictors. The reason `fitted()` permitted that was because we set `re_formula = NA`. When you do that, you tell `fitted()` to ignore group-level effects (i.e., focus only on the fixed effects). This was our `fitted()` version of ignoring the `r_` vectors returned by `posterior_samples()`. Here's the plot.
+You should notice a few things. Since `b12.4` is a multilevel model, it had three predictors: `prosoc_left`, `condition`, and `actor`. However, our `nd` data only included the first two of those predictors. The reason `fitted()` permitted that was because we set `re_formula = NA`. When you do that, you tell `fitted()` to ignore group-level effects (i.e., focus only on the fixed effects). This was our `fitted()` version of ignoring the `r_` vectors returned by `as_draws_df()`. Here's the plot.
 
 ```{r, fig.width = 2.5, fig.height = 3.25}
 p4 <-
@@ -1185,6 +1166,12 @@ p4
 For marginal of actor, we can continue using the same `nd` data. This time we'll be sticking with the default `re_formula` setting, which will accommodate the multilevel nature of the model. However, we'll also be adding `allow_new_levels = T` and `sample_new_levels = "gaussian"`. The former will allow us to marginalize across the specific actors in our data and the latter will instruct `fitted()` to use the multivariate normal distribution implied by the random effects. It'll make more sense why I say *multivariate* normal by the end of the [next chapter][Adventures in Covariance]. For now, just go with it.
 
 ```{r, warning = F, message = F}
+# update the new data to include a new level of actor
+nd <-
+  tibble(prosoc_left = c(0, 1, 0, 1),
+         condition   = c(0, 0, 1, 1),
+         actor       = "new")
+
 (
   f <-
   fitted(b12.4,
@@ -1371,7 +1358,7 @@ A big part of this chapter, both what McElreath focused on in the text and even 
 \sigma_{\text{<grouping variable>}} & \sim \operatorname{HalfCauchy}(0, 1),
 \end{align*}
 
-and we've been grappling with the relation between the grand mean $\alpha$ and the group-level deviations $\alpha_{\text{<grouping variable>}}$. For situations where we have the `brms::brm()` model fit in hand, we've been playing with various ways to use the iterations, particularly with either the `posterior_samples()` method and the `fitted()/predict()` method. Both are great. But (a) we have other options, which I'd like to share, and (b) if you're like me, you probably need more practice than following along with the examples in the text. In this bonus section, we are going to introduce two simplified models and then practice working with combining the grand mean various combinations of the random effects.
+and we've been grappling with the relation between the grand mean $\alpha$ and the group-level deviations $\alpha_{\text{<grouping variable>}}$. For situations where we have the `brms::brm()` model fit in hand, we've been playing with various ways to use the iterations, particularly with either the `as_draws_df()` method and the `fitted()/predict()` method. Both are great. But (a) we have other options, which I'd like to share, and (b) if you're like me, you probably need more practice than following along with the examples in the text. In this bonus section, we are going to introduce two simplified models and then practice working with combining the grand mean various combinations of the random effects.
 
 For our first step, we'll introduce the models.
 
@@ -1410,7 +1397,6 @@ b12.7 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .95),
       seed = 12,
       file = "fits/b12.07")
 ```
@@ -1456,7 +1442,6 @@ b12.8 <-
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = 0.95),
       seed = 12,
       file = "fits/b12.08")
 ```
@@ -1469,7 +1454,7 @@ print(b12.8)
 
 Now we've fit our two intercepts-only models, let's get to the heart of this section. We are going to practice four methods for working with the posterior samples. Each method will revolve around a different primary function. In order, they are
 
-* `brms::posterior_samples()`,
+* `brms::as_draws_df()`,
 * `brms::coef()`,
 * `brms::fitted()`, and
 * `tidybayes::spread_draws()`.
@@ -1484,27 +1469,27 @@ With each of the four methods, we'll practice three different model summaries:
 
 So to be clear, our goal is to accomplish those three tasks with four methods, each of which should yield equivalent results.
 
-### `brms::posterior_samples()`.
+### `brms::as_draws_df()`.
 
-To warm up, let's take a look at the structure of the `posterior_samples()` output for the simple `b12.7` model.
+To warm up, let's take a look at the structure of the `as_draws_df()` output for the simple `b12.7` model.
 
 ```{r}
-posterior_samples(b12.7) %>% str()
+as_draws_df(b12.7) %>% str()
 ```
 
 The `b_Intercept` vector corresponds to the $\alpha$ term in the statistical model. The second vector, `sd_actor__Intercept`, corresponds to the $\sigma_\text{actor}$ term. And the next 7 vectors beginning with the `r_actor` suffix are the $\alpha_\text{actor}$ deviations from the grand mean, $\alpha$. Thus if we wanted to get the model-implied probability for our first chimp, we'd add `b_Intercept` to `r_actor[1,Intercept]` and then take the inverse logit.
 
-```{r}
-posterior_samples(b12.7) %>% 
+```{r, warning = F}
+as_draws_df(b12.7) %>% 
   transmute(`chimp 1's average probability of pulling left` = (b_Intercept + `r_actor[1,Intercept]`) %>% inv_logit_scaled()) %>% 
   head()
 ```
 
 To complete our first task, then, of getting the posterior draws for the `actor`-level estimates from the `b12.7` model, we can do that in bulk.
 
-```{r}
+```{r, warning = F}
 p1 <-
-  posterior_samples(b12.7) %>% 
+  as_draws_df(b12.7) %>% 
   transmute(`chimp 1's average probability of pulling left` = b_Intercept + `r_actor[1,Intercept]`,
             `chimp 2's average probability of pulling left` = b_Intercept + `r_actor[2,Intercept]`,
             `chimp 3's average probability of pulling left` = b_Intercept + `r_actor[3,Intercept]`,
@@ -1517,11 +1502,11 @@ p1 <-
 str(p1)
 ```
 
-One of the things I really like about this method is the `b_Intercept + r_actor[i,Intercept]` part of the code makes it very clear, to me, how the `porterior_samples()` columns correspond to the statistical model, $\operatorname{logit}(p_i) = \alpha + \alpha_{\text{actor}_i}$. This method easily extends to our next task, getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`. In fact, other than switching out `b12.7` for `b12.8`, the method is identical.
+One of the things I really like about this method is the `b_Intercept + r_actor[i,Intercept]` part of the code makes it very clear, to me, how the `as_draws_df()` columns correspond to the statistical model, $\operatorname{logit}(p_i) = \alpha + \alpha_{\text{actor}_i}$. This method easily extends to our next task, getting the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, averaging over the levels of `block`. In fact, other than switching out `b12.7` for `b12.8`, the method is identical.
 
-```{r}
+```{r, warning = F}
 p2 <-
-  posterior_samples(b12.8) %>% 
+  as_draws_df(b12.8) %>% 
   transmute(`chimp 1's average probability of pulling left` = b_Intercept + `r_actor[1,Intercept]`,
             `chimp 2's average probability of pulling left` = b_Intercept + `r_actor[2,Intercept]`,
             `chimp 3's average probability of pulling left` = b_Intercept + `r_actor[3,Intercept]`,
@@ -1534,13 +1519,13 @@ p2 <-
 str(p2)
 ```
 
-The reason we can still get away with this is because the grand mean in the `b12.8` model is the grand mean across all levels of `actor` and `block`. AND it's the case that the `r_actor` and `r_block` vectors returned by `posterior_samples(b12.8)` are all in deviation metrics--execute `posterior_samples(b12.8) %>% glimpse()` if it will help you follow along. So if we simply leave out the `r_block` vectors, we are ignoring the specific `block`-level deviations, effectively averaging over them.
+The reason we can still get away with this is because the grand mean in the `b12.8` model is the grand mean across all levels of `actor` and `block`. AND it's the case that the `r_actor` and `r_block` vectors returned by `as_draws_df(b12.8)` are all in deviation metrics--execute `as_draws_df(b12.8) %>% glimpse()` if it will help you follow along. So if we simply leave out the `r_block` vectors, we are ignoring the specific `block`-level deviations, effectively averaging over them.
 
 Now for our third task, we've decided we wanted to retrieve the posterior draws for the `actor`-level estimates from the cross-classified `b12.8` model, based on `block == 1`. To get the chimp-specific estimates for the first `block`, we simply add `+ r_block[1,Intercept]` to the end of each formula.
 
-```{r}
+```{r, warning = F}
 p3 <-
-  posterior_samples(b12.8) %>% 
+  as_draws_df(b12.8) %>% 
   transmute(`chimp 1's average probability of pulling left` = b_Intercept + `r_actor[1,Intercept]` + `r_block[1,Intercept]`,
             `chimp 2's average probability of pulling left` = b_Intercept + `r_actor[2,Intercept]` + `r_block[1,Intercept]`,
             `chimp 3's average probability of pulling left` = b_Intercept + `r_actor[3,Intercept]` + `r_block[1,Intercept]`,
@@ -1553,7 +1538,7 @@ p3 <-
 str(p3)
 ```
 
-Again, I like this method because of how close the wrangling code within `transmute()` is to the statistical model formula. I wrote a lot of code like this in my early days of working with these kinds of models, and I think the pedagogical insights were helpful. But this method has its limitations. It works fine if you're working with some small number of groups. But that's a lot of repetitious code and it would be utterly un-scalable to situations where you have 50 or 500 levels in your grouping variable. We need alternatives.
+Again, I like this method because of how close the wrangling code within `transmute()` is to the statistical model formula. I wrote a lot of code like this in my early days of working with these kinds of models, and I think the pedagogical insights were helpful. But this method has its limitations. It works fine if you're working with some small number of groups. But that's a lot of repetitious code and it would not scale well to situations where you have 50 or 500 levels in your grouping variable. We need alternatives.
 
 ### `brms::coef()`.
 
@@ -1594,7 +1579,7 @@ c2 <-
 str(c2)
 ```
 
-As with our `posterior_samples()` method, this code was near identical to the block, above. All we did was switch out `b12.7` for `b12.8`. [Okay, we removed a line of annotations. But that doesn't really count.] We should point something out, though. Consider what `coef()` yields when working with a cross-classified model.
+As with our `as_draws_df()` method, this code was near identical to the block, above. All we did was switch out `b12.7` for `b12.8`. [Okay, we removed a line of annotations. But that doesn't really count.] We should point something out, though. Consider what `coef()` yields when working with a cross-classified model.
 
 ```{r}
 coef(b12.8)
@@ -1727,7 +1712,7 @@ b12.7 %>%
   spread_draws(b_Intercept, r_actor[actor,])
 ```
 
-First, notice `tidybayes::spread_draws()` took the model fit itself, `b12.7`, as input. No need for `posterior_samples()`. Now, notice we fed it two additional arguments. By the first argument, we that requested `spead_draws()` extract the posterior samples for the `b_Intercept`. By the second argument, `r_actor[actor,]`, we instructed `spead_draws()` to extract all the random effects for the `actor` variable. Also notice how within the brackets `[]` we specified `actor`, which then became the name of the column in the output that indexed the levels of the grouping variable `actor`. By default, the code returns the posterior samples for all the levels of `actor`. However, had we only wanted those from chimps #1 and #3, we might use typical tidyverse-style indexing. E.g.,
+First, notice `tidybayes::spread_draws()` took the model fit itself, `b12.7`, as input. No need for `as_draws_df()`. Now, notice we fed it two additional arguments. By the first argument, we that requested `spead_draws()` extract the posterior samples for the `b_Intercept`. By the second argument, `r_actor[actor,]`, we instructed `spead_draws()` to extract all the random effects for the `actor` variable. Also notice how within the brackets `[]` we specified `actor`, which then became the name of the column in the output that indexed the levels of the grouping variable `actor`. By default, the code returns the posterior samples for all the levels of `actor`. However, had we only wanted those from chimps #1 and #3, we might use typical tidyverse-style indexing. E.g.,
 
 ```{r}
 b12.7 %>%
