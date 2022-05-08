@@ -95,7 +95,6 @@ theme_pearl_earring <- function(light_color = "#E8DCCF",
   
   theme(line = element_line(color = light_color),
         text = element_text(color = light_color, family = my_family),
-        strip.text = element_text(color = light_color, family = my_family),
         axis.text = element_text(color = light_color),
         axis.ticks = element_line(color = light_color),
         axis.line = element_blank(),
@@ -105,6 +104,7 @@ theme_pearl_earring <- function(light_color = "#E8DCCF",
         panel.grid = element_blank(),
         plot.background = element_rect(fill = dark_color, color = dark_color),
         strip.background = element_rect(fill = dark_color, color = "transparent"),
+        strip.text = element_text(color = light_color, family = my_family),
         ...)
   
 }
@@ -225,11 +225,11 @@ ggplot(data = r_1, aes(x = V2)) +
                color = "transparent", fill = "#FCF9F0", alpha = 2/3) +
   geom_density(data = r_4,
                color = "transparent", fill = "#394165", alpha = 2/3) +
-  geom_text(data = tibble(x     = c(.83, .62, .46),
-                          y     = c(.54, .74, 1),
-                          label = c("eta = 1", "eta = 2", "eta = 4")),
-            aes(x = x, y = y, label = label),
-            color = "#A65141", family = "Courier") +
+  annotate(geom = "text",
+           x = c(.83, .62, .46), 
+           y = c(.54, .74, 1),
+           label = c("eta = 1", "eta = 2", "eta = 4"),
+           color = "#A65141", family = "Courier") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab("correlation") +
   theme_pearl_earring()
@@ -286,7 +286,7 @@ As defined above, our first model has both varying intercepts and `afternoon` sl
 With Figure 13.4, we assess how the posterior for the correlation of the random effects compares to its prior.
 
 ```{r, fig.width = 3, fig.height = 3}
-post <- posterior_samples(b13.1)
+post <- as_draws_df(b13.1)
 
 post %>%
   ggplot() +
@@ -419,8 +419,8 @@ p2 <-
   # ten-layered semitransparent ellipses we did with ten lines of `stat_ellipse()` 
   # functions in the previous plot
   mapply(function(level) {
-    stat_ellipse(geom  = "polygon", type = "norm",
-                 size  = 0, alpha = 1/20, fill = "#E7CDC2",
+    stat_ellipse(geom = "polygon", type = "norm",
+                 size = 0, alpha = 1/20, fill = "#E7CDC2",
                  level = level)
     }, 
     # enter the levels here
@@ -494,7 +494,7 @@ b13.2 <-
                 prior(cauchy(0, 2), class = sd)),
       iter = 4500, warmup = 500, chains = 3, cores = 3,
       seed = 13,
-      control = list(adapt_delta = .99),
+      control = list(adapt_delta = .9),
       file = "fits/b13.02")
 ```
 
@@ -565,18 +565,9 @@ If you'd like the $\widehat R$ and effective sample size summaries for those par
 ```{r, warning = F, message = F}
 library(posterior)
 
-posterior_samples(b13.2) %>% 
+b13.2 %>% 
   summarise_draws() %>% 
   mutate_if(is.double, round, digits = 2)
-```
-
-One last thing. The [broom package](https://cran.r-project.org/package=broom) offers a very handy way to get those brms random effects. Just throw the model `brm()` fit into the `tidy()` function.
-
-```{r}
-library(broom)
-
-tidy(b13.2) %>%
-  mutate_if(is.numeric, round, digits = 2)
 ```
 
 But note how, just as with `b13.2$fit`, this approach summarizes the posterior with the **non-centered** parameterization. Which is a fine parameterization. It's just a little different from what you'll get when using `precis( m13.2 , depth=2 )`, as in the text.
@@ -609,28 +600,26 @@ b13.3 <-
                 prior(lkj(2), class = cor)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       seed = 13,
-      control = list(adapt_delta = .99,
-                     max_treedepth = 12),
+      control = list(adapt_delta = .95),
       file = "fits/b13.03")
 ```
 
 McElreath encouraged us to make sure the chains look good. Instead of relying on convenience functions, let's do it by hand.
 
 ```{r, message = F, warning = F, fig.width = 8, fig.height = 7}
-post <- posterior_samples(b13.3, add_chain = T)
+post <- as_draws_df(b13.3)
 
 post %>% 
-  select(-lp__) %>% 
-  gather(key, value, -chain, -iter) %>% 
-  mutate(chain = as.character(chain)) %>% 
+  gather(key, value, b_Intercept:`r_dept_id[6,male]`) %>% 
+  mutate(.chain = as.character(.chain)) %>%
 
-  ggplot(aes(x = iter, y = value, group = chain, color = chain)) +
+  ggplot(aes(x = .iteration, y = value, group = .chain, color = .chain)) +
   geom_line(size = 1/15) +
   scale_color_manual(values = c("#80A0C7", "#B1934A", "#A65141", "#EEDA9D")) +
-  scale_x_continuous(NULL, breaks = c(1001, 5000)) +
+  scale_x_continuous(NULL, breaks = c(1, 2000, 4000)) +
   ylab(NULL) +
-  theme_pearl_earring(legend.position = c(.825, .06),
-                      legend.direction = "horizontal") +
+  theme_pearl_earring(legend.direction = "horizontal",
+                      legend.position = c(.825, .06)) +
   facet_wrap(~key, ncol = 3, scales = "free_y")
 ```
 
@@ -691,7 +680,7 @@ Just like in the text, our `male` slopes are much less dispersed than our interc
 Figure 13.6.a depicts the correlation between the full UCB model's varying intercepts and slopes.
 
 ```{r, fig.width = 3, fig.height = 3, warning = F, message = F}
-post <- posterior_samples(b13.3)
+post <- as_draws_df(b13.3)
 
 post %>% 
   ggplot(aes(x = cor_dept_id__Intercept__male, y = 0)) +
@@ -730,7 +719,7 @@ un_pooled_params <-
   summarise(prob_admit = mean(admit / applications)) %>%
   ungroup() %>%
   mutate(male = ifelse(male == 0, "intercept", "slope")) %>%
-  spread(key  = male, value = prob_admit) %>%
+  spread(key = male, value = prob_admit) %>%
   rename(dept = dept_id) %>%
   # here we put our `prob_to_logit()` function to work
   mutate(intercept = prob_to_logit(intercept),
@@ -753,8 +742,8 @@ library(ggrepel)
 
 ggplot(data = params, aes(x = intercept, y = slope)) +
   mapply(function(level) {
-    stat_ellipse(geom  = "polygon", type = "norm",
-                 size  = 0, alpha = 1/20, fill = "#E7CDC2",
+    stat_ellipse(geom = "polygon", type = "norm",
+                 size = 0, alpha = 1/20, fill = "#E7CDC2",
                  level = level)
     },  
     level = c(seq(from = 1/10, to = 9/10, by = 1/10), .99)) +
@@ -785,8 +774,7 @@ b13.4 <-
                 prior(cauchy(0, 2), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
       seed = 13,
-      control = list(adapt_delta = .99,
-                     max_treedepth = 12),
+      control = list(adapt_delta = .99),
       file = "fits/b13.04")
 ```
 
@@ -887,7 +875,7 @@ Our Figure 13.7 will differ from McElreath's in two important ways. Since we onl
 ```{r, fig.width = 4, fig.height = 3}
 library(ggbeeswarm)
 
-posterior_samples(b13.6) %>% 
+as_draws_df(b13.6) %>% 
   summarise_draws() %>% 
   select(starts_with("ess")) %>% 
   gather() %>% 
@@ -902,7 +890,7 @@ posterior_samples(b13.6) %>%
   theme_pearl_earring()
 ```
 
-Did you notice those sweet-looking jittered dots? They came form the handy [ggbeeswarm package](https://cran.r-project.org/package=ggbeeswarm) [@R-ggbeeswarm] and its `geom_quasirandom()`.
+Did you notice those sweet-looking jittered dots? They came form the handy [ggbeeswarm package](https://cran.r-project.org/package=ggbeeswarm) [@R-ggbeeswarm] and its `geom_quasirandom()` function.
 
 McElreath reported this model only has about 18 parameters. Let's compute the WAIC and check the `p_waic`.
 
@@ -915,21 +903,20 @@ b13.6$criteria$waic
 Yep, only about 18. Here are our standard deviation parameters.
 
 ```{r}
-tidy(b13.6) %>%
-  filter(str_detect(term , "sd_")) %>%
-  mutate_if(is.numeric, round, digits = 2)
+posterior_summary(b13.6)[4:9, ] %>% 
+  round(digits = 2)
 ```
 
 McElreath discussed `rethinking::link()` in the middle of page 407. He showed how his `link(m13.6NC)` code returned a list of four matrices, of which the `p` matrix was of primary interest. The `brms::fitted()` function doesn't work quite the same way, here.
 
-```{r, warning = F, message = F}
+```{r}
 fitted(b13.6,
        summary = F,
-       nsamples = 1000) %>% 
+       ndraws = 1000) %>% 
   str()
 ```
 
-First off, recall that `fitted()` returns summary values, by default. If we want individual values, set `summary = FALSE`. It's also the `fitted()` default to use all posterior iterations, which is 12,000 in this case. To match the text, we need to set `nsamples = 1000`. But those are just details. The main point is that `fitted()` only returns one matrix, which is the analogue to the `p` matrix in the text.
+First off, recall that `fitted()` returns summary values, by default. If we want individual values, set `summary = FALSE`. It's also the `fitted()` default to use all posterior iterations, which is 12,000 in this case. To match the text, we need to set `ndraws = 1000`. But those are just details. The main point is that `fitted()` only returns one matrix, which is the analogue to the `p` matrix in the text.
 
 Moving forward, before we can follow along with McElreath's R code 13.27, we need to refit the simpler model from way back in [Chapter 12][Two types of cluster.].
 
@@ -943,7 +930,7 @@ b12.5 <-
                 prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sd)),
       iter = 6000, warmup = 1000, cores = 4, chains = 4, 
-      control = list(adapt_delta = 0.99),
+      control = list(adapt_delta = .9),
       seed = 12,
       file = "fits/b12.05")
 ```
@@ -1078,22 +1065,23 @@ b13.7 <-
                 prior(normal(0, 1), class = b, coef = logpop),
                 prior(inv_gamma(2.874624, 2.941204), class = lscale, coef = gplat_adjlon2_adj),
                 prior(cauchy(0, 1), class = sdgp)),
-      iter = 1e4, warmup = 2000, chains = 4, cores = 4,
+      iter = 1e4, warmup = 5000, chains = 4, cores = 4,
       seed = 13,
-      control = list(adapt_delta = .999),
+      control = list(adapt_delta = .9999,
+                     max_treedepth = 12),
       file = "fits/b13.07")
 ```
 
 Here's the model summary.
 
 ```{r}
-posterior_samples(b13.7) %>% 
+b13.7 %>% 
   summarise_draws() %>% 
   mutate_if(is.double, round, digits = 2) %>% 
   select(-median, -mad)
 ```
 
-Let's start with the population parameters, first. Our intercept is just a touch high than McElreath's `a` parameter ($1.31, 89 \text{% HDI } [-0.57, 3.14]$). Happily, our `logpop` slope is almost dead on with McElreath's `bp` parameter.
+Let's start with the population parameters. Our intercept is just a touch higher than McElreath's `a` parameter ($1.31, 89\%\ \text{HDI}\ [-0.57, 3.14]$). Happily, our `logpop` slope is almost dead on with McElreath's `bp` parameter.
 
 If you look at the parameter summary using `print()` or `summary()`, you'll see those `sdgp_gplat_adjlon2_adj` and `lscale_gplat_adjlon2_adj` parameters are listed as 'Gaussian Process Terms'. They are different in name and values from McElreath's `etasq` and `rhosq` because brms uses a different parameterization. From the `gp` section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM], we learn the brms parameterization for the Gaussian process follows the form
 
@@ -1101,21 +1089,21 @@ $$k(x_{i},x_{j}) = sdgp^2 \exp \big (-||x_i - x_j||^2 / (2 lscale^2) \big ),$$
 
 where $k(x_{i},x_{j})$ is the same as McElreath's $\mathbf K_{ij}$ and $||x_i - x_j||^2$ is the Euclidean  distance, the same as McElreath's $D_{ij}^2$. Thus we could also express the brms parameterization as
 
-$$\mathbf K_{ij} = sdgp^2 \exp \big (-D_{ij}^2 / (2 lscale^2) \big ),$$
+$$\mathbf K_{ij} = sdgp^2 \exp \left (-D_{ij}^2 / (2 lscale^2) \right ),$$
 
 which is much closer to McElreath's
 
-$$\mathbf K_{ij} = \eta^2 \exp \big (-\rho^2 D_{ij}^2 \big ) + \delta_{ij} \sigma^2.$$
+$$\mathbf K_{ij} = \eta^2 \exp \left (-\rho^2 D_{ij}^2 \right ) + \delta_{ij} \sigma^2.$$
 
 On page 412, McElreath explained that the final $\delta_{ij} \sigma^2$ term is mute with the Oceanic societies data. Thus we won't consider it further. This reduces McElreath's equation to
 
-$$\mathbf K_{ij} = \eta^2 \exp \big (-\rho^2 D_{ij}^2 \big ).$$
+$$\mathbf K_{ij} = \eta^2 \exp \left (-\rho^2 D_{ij}^2 \right ).$$
 
 Importantly, what McElreath called $\eta$, Bürkner called $sdgp$. While McElreath estimated $\eta^2$, brms simply estimated $sdgp$. So we'll have to square our `sdgp_gplat_adjlon2_adj` before it's on the same scale as `etasq` in the text. Here it is.
 
 ```{r}
 post <-
-  posterior_samples(b13.7) %>% 
+  as_draws_df(b13.7) %>% 
   mutate(etasq = sdgp_gplat_adjlon2_adj^2)
 
 post %>% 
@@ -1208,15 +1196,14 @@ set.seed(13)
 
 # wrangle
 post %>% 
-  mutate(iter  = 1:n()) %>% 
   sample_n(100) %>% 
-  expand(nesting(iter, etasq, rhosq),
+  expand(nesting(.draw, etasq, rhosq),
          x = seq(from = 0, to = 10, by = .05)) %>% 
   mutate(covariance = etasq * exp(-rhosq * x^2)) %>% 
   
   # plot
   ggplot(aes(x = x, y = covariance)) +
-  geom_line(aes(group = iter),
+  geom_line(aes(group = .draw),
             size = 1/4, alpha = 1/4, color = "#EEDA9D") +
   stat_function(fun = function(x) median(post$etasq) * exp(-median(post$rhosq)*x^2),
                 color = "#EEDA9D", size = 1) +
@@ -1419,15 +1406,13 @@ b13.8 <-
 If you inspect them, the chains look great. We'll jump straight to the posterior summaries.
 
 ```{r}
-tidy(b13.8) %>%
-  filter(term != "lp__") %>%
-  mutate_if(is.numeric, round, digits = 2)
+fixef(b13.8) %>% round(digits = 2)
 ```
 
 Yep, the 95% intervals for `male` dummy exclude zero. If you wanted a one-sided Bayesian $p$-value, you might do something like this.
 
 ```{r}
-posterior_samples(b13.8) %>%
+as_draws_df(b13.8) %>%
   summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
@@ -1444,7 +1429,7 @@ b13.9 <-
                 prior(normal(0, 4), class = b),
                 prior(cauchy(0, 1), class = sd)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .99),
+      control = list(adapt_delta = .85),
       seed = 13,
       file = "fits/b13.09")
 
@@ -1457,7 +1442,7 @@ b13.10 <-
                 prior(cauchy(0, 1), class = sd),
                 prior(lkj(4), class = cor)),
       iter = 5000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .99),
+      control = list(adapt_delta = .9),
       seed = 13,
       file = "fits/b13.10")
 ```
@@ -1483,7 +1468,7 @@ model_weights(b13.8, b13.9, b13.10, weights = "waic") %>%
 
 Here we'll practice our `tidybayes::spread_draws()` skills from the [end of the last chapter][~~Summary~~ Bonus: Put your random effects to work] to see what the random intercepts from the full model look like in a coefficient plot.
 
-```{r, fig.height = 2.75, fig.width = 9}
+```{r, fig.height = 2.75, fig.width = 9, warning = F}
 b13.10 %>% 
   spread_draws(b_male, r_discipline[discipline,term]) %>% 
   filter(term == "male") %>% 
@@ -1506,22 +1491,21 @@ b13.10 %>%
 Note how the 95% intervals for all the random `male` slopes contain zero within their bounds. Here are the fixed effects.
 
 ```{r}
-tidy(b13.10) %>%
-  filter(str_detect(term , "b_")) %>%
-  mutate_if(is.numeric, round, digits = 2)
+fixef(b13.10) %>% 
+  round(digits = 2)
 ```
 
 And if you wanted a one-sided Bayesian $p$-value for the `male` dummy for the full model, you execute something like this.
 
 ```{r}
-posterior_samples(b13.10) %>%
+as_draws_df(b13.10) %>%
   summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
 Here's a fuller look at the posterior.
 
 ```{r, fig.height = 2.5, fig.width = 6}
-posterior_samples(b13.10) %>% 
+as_draws_df(b13.10) %>% 
   ggplot(aes(x = b_male, y = 0)) +
   geom_vline(xintercept = 0, color = "#E8DCCF", alpha = 1/2) +
   stat_halfeye(.width = c(.5, .95),
