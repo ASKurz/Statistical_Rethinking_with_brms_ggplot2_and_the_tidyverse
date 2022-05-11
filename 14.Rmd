@@ -101,13 +101,7 @@ sim_pancake <- function(seed) {
 
 Let's take this baby for a whirl.
 
-```{r, echo = F}
-# save(list = c("n_sim", "d"), file = "sims/14.sim_1.rda")
-load("sims/14.sim_1.rda")
-```
-
-```{r, eval = F}
-# how many simulations would you like?
+```{r}
 n_sim <- 1e4
 
 d <-
@@ -215,8 +209,7 @@ color <- viridis_pal(option = "C")(7)[7]
 
 p1 <-
   d %>%
-  ggplot(aes(x = MedianAgeMarriage, 
-             y = Divorce,
+  ggplot(aes(x = MedianAgeMarriage, y = Divorce,
              ymin = Divorce - Divorce.SE, 
              ymax = Divorce + Divorce.SE)) +
   geom_pointrange(shape = 20, alpha = 2/3, color = color) +
@@ -231,8 +224,7 @@ color <- viridis_pal(option = "C")(7)[6]
 
 p2 <-
   d %>%
-  ggplot(aes(x = log(Population), 
-             y = Divorce,
+  ggplot(aes(x = log(Population), y = Divorce,
              ymin = Divorce - Divorce.SE, 
              ymax = Divorce + Divorce.SE)) +
   geom_pointrange(shape = 20, alpha = 2/3, color = color) +
@@ -267,7 +259,7 @@ As in the text,
 >
 > All this does is define the measurement $D_{\text{OBS},i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST},i}$. So the above defines a probability for each State $i$'s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $SD$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no posterior for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM] and find the *Additional response information* subsection of the `brmsformula` section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $\textit{SD}$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no posterior for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM] and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
@@ -294,9 +286,7 @@ b14.1_se <-
                 prior(cauchy(0, 2.5), class = sigma)),
       iter = 5000, warmup = 1000, cores = 2, chains = 2,
       seed = 14,
-      control = list(adapt_delta = 0.99,
-                     max_treedepth = 12),
-      inits = inits_list,
+      init = inits_list,
       file = "fits/b14.01_se")
 
 b14.1_mi <- 
@@ -307,14 +297,14 @@ b14.1_mi <-
                 prior(cauchy(0, 2.5), class = sigma)),
       iter = 5000, warmup = 1000, cores = 2, chains = 2,
       seed = 14,
-      control = list(adapt_delta = 0.99,
-                     max_treedepth = 12),
-      save_mevars = TRUE,  # note this line for the `mi()` model
-      inits = inits_list,
+      control = list(adapt_delta = .9),
+      # note this line for the `mi()` model
+      save_pars = save_pars(latent = TRUE),
+      init = inits_list,
       file = "fits/b14.01_mi")
 ```
 
-Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `inits = inits_list` for both models, the differ by `fit@inits`.
+Before we dive into the model summaries, notice how the starting values (i.e., `inits`) differ by model. Even though we coded `init = inits_list` for both models, the differ by `fit@inits`.
 
 ```{r}
 b14.1_se$fit@inits
@@ -328,15 +318,15 @@ print(b14.1_se)
 print(b14.1_mi)
 ```
 
-Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `broom::tidy()` method.
+Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `posterior::summarise_draws()` method.
 
 ```{r}
-library(broom)
+library(posterior)
 
-tidy(b14.1_se) %>%
+summarise_draws(b14.1_se, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 
-tidy(b14.1_mi) %>%
+summarise_draws(b14.1_mi, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 # you can get similar output with `b14.1_mi$fit`
 ```
@@ -367,10 +357,8 @@ Anyway, since our `mi()`-syntax `b14.1_mi` model appears to be the analogue to M
 d <-
   d %>% 
   bind_cols(
-    tidy(b14.1_mi) %>% 
-      filter(str_detect(term, "Yl")) %>% 
-      transmute(d_est    = estimate,
-                d_est_sd = std.error)
+    summarise_draws(b14.1_mi, d_est = mean, d_est_sd = sd) %>% 
+      filter(str_detect(variable, "Yl"))
   )
 
 # redefine the color
@@ -398,7 +386,6 @@ b14.1b <-
                 prior(cauchy(0, 2.5), class = sigma)),
       chains = 2, iter = 5000, warmup = 1000, cores = 2,
       seed = 14,
-      control = list(adapt_delta = 0.95),
       file = "fits/b14.01b")
 ```
 
@@ -448,8 +435,7 @@ p2 <-
               alpha = 1/3, size = 1/2, linetype = 1) +
   # white dots
   geom_pointrange(data = d,
-                  aes(x = MedianAgeMarriage,
-                      y = d_est,
+                  aes(x = MedianAgeMarriage, y = d_est,
                       ymin = d_est - d_est_sd,
                       ymax = d_est + d_est_sd),
                   color = "white", shape = 20, alpha = 1/2) +
@@ -475,7 +461,6 @@ We might express this model for our current example as
 \text{Divorce}_{\text{observed}, i}  & \sim \operatorname{Normal}(\text{Divorce}_{\text{estimated}, i}, \text{Divorce}_{\text{standard error}, i}) \\
 
 \color{blue}{\text{Marriage_rate}_{\text{observed}, i}} & \color{blue}\sim \color{blue}{\operatorname{Normal}(\text{Marriage_rate}_{\text{estimated}, i}, \text{Marriage_rate}_{\text{standard error}, i})} \\
-
 
 \alpha  & \sim \operatorname{Normal}(0, 10) \\
 \beta_1 & \sim \operatorname{Normal}(0, 10) \\
@@ -507,8 +492,8 @@ b14.2_se <-
                 prior(cauchy(0, 2.5), class = sigma)),
       iter = 5000, warmup = 1000, chains = 3, cores = 3,
       seed = 14,
-      control = list(adapt_delta = 0.95),
-      save_mevars = TRUE,  # note the lack if `inits`
+      save_pars = save_pars(latent = TRUE),
+      # note the lack if `inits`
       file = "fits/b14.02_se")
 
 b14.2_mi <- 
@@ -521,8 +506,8 @@ b14.2_mi <-
       seed = 14,
       control = list(adapt_delta = 0.99,
                      max_treedepth = 12),
-      save_mevars = TRUE,
-      inits = inits_list,
+      save_pars = save_pars(latent = TRUE),
+      init = inits_list,
       file = "fits/b14.02_mi")
 ```
 
@@ -535,19 +520,19 @@ print(b14.2_se)
 print(b14.2_mi)
 ```
 
-We'll use `broom::tidy()`, again, to get a sense of `depth=2` summaries.
+We'll use `posterior::summarise_draws()`, again, to get a sense of `depth=2` summaries.
 
 ```{r, results = 'hide'}
-tidy(b14.2_se) %>%
+summarise_draws(b14.2_se, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 
-tidy(b14.2_mi) %>%
+summarise_draws(b14.2_mi, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 ```
 
-Due to space concerns, I'm not going to show the results, here. You can do that on your own. Both methods yielded the posteriors for `Xme_memar_obs[1]`, but only the `b14.2_mi` model based on the `mi()` syntax yielded posteriors for the criterion, the `Yl[i]` summaries.
+Due to space concerns, I'm not going to show the results, here. You can do that on your own. Both methods yielded the posteriors for `Xme_memar_obs[i]`, but only the `b14.2_mi` model based on the `mi()` syntax yielded posteriors for the criterion, the `Yl[i]` summaries.
 
-Note that you'll need to specify `save_mevars = TRUE` in the `brm()` function in order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
+Note that you'll need to specify `save_pars = save_pars(latent = TRUE)` in the `brm()` function in order to save the posterior samples of error-adjusted variables obtained by using the `me()` argument. Without doing so, functions like `predict()` may give you trouble.
 
 Here is the code for Figure 14.3.a.
 
@@ -558,13 +543,13 @@ d <-
   select(!starts_with("d_est")) %>% 
   bind_cols(
     # Divorce rate estimates
-    tidy(b14.2_mi) %>% 
-      filter(str_detect(term, "Yl")) %>% 
-      transmute(d_est = estimate),
+    summarise_draws(b14.2_mi, d_est = mean) %>% 
+      filter(str_detect(variable, "Yl")) %>% 
+      select(d_est),
     # Marriage rate estimated
-    tidy(b14.2_mi) %>% 
-      filter(str_detect(term, "Xme_")) %>% 
-      transmute(m_est = estimate)
+    summarise_draws(b14.2_mi, m_est = mean) %>% 
+      filter(str_detect(variable, "Xme_")) %>% 
+      select(m_est)
   )
 
 color <- viridis_pal(option = "C")(7)[3]
@@ -697,7 +682,7 @@ get_prior(data = data_list,
           b_model)
 ```
 
-With the one-step Bayesian imputation procedure in brms, you might need to use the `resp` argument when specifying non-defaut priors.
+With the one-step Bayesian imputation procedure in brms, you might need to use the `resp` argument when specifying non-default priors.
 
 Anyway, here we fit the model.
 
@@ -719,7 +704,7 @@ b14.3 <-
 The imputed `neocortex` values are indexed by occasion number from the original data.
 
 ```{r}
-tidy(b14.3) %>%
+summarise_draws(b14.3, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 ```
 
@@ -741,7 +726,7 @@ b14.3cc <-
 Check the parameter summaries.
 
 ```{r}
-tidy(b14.3cc) %>%
+summarise_draws(b14.3cc, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 ```
 
@@ -761,12 +746,12 @@ f_b14.3 %>%
   glimpse()
 ```
 
-To include the imputed `neocortex` values in the plot, we'll extract the information from `broom::tidy()`.
+To include the imputed `neocortex` values in the plot, we'll extract the information from `summarise_draws()`.
 
 ```{r}
 f_b14.3_mi <-
-  tidy(b14.3) %>%
-  filter(str_detect(term, "Ymi")) %>%
+  summarise_draws(b14.3, mean, ~quantile2(.x, probs = c(.025, .975))) %>% 
+  filter(str_detect(variable, "Ymi")) %>%
   bind_cols(data_list %>%
               as_tibble() %>%
               filter(is.na(neocortex)))
@@ -788,13 +773,9 @@ p1 <-
   geom_point(data = data_list %>% as_tibble(),
              aes(y = kcal),
              color = "white") +
-  geom_point(data = f_b14.3_mi,
-             aes(x = estimate, y = kcal),
-             color = color, shape = 1) +
-  geom_segment(data = f_b14.3_mi, 
-               aes(x = lower, xend = upper,
-                   y = kcal, yend = kcal),
-               color = color, size = 1/4) +
+  geom_pointrange(data = f_b14.3_mi,
+                  aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
+                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -813,9 +794,11 @@ p2 <-
   
   ggplot(aes(x = logmass, y = neocortex)) +
   geom_point(color = "white") +
+  
   geom_pointrange(data = f_b14.3_mi,
-                  aes(y = estimate, ymin = lower, ymax = upper),
-                  color = color, size = 1/3, shape = 1) +
+                  aes(y = mean, ymin = q2.5, ymax = q97.5),
+                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
+
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
@@ -868,7 +851,7 @@ b14.4 <-
 Behold the parameter summaries.
 
 ```{r}
-tidy(b14.4) %>%
+summarise_draws(b14.4, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 ```
 
@@ -881,13 +864,11 @@ f_b14.4 <-
   bind_cols(nd)
 
 f_b14.4_mi <-
-  tidy(b14.4) %>%
-  filter(str_detect(term, "Ymi")) %>%
-  bind_cols(
-    data_list %>%
-      as_tibble() %>%
-      filter(is.na(neocortex))
-    )
+  summarise_draws(b14.4, mean, ~quantile2(.x, probs = c(.025, .975))) %>% 
+  filter(str_detect(variable, "Ymi")) %>%
+  bind_cols(data_list %>%
+              as_tibble() %>%
+              filter(is.na(neocortex)))
 
 f_b14.4 %>%
   glimpse()
@@ -910,13 +891,9 @@ p1 <-
   geom_point(data = data_list %>% as_tibble(),
              aes(y = kcal),
              color = "white") +
-  geom_point(data = f_b14.4_mi,
-             aes(x = estimate, y = kcal),
-             color = color, shape = 1) +
-  geom_segment(data = f_b14.4_mi, 
-               aes(x = lower, xend = upper,
-                   y = kcal, yend = kcal),
-               color = color, size = 1/4) +
+  geom_pointrange(data = f_b14.4_mi,
+                  aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
+                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -936,8 +913,8 @@ p2 <-
   ggplot(aes(x = logmass, y = neocortex)) +
   geom_point(color = "white") +
   geom_pointrange(data = f_b14.4_mi,
-                  aes(y = estimate, ymin = lower, ymax = upper),
-                  color = color, size = 1/3, shape = 1) +
+                  aes(y = mean, ymin = q2.5, ymax = q97.5),
+                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
@@ -950,7 +927,9 @@ p1 | p2
 
 In one of [his responses](https://discourse.mc-stan.org/t/measurement-error-corrected-hierarchical-model-in-brms/8427/4) to a [question thread](https://discourse.mc-stan.org/t/measurement-error-corrected-hierarchical-model-in-brms/8427) on the Stan forums, Bürkner remarked he wasn't a fan of the brms `me()` syntax and that he planned to depreciate it in the future. As a consequence, our code for models `b14.2_se` and `b14.2_mi` from above might soon break. Happily, we can use the `mi()` workflow to replace `me()`. Here's what that might look like for an alternate version of `b14.2_mi`, which we'll call `b14.2_mi_mi`.
 
-```{r}
+Warning: Specifying global priors for regression coefficients in multivariate models is deprecated. Please specify priors separately for each response variable.
+
+```{r b14.2_mi_mi}
 b_model <-
   # here's the primary `div_obs` model
   bf(div_obs | mi(div_sd) ~ 0 + Intercept + mi(mar_obs) + A) +
@@ -963,15 +942,16 @@ b14.2_mi_mi <-
   brm(data = dlist, 
       family = gaussian,
       b_model,  # here we insert the model
-      prior = c(prior(normal(0, 10), class = b),
+      prior = c(prior(normal(0, 10), class = b, resp = divobs),
+                prior(normal(0, 10), class = b, resp = marobs),
                 prior(cauchy(0, 2.5), class = sigma, resp = divobs),
                 prior(cauchy(0, 2.5), class = sigma, resp = marobs)),
       iter = 5000, warmup = 1000, cores = 2, chains = 2,
       seed = 14,
       control = list(adapt_delta = 0.99,
-                     max_treedepth = 12),
-      save_mevars = TRUE,
-      inits = inits_list,
+                     max_treedepth = 11),
+      save_pars = save_pars(latent = TRUE),
+      init = inits_list,
       file = "fits/b14.02_mi_mi")
 ```
 
@@ -981,33 +961,37 @@ The advantage of the `mi()` approach is the `brm()` syntax requires an explicit 
 print(b14.2_mi_mi)
 ```
 
-If you compare the output from `tidy(b14.2_mi_mi)` to the output from `tidy(b14.2_mi)`, above, you'll see the values are largely the same, but the ordering and some of the `term` names have changed a bit. I'll leave that comparison to the interested reader.
+If you compare the output from `summarise_draws(b14.2_mi_mi)` to the output from `summarise_draws(b14.2_mi)`, above, you'll see the values are largely the same, but the ordering and some of the `variable` names have changed a bit. I'll leave that comparison to the interested reader.
+
+```{r, eval = F, echo = F}
+summarise_draws(b14.2_mi_mi, mean, sd, ~quantile2(.x, probs = c(.025, .975)))
+summarise_draws(b14.2_mi, mean, sd, ~quantile2(.x, probs = c(.025, .975)))
+```
 
 To further cement the similarities to the two models, here's a reworking of Figure 14.4.b, this time based on our `b14.2_mi_mi` model.
 
 ```{r, message = F, warning = F, fig.width = 3.75, fig.height = 3.5}
 full_join(
-  tibble(row     = 1:50,
-         Divorce = dlist$div_obs,
-         d_est   = tidy(b14.2_mi_mi) %>% 
-           filter(str_detect(term, "Yl_divobs")) %>% 
-           pull(estimate)) %>% 
-    gather(key, d, -row) %>% 
-    mutate(key = if_else(key == "Divorce", "observed", "posterior")),
+  # observed values
   tibble(row      = 1:50,
-         Marriage = dlist$mar_obs,
-         d_est    = tidy(b14.2_mi_mi) %>% 
-           filter(str_detect(term, "Yl_marobs")) %>% 
-           pull(estimate)) %>% 
-    gather(key, m, -row) %>% 
-    mutate(key = if_else(key == "Marriage", "observed", "posterior")),
-  by = c("row", "key")) %>% 
+         Divorce  = dlist$div_obs,
+         Marriage = dlist$mar_obs) %>% 
+    gather(variable, observed, -row),
+  # posterior means
+  summarise_draws(b14.2_mi_mi, posterior = mean) %>% 
+    filter(str_detect(variable, "Yl_")) %>% 
+    mutate(row      = str_extract(variable, "\\d+") %>% as.double(),
+           variable = if_else(str_detect(variable, "divobs"), "Divorce", "Marriage")),
+  by = c("row", "variable")
+) %>% 
+  pivot_longer(observed:posterior) %>% 
+  pivot_wider(names_from = variable, values_from = value) %>% 
   
   # plot!
-  ggplot(aes(x = m, y = d)) +
+  ggplot(aes(x = Marriage, y = Divorce)) +
   geom_line(aes(group = row),
             color = "white", size = 1/4) +
-  geom_point(aes(color = key)) +
+  geom_point(aes(color = name)) +
   scale_color_manual(values = c(color_p, color_y)) +
   scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
   labs(x = "Marriage rate (posterior)" , 
@@ -1023,7 +1007,7 @@ To wrap up, if modern missing data methods are new to you, you might also check 
 
 If your mind isn't fully blown by those measurement-error and missing-data models, let's keep building. As it turns out, meta-analyses are often just special kinds of multilevel measurement-error models. Thus, you can use `brms::brm()` to fit Bayesian meta-analyses, too.
 
-Before we proceed, I should acknowledge that this section is heavily influenced by [Matti Vourre](https://mvuorre.github.io/#about)'s great blog post, [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). Since McElreath's text doesn’t directly address meta-analyses, we'll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin's [-@gelman2013bayesian] [*Bayesian data analysis, Third edition*](https://stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
+Before we proceed, I should acknowledge that this section is heavily influenced by [Matti Vourre](https://vuorre.netlify.app/)'s great blog post, [*Bayesian meta-analysis with R, Stan & brms*](https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/). Since McElreath's text doesn't directly address meta-analyses, we'll also have to borrow a bit from Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin's [-@gelman2013bayesian] [*Bayesian data analysis, Third edition*](https://stat.columbia.edu/~gelman/book/). We'll let Gelman and colleagues introduce the topic:
 
 > Discussions of meta-analysis are sometimes imprecise about the estimands of interest in the analysis, especially when the primary focus is on testing the null hypothesis of no effect in any of the studies to be combined. Our focus is on estimating meaningful parameters, and for this objective there appear to be three possibilities, accepting the overarching assumption that the studies are comparable in some broad sense. The first possibility is that we view the studies as identical replications of each other, in the sense we regard the individuals in all the studies as independent samples from a common population, with the same outcome measures and so on. A second possibility is that the studies are so different that the results of any one study provide no information about the results of any of the others. A third, more general, possibility is that we regard the studies as exchangeable but not necessarily either identical or completely unrelated; in other words we allow differences from study to study, but such that the differences are not expected *a priori* to have predictable effects favoring one study over another.... this third possibility represents a continuum between the two extremes, and it is this exchangeable model (with unknown hyperparameters characterizing the population distribution) that forms the basis of our Bayesian analysis…
 >
@@ -1041,7 +1025,7 @@ $$\theta_i \sim \operatorname{Normal} (\mu, \tau),$$
 
 where $\mu$ is the meta-analytic effect (i.e., the population mean) and $\tau$ is the variation around that mean, what you might also think of as $\sigma_\tau$.
 
-Since there's no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's [-@gershoff2016spanking] paper, [*Spanking and child outcomes: Old controversies and new meta-analyses*](https://pdfs.semanticscholar.org/0d03/a2e9f085f0a268b4c0a52f5ac31c17a3e5f3.pdf). From their introduction, we read:
+Since there's no example of a meta-analysis in the text, we'll have to get our data elsewhere. We'll focus on Gershoff and Grogan-Kaylor's [-@gershoff2016spanking] paper, [*Spanking and child outcomes: Old controversies and new meta-analyses*](https://doi.org/10.1037/fam0000191). From their introduction, we read:
 
 > Around the world, most children (80%) are spanked or otherwise physically punished by their parents [@unicef2014hidden]. The question of whether parents should spank their children to correct misbehaviors sits at a nexus of arguments from ethical, religious, and human rights perspectives both in the U.S. and around the world [@gershoffSpankingChildDevelopment2013]. Several hundred studies have been conducted on the associations between parents' use of spanking or physical punishment and children's behavioral, emotional, cognitive, and physical outcomes, making spanking one of the most studied aspects of parenting. What has been learned from these hundreds of studies? (p. 453)
 
@@ -1110,13 +1094,14 @@ b14.5 <-
 One thing you might notice is our `se(se)` function excluded the `sigma` argument. If you recall from [Section 14.1][Measurement error], we specified `sigma = T` in our measurement-error models. The brms default is that within `se()`, `sigma = FALSE`. As such, we have no estimate for sigma the way we would if we were doing this analysis with the raw data from the studies. Hopefully this makes sense. The uncertainty around the `d`-value for each study $i$ has already been encoded in the data as `se`.
 
 This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publicly available. So effect size summaries were the best we typically had. However, times are changing [e.g., @winermanTrendsReport2017]. If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html#a-simple-distributional-model) [@Bürkner2020Distributional] and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
+
 But enough technical talk. Let's look at the model results.
 
 ```{r}
 print(b14.5)
 ```
 
-Thus, in our simple Bayesian meta-analysis, we have a population Cohen's $d$ of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these Cohen's* $d$*s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
+Thus, in our simple Bayesian meta-analysis, we have a population Cohen's $d$ of about `r round(fixef(b14.5)[1], 2)`. Our estimate for $\tau$, `r round(posterior_summary(b14.5)[2, 1], 2)`, suggests we have quite a bit of between-study variability. One question you might ask is: *What exactly are these Cohen's* $d$*'s measuring, anyways?* We've encoded that in the `outcome` vector of the `spank` data.
 
 ```{r}
 spank %>% 
@@ -1143,6 +1128,7 @@ b14.6 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 4000, warmup = 1000, cores = 4, chains = 4,
       seed = 14,
+      control = list(adapt_delta = .85),
       file = "fits/b14.06")
 ```
 
@@ -1152,7 +1138,7 @@ print(b14.6)
 
 Now we have two $\tau$ parameters. We might plot them to get a sense of where the variance is at.
 
-```{r, fig.width = 5, fig.height = 2}
+```{r, fig.width = 5, fig.height = 2, warning = F}
 # we'll want this to label the plot
 label <-
   tibble(tau   = c(.12, .3),
@@ -1160,7 +1146,7 @@ label <-
          label = c("sigma['outcome']", "sigma['study']"))
 
 # wrangle
-posterior_samples(b14.6) %>% 
+as_draws_df(b14.6) %>% 
   select(starts_with("sd")) %>% 
   gather(key, tau) %>% 
   mutate(key = str_remove(key, "sd_") %>% str_remove(., "__Intercept")) %>% 
@@ -1196,7 +1182,7 @@ b14.6 %>%
   geom_vline(xintercept = fixef(b14.6)[1, 3:4], color = "grey33", linetype = 2) +
   stat_halfeye(.width = .95, size = 2/3, color = "white") +
   scale_fill_viridis_d(option = "B", begin = .2) +
-  labs(x = expression(italic("Cohen's d")),
+  labs(x = expression("Cohen's "*italic(d)),
        y = NULL) +
   theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank())
@@ -1238,7 +1224,7 @@ Let's take a closer look at the `b_between` parameter.
 ```{r, fig.width = 4.5, fig.height = 2}
 color <- viridis_pal(option = "B")(7)[5]
 
-posterior_samples(b14.7) %>% 
+as_draws_df(b14.7) %>% 
   
   ggplot(aes(x = b_between, y = 0)) +
   stat_halfeye(.width = c(.5, .95), color = "white", fill = color) +
@@ -1250,7 +1236,7 @@ That difference isn't as large I'd expect it to be. But then again, I'm no spank
 
 There are other things you might do with these data. For example, you might check for trends by year or, as the authors did in their manuscript, distinguish among different severities of corporal punishment. But I think we've gone far enough to get you started.
 
-If you'd like to learn more about these methods, do check out Vourre's [*Meta-analysis is a special case of Bayesian multilevel modeling*](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot with the `brmstools::forest()` function and how our Bayesian brms method compares with frequentist meta-analyses via the [metafor package](https://CRAN.R-project.org/package=metafor) [@R-metafor; @viechtbauerMetafor2010]. You might also check out that aforementioned paper by Williams and colleagues', [*Bayesian meta-analysis with weakly informative prior distributions*](https://psyarxiv.com/7tbrm/), to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
+If you'd like to learn more about these methods, do check out Vourre's [*Bayesian meta-analysis with R, Stan & brms*](https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/). From his blog, you'll learn additional tricks, like making a more traditional-looking forest plot and how our Bayesian brms method compares with frequentist meta-analyses via the [metafor package](https://CRAN.R-project.org/package=metafor) [@R-metafor; @viechtbauerMetafor2010]. You might also check out that aforementioned paper by Williams and colleagues', [*Bayesian meta-analysis with weakly informative prior distributions*](https://psyarxiv.com/7tbrm/), to give you an empirical justification for using a half-Cauchy prior for your meta-analysis $\tau$ parameters.
 
 ## Session info {-}
 
