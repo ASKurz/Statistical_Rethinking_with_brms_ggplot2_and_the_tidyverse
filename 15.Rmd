@@ -35,7 +35,7 @@ It hasn't been that way, for me.
 
 Most of my data have a complicated multilevel structure and often aren't very well behaved. It's normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it's not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files.
 
-Consider this model. It's taken from Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about four minutes for my personal laptop to fit.
+Consider this model. It's taken from Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about three minutes for my personal laptop to fit.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -43,6 +43,7 @@ data("BTdata", package = "MCMCglmm")
 ```
 
 ```{r b15.1, echo = F}
+# 2.592466 mins on 5-11-2022
 # save(b15.1, file = "fits/b15.01.rda")
 # rm(b15.1)
 load("fits/b15.01.rda")
@@ -52,12 +53,13 @@ load("fits/b15.01.rda")
 b15.1 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex + hatchdate + (1 | p | fosternest) + (1 | q | dam), 
+      bf(mvbind(tarsus, back) ~ sex + hatchdate + (1 | p | fosternest) + (1 | q | dam)) +
+        set_rescor(TRUE),
       chains = 2, cores = 2,
       seed = 15)
 ```
 
-Four minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another four minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `b15.1` object outside of R with the `save()` function.
+Three minutes isn't terribly long to wait, but still. I'd prefer to never have to wait for another three minutes, again. Sure, if I save my code in a document like this, I will always be able to fit the model again. But I can work smarter. Here I'll save my `b15.1` object outside of R with the `save()` function.
 
 ```{r}
 save(b15.1, file = "fits/b15.01.rda")
@@ -87,7 +89,8 @@ The other option, which we’ve been using extensively throughout the earlier ch
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam), 
+      bf(mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam)) +
+        set_rescor(TRUE), 
       chains = 2, cores = 2,
       seed = 15,
       file = "fits/b15.02")
@@ -123,7 +126,8 @@ If you've fit a `brm()` model once and saved the results with `file`, executing 
 b15.2 <- 
   brm(data = BTdata,
       family = gaussian,
-      mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam), 
+      bf(mvbind(tarsus, back) ~ sex * hatchdate + (1 | p | fosternest) + (1 | q | dam)) +
+        set_rescor(TRUE), 
       chains = 2, cores = 2,
       seed = 15,
       file = "fits/b15.02")
@@ -151,19 +155,20 @@ Even if that was the final model I was interested in as a scientist, I still wou
 
 ```{r b15.0, message = F, results = "hide"}
 b15.0 <- 
-  brm(mvbind(tarsus, back) ~ 1, 
-      data = BTdata, 
+  brm(data = BTdata, 
+      bf(mvbind(tarsus, back) ~ 1) +
+        set_rescor(TRUE), 
       chains = 2, cores = 2,
       file = "fits/b15.00")
 ```
 
 ```{r, message = F, fig.width = 6.5, fig.height = 5.5}
-plot(b15.0)
+plot(b15.0, widths = c(2, 3))
 
 print(b15.0)
 ```
 
-If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$s at 1). If that wasn't what I intended, I'd rather catch it here than spend four minutes fitting the more complicated `b15.1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
+If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$'s at 1). If that wasn't what I intended, I'd rather catch it here than spend three minutes fitting the more complicated `b15.1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
 
 Note, this is not the same as $p$-hacking [@simmonsFalsepositivePsychologyUndisclosed2011] or wandering aimlessly down the garden of forking paths [@gelmanGardenForkingPaths2013]. We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
 
@@ -241,26 +246,26 @@ Actually, I started reading [Gelman's blog](https://statmodeling.stat.columbia.e
 
 If you're not on it, consider joining academic (see the related blog posts by [Sarah Mojarad](https://medium.com/@smojarad/a-beginners-guide-to-academic-twitter-f483dae86597) and [Dan Quintana](https://www.dsquintana.blog/twitter-for-scientists/)). The word on the street is correct. Twitter can be rage-fueled [dumpster fire](https://media.giphy.com/media/l0IynvPneUpb7SnBe/giphy.gif). But if you're selective about who you follow, it's a great place to lean from and connect with your academic heroes. If you're a fan of this project, here's a list of some of the people you might want to follow:
 
-* [Mara Averick](https://twitter.com/dataandme?lang=en)
-* [Michael Bentacourt](https://twitter.com/betanalpha?lang=en)
-* [Paul Bürkner](https://twitter.com/paulbuerkner?lang=en)
-* [Jenny Bryan](https://twitter.com/JennyBryan?lang=en)
+* [Mara Averick](https://twitter.com/dataandme)
+* [Michael Bentacourt](https://twitter.com/betanalpha)
+* [Paul Bürkner](https://twitter.com/paulbuerkner)
+* [Jenny Bryan](https://twitter.com/JennyBryan)
 * [Frank Harrell](https://twitter.com/f2harrell)
-* [Matthew Kay](https://twitter.com/mjskay?lang=en)
+* [Matthew Kay](https://twitter.com/mjskay)
 * [Tristan Mahr](https://twitter.com/tjmahr)
-* [Richard McElreath](https://twitter.com/rlmcelreath?lang=en)
+* [Richard McElreath](https://twitter.com/rlmcelreath)
 * [Chelsea Parlett-Pelleriti](https://twitter.com/ChelseaParlett)
 * [Danielle Navarro](https://twitter.com/djnavarro)
-* [Roger Peng](https://twitter.com/rdpeng?lang=en)
-* [Dan Simpson](https://twitter.com/dan_p_simpson?lang=en)
-* [Aki Vehtari](https://twitter.com/avehtari?lang=en)
-* [Matti Vuorre](https://twitter.com/vuorre?lang=en)
-* [Hadley Wickham](https://twitter.com/hadleywickham?lang=en)
-* [Yihui Xie](https://twitter.com/xieyihui?lang=en)
+* [Roger Peng](https://twitter.com/rdpeng)
+* [Dan Simpson](https://twitter.com/dan_p_simpson)
+* [Aki Vehtari](https://twitter.com/avehtari)
+* [Matti Vuorre](https://twitter.com/vuorre)
+* [Hadley Wickham](https://twitter.com/hadleywickham)
+* [Yihui Xie](https://twitter.com/xieyihui)
 
-[I'm on twitter](https://twitter.com/SolomonKurz?lang=en), too.
+[I'm on twitter](https://twitter.com/SolomonKurz), too.
 
-If you're on facebook and in the social sciences, you might check out the [Bayesian Inference in Psychology](https://www.facebook.com/groups/1249986448367985/?ref=bookmarks) group. It hasn't been terribly active, as of late. But there are a lot of great folks to connect with, there.
+If you're on facebook and in the social sciences, you might check out the [Bayesian Inference in Psychology](https://www.facebook.com/groups/1249986448367985/) group. It hasn't been terribly active, as of late. But there are a lot of great folks to connect with, there.
 
 I've already mentioned Gelman's blog. [McElreath has one, too](https://elevanth.org/blog/). He posts infrequently, but it's usually pretty good when he does.
 
@@ -276,7 +281,7 @@ Okay, that's enough from me. Let's start wrapping this project up with some McEl
 > 
 > The data and its analysis are the scientific product. The paper is just an advertisement. If you do your honest best to design, conduct, and document your research, so that others can build directly upon it, you can make a difference. (p. 443)
 
-Toward that end, also check out the [OSF](https://osf.io) and their YouTube channel, [here](https://www.youtube.com/channel/UCGPlVf8FsQ23BehDLFrQa-g). [Katie Corker](https://twitter.com/katiecorker) gets the last words: ["Open science is stronger because we’re doing this together."](https://cos.io/blog/open-science-is-a-behavior/)
+Toward that end, also check out the [OSF](https://osf.io) and their YouTube channel, [here](https://www.youtube.com/channel/UCGPlVf8FsQ23BehDLFrQa-g). [Katie Corker](https://twitter.com/katiecorker) gets the last words: ["Open science is stronger because we're doing this together."](https://cos.io/blog/open-science-is-a-behavior/)
 
 ## Session info {-}
 
