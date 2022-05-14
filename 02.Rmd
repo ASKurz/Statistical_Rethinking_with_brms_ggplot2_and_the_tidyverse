@@ -673,7 +673,7 @@ tibble(prob = seq(from = 0, to = 1, by = .01)) %>%
 
 > It is typical to conceive of data and parameters as completely different kinds of entities. Data are measures and known; parameters are unknown and must be estimated from data. Usefully, in the Bayesian framework the distinction between a datum and a parameter is fuzzy. (p. 34)
 
-For more in this topic, check out his lecture, [*Understanding Bayesian statistics without frequentist language*](https://www.youtube.com/watch?v=yakg94HyWdE&frags=pl%2Cwn).
+For more in this topic, check out his lecture, [*Understanding Bayesian statistics without frequentist language*](https://youtu.be/yakg94HyWdE).
 
 ### Prior.
 
@@ -746,7 +746,7 @@ d <-
   arrange(row, probability) %>% 
   mutate(prior = ifelse(row == "flat", 1,
                         ifelse(row == "stepped", rep(0:1, each = sequence_length / 2),
-                               exp(-abs(probability - .5) / .25) / (2 * .25))),
+                               exp(-abs(probability - 0.5) / 0.25) / (2 * 0.25))),
          likelihood = dbinom(x = 6, size = 9, prob = probability)) %>% 
   group_by(row) %>% 
   mutate(posterior = prior * likelihood / sum(prior * likelihood)) %>% 
@@ -800,7 +800,7 @@ library(patchwork)
 p1 / p2 / p3
 ```
 
-I'm not sure if it's the same McElreath used in the text, but the formula I used for the triangle-shaped prior is the [Laplace distribution](https://rdrr.io/cran/rmutil/man/Laplace.html) with a location of .5 and a dispersion of .25.
+I'm not sure if it's the same McElreath used in the text, but the formula I used for the triangle-shaped prior is the [Laplace distribution](https://rdrr.io/cran/rmutil/man/Laplace.html) with a location of 0.5 and a dispersion of 0.25.
 
 Also, to learn all about `dplyr::filter()`, check out Baert's [*Data wrangling part 3: Basic and more advanced ways to filter rows*](https://suzan.rbind.io/2018/02/dplyr-tutorial-3/).
 
