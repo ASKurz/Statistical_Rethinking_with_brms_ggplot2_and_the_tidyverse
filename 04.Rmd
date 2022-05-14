@@ -344,11 +344,11 @@ d2 %>%
 
 #### Overthinking: Data frames.
 
-This probably reflects my training history, but the structure of a data frame seems natural and inherently appealing, to me. So I can't relate to the "annoying" comment. But if you're in the other camp, do check out either of these two data wrangling talks ([here](https://www.youtube.com/watch?v=4MfUCX_KpdE) and [here](https://www.youtube.com/watch?v=GapSskrtUzU)) by the ineffable [Jenny Bryan](https://twitter.com/jennybryan).
+This probably reflects my training history, but the structure of a data frame seems natural and inherently appealing, to me. So I can't relate to the "annoying" comment. But if you're in the other camp, do check out either of these two data wrangling talks ([here](https://youtu.be/4MfUCX_KpdE) and [here](https://youtu.be/GapSskrtUzU)) by the ineffable [Jenny Bryan](https://twitter.com/jennybryan).
 
 #### Overthinking: Index magic.
 
-For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Peng's [-@pengProgrammingDataScience2019] text, *R programming for data science*, or even the [Subsetting](http://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
+For more on indexing, check out [Chapter 9](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html) of Peng's [-@pengProgrammingDataScience2020] text, *R programming for data science*, or even the [Subsetting](http://r4ds.had.co.nz/vectors.html#subsetting-1) subsection from *R4DS*.
 
 ### The model. 
 
@@ -598,7 +598,7 @@ d_grid_samples %>%
 
 That `labeller = label_parsed` bit in the `facet_wrap()` function is what converted our subplot strip labels into Greek. Anyway, $\sigma$ is not so Gaussian with that small $n$.
 
-This is the point in the project where we hop off the grid-approximation train. On the one hand, I think this is a great idea. Most of y'all reading this will never use grid approximation in a real-world applied data analysis. On the other hand, there is some pedagogical utility in practicing with it. It can help you grasp what it is we're dong when we apply Bayes' theorem. If you'd like more practice, check out the first several chapters in John Kruschke's [-@kruschkeDoingBayesianData2015] [textbook](https://sites.google.com/site/doingbayesiandataanalysis/) and the corresponding chapters in my [-@kurzDoingBayesianData2020] [ebook](https://bookdown.org/content/3686/) translating it into **brms** and **tidyverse**.
+This is the point in the project where we hop off the grid-approximation train. On the one hand, I think this is a great idea. Most of y'all reading this will never use grid approximation in a real-world applied data analysis. On the other hand, there is some pedagogical utility in practicing with it. It can help you grasp what it is we're dong when we apply Bayes' theorem. If you'd like more practice, check out the first several chapters in John Kruschke's [-@kruschkeDoingBayesianData2015] [textbook](https://sites.google.com/site/doingbayesiandataanalysis/) and the corresponding chapters in my [-@kurzDoingBayesianDataAnalysis2022] [ebook](https://bookdown.org/content/3686/) translating it into **brms** and **tidyverse**.
 
 ### Fitting the model with ~~`map`~~ `brm()`.
 
@@ -719,7 +719,7 @@ With our `post <- as_draws_df(b4.1)` code from a few lines above, we've already 
 str(post)
 ```
 
-Notice how our data frame, `post`, includes a vector named `lp__`. That's the log posterior. For more information on the log posterior, see the [brms reference manual](https://CRAN.R-project.org/package=brms/brms.pdf) [@brms2020RM], the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [-@standevelopmentteamRStanInterfaceStan2020] [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient), or [Stephen Martin](https://twitter.com/smartin2018)'s [nice explanation](https://discourse.mc-stan.org/t/basic-question-what-is-lp-in-posterior-samples-of-a-brms-regression/17567/2?u=solomon) on the Stan Forums. The log posterior will largely be outside of our focus in this project.
+Notice how our data frame, `post`, includes a vector named `lp__`. That's the log posterior. For more information on the log posterior, see the [brms reference manual](https://CRAN.R-project.org/package=brms/brms.pdf) [@brms2022RM], the "The Log-Posterior (function and gradient)" section of the Stan Development Team's [-@standevelopmentteamRStanInterfaceStan2022] [*RStan: the R interface to Stan*](https://cran.r-project.org/package=rstan/vignettes/rstan.html#the-log-posterior-function-and-gradient), or [Stephen Martin](https://twitter.com/smartin2018)'s [nice explanation](https://discourse.mc-stan.org/t/basic-question-what-is-lp-in-posterior-samples-of-a-brms-regression/17567/2) on the Stan Forums. The log posterior will largely be outside of our focus in this project.
 
 Our `post` also contains a vector named `lprior`. This is the log of the joint prior and is a new addition to the output based on brms version 2.17.0. It is related to functionality from the up-and-coming [priorsense package](https://github.com/n-kall/priorsense) [@R-priorsense], which is based on new work, such as @kallioinen2021DetectingAndDiagnosing. Though you'll see it pop up in our output from time to time, the `lprior` will be outside of our focus in this project.
 
@@ -784,7 +784,7 @@ ggplot(data = post,
 
 See? HMC handled the mild skew just fine.
 
-But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his [-@Bürkner2020Distributional] vignette [*Estimating distributional models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.]. Kruschke also covered several models of this kind in his (2015) text, [*Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), which I've translated into brms and tidyverse code. Check out [Section 16.3](https://bookdown.org/content/3686/metric-predicted-variable-on-one-or-two-groups.html#two-groups) for an example of modeling $\log \sigma$ with a grouping variable.
+But sometimes you want to actually model $\sigma$, such as in the case where your variances are systematically heterogeneous. Bürkner calls these kinds of models distributional models, which you can learn more about in his [-@Bürkner2022Distributional] vignette [*Estimating distributional models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html). As he explained in the vignette, you actually model $\log (\sigma)$ in those instances. If you're curious, we'll practice with a model like this in [Chapter 9][Linking linear models to distributions.]. Kruschke also covered several models of this kind in his (2015) text, [*Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan*](https://sites.google.com/site/doingbayesiandataanalysis/), which I've translated into brms and tidyverse code. Check out [Section 16.3](https://bookdown.org/content/3686/metric-predicted-variable-on-one-or-two-groups.html#two-groups) for an example of modeling $\log \sigma$ with a grouping variable.
 
 ## Adding a predictor
 
