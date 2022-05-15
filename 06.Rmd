@@ -28,7 +28,7 @@ Toward that end, we will employ
 >
 > ...Whatever you thing about null hypothesis significance testing in general, using it to select among structurally different models is a mistake--$p$-values are not designed to help you navigate between undercutting and overfitting. (p. 167, **emphasis** in the original)
 
-McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [-@kurzDoingBayesianData2020] [ebook translating it to brms and the tidyverse](https://bookdown.org/content/3686/). The great [Frank Harrell](https://twitter.com/f2harrell) has complied [*A litany of problems With p-values*](https://www.fharrell.com/post/pval-litany/) and you might consult the recent statement on $p$-values by the American Statistical Association [@wassersteinASAStatementonPValues2016].
+McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [-@kurzDoingBayesianDataAnalysis2022] [ebook translating it to brms and the tidyverse](https://bookdown.org/content/3686/). The great [Frank Harrell](https://twitter.com/f2harrell) has complied [*A litany of problems With p-values*](https://www.fharrell.com/post/pval-litany/) and you might consult the recent statement on $p$-values by the American Statistical Association [@wassersteinASAStatementonPValues2016].
 
 ## The problem with parameters
 
@@ -44,7 +44,7 @@ McElreath is not a fan of the $R^2$. But it's important in my field, so instead 
 
 > **Overfitting** occurs when a model learns too much from the sample. What this means is that there are both *regular* and *irregular* features in every sample. The regular features are the targets of our learning, because they generalize well or answer a question of interest. Regular features are useful, given an objective of our choice. The irregular features are instead aspects of the data that do not generalize and so may mislead us. (p. 169, **emphasis** in the original)
 
-There's a lot to like about this section, but my experience as a clinical psychologist inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individual cases. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we're about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/). Though not covered in this edition of the text, McElreath introduced  Student-$t$ regression in his [-@mcelreathStatisticalRethinkingBayesian2020] second edition (e.g.,  Section 7.6.2).
+There's a lot to like about this section, but my experience as a clinical psychologist inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individual cases. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we're about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.app/post/2019-02-02-robust-linear-regression-with-student-s-t-distribution/). Though not covered in this edition of the text, McElreath introduced  Student-$t$ regression in his [-@mcelreathStatisticalRethinkingBayesian2020] second edition (e.g.,  Section 7.6.2).
 
 In other words, the topics McElreath grappled with in this chapter are difficult and ones I hope you return to again and again during your data analysis career. Back to the text!
 
@@ -132,7 +132,7 @@ fits <-
 print(fits)
 ```
 
-Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). To learn more about this bulk approach to fitting models, check out Hadley Wickham's talk, [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2339s&frags=pl%2Cwn). As you might learn in the talk, we can extract the $R^2$ from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
+Our `fits` object is a [nested tibble](https://tidyr.tidyverse.org/reference/nest.html). To learn more about this bulk approach to fitting models, check out Hadley Wickham's talk, [Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg). As you might learn in the talk, we can extract the $R^2$ from each model with `map_dbl("r.squared")`, which we'll then display in a plot.
 
 ```{r, fig.width = 8, fig.height = 1.5}
 fits <-
@@ -664,7 +664,7 @@ print(b6.8)
 
 **Details about `inits`**: You don't have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
 
-Anyway, the brms `log_lik()` function returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/name-repair.html) within the `as_tibble()` function.
+Anyway, the brms `log_lik()` function returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/as_tibble.html) within the `as_tibble()` function.
 
 ```{r}
 ll <-
@@ -915,7 +915,7 @@ Our results don't perfectly align with those in the text, but they're really clo
 
 > Regularizing priors are great, because they reduce overfitting. But if they are too skeptical, they prevent the model from learning from the data. So to use them effectively, you need some way to tune them. Tuning them isn't always easy. (p. 187)
 
-For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [-@gelmanPriorCanOften2017] [*The prior can generally only be understood in the context of the likelihood*](https://www.mdpi.com/1099-4300/19/10/555), a paper that will probably make more sense after [Chapter 9][Big Entropy and the Generalized Linear Model]. And if you're feeling feisty, also check out Simpson's related blog post [*(It's never a) total eclipse of the prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
+For more on this how to choose your priors, consider Gelman, Simpson, and Betancourt's [-@gelmanPriorCanOften2017] [*The prior can generally only be understood in the context of the likelihood*](https://doi.org/10.3390/e19100555), a paper that will probably make more sense after [Chapter 9][Big Entropy and the Generalized Linear Model]. And if you're feeling feisty, also check out Simpson's related blog post [*(It's never a) total eclipse of the prior*](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/).
 
 #### Rethinking: Multilevel models as adaptive regularization.
 
@@ -925,7 +925,7 @@ I found this connection difficult to grasp for a long time. Practice now and hop
 
 #### Rethinking: Ridge regression.
 
-Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM]. Here's an extract from the section:
+Within the brms framework, you can do something like this with the horseshoe prior via the `horseshoe()` function. You can learn all about it from the `horseshoe` section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM]. Here's an extract from the section:
 
 > The horseshoe prior is a special shrinkage prior initially proposed by @carvalho2009handling. It is symmetric around zero with fat tails and an infinitely large spike at zero. This makes it ideal for sparse models that have many regression coefficients, although only a minority of them is non-zero. The horseshoe prior can be applied on all population-level effects at once (excluding the intercept) by using `set_prior("horseshoe(1)")`. (p. 93)
 
@@ -984,7 +984,7 @@ Again, our numbers aren't the exact same as McElreath's because a) this is a sim
 
 ### DIC.
 
-The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://www.youtube.com/watch?v=H-59eqmHuuQ&frags=pl%2Cwn). If we define $D$ as the deviance's posterior distribution, $\bar D$ as its mean and $\hat D$ as the deviance when computed at the posterior mean, then we define the DIC as
+The DIC has been widely used for some time, now. For a great talk on the DIC, check out the authoritative David Spiegelhalter's [*Retrospective read paper: Bayesian measure of model complexity and fit*](https://youtu.be/H-59eqmHuuQ). If we define $D$ as the deviance's posterior distribution, $\bar D$ as its mean and $\hat D$ as the deviance when computed at the posterior mean, then we define the DIC as
 
 $$\text{DIC} = \bar D + (\bar D - \hat D) = \bar D + p_D.$$
 
@@ -1233,7 +1233,7 @@ Again, our results don't perfectly match those in the text because we're simulat
 >
 > Perhaps a larger concern is that our train-test thought experiment pulls the test sample from exactly the same process as the training sample. This is a kind of *uniformitarian* assumption, in which future data are expected to come from the same process as past data and have the same rough range of values. (pp. 194--195, *emphasis* in the original)
 
-This is one of those big-ticket issues that precisely-computed and neatly-presented statistics isn't so well suited to solve. If you're ready to ponder this further, Navarro's [-@navarroDevilDeepBlue2019] [*Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection*](https://link.springer.com/article/10.1007%2Fs42113-018-0019-z) is a fine place to start.
+This is one of those big-ticket issues that precisely-computed and neatly-presented statistics isn't so well suited to solve. If you're ready to ponder this further, Navarro's [-@navarroDevilDeepBlue2019] [*Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection*](https://doi.org/10.1007/s42113-018-0019-z) is a fine place to start.
 
 ## Using information criteria
 
@@ -1453,7 +1453,7 @@ We briefly discussed the alternative information criteria, the LOO, above. Hereâ
 loo(b6.11)
 ```
 
-The Pareto $k$ values are a useful model fit diagnostic tool, which we'll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/package=loo) [@R-loo; @vehtariPracticalBayesianModel2017; @yaoUsingStackingAverage2018] to compute its WAIC and LOO values. In addition to the vignette, above, Vehtari and Gabry's [-@vehtariBayesianStackingPseudoBMA] vignette, [*Bayesian stacking and pseudo-BMA weights using the loo package*](https://cran.r-project.org/package=loo/vignettes/loo2-weights.html), demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://www.youtube.com/watch?v=8_Su5Qo49Dg&t) or his talk from November 2018, [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+The Pareto $k$ values are a useful model fit diagnostic tool, which we'll discuss later. But for now, realize that brms uses functions from the [loo package](https://cran.r-project.org/package=loo) [@R-loo; @vehtariPracticalBayesianModel2017; @yaoUsingStackingAverage2018] to compute its WAIC and LOO values. In addition to the vignette, above, Vehtari and Gabry's [-@vehtariBayesianStackingPseudoBMA] vignette, [*Bayesian stacking and pseudo-BMA weights using the loo package*](https://cran.r-project.org/package=loo/vignettes/loo2-weights.html), demonstrates the LOO with these very same examples from McElreath's text. And if you'd like to dive a little deeper, check out [Aki Vehtari's GPSS2017 workshop](https://youtu.be/8_Su5Qo49Dg) or his talk from November 2018, [*Model assessment, selection and averaging*](https://youtu.be/Re-2yVd0Mqk).
 
 Let's get back on track with the text. To put all this model comparison in perspective,
 
@@ -1524,7 +1524,9 @@ tibble(diff = seq(from = -20, to = 30, by = 0.25)) %>%
 
 The brms package doesn't have anything like rethinking's `coeftab()` function. However, one can get that information with a little ingenuity. Here we'll employ the `summarise_draws()` function from the [posterior package](https://mc-stan.org/posterior) [@R-posterior], which will compute the summary statistics for our model parameters. For example, this is what it returns for the full model, `b6.14`.
 
-```{r}
+```{r, warning = F, message = F}
+library(posterior)
+
 summarise_draws(b6.14)
 ```
 
@@ -1767,7 +1769,7 @@ r2_combined %>%
 
 If you multiply those values by 100, they make a distribution for the greater percentage in `kcal.per.g` variance `b6.14` explained compared to `b6.13`.
 
-The brms package did not get these $R^2$ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian $R^2$ sausage is made, check out the paper by @gelmanRsquaredBayesianRegression2019, [*R-squared for Bayesian regression models*](https://www.tandfonline.com/doi/abs/10.1080/00031305.2018.1549100?journalCode=utas20).
+The brms package did not get these $R^2$ values by traditional method used in, say, ordinary least squares estimation. To learn more about how the Bayesian $R^2$ sausage is made, check out the paper by @gelmanRsquaredBayesianRegression2019, [*R-squared for Bayesian regression models*](https://doi.org/10.1080/00031305.2018.1549100).
 
 ## Session info {-}
 
