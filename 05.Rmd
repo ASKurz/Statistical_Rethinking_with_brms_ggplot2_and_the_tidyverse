@@ -40,8 +40,8 @@ Unload rethinking and load brms and, while we're at it, the tidyverse.
 ```{r, message = F, warning = F}
 rm(WaffleDivorce)
 detach(package:rethinking, unload = T)
-library(brms)
 library(tidyverse)
+library(brms)
 ```
 
 I'm not going to show the output, but you might go ahead and investigate the data with the typical functions. E.g.,
@@ -367,7 +367,7 @@ f %>%
   theme(panel.grid = element_blank())     
 ```
 
-We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM] for details.
+We get the residuals with the well-named `residuals()` function. Much like with `brms::fitted()`, `brms::residuals()` returns a four-vector matrix with the number of rows equal to the number of observations in the original data (by default, anyway). The vectors have the familiar names: `Estimate`, `Est.Error`, `Q2.5`, and `Q97.5`. See the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM] for details.
 
 With our residuals in hand, we just need a little more data processing to make Figure 5.4.a.
 
@@ -1278,7 +1278,7 @@ ggpairs(data = d, columns = c(3:4, 6)) +
   theme(panel.grid = element_blank())
 ```
 
-But you can customize [these](https://ggobi.github.io/ggally/#ggallyggpairs), too. E.g.,
+But you can customize [these](https://ggobi.github.io/ggally/articles/ggpairs.html), too. E.g.,
 
 ```{r, fig.width = 3.5, fig.height = 3.5, warning = F, message = F}
 my_diag <- function(data, mapping, ...) {
