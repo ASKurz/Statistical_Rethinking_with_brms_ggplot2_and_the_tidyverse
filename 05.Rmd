@@ -72,26 +72,24 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-Since these are geographically-based data, we might plot our three major variables in a map format. The [urbnmapr package](https://github.com/UrbanInstitute/urbnmapr) [@R-urbnmapr] provides latitude and longitude data for the 50 states and the `geom_sf()` function for plotting them. We'll use the `left_join()` function to combine those data with our primary data `d`.
+Since these are geographically-based data, we might plot our three major variables in a map format. The [tigris package](https://github.com/walkerke/tigris) [@R-tigris] provides latitude and longitude data for the 50 states. We'll extract the geographic coordinates with the `tigris::states()` function and then shift and rescale the coordinates for Alaska and Hawaii with the `tigris::shift_geometry()` function. As part of the workflow, we'll combine the geographic coordinates with the `d` data set with help from the `right_join()` function. Finally, we'll plot the thing with the handy `ggplot2::geom_sf()` function.
 
 ```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
-# devtools::install_github("UrbanInstitute/urbnmapr")
-library(urbnmapr)
+# install.packages("tigris", dependencies = T)
+library(tigris)
 
-left_join(
-  # get the map data
-  get_urbn_map(map = "states", sf = TRUE),
-  # add the primary data
-  d %>% 
-    # tandardize the three variables to put them all on the same scale
-    mutate(Divorce_z           = (Divorce - mean(Divorce))                     / sd(Divorce),
-           MedianAgeMarriage_z = (MedianAgeMarriage - mean(MedianAgeMarriage)) / sd(MedianAgeMarriage),
-           Marriage_z          = (Marriage - mean(Marriage))                   / sd(Marriage),
-           # convert the state names to characters to match the map data
-           state_name          = Location %>% as.character()) %>% 
-    select(Divorce_z:Marriage_z:state_name),
-  by = "state_name"
-  ) %>%
+d %>% 
+  # standardize these three variables to put them all on the same scale
+  mutate(Divorce_z           = (Divorce - mean(Divorce))                     / sd(Divorce),
+         MedianAgeMarriage_z = (MedianAgeMarriage - mean(MedianAgeMarriage)) / sd(MedianAgeMarriage),
+         Marriage_z          = (Marriage - mean(Marriage))                   / sd(Marriage)) %>% 
+  # add in the geographic coordinates
+  right_join(states(class = "sf", cb = TRUE) %>% 
+               # shift and rescale the coordinates for Alaska, Puerto Rico, and Hawaii
+               shift_geometry() %>%
+               # drop Puerto Rico
+               filter(NAME != "Puerto Rico"), 
+             by = c("Location" = "NAME")) %>%
   # convert to the long format for faceting
   pivot_longer(ends_with("_z")) %>% 
   
@@ -100,9 +98,11 @@ left_join(
   geom_sf(aes(fill = value, geometry = geometry),
           size = 0) +
   scale_fill_gradient(low = "#f8eaea", high = "firebrick4") +
+  coord_sf(xlim = c(-29e5, 21e5),
+           ylim = c(-2e6, 2e6)) +
   theme_void() +
   theme(legend.position = "none",
-        strip.text = element_text(margin = margin(0, 0, .5, 0))) +
+        strip.text = element_text(margin = margin(0, 0, 0.5, 0))) +
   facet_wrap(~name) 
 ```
 
