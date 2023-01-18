@@ -366,7 +366,7 @@ This yielded a posterior mean of 4.2, much like our `average_outcome_value`, abo
 **End aside**
 
 Now we'll try it by subtracting .5 from each.
- 
+
 ```{r}
 # the probabilities of a given response
 (pk <- dordlogit(1:7, 0, fixef(b11.1)[, 1] - .5))
@@ -1098,7 +1098,8 @@ I'm not going to go into great detail explaining the ins and outs of making cust
 ```{r}
 beta_binomial2 <- custom_family(
   "beta_binomial2", dpars = c("mu", "phi"),
-  links = c("logit", "log"), lb = c(NA, 0),
+  links = c("logit", "log"),
+  lb = c(0, 0), ub = c(1, NA),
   type = "int", vars = "vint1[n]"
 )
 
@@ -1114,7 +1115,7 @@ stan_funs <- "
 stanvars <- stanvar(scode = stan_funs, block = "functions")
 ```
 
-With that out of the way, we're almost ready to test this baby out. Before we do, we should clarify two points: 
+With that out of the way, we're almost ready to test this baby out. Before we do, we should clarify two points:
 
 First, what McElreath referred to as the shape parameter, $\theta$, Bürkner called the precision parameter, $\phi$. In our exposition, above, we followed Kruschke's convention and called it $\kappa$. These are all the same thing: $\theta$, $\phi$, and $\kappa$ are all the same thing. Perhaps less confusingly, what McElreath called the `pbar` parameter, $\bar p$, Bürkner simply called $\mu$.
 
@@ -1168,7 +1169,7 @@ lines <-
   post %>% 
   mutate(p_bar = inv_logit_scaled(b_Intercept)) %>% 
   slice_sample(n = 100) %>% 
-  expand_grid(x = seq(from = 0, to = 1, by = .0025)) %>% 
+  expand_grid(x = seq(from = 0, to = 1, by = .001)) %>% 
   mutate(density = rethinking::dbeta2(x, prob = p_bar, theta = phi))
 
 str(lines)
@@ -1200,23 +1201,23 @@ expose_functions(b11.5, vectorize = TRUE)
 
 # required to use `predict()`
 log_lik_beta_binomial2 <- function(i, prep) {
-  mu     <- prep$dpars$mu[, i]
-  phi    <- prep$dpars$phi
+  mu     <- brms::get_dpar(prep, "mu", i = i)
+  phi    <- brms::get_dpar(prep, "phi", i = i)
   trials <- prep$data$vint1[i]
   y      <- prep$data$Y[i]
   beta_binomial2_lpmf(y, mu, phi, trials)
 }
 
 posterior_predict_beta_binomial2 <- function(i, prep, ...) {
-  mu     <- prep$dpars$mu[, i]
-  phi    <- prep$dpars$phi
+  mu     <- brms::get_dpar(prep, "mu", i = i)
+  phi    <- brms::get_dpar(prep, "phi", i = i)
   trials <- prep$data$vint1[i]
   beta_binomial2_rng(mu, phi, trials)
 }
 
 # required to use `fitted()`
 posterior_epred_beta_binomial2 <- function(prep) {
-  mu     <- prep$dpars$mu
+  mu     <- brms::get_dpar(prep, "mu")
   trials <- prep$data$vint1
   trials <- matrix(trials, nrow = nrow(mu), ncol = ncol(mu), byrow = TRUE)
   mu * trials
@@ -1267,7 +1268,7 @@ As in the text, the raw data are consistent with the prediction intervals. But t
 
 Recall the Poisson distribution presumes $\sigma^2$ scales with $\mu$. The negative binomial distribution relaxes this assumption and presumes "each Poisson count observation has its own rate. It estimates the shape of a gamma distribution to describe the Poisson rates across cases" (p. 350).
 
-Here's a look at the $\gamma$ distribution. 
+Here's a look at the $\gamma$ distribution.
 
 ```{r, fig.width = 3.5, fig.height = 3}
 mu    <- 3
@@ -1556,7 +1557,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, logit, d_plot, text, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, posterior_epred_beta_binomial2, post, mu, b11.6, p, alpha)
+rm(d, logit, d_plot, text, inits, inits_list, b11.1, b11.1b, logistic, dordlogit, pk, explicit_example,  b11.2, b11.3, get_summary, nd, max_iter, make_Figure_11.3_data, make_alternative_data, geom_figure11.3, p1, p2, p3, prob_drink, rate_work, n, drink, y, b11.4, lambda_b11.4, p_b11.4, pbar, theta, betaABfromMeanKappa, beta_binomial2, beta_binomial2_lpmf,  beta_binomial2_rng, stanvars, dzip, stan_funs, b11.5, lines, log_lik_beta_binomial2, posterior_predict_beta_binomial2, posterior_epred_beta_binomial2, post, mu, b11.6, p, alpha)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
