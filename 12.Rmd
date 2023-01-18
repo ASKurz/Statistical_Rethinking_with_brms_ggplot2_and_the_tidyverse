@@ -455,7 +455,7 @@ dsim %>%
 
 Here is our code for Figure 12.3. The extra data processing for `dfline` is how we get the values necessary for the horizontal summary lines.
 
-```{r, fig.width = 5, fig.height = 5, message = F}
+```{r, fig.width = 5, fig.height = 5, message = F, warning = F}
 dfline <- 
   dsim %>%
   select(ni, nopool_error:partpool_error) %>%
@@ -545,7 +545,7 @@ bind_rows(as_draws_df(b12.3),
 
   ggplot(aes(x = b_Intercept, y = sd_pond__Intercept)) +
   stat_density_2d(geom = "raster", 
-                  aes(fill = stat(density)), 
+                  aes(fill = after_stat(density)), 
                   contour = F, n = 200) +
   geom_vline(xintercept = a,     color = "orange3", linetype = 3) +
   geom_hline(yintercept = sigma, color = "orange3", linetype = 3) +
@@ -767,7 +767,7 @@ b12.5 <-
          formula = pulled_left | trials(1) ~ 1 + prosoc_left + prosoc_left:condition + 
            (1 | actor) + (1 | block),
          iter = 6000, warmup = 1000, cores = 4, chains = 4, 
-         control = list(adapt_delta = .9),
+         control = list(adapt_delta = .85),
          seed = 12,
          file = "fits/b12.05")
 ```
