@@ -280,7 +280,7 @@ d_plot %>%
 Now we define the linear model as $\phi_i = \beta x_i$. Accordingly, the formula for our cumulative logit model becomes
 
 \begin{align*}
-\log \frac{\text{Pr}(y_i \leq k)}{1 - \text{Pr}(y_i \leq k)} & = \alpha_k - \phi_i \\
+\log \frac{\Pr(y_i \leq k)}{1 - \Pr(y_i \leq k)} & = \alpha_k - \phi_i \\
 \phi_i & = \beta x_i.
 \end{align*}
 
@@ -870,21 +870,21 @@ d <-
 With these data, the likelihood of observing zero on `y`, (i.e., the likelihood zero manuscripts were completed on a given occasion) is
 
 \begin{align*}
-\text{Pr}(0 | p, \lambda) & = \text{Pr}(\text{drink} | p) + \text{Pr}(\text{work} | p) \times \text{Pr}(0 | \lambda) \\
-                           & = p + (1 - p) \; \exp (- \lambda).
+\Pr(0 | p, \lambda) & = \Pr(\text{drink} | p) + \Pr(\text{work} | p) \times \Pr(0 | \lambda) \\
+                    & = p + (1 - p) \; \exp (- \lambda).
 \end{align*}
 
 And 
 
-> since the Poisson likelihood of $y$ is $\text{Pr}(y | \lambda) = \lambda^y \exp (- \lambda) / y!$, the likelihood of $y = 0$ is just $\exp(- \lambda)$. The above is just the mathematics for:
+> since the Poisson likelihood of $y$ is $\Pr(y | \lambda) = \lambda^y \exp (- \lambda) / y!$, the likelihood of $y = 0$ is just $\exp(- \lambda)$. The above is just the mathematics for:
 >
 >> *The probability of observing a zero is the probability that the monks didn't drink OR ($+$) the probability that the monks worked AND ($\times$) failed to finish anything*. 
 >
 > And the likelihood of a non-zero value $y$ is:
 >
 > \begin{align*}
-> \text{Pr}(y | p, \lambda) & = \text{Pr}(\text{drink} | p) (0) + \text{Pr}(\text{work} | p) \text{Pr}(y | \lambda) \\
->                            & = (1 - p) \frac {\lambda^y \; \exp (- \lambda)}{y!}
+> \Pr(y | p, \lambda) & = \Pr(\text{drink} | p) (0) + \Pr(\text{work} | p) \Pr(y | \lambda) \\
+>                     & = (1 - p) \frac {\lambda^y \; \exp (- \lambda)}{y!}
 > \end{align*}
 >
 > Since drinking monks never produce $y > 0$, the expression above is just the chance the monks both work $1 - p$, and finish $y$ manuscripts. (p. 344, *emphasis* in the original)

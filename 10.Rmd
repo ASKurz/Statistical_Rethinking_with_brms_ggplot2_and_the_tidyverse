@@ -1360,9 +1360,9 @@ The next two of the remaining four models are maximum entropy distributions for 
 
 ### Multinomial.
 
-> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in [Chapter 9][Maximum entropy] when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, …, p_K$, then the probability of observing $y_1, …, y_K$ events of each type out of $n$ trials is (p. 323):
+> When more than two types of unordered events are possible, and the probability of each type of event is constant across trials, then the maximum entropy distribution is the multinomial distribution. [We] already met the multinomial, implicitly, in [Chapter 9][Maximum entropy] when we tossed pebbles into buckets as an introduction to maximum entropy. The binomial is really a special case of this distribution. And so its distribution formula resembles the binomial, just extrapolated out to three or more types of events. If there are $K$ types of events with probabilities $p_1, \dots, p_K$, then the probability of observing $y_1, \dots, y_K$ events of each type out of $n$ trials is (p. 323):
 
-$$\text{Pr} (y_1, ..., y_K | n, p_1, ..., p_K) = \frac{n!}{\prod_i y_i!} \prod_{i = 1}^K p_i^{y_i}$$
+$$\Pr (y_1, ..., y_K | n, p_1, ..., p_K) = \frac{n!}{\prod_i y_i!} \prod_{i = 1}^K p_i^{y_i}$$
 
 Compare that equation with the simpler version in section 2.3.1 (page 33 in the text).
 
@@ -1370,7 +1370,7 @@ Compare that equation with the simpler version in section 2.3.1 (page 33 in the 
 
 "The conventional and natural link is this context is the *multinomial logit*. This link function takes a vector of *scores*, one for each $K$ event types, and computed the probability of a particular type of event $K$ as" (p. 323, *emphasis* in the original)
 
-$$\text{Pr}(k | s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
+$$\Pr(k | s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}$$
 
 `r emo::ji('warning')`
 McElreath then went on to explain how multinomial logistic regression models are among the more difficult of the GLMs to master. He wasn't kidding. To get a grasp on these, we'll cover them in a little more detail than he did in the text. To fully flesh this out, our section headers will be more granular than those in the text. Whereas McElreath kept all of the material in Section 10.3.1.1 together, we will break things up into subsections 10.3.1.1.1 through 10.3.1.1.3.
@@ -1427,7 +1427,7 @@ tibble(income = 1:3) %>%
 
 Notice how the values in the `p` column match up well with the `probability` values from the output from the block just above. Our simulation successfully produces data corresponding to the data-generating values. Woot! Also note how the code we just used to compute those `p` values, `p = exp(score) / sum(exp(score))`, corresponds nicely with the formula from above,
 
-$$\text{Pr}(k |s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
+$$\Pr(k |s_1, s_2, \dots, s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)}.$$
 
 What still might seem mysterious is what those $s$ values in the equation are. In the simulation and in the prose, McElreath called them *scores*. Another way to think about them is as weights. The thing to get is that their exact values aren't important so much as their difference one from another. You'll note that `score` for `income == 2` was 0.5 larger than that of `income == 1`. The same was true for `income == 3` and `income == 2`. So if we add an arbitrary constant to each of those `score` values, like 104, we'll get the same `p` values.
 
@@ -1807,7 +1807,7 @@ Our `mu2` is the same as the second score value. Our 0.59 is our estimate for th
 
 You may be wondering what we might do with our vector of `b_b_Intercept` draws. Well, after converting the draws out of the log-odds scale, we can carefully multiply them by our three `income` values, which will return the posteriors for the three score values. We can then use the formula form above,
 
-$$\text{Pr}(k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)},$$
+$$\Pr(k |s_1, s_2, ..., s_K) = \frac{\exp (s_k)}{\sum_{i = 1}^K \exp (s_i)},$$
 
 to return the posterior probabilities for each of the career choices based on their `income` values.
 
@@ -1969,7 +1969,7 @@ bind_cols(
 
 > Sometimes a count variable is a number of events up until something happened. Call this "something" the terminating event. Often we want to model the probability of that event, a kind of analysis known as event history analysis or survival analysis. When the probability of the terminating event is constant through time (or distance), and the units of time (or distance) are discrete, a common likelihood function is the geometric distribution. This distribution has the form:
 >
-> $$\text{Pr}(y | p) = p (1 - p) ^{y - 1}$$
+> $$\Pr(y | p) = p (1 - p) ^{y - 1}$$
 >
 > where $y$ is the number of time steps (events) until the terminating event occurred and $p$ is the probability of that event in each time step. This distribution has maximum entropy for unbounded counts with constant expected value. (pp. 327--328)
 
