@@ -723,6 +723,8 @@ Notice how our data frame, `post`, includes a vector named `lp__`. That's the lo
 
 Our `post` also contains a vector named `lprior`. This is the log of the joint prior and is a new addition to the output based on brms version 2.17.0. It is related to functionality from the up-and-coming [priorsense package](https://github.com/n-kall/priorsense) [@R-priorsense], which is based on new work, such as @kallioinen2021DetectingAndDiagnosing. Though you'll see it pop up in our output from time to time, the `lprior` will be outside of our focus in this project.
 
+The final three columns--`.chain`, `.iteration`, and `.draw`--contain metadata about the posterior draws. We'll end up using the `.draw` column to index the posterior draws, from time to time. You can learn more about these metadata columns [here](https://mc-stan.org/posterior/reference/draws_df.html).
+
 The `summary()` function doesn't work for brms posterior data frames quite the way `precis()` does for posterior data frames from the rethinking package. E.g.,
 
 ```{r, warning = F}
