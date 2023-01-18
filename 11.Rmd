@@ -81,7 +81,7 @@ Now we're ready to make our version of the simple Figure 11.1 histogram of our p
 ```{r, fig.width = 2.5, fig.height = 3}
 p1 <-
   ggplot(data = d, aes(x = response, fill = ..x..)) +
-  geom_histogram(binwidth = 1/4, size = 0) +
+  geom_histogram(binwidth = 1/4, linewidth = 0) +
   scale_x_continuous(breaks = 1:7) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
                       high = canva_pal("Green fields")(4)[1]) +
@@ -857,7 +857,7 @@ d <-
   
   ggplot(data = d, aes(x = Y)) +
   geom_histogram(aes(fill = zeros),
-                 binwidth = 1, size = 1/10, color = "grey92") +
+                 binwidth = 1, linewidth = 1/10, color = "grey92") +
   scale_fill_manual(values = c(canva_pal("Green fields")(4)[1], 
                                canva_pal("Green fields")(4)[2], 
                                canva_pal("Green fields")(4)[1])) +
@@ -1229,7 +1229,7 @@ lines %>%
   stat_function(fun = rethinking::dbeta2,
                 args = list(prob = mean(inv_logit_scaled(post$b_Intercept)),
                             theta = mean(post$phi)),
-                size = 1.5, color = canva_pal("Green fields")(4)[4]) +
+                linewidth = 1.5, color = canva_pal("Green fields")(4)[4]) +
   geom_line(aes(group = .draw ),
             alpha = .2, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL, limits = c(0, 3)) +
@@ -1289,12 +1289,12 @@ predict(b11.5) %>%
   geom_linerange(aes(ymin = ll / applications, 
                      ymax = ul / applications),
                  color = canva_pal("Green fields")(4)[1], 
-                 size = 2.5, alpha = 1/4) +
+                 linewidth = 2.5, alpha = 1/4) +
   geom_pointrange(aes(ymin = Q2.5  / applications, 
                       ymax = Q97.5 / applications, 
                       y = Estimate/applications),
                   color = canva_pal("Green fields")(4)[4],
-                  size = 1/2, shape = 1) +
+                  linewidth = 1/2, shape = 1) +
   geom_point(aes(y = admit/applications),
              color = canva_pal("Green fields")(4)[2],
              size = 2) +
@@ -1496,7 +1496,7 @@ post %>%
   stat_function(fun = rethinking::dgamma2,
                 args = list(mu    = mu,
                             scale = theta),
-                size = 1.5, color = canva_pal("Green fields")(4)[4]) +
+                linewidth = 1.5, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(distribution~of~lambda~values)) +
   coord_cartesian(xlim = c(0, 500),
@@ -1541,7 +1541,7 @@ post %>%
   stat_function(fun = dgamma,
                 args = list(shape = alpha,
                             scale = theta),
-                size = 1.5, color = canva_pal("Green fields")(4)[4]) +
+                linewidth = 1.5, color = canva_pal("Green fields")(4)[4]) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(distribution~of~lambda~values)) +
   coord_cartesian(xlim = c(0, 500),

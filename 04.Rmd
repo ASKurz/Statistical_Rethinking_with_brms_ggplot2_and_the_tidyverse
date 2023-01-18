@@ -395,7 +395,7 @@ tibble(sample_mu    = rnorm(n, mean = 178,       sd  = 20),
   mutate(x = rnorm(n, mean = sample_mu, sd  = sample_sigma)) %>% 
   
   ggplot(aes(x = x)) +
-  geom_density(fill = "black", size = 0) +
+  geom_density(fill = "black", linewidth = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(subtitle = expression(Prior~predictive~distribution~"for"~italic(h[i])),
        x = NULL) +
@@ -483,7 +483,7 @@ d_grid_samples <-
 
 d_grid_samples %>% 
   ggplot(aes(x = mu, y = sigma)) + 
-  geom_point(size = .9, alpha = 1/15) +
+  geom_point(size = 0.9, alpha = 1/15) +
   scale_fill_viridis_c() +
   labs(x = expression(mu[samples]),
        y = expression(sigma[samples])) +
@@ -498,7 +498,7 @@ d_grid_samples %>%
   gather() %>% 
 
   ggplot(aes(x = value)) + 
-  geom_density(fill = "grey33", size = 0) +
+  geom_density(fill = "grey33", linewidth = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(NULL) +
   theme(panel.grid = element_blank()) +
@@ -574,7 +574,7 @@ d_grid_samples <-
 
 d_grid_samples %>% 
   ggplot(aes(x = mu, y = sigma)) + 
-  geom_point(size = .9, alpha = 1/15) +
+  geom_point(size = 0.9, alpha = 1/15) +
   scale_fill_viridis_c() +
   labs(x = expression(mu[samples]),
        y = expression(sigma[samples])) +
@@ -589,7 +589,7 @@ d_grid_samples %>%
   gather() %>% 
 
   ggplot(aes(x = value)) + 
-  geom_density(fill = "grey33", size = 0) +
+  geom_density(fill = "grey33", linewidth = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(NULL) +
   theme(panel.grid = element_blank()) +
@@ -776,7 +776,7 @@ There's no need to fret about this when using brms. With HMC, we are not constra
 ```{r, fig.width = 3, fig.height = 3}
 ggplot(data = post, 
        aes(x = sigma)) +
-  geom_density(size = 1/10, fill = "black") +
+  geom_density(linewidth = 1/10, fill = "black") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(sigma)) +
   theme(panel.grid = element_blank())
@@ -846,7 +846,7 @@ tibble(beta = -40:40) %>%
   mutate(density = dnorm(beta, mean = 0, sd = 10)) %>% 
   
   ggplot(aes(x = beta, y = density)) +
-  geom_area(size = 0, fill = "royalblue") +
+  geom_area(linewidth = 0, fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
   xlab(expression(beta)) +
   theme(panel.grid = element_blank())
@@ -1100,7 +1100,7 @@ p1 <-
          aes(x = weight, y = height)) +
   geom_abline(data = post010 %>% slice(1:20),
               aes(intercept = b_Intercept, slope = b_weight, group = .draw),
-              size = 1/3, alpha = .3) +
+              linewidth = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
@@ -1111,7 +1111,7 @@ p2 <-
          aes(x = weight, y = height)) +
   geom_abline(data = post050 %>% slice(1:20),
               aes(intercept = b_Intercept, slope = b_weight, group = .draw),
-              size = 1/3, alpha = .3) +
+              linewidth = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
@@ -1122,7 +1122,7 @@ p3 <-
          aes(x = weight, y = height)) +
   geom_abline(data = post150 %>% slice(1:20),
               aes(intercept = b_Intercept, slope = b_weight, group = .draw),
-              size = 1/3, alpha = .3) +
+              linewidth = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
@@ -1133,7 +1133,7 @@ p4 <-
          aes(x = weight, y = height)) +
   geom_abline(data = post352 %>% slice(1:20),
               aes(intercept = b_Intercept, slope = b_weight, group = .draw),
-              size = 1/3, alpha = .3) +
+              linewidth = 1/3, alpha = .3) +
   geom_point(shape = 1, size = 2, color = "royalblue") +
   coord_cartesian(xlim = range(d2$weight),
                   ylim = range(d2$height)) +
@@ -1165,7 +1165,7 @@ And here is a version McElreath's Figure 4.6 density plot.
 ```{r, fig.width = 3, fig.height = 3}
 mu_at_50 %>%
   ggplot(aes(x = mu_at_50)) +
-  geom_density(size = 0, fill = "royalblue") +
+  geom_density(linewidth = 0, fill = "royalblue") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(x = expression(mu["height | weight = 50"])) +
   theme_classic()
@@ -1266,7 +1266,7 @@ d2 %>%
   geom_smooth(data = mu_summary,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/2) +
   geom_point(color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
   coord_cartesian(xlim = range(d2$weight)) +
   theme(text = element_text(family = "Times"),
@@ -1317,7 +1317,7 @@ d2 %>%
   geom_smooth(data = mu_summary,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/2) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 2/3) +
   ylab("height") +
@@ -1397,7 +1397,7 @@ ggplot(data = d,
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/2) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/2) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
@@ -1461,7 +1461,7 @@ ggplot(data = d,
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/4) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/4) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
@@ -1492,7 +1492,7 @@ ggplot(data = d,
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/4) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/4) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +
@@ -1515,7 +1515,7 @@ ggplot(data = d,
   geom_smooth(data = f,
               aes(y = Estimate, ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "grey70", color = "black", alpha = 1, size = 1/4) +
+              fill = "grey70", color = "black", alpha = 1, linewidth = 1/4) +
   geom_point(aes(y = height),
              color = "navyblue", shape = 1, size = 1.5, alpha = 1/3) +
   coord_cartesian(xlim = range(d$weight_s)) +

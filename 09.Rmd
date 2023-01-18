@@ -186,7 +186,7 @@ tibble(mu   = 0,
   
   ggplot(aes(x = beta, y = entropy)) +
   geom_vline(xintercept = 2, color = "white") +
-  geom_line(size = 2, color = ghibli_palette("MarnieMedium2")[6]) +
+  geom_line(linewidth = 2, color = ghibli_palette("MarnieMedium2")[6]) +
   xlab(expression(beta*" (i.e., shape)")) +
   coord_cartesian(ylim = c(1.34, 1.42)) +
   theme(panel.grid = element_blank(),
@@ -389,7 +389,7 @@ We're finally ready to make our version of the left panel of Figure 9.4.
 p1 <-
   d %>% 
   ggplot(aes(x = h)) +
-  geom_density(size = 0, fill = ghibli_palette("LaputaMedium")[3],
+  geom_density(linewidth = 0, fill = ghibli_palette("LaputaMedium")[3],
                adjust = 1/4) +
   # note the data statements for the next two geoms
   geom_linerange(data = subset_d %>% group_by(seed) %>% slice(1),
@@ -462,10 +462,10 @@ tibble(x = seq(from = -1, to = 3, by = .01)) %>%
             fill = ghibli_palette("MononokeMedium")[5]) +
   geom_hline(yintercept = 0:1, linetype = 2, color = ghibli_palette("MononokeMedium")[7]) +
   geom_line(aes(linetype = probability > 1, color = probability > 1),
-            size = 1) +
+            linewidth = 1) +
   geom_segment(x = 1.3, xend = 3,
                y = 1, yend = 1,
-               size = 2/3, color = ghibli_palette("MononokeMedium")[3]) +
+               linewidth = 2/3, color = ghibli_palette("MononokeMedium")[3]) +
   scale_color_manual(values = c(ghibli_palette("MononokeMedium")[c(3, 4)])) +
   scale_y_continuous(breaks = c(0, .5, 1)) +
   coord_cartesian(xlim = c(0, 2),
@@ -635,7 +635,7 @@ p1 <-
   geom_hline(data = lines,
              aes(yintercept = `log-odds`),
              color = ghibli_palette("YesterdayMedium")[6]) +
-  geom_line(size = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
+  geom_line(linewidth = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
   coord_cartesian(xlim = c(-1, 1)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[5]))
@@ -646,7 +646,7 @@ p2 <-
   geom_hline(data = lines,
              aes(yintercept = probability),
              color = ghibli_palette("YesterdayMedium")[6]) +
-  geom_line(size = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
+  geom_line(linewidth = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
   coord_cartesian(xlim = c(-1, 1)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[7]))
@@ -793,7 +793,7 @@ p1 <-
   geom_hline(data = lines,
              aes(yintercept = `log-measurement`),
              color = ghibli_palette("YesterdayMedium")[6]) +
-  geom_line(size = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
+  geom_line(linewidth = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
   coord_cartesian(xlim = c(-1, 1)) +
   theme(panel.grid = element_blank(),
         panel.background = element_rect(fill = ghibli_palette("YesterdayMedium")[5]))
@@ -804,7 +804,7 @@ p2 <-
   geom_hline(data = lines,
              aes(yintercept = `original measurement`),
              color = ghibli_palette("YesterdayMedium")[6]) +
-  geom_line(size = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
+  geom_line(linewidth = 1.5, color = ghibli_palette("YesterdayMedium")[3]) +
   scale_y_continuous(position = "right", limits = c(0, 10)) +
   coord_cartesian(xlim = c(-1, 1)) +
   theme(panel.grid = element_blank(),

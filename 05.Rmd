@@ -59,7 +59,7 @@ library(ggrepel)
 
 d %>%
   ggplot(aes(x = WaffleHouses/Population, y = Divorce)) +
-  stat_smooth(method = "lm", fullrange = T, size = 1/2,
+  stat_smooth(method = "lm", fullrange = T, linewidth = 1/2,
               color = "firebrick4", fill = "firebrick", alpha = 1/5) +
   geom_point(size = 1.5, color = "firebrick4", alpha = 1/2) +
   geom_text_repel(data = d %>% filter(Loc %in% c("ME", "OK", "AR", "AL", "GA", "SC", "NJ")),  
@@ -156,7 +156,7 @@ ggplot(data = f,
        aes(x = MedianAgeMarriage_s, y = Estimate)) +
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, linewidth = 1/4) +
   geom_point(data = d, 
              aes(y = Divorce), 
              size = 2, color = "firebrick4") +
@@ -208,7 +208,7 @@ ggplot(data = f,
        aes(x = Marriage_s, y = Estimate)) +
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
-              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, linewidth = 1/4) +
   geom_point(data = d, 
              aes(y = Divorce), 
              size = 2, color = "firebrick4") +
@@ -359,7 +359,7 @@ f %>%
   ggplot(aes(x = MedianAgeMarriage_s, y = Marriage_s)) +
   geom_point(size = 2, shape = 1, color = "firebrick4") +
   geom_segment(aes(xend = MedianAgeMarriage_s, yend = Estimate), 
-               size = 1/4) +
+               linewidth = 1/4) +
   geom_line(aes(y = Estimate), 
             color = "firebrick4") +
   coord_cartesian(ylim = range(d$Marriage_s)) +
@@ -389,7 +389,7 @@ r %>%
   ggplot(aes(x = Estimate, y = Divorce)) +
   stat_smooth(method = "lm", fullrange = T,
               color = "firebrick4", fill = "firebrick4", 
-              alpha = 1/5, size = 1/2) +
+              alpha = 1/5, linewidth = 1/2) +
   geom_vline(xintercept = 0, linetype = 2, color = "grey50") +
   geom_point(size = 2, color = "firebrick4", alpha = 2/3) +
   geom_text(data = text,
@@ -434,7 +434,7 @@ residuals(b5.4b) %>%
   ggplot(aes(x = Estimate, y = Divorce)) +
   stat_smooth(method = "lm", fullrange = T,
               color = "firebrick4", fill = "firebrick4", 
-              alpha = 1/5, size = 1/2) +
+              alpha = 1/5, linewidth = 1/2) +
   geom_vline(xintercept = 0, linetype = 2, color = "grey50") +
   geom_point(size = 2, color = "firebrick4", alpha = 2/3) +
   geom_text(data = text,
@@ -482,7 +482,7 @@ fitted(b5.3, newdata = nd) %>%
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = f_ll, ymax = f_ul),
               stat = "identity",
-              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, linewidth = 1/4) +
   labs(subtitle = "Counterfactual plot for which\nMedianAgeMarriage_s = 0",
        y = "Divorce") +
   coord_cartesian(xlim = range(d$Marriage_s),
@@ -518,7 +518,7 @@ fitted(b5.3, newdata = nd) %>%
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = f_ll, ymax = f_ul),
               stat = "identity",
-              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/4) +
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, linewidth = 1/4) +
   labs(subtitle = "Counterfactual plot for which\nMarriage_s = 0",
        y = "Divorce") +
   coord_cartesian(xlim = range(d$MedianAgeMarriage_s),
@@ -544,13 +544,13 @@ p1 <-
   bind_cols(d) %>%
   
   ggplot(aes(x = Divorce, y = Estimate)) +
-  geom_abline(linetype = 2, color = "grey50", size = .5) +
+  geom_abline(linetype = 2, color = "grey50", linewidth = 0.5) +
   geom_point(size = 1.5, color = "firebrick4", alpha = 3/4) +
   geom_linerange(aes(ymin = Q2.5, ymax = Q97.5),
-                 size = 1/4, color = "firebrick4") +
+                 linewidth = 1/4, color = "firebrick4") +
   geom_linerange(aes(ymin = Estimate - Est.Error, 
                      ymax = Estimate + Est.Error),
-                 size = 1/2, color = "firebrick4") +
+                 linewidth = 1/2, color = "firebrick4") +
   # Note our use of the dot placeholder, here: https://magrittr.tidyverse.org/reference/pipe.html
   geom_text(data = . %>% filter(Loc %in% c("ID", "UT")),
             aes(label = Loc), 
@@ -593,18 +593,18 @@ p2 <-
   
   # now plot!
   ggplot(aes(x = reorder(Loc, Estimate), y = Estimate)) +
-  geom_hline(yintercept = 0, size = 1/2, 
+  geom_hline(yintercept = 0, linewidth = 1/2, 
              color = "firebrick4", alpha = 1/10) +
   geom_pointrange(aes(ymin = f_ll, ymax = f_ul),
-                  size = 2/5, shape = 20, color = "firebrick4") + 
+                  linewidth = 2/5, shape = 20, color = "firebrick4") + 
   geom_segment(aes(y    = Estimate - Est.Error, 
                    yend = Estimate + Est.Error,
                    x    = Loc, 
                    xend = Loc),
-               size = 1, color = "firebrick4") +
+               linewidth = 1, color = "firebrick4") +
   geom_segment(aes(y = p_ll, yend = p_ul,
                    x = Loc,  xend = Loc),
-               size = 3, color = "firebrick4", alpha = 1/10) +
+               linewidth = 3, color = "firebrick4", alpha = 1/10) +
   labs(x = NULL, y = NULL) +
   coord_flip(ylim = c(-6, 5)) +
   theme_bw() +
@@ -627,7 +627,7 @@ p3 <-
   ggplot(aes(x = wpc, y = Estimate)) +
   geom_point(size = 1.5, color = "firebrick4", alpha = 1/2) +
   stat_smooth(method = "lm", fullrange = T,
-              color = "firebrick4", size = 1/2, 
+              color = "firebrick4", linewidth = 1/2, 
               fill = "firebrick", alpha = 1/5) + 
   geom_text_repel(data = . %>% filter(Loc %in% c("ME", "AR", "MS", "AL", "GA", "SC", "ID")),
                   aes(label = Loc),
@@ -786,7 +786,7 @@ fitted(b5.5,
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = Q25, ymax = Q75),
               stat = "identity",
-              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, linewidth = 1/2) +
   geom_point(data = dcc, 
              aes(y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -840,7 +840,7 @@ fitted(b5.6,
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = Q25, ymax = Q75),
               stat = "identity",
-              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, linewidth = 1/2) +
   geom_point(data = dcc, 
              aes(y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -900,7 +900,7 @@ p1 <-
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = Q25, ymax = Q75),
               stat = "identity",
-              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, linewidth = 1/2) +
   geom_point(data = dcc, 
              aes(y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -928,7 +928,7 @@ p2 <-
               fill = "firebrick", alpha = 1/5) +
   geom_smooth(aes(ymin = Q25, ymax = Q75),
               stat = "identity",
-              fill = "firebrick4", color = "firebrick4", alpha = 1/5, size = 1/2) +
+              fill = "firebrick4", color = "firebrick4", alpha = 1/5, linewidth = 1/2) +
   geom_point(data = dcc, 
              aes(y = kcal.per.g),
              size = 2, color = "firebrick4") +
@@ -1283,12 +1283,12 @@ But you can customize [these](https://ggobi.github.io/ggally/articles/ggpairs.ht
 ```{r, fig.width = 3.5, fig.height = 3.5, warning = F, message = F}
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
-    geom_density(fill = "firebrick4", size = 0)
+    geom_density(fill = "firebrick4", linewidth = 0)
 }
 
 my_lower <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
-    geom_smooth(method = "lm", color = "firebrick4", size = 1/3, 
+    geom_smooth(method = "lm", color = "firebrick4", linewidth = 1/3, 
                 fill = "firebrick", alpha = 1/5) +
     geom_point(color = "firebrick", alpha = .8, size = 1/4)
   }
@@ -1351,7 +1351,7 @@ d %>%
   ggplot(aes(x = rho, y = mean)) +
   geom_smooth(aes(ymin = ll, ymax = ul),
               stat = "identity",
-              fill = "firebrick", color = "firebrick4", alpha = 1/5, size = 1/2) +
+              fill = "firebrick", color = "firebrick4", alpha = 1/5, linewidth = 1/2) +
   labs(x = expression(rho),
        y = "parameter SD") +
   coord_cartesian(ylim = c(0, .0072)) +

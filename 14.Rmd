@@ -425,14 +425,14 @@ p2 <-
                   ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = color_y, color = color_y, 
-              alpha = 1/4, size = 1/2, linetype = 2) +
+              alpha = 1/4, linewidth = 1/2, linetype = 2) +
   # `f_error`
   geom_smooth(data = f_error,
               aes(x = A, y = Estimate, 
                   ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = color_r, color = color_r, 
-              alpha = 1/3, size = 1/2, linetype = 1) +
+              alpha = 1/3, linewidth = 1/2, linetype = 1) +
   # white dots
   geom_pointrange(data = d,
                   aes(x = MedianAgeMarriage, y = d_est,
@@ -586,7 +586,7 @@ p2 <-
   # plot!
   ggplot(aes(x = m, y = d)) +
   geom_line(aes(group = Loc),
-            color = "white", size = 1/4) +
+            color = "white", linewidth = 1/4) +
   geom_point(aes(color = key)) +
   scale_color_manual(values = c(color_p, color_y)) +
   scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
@@ -769,13 +769,13 @@ p1 <-
   ggplot(aes(x = neocortex)) +
   geom_smooth(aes(y = Estimate.kcal, ymin = Q2.5.kcal, ymax = Q97.5.kcal),
               stat = "identity",
-              fill = color, color = color, alpha = 1/3, size = 1/2) +
+              fill = color, color = color, alpha = 1/3, linewidth = 1/2) +
   geom_point(data = data_list %>% as_tibble(),
              aes(y = kcal),
              color = "white") +
   geom_pointrange(data = f_b14.3_mi,
                   aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
-                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -797,7 +797,7 @@ p2 <-
   
   geom_pointrange(data = f_b14.3_mi,
                   aes(y = mean, ymin = q2.5, ymax = q97.5),
-                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
 
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
@@ -887,13 +887,13 @@ p1 <-
   ggplot(aes(x = neocortex)) +
   geom_smooth(aes(y = Estimate.kcal, ymin = Q2.5.kcal, ymax = Q97.5.kcal),
               stat = "identity",
-              fill = color, color = color, alpha = 1/2, size = 1/2) +
+              fill = color, color = color, alpha = 1/2, linewidth = 1/2) +
   geom_point(data = data_list %>% as_tibble(),
              aes(y = kcal),
              color = "white") +
   geom_pointrange(data = f_b14.4_mi,
                   aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
-                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -914,7 +914,7 @@ p2 <-
   geom_point(color = "white") +
   geom_pointrange(data = f_b14.4_mi,
                   aes(y = mean, ymin = q2.5, ymax = q97.5),
-                  color = color, shape = 1, size = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
@@ -990,7 +990,7 @@ full_join(
   # plot!
   ggplot(aes(x = Marriage, y = Divorce)) +
   geom_line(aes(group = row),
-            color = "white", size = 1/4) +
+            color = "white", linewidth = 1/4) +
   geom_point(aes(color = name)) +
   scale_color_manual(values = c(color_p, color_y)) +
   scale_y_continuous(breaks = seq(from = 4, to = 14, by = 2)) +
@@ -1178,7 +1178,7 @@ b14.6 %>%
 
   # plot
   ggplot(aes(x = mu, y = reorder(outcome, mu), fill = reorder(outcome, mu))) +
-  geom_vline(xintercept = fixef(b14.6)[1, 1], color = "grey33", size = 1) +
+  geom_vline(xintercept = fixef(b14.6)[1, 1], color = "grey33", linewidth = 1) +
   geom_vline(xintercept = fixef(b14.6)[1, 3:4], color = "grey33", linetype = 2) +
   stat_halfeye(.width = .95, size = 2/3, color = "white") +
   scale_fill_viridis_d(option = "B", begin = .2) +

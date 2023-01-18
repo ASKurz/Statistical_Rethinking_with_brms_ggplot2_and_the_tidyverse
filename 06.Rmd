@@ -188,7 +188,7 @@ p1 <-
   p +
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,  # note our rare use of 89% intervals
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,
+              linewidth = 1/2, alpha = 1/3,
               formula = y ~ x) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==".49"))
   
@@ -197,7 +197,7 @@ p2 <-
   p + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              linewidth = 1/2, alpha = 1/3,              
               formula = y ~ poly(x, 2)) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==".54"))
 
@@ -206,7 +206,7 @@ p3 <-
   p + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              linewidth = 1/2, alpha = 1/3,              
               formula = y ~ poly(x, 3)) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==".68"))
 
@@ -215,7 +215,7 @@ p4 <-
   p + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              linewidth = 1/2, alpha = 1/3,              
               formula = y ~ poly(x, 4)) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==".81"))
 
@@ -224,7 +224,7 @@ p5 <-
   p + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              linewidth = 1/2, alpha = 1/3,              
               formula = y ~ poly(x, 5)) +
   # we're adjusting the y-axis range for this plot (and the next)
   coord_cartesian(ylim = c(150, 1900)) +
@@ -237,7 +237,7 @@ p6 <-
   geom_hline(yintercept = 0, color = carto_pal(7, "BurgYl")[2], linetype = 2) + 
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,
+              linewidth = 1/2, alpha = 1/3,
               formula = y ~ poly(x, 6)) +
   coord_cartesian(ylim = c(-300, 1500)) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==1))
@@ -278,7 +278,7 @@ Zero. Our intercept-only `b6.7` explained exactly zero variance in `brain`. All 
 p +
   stat_smooth(method = "lm", fullrange = TRUE, level = .89,
               color = carto_pal(7, "BurgYl")[6], fill = carto_pal(7, "BurgYl")[6], 
-              size = 1/2, alpha = 1/3,              
+              linewidth = 1/2, alpha = 1/3,              
               formula = y ~ 1) +
   ggtitle(NULL, subtitle = expression(italic(R)^2==0))
 ```
@@ -335,7 +335,7 @@ p +
   scale_x_continuous(expand = c(0, 0)) +
   geom_line(data = lines, 
             aes(x = mass, y = brain, group = row),
-            color = carto_pal(7, "BurgYl")[6], alpha = 1/2, size = 1/2)
+            color = carto_pal(7, "BurgYl")[6], alpha = 1/2, linewidth = 1/2)
 ```
 
 To make the right panel for Figure 6.5, we'll need to increase the number of `mass` points in our `nd` data and redefine the `make_lines()` function to fit the sixth-order-polynomial model.
@@ -369,7 +369,7 @@ lines <-
 p +
   geom_line(data = lines, 
             aes(group = row),
-            color = carto_pal(7, "BurgYl")[6], alpha = 1/2, size = 1/2) +
+            color = carto_pal(7, "BurgYl")[6], alpha = 1/2, linewidth = 1/2) +
   coord_cartesian(ylim = c(-300, 2000))
 ```
 
@@ -564,7 +564,7 @@ Now we have the data, plotting Figure 6.6 is little more than `geom_line()` with
 t %>% 
   ggplot(aes(x = q_1, y = d_kl)) +
   geom_vline(xintercept = .3, color = carto_pal(7, "BurgYl")[5], linetype = 2) +
-  geom_line(color = carto_pal(7, "BurgYl")[7], size = 1.5) +
+  geom_line(color = carto_pal(7, "BurgYl")[7], linewidth = 1.5) +
   annotate(geom = "text", x = .4, y = 1.5, label = "q = p",
            color = carto_pal(7, "BurgYl")[5], family = "Courier", size = 3.5) +
   labs(x = expression(italic(q)[1]),
@@ -890,7 +890,7 @@ s %>%
   # now plot
   ggplot(aes(x = n_par, y = mean,
              group = interaction(sample, b_sigma))) +
-  geom_line(aes(color = sample, size = b_sigma)) +
+  geom_line(aes(color = sample, linewidth = b_sigma)) +
   # this function contains the data from the previous simulation
   geom_point(data = dev_tibble, 
              aes(group = sample, fill = sample),
@@ -960,7 +960,7 @@ dev_tibble  %>%
              color = carto_pal(7, "BurgYl")[5], size = 2) +
   geom_errorbar(aes(x = n_par + .15,
                     ymin = `in`, ymax = out),
-                width = .1, size = 1/3) +
+                width = 0.1, linewidth = 1/3) +
   geom_text(aes(x = n_par + .4,
                 y = (out + `in`) / 2,
                 label = height),
@@ -1739,9 +1739,9 @@ r2_combined <-
 r2_combined %>%
   ggplot() +
   geom_density(aes(x = r2_13),
-               fill = carto_pal(7, "BurgYl")[4], alpha = 3/4, size = 0, ) +
+               fill = carto_pal(7, "BurgYl")[4], alpha = 3/4, linewidth = 0) +
   geom_density(aes(x = r2_14),
-               fill = carto_pal(7, "BurgYl")[6], alpha = 3/4, size = 0, ) +
+               fill = carto_pal(7, "BurgYl")[6], alpha = 3/4, linewidth = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   coord_cartesian(xlim = 0:1) +
   labs(title = expression(italic(R)^2~distributions),

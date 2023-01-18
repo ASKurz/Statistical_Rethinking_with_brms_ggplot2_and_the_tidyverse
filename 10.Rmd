@@ -242,10 +242,10 @@ ppa %>%
   geom_smooth(aes(y = pulled_left, ymin = Q2.5, ymax = Q97.5, group = 0),
               stat = "identity",
               fill = wes_palette("Moonrise2")[2], color = "black", 
-              alpha = 1, size = 1/2) +
+              alpha = 1, linewidth = 1/2) +
   geom_line(data = d_plot,
             aes(y = pulled_left, group = actor),
-            color = wes_palette("Moonrise2")[1], size = 1/3) +
+            color = wes_palette("Moonrise2")[1], linewidth = 1/3) +
   scale_x_discrete("prosoc_left/condition", expand = c(.03, .03)) +
   ylab("proportion pulled left") +
   coord_cartesian(ylim = 0:1) +
@@ -356,9 +356,9 @@ f %>%
   geom_smooth(aes(ymin = Q2.5, ymax = Q97.5),
               stat = "identity",
               fill = wes_palette("Moonrise2")[2], color = "black", 
-              alpha = 1, size = 1/2) +
+              alpha = 1, linewidth = 1/2) +
   geom_line(data = d_plot_4,
-            color = wes_palette("Moonrise2")[1], size = 1.25) +
+            color = wes_palette("Moonrise2")[1], linewidth = 1.25) +
   scale_x_discrete("prosoc_left/condition", expand = c(.03, .03)) +
   scale_y_continuous("proportion pulled left",
                      breaks = c(0, .5, 1), limits = c(0, 1)) +
@@ -1159,7 +1159,7 @@ ppa %>%
   ggplot(aes(x = log_pop, group = contact_high, color = contact_high)) +
   geom_smooth(aes(y = Estimate, ymin = Q2.5, ymax = Q97.5, fill = contact_high),
               stat = "identity",
-              alpha = 1/4, size = 1/2) +
+              alpha = 1/4, linewidth = 1/2) +
   geom_text(data = d, 
             aes(y = total_tools, label = total_tools),
             size = 3.5) +
@@ -1238,7 +1238,7 @@ my_upper <- function(data, mapping, ...) {
 
 my_diag <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) + 
-    geom_density(fill = wes_palette("Moonrise2")[2], size = 0) +
+    geom_density(fill = wes_palette("Moonrise2")[2], linewidth = 0) +
     theme_void()
 }
 
@@ -1405,7 +1405,7 @@ Here's what the data look like.
 ```{r, fig.width = 3, fig.height = 2.25, message = F, warning = F}
 tibble(career = career) %>%
   ggplot(aes(x = career)) +
-  geom_bar(size = 0, fill = wes_palette("Moonrise2")[2])
+  geom_bar(linewidth = 0, fill = wes_palette("Moonrise2")[2])
 ```
 
 Our `career` variable is composed of three categories, `1:3`, with each category more likely than the one before. Here's a breakdown of the counts, percentages, and probabilities of each category.
@@ -1570,7 +1570,7 @@ p1 <-
          family_income) %>% 
   
   ggplot(aes(x = family_income, fill = career)) +
-  geom_density(size = 0, alpha = 3/4) +
+  geom_density(linewidth = 0, alpha = 3/4) +
   scale_fill_manual(values = wes_palette("Moonrise2")[c(4, 2, 1)]) +
   theme(legend.position = "none")
   
@@ -1651,7 +1651,7 @@ rbind(f[, , 1],
   geom_ribbon(aes(fill = career),
               alpha = 2/3) +
   geom_line(aes(color = career), 
-            size = 3/4) +
+            linewidth = 3/4) +
   scale_fill_manual(values = wes_palette("Moonrise2")[c(4, 2, 1)]) +
   scale_color_manual(values = wes_palette("Moonrise2")[c(4, 2, 1)]) +
   scale_x_continuous(breaks = 0:2 / 2) +

@@ -19,7 +19,9 @@ options(width = 100)
 
 Here we simulate King Markov's journey. In this version of the code, we've added `set.seed()`, which helps make the exact results reproducible.
 
-```{r}
+```{r, warning = F, message = F}
+library(tidyverse)
+
 set.seed(8)
 
 num_weeks <- 1e5
@@ -103,11 +105,11 @@ We will not be using the Gibbs sampler in this project. It's available for use i
 
 ### Hamiltonian Monte Carlo.
 
-Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath's [lecture on the topic from January 2019](https://www.youtube.com/watch?v=v-j0UmWf3Us) or one of these lectures ([here](https://www.youtube.com/watch?v=jUSZboSq1zg), [here](https://www.youtube.com/watch?v=_fnDz2Bz3h8), or [here](https://www.youtube.com/watch?v=pHsuIaPbNbY)) by Michael Betancourt.
+Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath's [lecture on the topic from January 2019](https://youtu.be/v-j0UmWf3Us) or one of these lectures ([here](https://youtu.be/jUSZboSq1zg), [here](https://youtu.be/_fnDz2Bz3h8), or [here](https://youtu.be/pHsuIaPbNbY)) by Michael Betancourt.
 
 ## Easy HMC: ~~map2stan~~ `brm()`
 
-Much like McElreath's rethinking package, brms provides a convenient interface to HMC via Stan. Other packages providing Stan interfaces include [rstanarm](https://mc-stan.org/rstanarm/) [@R-rstanarm; @rstanarm2018] and [blavaan](https://faculty.missouri.edu/~merklee/blavaan/) [@R-blavaan; @Merkle2018blavaan]. I'm not aware of any up-to-date comparisons across the packages. If you're ever inclined to make one, [let the rest of us know](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues)!
+Much like McElreath's rethinking package, brms provides a convenient interface to HMC via Stan. Other packages providing Stan interfaces include [rstanarm](https://mc-stan.org/rstanarm/) [@R-rstanarm; @rstanarm2018] and [blavaan](https://ecmerkle.github.io/blavaan/) [@R-blavaan; @Merkle2018blavaan]. I'm not aware of any up-to-date comparisons across the packages. If you're ever inclined to make one, [let the rest of us know](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues)!
 
 Here we load the `rugged` data.
 
@@ -187,7 +189,7 @@ post %>%
   mean_hdi(value, .width = .89)  # note our rare use of 89% intervals
 ```
 
-There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. Earlier versions of brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [-@vehtariRanknormalizationFoldingLocalization2019] [paper](https://arxiv.org/abs/1903.08008?) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
+There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. Earlier versions of brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [-@vehtariRanknormalizationFoldingLocalization2019] [paper](https://doi.org/10.1214/20-BA1221) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
 
 > If you plan to report quantile estimates or posterior intervals, we strongly suggest assessing the convergence of the chains for these quantiles. In Section 4.3 we show that convergence of Markov chains is not uniform across the parameter space and propose diagnostics and effective sample sizes specifically for extreme quantiles. This is *different* from the standard ESS estimate (which we refer to as the "bulk-ESS"), which mainly assesses how well the centre of the distribution is resolved. Instead, these "tail-ESS" measures allow the user to estimate the MCSE for interval estimates. (p. 5, *emphasis* in the original)
 
@@ -331,7 +333,7 @@ $$p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta$$
 
 "is the leave-one-out predictive density given the data without the $i$th data point" (p. 3). And recall, you can convert the $\text{elpd}$ to the conventional information criteria metric by multiplying it by -2.
 
-To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/package=loo). And if you prefer watching video lectures to reading technical papers, check out Vehtari's [*Model assessment, selection and averaging*](https://www.youtube.com/watch?v=Re-2yVd0Mqk).
+To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/package=loo). And if you prefer watching video lectures to reading technical papers, check out Vehtari's [*Model assessment, selection and averaging*](https://youtu.be/Re-2yVd0Mqk).
 
 ### Checking the chain.
 
@@ -351,7 +353,7 @@ post <- as_draws_df(b8.1)
 mcmc_trace(post, 
            pars = vars(b_Intercept:sigma),
            facet_args = list(ncol = 3), 
-           size = .15) +
+           size = 0.15) +
   scale_color_ipsum() +
   labs(title = "My custom trace plots") +
   theme_ipsum() +
@@ -395,9 +397,9 @@ ggs(b8.1) %>%
   # this marks off the warmups
   annotate(geom = "rect", 
            xmin = 0, xmax = 1000, ymin = -Inf, ymax = Inf,
-           fill = "grey80", alpha = 1/2, size = 0) +
+           fill = "grey80", alpha = 1/2, linewidth = 0) +
   geom_line(aes(color = chain),
-            size = .15) +
+            linewidth = 0.15) +
   scale_color_ipsum() +
   labs(title = "My custom trace plots with warmups via ggmcmc::ggs()",
        x = NULL, y = NULL) +
@@ -417,9 +419,9 @@ ggs(b8.1) %>%
   # this marks off the warmups
   annotate(geom = "rect", 
            xmin = 0, xmax = 1000, ymin = -Inf, ymax = Inf,
-           fill = "grey80", alpha = 1/2, size = 0) +
+           fill = "grey80", alpha = 1/2, linewidth = 0) +
   geom_line(aes(color = chain),
-            size = .5) +
+            linewidth = 0.5) +
   scale_color_ipsum() +
   labs(title = "My custom trace plots with warmups via ggmcmc::ggs()",
        x = NULL, y = NULL) +
@@ -445,7 +447,7 @@ You can also get that information with `b8.1$model` or `b8.1$fit@stanmodel`.
 
 > Markov chain Monte Carlo is a highly technical and usually automated procedure. Most people who use it don't really understand what it is doing. That's okay, up to a point. Science requires division of labor, and if every one of us had to write our own Markov chains from scratch, a lot less research would get done in the aggregate. (p. 255)
 
-But if you do want to learn more about HMC, McElreath has some nice introductory lectures on the topic (see [here](https://www.youtube.com/watch?v=v-j0UmWf3Us) and [here](https://www.youtube.com/watch?v=BWEtS3HuU5A)). To dive even deeper, [Michael Betancourt]( https://twitter.com/betanalpha) from the Stan team has given many lectures on the topic (e.g., [here](https://www.youtube.com/watch?v=_fnDz2Bz3h8) and [here](https://www.youtube.com/watch?v=jUSZboSq1zg)).
+But if you do want to learn more about HMC, McElreath has some nice introductory lectures on the topic (see [here](https://youtu.be/v-j0UmWf3Us) and [here](https://youtu.be/BWEtS3HuU5A)). To dive even deeper, [Michael Betancourt]( https://twitter.com/betanalpha) from the Stan team has given many lectures on the topic (e.g., [here](https://youtu.be/_fnDz2Bz3h8) and [here](https://youtu.be/jUSZboSq1zg)).
 
 ### How many samples do you need?
 
@@ -467,7 +469,7 @@ Times have changed. In the text, we read:
 
 We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\widehat R$, too. As it turns out, the Stan team has found some deficiencies with the $\widehat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon (see [here](https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165) for a related thread on the Stan Forums). In the meantime, you can read all about it in @vehtariRanknormalizationFoldingLocalization2019 and in one of Dan Simpson's [blog posts](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/).
 
-For more on these topics, you might also check out Gabry and Modrák's [-@gabryVisualMCMCDiagnostics2020] vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
+For more on these topics, you might also check out Gabry and Modrák's [-@gabryVisualMCMCDiagnostics2022] vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
 
 ### Taming a wild chain.
 
@@ -494,7 +496,7 @@ post <- as_draws_df(b8.2)
 
 mcmc_trace(post,
            pars = vars(b_Intercept:sigma),
-           size = .25) +
+           size = 0.25) +
   labs(title = "My version of Figure 8.5.a.",
        subtitle = "These trace plots do not look like the fuzzy caterpillars we usually hope for.") +
   scale_color_ipsum() +
@@ -536,7 +538,7 @@ post <- as_draws_df(b8.3)
 
 mcmc_trace(post,
            pars = vars(b_Intercept:sigma),
-           size = .25) +
+           size = 0.25) +
   labs(title = "My version of Figure 8.5.b",
        subtitle = "Oh man. This looks so much better.") +
   scale_color_ipsum() +
@@ -697,7 +699,7 @@ post <- as_draws_df(b8.4)
 p1 <-
   mcmc_trace(post,
              pars = vars(b_intercept_1:sigma),
-             size = .25,
+             size = 0.25,
              facet_args = c(ncol = 1)) +
   scale_color_ipsum() +
   labs(subtitle = "flat priors") +
@@ -710,7 +712,7 @@ post <- as_draws_df(b8.5)
 p2 <-
   mcmc_trace(post,
              pars = vars(b_intercept_1:sigma),
-             size = .25,
+             size = 0.25,
              facet_args = c(ncol = 1)) +
   scale_color_ipsum() +
   labs(subtitle = "weakly-informative priors") +
@@ -722,7 +724,7 @@ p1 + p2 + plot_annotation(title = "Prior strength matters",
                           theme = theme_ipsum())
 ```
 
-The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Simpson's post on Gelman's blog](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/) and their corresponding [-@gelmanPriorCanOften2017] paper with Betancourt, [*The prior can often only be understood in the context of the likelihood*](https://www.mdpi.com/1099-4300/19/10/555)
+The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Simpson's post on Gelman's blog](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/) and their corresponding [-@gelmanPriorCanOften2017] paper with Betancourt, [*The prior can often only be understood in the context of the likelihood*](https://doi.org/10.3390/e19100555)
 
 ## Session info {-}
 

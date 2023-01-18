@@ -110,7 +110,7 @@ tibble(estimate = fixef(b12.1)[, 1]) %>%
   mutate(key = if_else(key == "p", "expected survival probability", "expected survival log-odds")) %>% 
   
   ggplot(aes(x = value, fill = key)) +
-  geom_density(size = 0) +
+  geom_density(linewidth = 0) +
   scale_fill_manual(values = c("orange1", "orange4")) +
   scale_y_continuous(breaks = NULL) +
   labs(title = "Tank-level intercepts from the no-pooling model",
@@ -198,9 +198,9 @@ Here's the ggplot2 code to reproduce Figure 12.1.
 ```{r, fig.width = 5, fig.height = 4}
 post_mdn %>%
   ggplot(aes(x = tank)) +
-  geom_hline(yintercept = inv_logit_scaled(median(post$b_Intercept)), linetype = 2, size = 1/4, 
+  geom_hline(yintercept = inv_logit_scaled(median(post$b_Intercept)), linetype = 2, linewidth = 1/4, 
              color = ggthemes_data[["fivethirtyeight"]][1, 2] %>% pull()) +
-  geom_vline(xintercept = c(16.5, 32.5), size = 1, 
+  geom_vline(xintercept = c(16.5, 32.5), linewidth = 1, 
              color = ggthemes_data[["fivethirtyeight"]][2, 2] %>% pull()) +
   geom_point(aes(y = propsurv), color = "orange2") +
   geom_point(aes(y = post_mdn), shape = 1) +
@@ -244,7 +244,7 @@ p2 <-
                        mean = b_Intercept, 
                        sd = sd_tank__Intercept) %>% 
                inv_logit_scaled())) +
-  geom_density(size = 0, fill = "orange2") +
+  geom_density(linewidth = 0, fill = "orange2") +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Probability of survival",
        subtitle = "transformed by the inverse-logit function")
@@ -306,7 +306,7 @@ tibble(x = seq(from = 0, to = 6, by = 0.01)) %>%
   # the posterior
   geom_density(data = as_draws_df(b12.2b),
                aes(x = sd_tank__Intercept), 
-               fill = "orange2", size = 0) +
+               fill = "orange2", linewidth = 0) +
   scale_y_continuous(NULL, breaks = NULL) +
   labs(title = "Bonus prior/posterior plot\nfor sd_tank__Intercept",
        subtitle = "The prior is the semitransparent ramp in the\nbackground. The posterior is the solid orange\nmound.") +
@@ -469,7 +469,7 @@ dfline <-
 dsim %>% 
   ggplot(aes(x = pond)) +
   geom_vline(xintercept = c(15.5, 30.5, 45.4), 
-             color = "white", size = 2/3) +
+             color = "white", linewidth = 2/3) +
   geom_point(aes(y = nopool_error), color = "orange2") +
   geom_point(aes(y = partpool_error), shape = 1) +
   geom_segment(data = dfline, 
@@ -616,9 +616,9 @@ two_gaussians %>%
   
   ggplot() +
   geom_density(aes(x = y1), 
-               size = 0, fill = "orange1", alpha = 1/3) +
+               linewidth = 0, fill = "orange1", alpha = 1/3) +
   geom_density(aes(x = y2), 
-               size = 0, fill = "orange4", alpha = 1/3) +
+               linewidth = 0, fill = "orange4", alpha = 1/3) +
   scale_y_continuous(NULL, breaks = NULL) +
   ggtitle("Our simulated Gaussians") +
   theme_fivethirtyeight()
@@ -820,9 +820,9 @@ Once we get the posterior samples, it's easy to compare the random variances as 
 ```{r, fig.width = 3, fig.height = 3}
 post %>%
   ggplot(aes(x = sd_actor__Intercept)) +
-  geom_density(size = 0, fill = "orange1", alpha = 3/4) +
+  geom_density(linewidth = 0, fill = "orange1", alpha = 3/4) +
   geom_density(aes(x = sd_block__Intercept), 
-               size = 0, fill = "orange4", alpha = 3/4)  +
+               linewidth = 0, fill = "orange4", alpha = 3/4)  +
   annotate(geom = "text", x = 2/3, y = 2, label = "block", color = "orange4") +
   annotate(geom = "text", x = 2, y = 3/4, label = "actor", color = "orange1") +
   scale_y_continuous(NULL, breaks = NULL) +
@@ -932,7 +932,7 @@ post %>%
   mutate(actor_5 = `r_actor[5,Intercept]`) %>% 
   
   ggplot(aes(x = actor_5)) +
-  geom_density(size = 0, fill = "blue") +
+  geom_density(linewidth = 0, fill = "blue") +
   scale_y_continuous(breaks = NULL) +
   ggtitle("Chimp #5's density") +
   theme_fivethirtyeight()
