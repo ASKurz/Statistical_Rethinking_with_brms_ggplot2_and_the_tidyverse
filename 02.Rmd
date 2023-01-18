@@ -590,8 +590,7 @@ Fair warning: We don't learn the skills for making Figure 2.5 until later in the
 sequence_length <- 50
 
 d %>% 
-  expand(nesting(n_trials, toss, n_success), 
-         p_water = seq(from = 0, to = 1, length.out = sequence_length)) %>% 
+  expand_grid(p_water = seq(from = 0, to = 1, length.out = sequence_length)) %>% 
   group_by(p_water) %>% 
  # you can learn more about lagging here: https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lag or here: https://dplyr.tidyverse.org/reference/lead-lag.html
   mutate(lagged_n_trials  = lag(n_trials,  k = 1),
@@ -623,7 +622,7 @@ d %>%
 
 If it wasn't clear in the code, the dashed curves are normalized prior densities. The solid ones are normalized likelihoods. If you don't normalize (i.e., divide the density by the sum of the density), their respective heights don't match up with those in the text. Furthermore, it's the normalization that makes them directly comparable.
 
-To learn more about `dplyr::group_by()` and its opposite `dplyr::ungroup()`, check out [*R4DS*, Chapter 5](https://r4ds.had.co.nz/transform.html). To learn about `tidyr::expand()`, go [here](https://tidyr.tidyverse.org/reference/expand.html).
+To learn more about `dplyr::group_by()` and its opposite `dplyr::ungroup()`, check out [*R4DS*, Chapter 5](https://r4ds.had.co.nz/transform.html). To learn about `tidyr::expand_grid()`, go [here](https://tidyr.tidyverse.org/reference/expand_grid.html).
 
 ### Evaluate.
 
@@ -696,7 +695,7 @@ I like to verify things with plots.
 ```{r, fig.width = 8, fig.height = 2}
 tibble(a = 0,
        b = c(1, 1.5, 2, 3, 9)) %>% 
-  expand(nesting(a, b), parameter_space = seq(from = 0, to = 9, length.out = 500)) %>% 
+  expand_grid(parameter_space = seq(from = 0, to = 9, length.out = 500)) %>% 
   mutate(prob = dunif(parameter_space, a, b),
          b = str_c("b = ", b)) %>% 
   
@@ -742,7 +741,7 @@ sequence_length <- 1e3
 
 d <-
   tibble(probability = seq(from = 0, to = 1, length.out = sequence_length)) %>% 
-  expand(probability, row = c("flat", "stepped", "Laplace")) %>% 
+  expand_grid(row = c("flat", "stepped", "Laplace")) %>% 
   arrange(row, probability) %>% 
   mutate(prior = ifelse(row == "flat", 1,
                         ifelse(row == "stepped", rep(0:1, each = sequence_length / 2),
@@ -907,8 +906,7 @@ n_grid <- 100
 tibble(w = c(6, 12, 24),
        n = c(9, 18, 36),
        s = c(.16, .11, .08)) %>% 
-  expand(nesting(w, n, s),
-         p_grid = seq(from = 0, to = 1, length.out = n_grid)) %>% 
+  expand_grid(p_grid = seq(from = 0, to = 1, length.out = n_grid)) %>% 
   mutate(prior = 1,
          m     = .67)  %>%
   mutate(likelihood = dbinom(w, size = n, prob = p_grid)) %>%

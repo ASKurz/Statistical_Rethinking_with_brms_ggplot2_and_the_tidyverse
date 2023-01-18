@@ -151,8 +151,7 @@ tibble(mu   = 0,
        # I arrived at these values by trial and error
        beta = c(1, 1.5, 2, 4)) %>% 
   mutate(alpha = alpha_per_beta(beta)) %>% 
-  expand(nesting(mu, beta, alpha), 
-         value = seq(from = -5, to = 5, by = .01)) %>% 
+  expand_grid(value = seq(from = -5, to = 5, by = .01)) %>% 
   # behold the formula for the generalized normal distribution in code!
   mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
            exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
@@ -176,8 +175,7 @@ tibble(mu   = 0,
        # this time we need a more densely-packed sequence of `beta` values
        beta = seq(from = 1, to = 4, length.out = 100)) %>% 
   mutate(alpha = alpha_per_beta(beta)) %>% 
-  expand(nesting(mu, beta, alpha), 
-         value = -8:8) %>% 
+  expand_grid(value = -8:8) %>% 
   mutate(density = (beta / (2 * alpha * gamma(1 / beta))) * 
            exp(1) ^ (-1 * (abs(value - mu) / alpha) ^ beta)) %>% 
   group_by(beta) %>% 

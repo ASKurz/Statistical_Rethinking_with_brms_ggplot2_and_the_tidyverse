@@ -1335,7 +1335,7 @@ n_rho  <- 30
 
 d <-
   tibble(seed = 1:n_seed) %>% 
-  expand(seed, rho = seq(from = 0, to = .99, length.out = n_rho)) %>% 
+  expand_grid(rho = seq(from = 0, to = .99, length.out = n_rho)) %>% 
   mutate(parameter_sd = purrr::map2_dbl(seed, rho, sim_coll)) %>% 
   group_by(rho) %>% 
   # we'll `summarise()` our output by the mean and 95% intervals

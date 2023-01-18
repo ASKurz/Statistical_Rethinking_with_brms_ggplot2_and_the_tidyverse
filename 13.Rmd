@@ -116,7 +116,7 @@ Note how our custom `theme_pearl_earing()` function has a few adjustable paramet
 vary_effects %>% 
   ggplot(aes(x = a_cafe, y = b_cafe)) +
   geom_point(color = "#80A0C7") +
-  geom_rug(color = "#8B9DAF", size = 1/7) + 
+  geom_rug(color = "#8B9DAF", linewidth = 1/7) + 
   theme_pearl_earring()
 ```
 
@@ -138,7 +138,8 @@ set.seed(13)  # used to replicate example
 d <-
   vary_effects %>% 
   mutate(cafe = 1:n_cafes) %>% 
-  expand(nesting(cafe, a_cafe, b_cafe), visit = 1:n_visits) %>% 
+  select(cafe, a_cafe, b_cafe) %>% 
+  expand_grid(visit = 1:n_visits) %>% 
   mutate(afternoon = rep(0:1, times = n() / 2)) %>% 
   mutate(mu = a_cafe + b_cafe * afternoon) %>% 
   mutate(wait = rnorm(n = n(), mean = mu, sd = sigma))
@@ -357,18 +358,18 @@ Finally, here's our code for Figure 13.5.a, showing shrinkage in two dimensions.
 ```{r, fig.width = 5, fig.height = 3}
 p1 <-
   ggplot(data = params, aes(x = Intercept, y = Slope)) +
-  stat_ellipse(geom = "polygon", type = "norm", level = 1/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 2/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 3/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 4/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 5/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 6/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 7/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 8/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = 9/10, size = 0, alpha = 1/20, fill = "#E7CDC2") +
-  stat_ellipse(geom = "polygon", type = "norm", level = .99,  size = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 1/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 2/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 3/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 4/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 5/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 6/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 7/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 8/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = 9/10, linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
+  stat_ellipse(geom = "polygon", type = "norm", level = .99,  linewidth = 0, alpha = 1/20, fill = "#E7CDC2") +
   geom_point(aes(group = cafe, color = pooled)) +
-  geom_line(aes(group = cafe), size = 1/4) +
+  geom_line(aes(group = cafe), linewidth = 1/4) +
   scale_color_manual("Pooled?",
                      values = c("#80A0C7", "#A65141")) +
   coord_cartesian(xlim = range(params$Intercept),
@@ -420,13 +421,13 @@ p2 <-
   # functions in the previous plot
   mapply(function(level) {
     stat_ellipse(geom = "polygon", type = "norm",
-                 size = 0, alpha = 1/20, fill = "#E7CDC2",
+                 linewidth = 0, alpha = 1/20, fill = "#E7CDC2",
                  level = level)
     }, 
     # enter the levels here
     level = c(seq(from = 1/10, to = 9/10, by = 1/10), .99)) +
   geom_point(aes(group = cafe, color = pooled)) +
-  geom_line(aes(group = cafe), size = 1/4) +
+  geom_line(aes(group = cafe), linewidth = 1/4) +
   scale_color_manual("Pooled?", values = c("#80A0C7", "#A65141")) +
   labs(x = "morning wait (mins)",
        y = "afternoon wait (mins)") +
@@ -614,7 +615,7 @@ post %>%
   mutate(.chain = as.character(.chain)) %>%
 
   ggplot(aes(x = .iteration, y = value, group = .chain, color = .chain)) +
-  geom_line(size = 1/15) +
+  geom_line(linewidth = 1/15) +
   scale_color_manual(values = c("#80A0C7", "#B1934A", "#A65141", "#EEDA9D")) +
   scale_x_continuous(NULL, breaks = c(1, 2000, 4000)) +
   ylab(NULL) +
@@ -665,7 +666,7 @@ rbind(coef(b13.3)$dept_id[, , 1],
   ggplot(aes(y = reorder(param, reorder))) +
   geom_vline(xintercept = 0, linetype = 3, color = "#8B9DAF") +
   geom_pointrange(aes(xmin = Q2.5, xmax = Q97.5, x = Estimate, color = reorder < 7),
-                  shape = 20, size = 3/4) +
+                  shape = 20, linewidth = 3/4) +
   scale_color_manual(values = c("#394165", "#A65141")) +
   ylab(NULL) +
   theme_pearl_earring(axis.ticks.y = element_blank(),
@@ -743,12 +744,12 @@ library(ggrepel)
 ggplot(data = params, aes(x = intercept, y = slope)) +
   mapply(function(level) {
     stat_ellipse(geom = "polygon", type = "norm",
-                 size = 0, alpha = 1/20, fill = "#E7CDC2",
+                 linewidth = 0, alpha = 1/20, fill = "#E7CDC2",
                  level = level)
     },  
     level = c(seq(from = 1/10, to = 9/10, by = 1/10), .99)) +
   geom_point(aes(group = dept, color = pooled)) +
-  geom_line(aes(group = dept), size = 1/4) +
+  geom_line(aes(group = dept), linewidth = 1/4) +
   scale_color_manual("Pooled?",
                      values = c("#80A0C7", "#A65141")) +
   geom_text_repel(data = params %>% filter(pooled == "partially"),
@@ -1128,8 +1129,8 @@ p1 <-
   mutate(lscale = sqrt(1 / (2 * `rho^2`))) %>%
   
   ggplot(aes(x = `rho^2`, y = lscale)) +
-  geom_hline(yintercept = 0, color = "#FCF9F0", size = 1/4, linetype = 2) +
-  geom_vline(xintercept = 0, color = "#FCF9F0", size = 1/4, linetype = 2) +
+  geom_hline(yintercept = 0, color = "#FCF9F0", linewidth = 1/4, linetype = 2) +
+  geom_vline(xintercept = 0, color = "#FCF9F0", linewidth = 1/4, linetype = 2) +
   geom_line(color = "#A65141") +
   xlab(expression(rho^2)) +
   coord_cartesian(xlim = c(0, 10),
@@ -1141,8 +1142,8 @@ p2 <-
   mutate(`rho^2` = 1 / (2 * lscale^2)) %>%
   
   ggplot(aes(x = lscale, y = `rho^2`)) +
-  geom_hline(yintercept = 0, color = "#FCF9F0", size = 1/4, linetype = 2) +
-  geom_vline(xintercept = 0, color = "#FCF9F0", size = 1/4, linetype = 2) +
+  geom_hline(yintercept = 0, color = "#FCF9F0", linewidth = 1/4, linetype = 2) +
+  geom_vline(xintercept = 0, color = "#FCF9F0", linewidth = 1/4, linetype = 2) +
   geom_line(color = "#80A0C7") +
   ylab(expression(rho^2)) +
   coord_cartesian(xlim = c(0, 10),
@@ -1179,7 +1180,7 @@ tibble(lscale = seq(from = 0, to = 9, by = 0.01)) %>%
   mutate(density = invgamma::dinvgamma(lscale, 2.874624, 2.941204)) %>% 
   
   ggplot(aes(x = lscale, ymin = 0, ymax = density)) +
-  geom_ribbon(size = 0, fill = "#EEDA9D") +
+  geom_ribbon(linewidth = 0, fill = "#EEDA9D") +
   annotate(geom = "text", x = 4.75, y = 0.75,
            label = "inverse gamma(2.874624, 0.393695)",
            color = "#EEDA9D") +
@@ -1197,16 +1198,15 @@ set.seed(13)
 # wrangle
 post %>% 
   sample_n(100) %>% 
-  expand(nesting(.draw, etasq, rhosq),
-         x = seq(from = 0, to = 10, by = .05)) %>% 
+  expand_grid(x = seq(from = 0, to = 10, by = .05)) %>% 
   mutate(covariance = etasq * exp(-rhosq * x^2)) %>% 
   
   # plot
   ggplot(aes(x = x, y = covariance)) +
   geom_line(aes(group = .draw),
-            size = 1/4, alpha = 1/4, color = "#EEDA9D") +
+            linewidth = 1/4, alpha = 1/4, color = "#EEDA9D") +
   stat_function(fun = function(x) median(post$etasq) * exp(-median(post$rhosq)*x^2),
-                color = "#EEDA9D", size = 1) +
+                color = "#EEDA9D", linewidth = 1) +
   scale_x_continuous("distance (thousand km)", expand = c(0, 0),
                      breaks = 0:5 * 2) +
   coord_cartesian(xlim = c(0, 10),
@@ -1316,8 +1316,7 @@ Here's our the code for our version of Figure 13.10.b.
 # log population and total tools, summarized by the median and 80% interval
 f <-
   post %>% 
-  expand(logpop = seq(from = 6, to = 14, length.out = 30),
-         nesting(b_Intercept, b_logpop)) %>%
+  expand_grid(logpop = seq(from = 6, to = 14, length.out = 30)) %>%
   mutate(lambda = exp(b_Intercept + b_logpop * logpop)) %>% 
   group_by(logpop) %>% 
   median_qi(lambda, .width = .8)
@@ -1329,7 +1328,7 @@ p2 <-
   geom_smooth(data = f,
               aes(y = lambda, ymin = .lower, ymax = .upper),
               stat = "identity",
-              fill = "#394165", color = "#100F14", alpha = .5, size = 1.1) +
+              fill = "#394165", color = "#100F14", alpha = .5, linewidth = 1.1) +
   geom_line(aes(y = total_tools, group = group, alpha = correlation^2),
             color = "#80A0C7") +
   geom_point(data = d, 
@@ -1478,7 +1477,7 @@ b13.10 %>%
   
   ggplot(aes(x = effect, y = reorder(discipline, effect))) +
   geom_vline(xintercept = 0, color = "#E8DCCF", alpha = 1/2) +
-  stat_halfeye(.width = .95, size = .9, scale = .9,
+  stat_halfeye(.width = .95, size = 0.9, scale = 0.9,
                color = "#80A0C7", fill = "#394165") +
   labs(title = "Random slopes for the male dummy",
        subtitle = "The dots and horizontal lines are the posterior means and percentile-based\n95% intervals, respectively. The values are on the log scale.",

@@ -482,55 +482,9 @@ nd <-
 
 max_iter <- 100
 
-fitted(b11.3, 
-       newdata = nd, 
-       fitted(b11.3,
+fitted(b11.3,
        newdata = nd, 
        draw_ids = 1:max_iter,
-       summary = F) %>% 
-  as_tibble() %>%
-  # we need an variable to index which posterior iteration we're working with
-  mutate(iter = 1:max_iter) %>% 
-  # convert the data to the long format
-  gather(key, pk, -iter) %>%
-  # extract the `intention` and `response` information out of the `key` vector and 
-  # spread it into two vectors.
-  separate(key, into = c("intention", "rating")) %>% 
-  # that step produced two character vectors. they’ll be more useful as numbers
-  mutate(intention = intention %>% as.double(),
-         rating    = rating    %>% as.double()) %>%
-  # here we convert `intention` into its proper 0:1 metric
-  mutate(intention = intention -1) %>%
-  # this step is based on McElreath's R code 11.10 on page 338
-  mutate(`pk:rating` = pk * rating) %>% 
-  # I'm not sure how to succinctly explain this. you’re just going to have to trust me
-  group_by(iter, intention) %>% 
-  # this is very important for the next step.
-  arrange(iter, intention, rating) %>% 
-  # here we take our `pk` values and make cumulative sums. why? take a long hard look at Figure 11.2. 
-  mutate(probability = cumsum(pk)) %>% 
-  # `rating == 7` is unnecessary. these `probability` values are by definition 1
-  filter(rating < 7) %>% 
-  
-  ggplot(aes(x = intention, y = probability, 
-             color = probability)) +
-  geom_line(aes(group = interaction(iter, rating)),
-            alpha = 1/10) +
-  # note how we made a new data object for `geom_text()`
-  geom_text(data = tibble(text        = 1:7,
-                          intention   = seq(from = .9, to = .1, length.out = 7),
-                          probability = c(.05, .12, .20, .35, .53, .71, .87)),
-            aes(label = text),
-            size = 3) +
-  scale_x_continuous("intention", breaks = 0:1) +
-  scale_y_continuous(breaks = c(0, .5, 1), limits = c(0, 1)) +
-  scale_color_gradient(low  = canva_pal("Green fields")(4)[4],
-                       high = canva_pal("Green fields")(4)[1]) +
-  labs(subtitle = "action = 0,\ncontact = 0") +
-  theme_hc() +
-  theme(axis.ticks = element_blank(),
-        legend.position = "none",
-        plot.background = element_rect(fill = "grey92")) = 1:max_iter,
        summary = F) %>% 
   as_tibble() %>% 
   glimpse()
@@ -1090,7 +1044,7 @@ McElreath encouraged us to "explore different values for `pbar` and `theta`" (p.
 # data
 crossing(pbar  = c(.25, .5, .75),
          theta = c(5, 15, 30)) %>% 
-  expand(nesting(pbar, theta), x = seq(from = 0, to = 1, length.out = 100)) %>% 
+  expand_grid(x = seq(from = 0, to = 1, length.out = 100)) %>% 
   mutate(density = rethinking::dbeta2(x, pbar, theta),
          mu      = str_c("mu == ", pbar %>% str_remove(., "0")),
          kappa   = factor(str_c("kappa == ", theta), 
@@ -1205,7 +1159,7 @@ post %>%
   mutate_if(is.double, round, digits = 3)
 ```
 
-To stay within the tidyverse while making the many thin lines in Figure 11.5.a, we're going to need to do a bit of data processing. First, we'll want a variable to index the rows in `post` (i.e., to index the posterior draws). And we'll want to convert the `b_Intercept` to the $\bar p$ metric with the `inv_logit_scaled()` function. Then we'll use `slice_sample()` to randomly draw a subset of the posterior draws. Then with the `expand()` function, we'll insert a tightly-spaced sequence of `x` values ranging between 0 and 1--the parameter space of beta distribution. Finally, we'll use the `rethinking::dbeta2()` function to compute the density values for the unique combination of `x`, `p_bar`, and `phi` values in each row.
+To stay within the tidyverse while making the many thin lines in Figure 11.5.a, we're going to need to do a bit of data processing. First, we'll want a variable to index the rows in `post` (i.e., to index the posterior draws). And we'll want to convert the `b_Intercept` to the $\bar p$ metric with the `inv_logit_scaled()` function. Then we'll use `slice_sample()` to randomly draw a subset of the posterior draws. Then with the `expand_grid()` function, we'll insert a tightly-spaced sequence of `x` values ranging between 0 and 1--the parameter space of beta distribution. Finally, we'll use the `rethinking::dbeta2()` function to compute the density values for the unique combination of `x`, `p_bar`, and `phi` values in each row.
 
 ```{r}
 set.seed(11)
@@ -1214,8 +1168,7 @@ lines <-
   post %>% 
   mutate(p_bar = inv_logit_scaled(b_Intercept)) %>% 
   slice_sample(n = 100) %>% 
-  expand(nesting(.draw, p_bar, phi),
-         x = seq(from = 0, to = 1, by = .0025)) %>% 
+  expand_grid(x = seq(from = 0, to = 1, by = .0025)) %>% 
   mutate(density = rethinking::dbeta2(x, prob = p_bar, theta = phi))
 
 str(lines)
@@ -1335,12 +1288,11 @@ ggplot(data = tibble(x = seq(from = 0, to = 12, by = .01)),
 
 McElreath encouraged us to fool around with plotting gamma distributions with different combinations of $\mu$ and $\theta$. Here's a small attempt with different combinations of each taking on 1, 5, and 9.
 
-```{r, fig.width = 4.5, fig.height = 4.5}
+```{r, fig.width = 4.5, fig.height = 4.5, warning = F}
 # data
 crossing(mu    = c(1, 5, 9),
          theta = c(1, 5, 9)) %>% 
-  expand(nesting(mu, theta), 
-         x = seq(from = 0, to = 27, length.out = 100)) %>% 
+  expand_grid(x = seq(from = 0, to = 27, length.out = 100)) %>% 
   mutate(density    = rethinking::dgamma2(x, mu, theta),
          mu_char    = str_c("mu==", mu),
          theta_char = str_c("theta==", theta)) %>% 
@@ -1380,7 +1332,7 @@ b11.6 <-
 
 You may have noticed we used the brms default `prior(gamma(0.01, 0.01), class = shape)` for the shape parameter. Here's what that prior looks like.
 
-```{r, fig.width = 3.5, fig.height = 3}
+```{r, fig.width = 3.5, fig.height = 3, warning = F}
 ggplot(data = tibble(x = seq(from = 0, to = 60, by = .1)),
        aes(x = x, y = dgamma(x, 0.01, 0.01))) +
   geom_area(fill = canva_pal("Green fields")(4)[2]) +
@@ -1397,7 +1349,7 @@ Before we even look at the summary of the model parameters, we'll use the `brms:
 ```{r}
 p <-
   predict(b11.6,
-        summary = F)
+          summary = F)
 
 p %>% 
   str()
@@ -1485,8 +1437,7 @@ post %>%
   mutate(mu    = exp(b_Intercept),
          theta = exp(b_Intercept) / shape) %>%
   sample_n(size = 100) %>% 
-  expand(nesting(.draw, mu, theta),
-         x = 1:550) %>% 
+  expand_grid(x = 1:550) %>% 
   mutate(density = rethinking::dgamma2(x, mu, theta)) %>% 
   
   # plot
@@ -1530,8 +1481,7 @@ post %>%
   mutate(alpha = shape,
          theta = exp(b_Intercept) / shape) %>%
   sample_n(size = 100) %>% 
-  expand(nesting(.draw, alpha, theta),
-         x = 1:550) %>% 
+  expand_grid(x = 1:550) %>% 
   mutate(density = dgamma(x, shape = alpha, scale = theta)) %>% 
   
   # plot

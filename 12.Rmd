@@ -223,8 +223,7 @@ set.seed(12)
 p1 <-
   post %>% 
   slice_sample(n = 100) %>% 
-  expand(nesting(.draw, b_Intercept, sd_tank__Intercept),
-         x = seq(from = -4, to = 5, length.out = 100)) %>% 
+  expand_grid(x = seq(from = -4, to = 5, length.out = 100)) %>% 
 
   ggplot(aes(x = x, group = .draw)) +
   geom_line(aes(y = dnorm(x, b_Intercept, sd_tank__Intercept)),
@@ -1223,7 +1222,7 @@ n_sim <- 50
   bind_cols(nd %>% 
               transmute(condition = factor(str_c(prosoc_left, "/", condition), 
                                            levels = c("0/0", "1/0", "0/1", "1/1"))) %>% 
-              expand(condition, iter = 1:n_sim) %>% 
+              expand_grid(iter = 1:n_sim) %>% 
               select(-iter))
 )
 ```
