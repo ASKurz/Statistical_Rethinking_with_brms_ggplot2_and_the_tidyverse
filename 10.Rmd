@@ -137,7 +137,6 @@ cbind(waic_diff = w[, 1] * -2,
 For this chapter, we'll take our color scheme from the `"Moonrise2"` palette from the [wesanderson package](https://cran.r-project.org/package=wesanderson) [@R-wesanderson].
 
 ```{r, message = F, fig.width = 3, fig.height = 1}
-# install.packages("wesanderson", dependencies = T)
 library(wesanderson)
 
 wes_palette("Moonrise2")
@@ -593,7 +592,7 @@ So when you `plot()` a loo object, you get a nice diagnostic plot for those $k$ 
 pareto_k_ids(l_b10.6, threshold = 1)
 ```
 
-Note our use of the `threshold` argument. Play around with it to see how it works. If you want an explicit look at those $k$ values, you execute something like this.
+Note our use of the `threshold` argument. Play around with different values to see how it works. If you want an explicit look at those $k$ values, you execute something like this.
 
 ```{r}
 l_b10.6$diagnostics
@@ -609,10 +608,7 @@ Part of the warning message for model `b10.6` read:
 
 Let's do that using the `brms::loo_moment_match()` function.
 
-```{r l_b10.6_mm, cache = T, warning = F, message = F, results = 'hide', eval = F}
-
-# fix this later
-
+```{r l_b10.6_mm, warning = F, message = F, results = 'hide'}
 l_b10.6_mm <- loo_moment_match(b10.6, loo = l_b10.6)
 ```
 
@@ -624,7 +620,7 @@ l_b10.6_mm
 
 Now that looks better. We'll do the same thing for model `b10.7`. 
 
-```{r l_b10.7_mm, cache = T, warning = F, message = F, results = 'hide'}
+```{r l_b10.7_mm, warning = F, message = F, results = 'hide'}
 l_b10.7_mm <- loo_moment_match(b10.7, loo = l_b10.7)
 ```
 
@@ -635,7 +631,7 @@ loo_compare(l_b10.6, l_b10.7)
 loo_compare(l_b10.6_mm, l_b10.7_mm)
 ```
 
-In this case, the results are similar. The standard errors for the differences are huge compared to the point estimates, suggesting large uncertainty. Watch out for this in your real-world data, though.
+In this case, the results are similar. The standard errors for the differences are huge compared to the point estimates, suggesting large uncertainty. Watch out for this in your real-world data analyses, though.
 
 But this has all been a tangent from the central thrust of this section.
 
@@ -1263,7 +1259,7 @@ as_draws_df(b10.10) %>%
   select(starts_with("b_")) %>% 
   set_names(c("alpha", "beta[log_pop]", "beta[contact_high]", "beta[interaction]")) %>%
   ggpairs(upper = list(continuous = my_upper),
-          diag  = list(continuous = my_diag),
+          diag = list(continuous = my_diag),
           lower = list(continuous = my_lower),
           labeller = "label_parsed") +
   ggtitle("Model: b10.10") +
@@ -1274,7 +1270,7 @@ as_draws_df(b10.10_c) %>%
   select(starts_with("b_")) %>% 
   set_names(c("alpha", "beta[log_pop_c]", "beta[contact_high]", "beta[interaction]")) %>%
   ggpairs(upper = list(continuous = my_upper),
-          diag  = list(continuous = my_diag),
+          diag = list(continuous = my_diag),
           lower = list(continuous = my_lower),
           labeller = "label_parsed") +
   ggtitle("Model: b10.10_c") +
@@ -1293,10 +1289,10 @@ Here we simulate our data.
 set.seed(10)
 
 num_days  <- 30
-y         <- rpois(num_days, 1.5)
+num_weeks <-  4
 
-num_weeks <- 4
-y_new     <- rpois(num_weeks, 0.5 * 7)
+y     <- rpois(num_days, 1.5)
+y_new <- rpois(num_weeks, 0.5 * 7)
 ```
 
 Let's make them tidy and add `log_days`.
@@ -1820,13 +1816,13 @@ to return the posterior probabilities for each of the career choices based on th
 
 ```{r, warning = F}
 as_draws_df(b10.16_true) %>% 
-  transmute(iter = 1:n(),
+  transmute(draw = .draw,
             s1   = inv_logit_scaled(b_b_Intercept) * income[1],
             s2   = inv_logit_scaled(b_b_Intercept) * income[2],
             s3   = inv_logit_scaled(b_b_Intercept) * income[3]) %>% 
-  gather(key, score, -iter) %>% 
+  gather(key, score, -draw) %>% 
   mutate(income = str_remove(key, "s")) %>% 
-  group_by(iter) %>% 
+  group_by(draw) %>% 
   # use the formula
   mutate(p = exp(score) / sum(exp(score))) %>% 
   group_by(income) %>% 
@@ -1842,7 +1838,7 @@ tibble(income = income,
   mutate(p = exp(score) / sum(exp(score)))
 ```
 
-I'm not going to dive any further into the brms non-linear syntax in this ebook. You want a deeper understanding, check out Bürkner's vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html), or [my translation](https://bookdown.org/content/4857/) of McElreath's 2nd edition. For more practice fitting multinomial models with brms, you might also check out my [translation of Chapter 22](https://bookdown.org/content/3686/nominal-predicted-variable.html) of Kruschke's [-@kruschkeDoingBayesianData2015] text.
+I'm not going to dive any further into the brms non-linear syntax in this ebook. If you want more, check out Bürkner's vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html), or [my translation](https://bookdown.org/content/4857/) of McElreath's 2nd edition. For more practice fitting multinomial models with brms, you might also check out my [translation of Chapter 22](https://bookdown.org/content/3686/nominal-predicted-variable.html) of Kruschke's [-@kruschkeDoingBayesianData2015] text.
 
 #### Multinomial in disguise as Poisson.
 
@@ -1861,13 +1857,19 @@ library(brms)
 
 Fit the models.
 
-```{r}
+set_rescor(FALSE)
+
+```{r, eval = F, echo = F}
 get_prior(data = d %>%
         mutate(rej = reject),  # 'reject' is a reserved word
       family = poisson,
       mvbind(admit, rej) ~ 1)
-```
 
+get_prior(data = d %>%
+        mutate(rej = reject),  # 'reject' is a reserved word
+      family = poisson,
+      bf(mvbind(admit, rej) ~ 1) + set_rescor(FALSE))
+```
 
 ```{r b10.binom}
 # binomial model of overall admission probability
@@ -1885,7 +1887,7 @@ b10.pois <-
   brm(data = d %>%
         mutate(rej = reject),  # 'reject' is a reserved word
       family = poisson,
-      mvbind(admit, rej) ~ 1,
+      bf(mvbind(admit, rej) ~ 1) + set_rescor(FALSE),
       prior = c(prior(normal(0, 100), class = Intercept, resp = admit),
                 prior(normal(0, 100), class = Intercept, resp = rej)),
       iter = 2000, warmup = 1000, cores = 3, chains = 3,
@@ -1911,6 +1913,7 @@ post %>%
                color = wes_palette("Moonrise2")[4]) +
   scale_fill_manual(values = c(wes_palette("Moonrise2")[1],
                                wes_palette("Moonrise2")[2])) +
+  scale_y_discrete(expand = expansion(add = 0.1)) +
   labs(title = " Mean admit/reject rates across departments",
        x = "# applications",
        y = NULL) +
@@ -1966,7 +1969,7 @@ bind_cols(
   labs(title = "Two models, same marginal posterior",
        x = "admissions probability",
        y = NULL) +
-  coord_cartesian(ylim = c(1.5, 2.35)) +
+  scale_y_discrete(expand = expansion(add = 0.1)) +
   theme(axis.text.y = element_text(hjust = 0),
         axis.ticks.y = element_blank(),
         legend.position = "none")
@@ -2002,7 +2005,7 @@ list(x = x, y = y) %>%
   geom_point(size = 3/5, alpha = 2/3)
 ```
 
-We fit the geometric model using `family = geometric(link = log)`.
+We fit the geometric model by setting `family = geometric(link = log)`.
 
 ```{r b10.18}
 b10.18 <-
