@@ -504,8 +504,7 @@ b14.2_mi <-
                 prior(cauchy(0, 2.5), class = sigma)),
       iter = 5000, warmup = 1000, cores = 2, chains = 2,
       seed = 14,
-      control = list(adapt_delta = 0.99,
-                     max_treedepth = 12),
+      control = list(adapt_delta = 0.95),
       save_pars = save_pars(latent = TRUE),
       init = inits_list,
       file = "fits/b14.02_mi")
@@ -775,7 +774,7 @@ p1 <-
              color = "white") +
   geom_pointrange(data = f_b14.3_mi,
                   aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
-                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 4, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -797,7 +796,7 @@ p2 <-
   
   geom_pointrange(data = f_b14.3_mi,
                   aes(y = mean, ymin = q2.5, ymax = q97.5),
-                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 4, stroke = 1/2) +
 
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
@@ -893,7 +892,7 @@ p1 <-
              color = "white") +
   geom_pointrange(data = f_b14.4_mi,
                   aes(x = mean, xmin = q2.5, xmax = q97.5, y = kcal),
-                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 4, stroke = 1/2) +
   labs(subtitle = "Note: For the regression line in this plot,\nlog(mass) has been set to its median, 1.244.",
        x = "neocortex proportion",
        y = "kcal per gram") +
@@ -914,7 +913,7 @@ p2 <-
   geom_point(color = "white") +
   geom_pointrange(data = f_b14.4_mi,
                   aes(y = mean, ymin = q2.5, ymax = q97.5),
-                  color = color, shape = 1, linewidth = 1/4, fatten = 8, stroke = 1/2) +
+                  color = color, shape = 1, linewidth = 1/4, fatten = 4, stroke = 1/2) +
   scale_x_continuous("log(mass)", breaks = -2:4) +
   ylab("neocortex proportion") +
   coord_cartesian(xlim = range(data_list$logmass, na.rm = T),
@@ -948,7 +947,7 @@ b14.2_mi_mi <-
                 prior(cauchy(0, 2.5), class = sigma, resp = marobs)),
       iter = 5000, warmup = 1000, cores = 2, chains = 2,
       seed = 14,
-      control = list(adapt_delta = 0.99,
+      control = list(adapt_delta = 0.99, 
                      max_treedepth = 11),
       save_pars = save_pars(latent = TRUE),
       init = inits_list,
@@ -1128,7 +1127,6 @@ b14.6 <-
                 prior(cauchy(0, 1), class = sd)),
       iter = 4000, warmup = 1000, cores = 4, chains = 4,
       seed = 14,
-      control = list(adapt_delta = .85),
       file = "fits/b14.06")
 ```
 
