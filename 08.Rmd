@@ -222,6 +222,8 @@ post <- as_draws_df(b8.1)
 str(post)
 ```
 
+Though we won't be doing so in this ebook, you could instead use the `as_draws()` or `as_draws_list()` functions if you really wanted your posterior draws in a list format.
+
 As with McElreath's rethinking, brms allows users to put the `post` data frame or the brmsfit object directly in `pairs()`.
 
 ```{r, fig.width = 6, fig.height = 5}
@@ -302,7 +304,7 @@ waic(b8.1)
 (l_b8.1 <- loo(b8.1))
 ```
 
-And the recommended workflow since brms version 2.8.0 is to save the information criteria information with your `brm()` fit objects with the `add_criterion()` function.
+The recommended workflow since brms version 2.8.0 is to save the information criteria information with your `brm()` fit objects with the `add_criterion()` function.
 
 ```{r}
 b8.1 <- add_criterion(b8.1, c("waic", "loo"))
@@ -375,7 +377,6 @@ That's just what we like to see--nice L-shaped autocorrelation plots. Those are 
 Before we move on, there's an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath's trace plots include the warmup iterations. Ours did not. That's why his $x$-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @fernandezGGMCMCAnalysisofMCMC2016].
 
 ```{r, message = F, warning = F}
-# install.packages("ggmcmc", dependencies = T)
 library(ggmcmc)
 ```
 
@@ -473,7 +474,7 @@ For more on these topics, you might also check out Gabry and Modrák's [-@gabryV
 
 ### Taming a wild chain.
 
-As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an `inits` argument rather than with `start`.
+As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an `init` argument rather than with `start`.
 
 ```{r b8.2}
 b8.2 <-
@@ -482,8 +483,8 @@ b8.2 <-
       y ~ 1,
       prior = c(prior(uniform(-1e10, 1e10), class = Intercept),
                 prior(uniform(0, 1e10), class = sigma, ub = 1e10)),
-      inits = list(list(Intercept = 0, sigma = 1),
-                   list(Intercept = 0, sigma = 1)),
+      init = list(list(Intercept = 0, sigma = 1),
+                  list(Intercept = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
       seed = 8,
       file = "fits/b08.02")
@@ -520,8 +521,8 @@ b8.3 <-
       y ~ 1,
       prior = c(prior(normal(0, 10), class = Intercept),
                 prior(cauchy(0, 1), class = sigma)),
-      inits = list(list(Intercept = 0, sigma = 1),
-                   list(Intercept = 0, sigma = 1)),
+      init = list(list(Intercept = 0, sigma = 1),
+                  list(Intercept = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
       seed = 8,
       file = "fits/b08.03")
@@ -549,7 +550,7 @@ mcmc_trace(post,
 
 Now behold our version of Figure 8.6.
 
-```{r, fig.height = 4.5, fig.width = 7.25}
+```{r, fig.height = 4.5, fig.width = 7.25, warning = F}
 # left
 p1 <-
   post %>%
@@ -656,8 +657,8 @@ b8.4 <-
       y ~ 0 + intercept_1 + intercept_2,
       prior = c(prior(uniform(-1e10, 1e10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
-                   list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
+      init = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
+                  list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
       seed = 8,
       file = "fits/b08.04")
@@ -680,8 +681,8 @@ b8.5 <-
       y ~ 0 + intercept_1 + intercept_2,
       prior = c(prior(normal(0, 10), class = b),
                 prior(cauchy(0, 1), class = sigma)),
-      inits = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
-                   list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
+      init = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
+                  list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
       iter = 4000, warmup = 1000, chains = 2,
       seed = 8,
       file = "fits/b08.05")
@@ -733,7 +734,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1b, post, my_diag, my_lower, l_b8.1, b8.2, b8.3, n, y, b8.4, b8.5, p1, p2)
+rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1b, post, my_upper, my_diag, my_lower, l_b8.1, b8.2, b8.3, n, y, b8.4, b8.5, p1, p2)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
