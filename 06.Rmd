@@ -662,7 +662,7 @@ b6.8 <-
 print(b6.8)
 ```
 
-**Details about `inits`**: You don't have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains if you want.
+**Details about `inits`**: You don't have to specify your `inits` lists outside of the `brm()` function the way we did, here. This is just how I currently prefer. When you specify start values for the parameters in your Stan models, you need to do so with a list of lists. You need as many lists as HMC chains--four in this example. And then you put your--in this case--four lists inside a list. Also, we were lazy and specified the same start values across all our chains. You can mix them up across chains, which I recommend once you've had some experience with brms. For more on initial values, check out my blog post, [*Don't forget your inits*](https://solomonkurz.netlify.app/blog/2021-06-05-don-t-forget-your-inits/).
 
 Anyway, the brms `log_lik()` function returns a matrix. Each occasion gets a column and each HMC chain iteration gets a row. To make it easier to understand the output, we'll name the columns by `species` using the [`.name_repair` argument](https://tibble.tidyverse.org/reference/as_tibble.html) within the `as_tibble()` function.
 
@@ -874,7 +874,7 @@ load("sims/06.sim_2.rda")
 
 We'll follow the same principles for wrangling these data as we did those from the previous simulation, `dev_tibble`. And after wrangling, we'll feed the data directly into the code for our version of Figure 6.9.
 
-```{r, fig.width = 6, fig.height = 3}
+```{r, fig.width = 6, fig.height = 3, warning = F}
 # wrangle the simulation data
 s %>% 
   mutate(statistic = rep(c("mean", "sd"), each = 2) %>% rep(., times = 3 * 2),
@@ -890,7 +890,7 @@ s %>%
   # now plot
   ggplot(aes(x = n_par, y = mean,
              group = interaction(sample, b_sigma))) +
-  geom_line(aes(color = sample, linewidth = b_sigma)) +
+  geom_line(aes(color = sample, size = b_sigma)) +
   # this function contains the data from the previous simulation
   geom_point(data = dev_tibble, 
              aes(group = sample, fill = sample),
@@ -1366,7 +1366,7 @@ With that in place, here's how you'd extract the WAIC information from the fit o
 b6.11$criteria$waic
 ```
 
-*Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output, which can be convenient. But second, it sets you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we’ll use `loo_compare()`.
+*Why would I go through all that trouble?*, you might ask. Well, two reasons. First, now your WAIC information is saved with all the rest of your fit output, which can be convenient. But second, it sets you up to use the `loo_compare()` function to compare models by their information criteria. To get a sense of that workflow, here we use `add_criterion()` for the next three models. Then we'll use `loo_compare()`.
 
 ```{r w_b6.12_through_b6.14, message = F}
 # compute and save the WAIC information for the next three models
@@ -1778,7 +1778,7 @@ sessionInfo()
 ```
 
 ```{r, echo = F}
-rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, cars, b6.0_waic, log_p_y, lppd, v_i, pwaic, text, b6.11, b6.12, b6.13, b6.14, w, n, diff, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
+rm(d, fit_lm, fits, p, p1, p2, p3, p4, p5, p6, b6.7, nd, make_lines, lines, weatherperson, newcomer, t, inits, inits_list, b6.8, ll, kseq, n_sim, n_cores, dev_20, dev_100, dev_tibble, dev_text, s, cars, b6.0_waic, log_p_y, lppd, v_i, pwaic, text, b6.11, b6.12, b6.13, b6.14, w, n, diff, get_summary, my_coef_tab, wrangled_my_coef_tab, f, r2_b6.13, r2_b6.14, r2_combined)
 ```
 
 ```{r, echo = F, message = F, warning = F, results = "hide"}
