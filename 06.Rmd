@@ -1019,9 +1019,9 @@ This largely doesn't matter. As we'll see in just a moment, brms offers the WAIC
 
 It's okay that the brms and loo packages don't yield the DIC because the Widely Applicable Information Criterion [WAIC, @watanabeAsymptoticEquivalenceBayes2010] is even better.
 
-> Define $\text{Pr}(y_i)$ as the average likelihood of observation $i$ in the training sample. This means we compute the likelihood of $y_i$ for each set of parameters sampled from the posterior distribution. Then we average the likelihoods for each observation $i$ and finally sum over all observations. This produces the first part of WAIC, the log-pointwise-predictive-density, lppd:
+> Define $\Pr(y_i)$ as the average likelihood of observation $i$ in the training sample. This means we compute the likelihood of $y_i$ for each set of parameters sampled from the posterior distribution. Then we average the likelihoods for each observation $i$ and finally sum over all observations. This produces the first part of WAIC, the log-pointwise-predictive-density, lppd:
 >
-> $$\text{lppd} = \sum_{i = 1}^N \log \text{Pr}(y_i)$$
+> $$\text{lppd} = \sum_{i = 1}^N \log \Pr(y_i)$$
 >
 > You might say this out loud as:
 >
@@ -1074,9 +1074,9 @@ ll <-
 
 Now we compute the "Bayesian deviance" (i.e., $\text{lppd}$), which follows the form
 
-$$\text{lppd} = \sum_{i = 1}^N \log \text{Pr}(y_i).$$
+$$\text{lppd} = \sum_{i = 1}^N \log \Pr(y_i).$$
 
-We'll do it in two steps, saving the $\log \text{Pr}(y_i)$ and the $\text{lppd}$ as two objects.
+We'll do it in two steps, saving the $\log \Pr(y_i)$ and the $\text{lppd}$ as two objects.
 
 ```{r, message = F}
 log_p_y <-
