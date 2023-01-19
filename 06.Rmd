@@ -21,7 +21,7 @@ Toward that end, we will employ
 >
 > ...Whatever you thing about null hypothesis significance testing in general, using it to select among structurally different models is a mistake--$p$-values are not designed to help you navigate between undercutting and overfitting. (p. 167, **emphasis** in the original)
 
-McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [-@kurzDoingBayesianDataAnalysis2022] [ebook translating it to brms and the tidyverse](https://bookdown.org/content/3686/). The great [Frank Harrell](https://twitter.com/f2harrell) has complied [*A litany of problems With p-values*](https://www.fharrell.com/post/pval-litany/) and you might consult the recent statement on $p$-values by the American Statistical Association [@wassersteinASAStatementonPValues2016].
+McElreath spent little time discussing $p$-values and null hypothesis testing in the text. If you'd like to learn more from a Bayesian perspective, you might check out the first several chapters (particularly 10--13) in Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/) and my [-@kurzDoingBayesianDataAnalysis2023] [ebook translating it to brms and the tidyverse](https://bookdown.org/content/3686/). The great [Frank Harrell](https://www.fharrell.com/) has complied [*A litany of problems With p-values*](https://www.fharrell.com/post/pval-litany/) and you might consult the recent statement on $p$-values by the American Statistical Association [@wassersteinASAStatementonPValues2016].
 
 ## The problem with parameters
 
@@ -37,7 +37,7 @@ McElreath is not a fan of the $R^2$. But it's important in my field, so instead 
 
 > **Overfitting** occurs when a model learns too much from the sample. What this means is that there are both *regular* and *irregular* features in every sample. The regular features are the targets of our learning, because they generalize well or answer a question of interest. Regular features are useful, given an objective of our choice. The irregular features are instead aspects of the data that do not generalize and so may mislead us. (p. 169, **emphasis** in the original)
 
-There's a lot to like about this section, but my experience as a clinical psychologist inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individual cases. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we're about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.app/post/2019-02-02-robust-linear-regression-with-student-s-t-distribution/). Though not covered in this edition of the text, McElreath introduced  Student-$t$ regression in his [-@mcelreathStatisticalRethinkingBayesian2020] second edition (e.g.,  Section 7.6.2).
+There's a lot to like about this section, but my experience as a clinical psychologist inclines me to approach this topic differently. In practice, therapy is often a one-on-one process where the outcome is for a specific person in a specific time and set of circumstances in their life. Therapy research is often the aggregate of many such individual cases. As such, both the regular and irregular features of every therapy trial are of great interest. So yes, I agree with McElreath that overfitting of the kind we're about to entertain is silly and to be avoided. And yet the goal of my line of research is to develop treatments (and to examine those treatments with statistical models) that are robust enough to handle irregularities as well. It's my job to deal with the outliers. For more on what you might think of as robust models (i.e., models that can handle unusual observations), check out my [blog on Student-$t$ regression](https://solomonkurz.netlify.app/blog/2019-02-02-robust-linear-regression-with-student-s-t-distribution/). Though not covered in this edition of the text, McElreath introduced  Student-$t$ regression in his [-@mcelreathStatisticalRethinkingBayesian2020] second edition (e.g.,  Section 7.6.2).
 
 In other words, the topics McElreath grappled with in this chapter are difficult and ones I hope you return to again and again during your data analysis career. Back to the text!
 
@@ -57,7 +57,6 @@ library(tidyverse)
 Let's get ready for Figure 6.2. The plots in this chapter will be characterized by `theme_classic() + theme(text = element_text(family = "Courier"))`. Our color palette will come from the [rcartocolor package](https://cran.r-project.org/package=rcartocolor) [@R-rcartocolor], which provides color schemes [designed by 'CARTO'](https://carto.com/carto-colors/).
 
 ```{r, warning = F, message = F}
-# install.packages("rcartocolor", dependencies = T)
 library(rcartocolor)
 ```
 
@@ -1337,7 +1336,7 @@ In brms, you can get a model's WAIC value with the `waic()` function.
 waic(b6.14)
 ```
 
-Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published the first edition of *Statistical rethinking*. I won't go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) by @vehtariUsingLooPackage2020 or in the second edition of *Statistical rethinking* [@mcelreathStatisticalRethinkingBayesian2020]. For now, back to the WAIC.
+Note the warning message. Statisticians have made notable advances in Bayesian information criteria since McElreath published the first edition of *Statistical rethinking*. I won't go into detail here, but the "We recommend trying loo instead" part of the message is designed to prompt us to use a different information criteria, the Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO; aka, the LOO).  In brms this is available with the `loo()` function, which you can learn more about in [this vignette](https://cran.r-project.org/package=loo/vignettes/loo2-example.html) by @vehtariUsingLooPackage2022 or in the second edition of *Statistical rethinking* [@mcelreathStatisticalRethinkingBayesian2020]. For now, back to the WAIC.
 
 There are a few ways to approach information criteria within the brms framework. If all you want are the quick results for a model, just plug the name of your `brm()` fit object into the `waic()` function.
 
@@ -1564,7 +1563,7 @@ Just a little more work and we'll have a table analogous to the one McElreath pr
 
 ```{r}
 my_coef_tab %>%
-  # learn more about `dplyr::complete()` here: https://rdrr.io/cran/tidyr/man/expand.html
+  # learn more about `tidyr::complete()` here: https://tidyr.tidyverse.org/reference/complete.html
   complete(model, variable) %>% 
   select(model, variable, mean) %>%
   mutate(mean = round(mean, digits = 2)) %>%
