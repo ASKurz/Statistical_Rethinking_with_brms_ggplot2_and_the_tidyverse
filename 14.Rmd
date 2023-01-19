@@ -147,8 +147,6 @@ library(brms)
 For the plots in this chapter, we'll use the dark themes from the [ggdark package](https://CRAN.R-project.org/package=ggdark) [@R-ggdark].
 
 ```{r, message = F, warning = F}
-# install.packages("ggdark")
-
 library(ggdark)
 ```
 
@@ -252,7 +250,7 @@ As in the text,
 >
 > All this does is define the measurement $D_{\text{OBS},i}$ as having the specified Gaussian distribution centered on the unknown parameter $D_{\text{EST},i}$. So the above defines a probability for each State $i$'s observed divorce rate, given a known measurement error. (pp. 426--427)
 
-Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $\textit{SD}$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/post/2016/09/29/meta-analysis-is-a-special-case-of-bayesian-multilevel-modeling/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no posterior for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM] and find the *Additional response information* subsection of the `brmsformula` section.
+Now we're ready to fit some models. In brms, there are at least two ways to accommodate measurement error in the criterion. The first way uses the `se()` syntax, following the form `<response> | se(<se_response>, sigma = TRUE)`. With this syntax, `se` stands for standard error, the loose frequentist analogue to the Bayesian posterior $\textit{SD}$. Unless you're [fitting a meta-analysis](https://mvuorre.github.io/posts/2016-09-29-bayesian-meta-analysis/) on summary information, which we'll be doing at the end of this chapter, make sure to specify `sigma = TRUE`. Without that you'll have no posterior for $\sigma$! For more information on the `se()` method, go to the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM] and find the *Additional response information* subsection of the `brmsformula` section.
 
 The second way uses the `mi()` syntax, following the form `<response> | mi(<se_response>)`. This follows a missing data logic, resulting in Bayesian missing data imputation for the criterion values. The `mi()` syntax is based on the newer missing data capabilities for brms. We will cover that in more detail in the second half of this chapter.
 
@@ -599,7 +597,7 @@ Anyway,
 
 ## Missing data
 
-Starting with [version 2.2.0](https://cran.r-project.org/package=brms/news/news.html), brms supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html) [@Bürkner2020Multivariate]. Bürkner's [-@Bürkner2020HandleMissingValues] vignette, [*Handle missing values with brms*](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), is quite helpful for learning the basics.
+Starting with [version 2.2.0](https://cran.r-project.org/package=brms/news/news.html), brms supports Bayesian missing data imputation using adaptations of the [multivariate syntax](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html) [@Bürkner2022Multivariate]. Bürkner's [-@Bürkner2022HandleMissingValues] vignette, [*Handle missing values with brms*](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), is quite helpful for learning the basics.
 
 ### Imputing `neocortex`
 
@@ -993,7 +991,7 @@ full_join(
 
 The results are basically the same.
 
-To wrap up, if modern missing data methods are new to you, you might also check out van Burren's great [-@vanbuurenFlexibleImputationMissing2018] text, [*Flexible imputation of missing data: Second edition*](https://stefvanbuuren.name/fimd/). I'm also a fan of Enders's [-@enders2010applied] [*Applied missing data analysis*](http://www.appliedmissingdata.com), for which you can find a free sample chapter [here](http://www.appliedmissingdata.com/sample-chapter.pdf). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
+To wrap up, if modern missing data methods are new to you, you might also check out van Burren's great [-@vanbuurenFlexibleImputationMissing2018] text, [*Flexible imputation of missing data: Second edition*](https://stefvanbuuren.name/fimd/). I'm also a fan of Enders's [-@enders2022applied] [*Applied missing data analysis*](http://www.appliedmissingdata.com), for which you can download a free sample chapter by clicking [here](https://dl.dropboxusercontent.com/s/mhk6bdxj1lu48ua/Enders2E-Ch1.pdf?dl=1). I'll also quickly mention that [brms accommodates multiple imputation](https://cran.r-project.org/package=brms/vignettes/brms_missings.html), too.
 
 ## ~~Summary~~ Bonus: Meta-analysis
 
@@ -1085,7 +1083,7 @@ b14.5 <-
 
 One thing you might notice is our `se(se)` function excluded the `sigma` argument. If you recall from [Section 14.1][Measurement error], we specified `sigma = T` in our measurement-error models. The brms default is that within `se()`, `sigma = FALSE`. As such, we have no estimate for sigma the way we would if we were doing this analysis with the raw data from the studies. Hopefully this makes sense. The uncertainty around the `d`-value for each study $i$ has already been encoded in the data as `se`.
 
-This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publicly available. So effect size summaries were the best we typically had. However, times are changing [e.g., @winermanTrendsReport2017]. If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html#a-simple-distributional-model) [@Bürkner2020Distributional] and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
+This brings us to another point. We typically perform meta-analyses on data summaries. In my field and perhaps in yours, this is due to the historical accident that it has not been the norm among researchers to make their data publicly available. So effect size summaries were the best we typically had. However, times are changing [e.g., @winermanTrendsReport2017]. If the raw data from all the studies for your meta-analysis are available, you can just fit a multilevel model in which the data are nested in the studies. Heck, you could even allow the studies to vary by $\sigma$ by taking the [distributional modeling approach](https://cran.r-project.org/package=brms/vignettes/brms_distreg.html#a-simple-distributional-model) [@Bürkner2022Distributional] and specify something like `sigma ~ 0 + study` or even `sigma ~ 1 + (1 | study)`.
 
 But enough technical talk. Let's look at the model results.
 
