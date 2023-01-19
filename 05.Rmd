@@ -72,13 +72,13 @@ d %>%
   theme(panel.grid = element_blank())  
 ```
 
-Since these are geographically-based data, we might plot our three major variables in a map format. The [tigris package](https://github.com/walkerke/tigris) [@R-tigris] provides latitude and longitude data for the 50 states. We'll extract the geographic coordinates with the `tigris::states()` function and then shift and rescale the coordinates for Alaska and Hawaii with the `tigris::shift_geometry()` function. As part of the workflow, we'll combine the geographic coordinates with the `d` data set with help from the `right_join()` function. Finally, we'll plot the thing with the handy `ggplot2::geom_sf()` function.
+Since these are geographically-based data, we might plot our three major variables in a map format. The [tigris package](https://github.com/walkerke/tigris) [@R-tigris] provides latitude and longitude data for the 50 states. We'll extract the geographic coordinates with the `tigris::states()` function and then shift and rescale the coordinates for Alaska and Hawaii with the `tigris::shift_geometry()` function. As part of the workflow, we'll combine the geographic coordinates with the `d` data set with help from the `right_join()` function. 
 
-```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
-# install.packages("tigris", dependencies = T)
+```{r, warning = F, message = F}
 library(tigris)
 
-d %>% 
+d_states <- 
+  d %>% 
   # standardize these three variables to put them all on the same scale
   mutate(Divorce_z           = (Divorce - mean(Divorce))                     / sd(Divorce),
          MedianAgeMarriage_z = (MedianAgeMarriage - mean(MedianAgeMarriage)) / sd(MedianAgeMarriage),
@@ -91,9 +91,13 @@ d %>%
                filter(NAME != "Puerto Rico"), 
              by = c("Location" = "NAME")) %>%
   # convert to the long format for faceting
-  pivot_longer(ends_with("_z")) %>% 
-  
-  # plot!
+  pivot_longer(ends_with("_z")) 
+```
+
+Now we plot the thing with the handy `ggplot2::geom_sf()` function.
+
+```{r, fig.width = 8, fig.height = 2, warning = F, message = F}
+d_states %>% 
   ggplot() +
   geom_sf(aes(fill = value, geometry = geometry),
           size = 0) +
