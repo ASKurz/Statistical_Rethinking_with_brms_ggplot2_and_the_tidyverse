@@ -20,7 +20,7 @@ McElreath discussed how researchers might use other multivariate distributions t
 
 ### Simulate the population.
 
-If you follow this section closely, it's a great template for simulating multilevel code for any of your future projects. You might think of this as an alternative to a frequentist power analysis. Vourre has done [some nice work along these lines](https://gitlab.com/vuorre/bayesplan), I have a [blog series](https://solomonkurz.netlify.com/post/bayesian-power-analysis-part-i/) on Bayesian power analysis, and Kruschke covered the topic in Chapter 13 of his [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/).
+If you follow this section closely, it's a great template for simulating multilevel code for any of your future projects. You might think of this as an alternative to a frequentist power analysis. Vourre has done [some nice work along these lines](https://gitlab.com/vuorre/bayesplan), I have a [blog series](https://solomonkurz.netlify.app/blog/bayesian-power-analysis-part-i/) on Bayesian power analysis, and Kruschke covered the topic in Chapter 13 of his [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/).
 
 ```{r, warning = F, message = F}
 a       <-  3.5  # average morning wait time
@@ -78,7 +78,7 @@ library(dutchmasters)
 dutchmasters$pearl_earring
 ```
 
-We'll name our custom theme `theme_pearl_earring()`. I cobbled together this approach to defining a custom ggplot2 theme with help from [Chapter 17](https://ggplot2-book.org/programming.html) of Wichkam's [-@wickhamGgplot2ElegantGraphics2016] *ggplot2: Elegant graphics for data analysis*; [Section 4.6](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html) of Peng, Kross, and Anderson's [-@pengMasteringSoftwareDevelopment2017] [*Mastering Software Development in R*](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html); Lea Waniek's blog post, [*Custom themes in ggplot2*](https://www.statworx.com/de/blog/custom-themes-in-ggplot2/), and Joey Stanley's blog post of the same name, [*Custom themes in ggplot2*](https://joeystanley.com/blog/custom-themes-in-ggplot2).
+We'll name our custom theme `theme_pearl_earring()`. I cobbled together this approach to defining a custom ggplot2 theme with help from [Chapter 17](https://ggplot2-book.org/programming.html) of Wichkam's [-@wickhamGgplot2ElegantGraphics2016] *ggplot2: Elegant graphics for data analysis*; [Section 4.6](https://bookdown.org/rdpeng/RProgDA/building-a-new-theme.html) of Peng, Kross, and Anderson's [-@pengMasteringSoftwareDevelopment2017] [*Mastering Software Development in R*](https://bookdown.org/rdpeng/RProgDA/); Lea Waniek's blog post, [*Custom themes in ggplot2*](https://www.statworx.com/de/blog/custom-themes-in-ggplot2/), and Joey Stanley's blog post of the same name, [*Custom themes in ggplot2*](https://joeystanley.com/blog/custom-themes-in-ggplot2).
 
 ```{r}
 theme_pearl_earring <- function(light_color = "#E8DCCF", 
@@ -1029,7 +1029,7 @@ detach(package:rethinking, unload = T)
 library(brms)
 ```
 
-`r emo::ji("wave")` **Heads up**: The brms package is capable of handling a variety of Gaussian process models using the `gp()` function. As we will see throughout this section, this method will depart in important ways from how McElreath fits Gaussian process models with rethinking. Due in large part to these differences, this section baffled me, at first. Happily, fellow enthusiasts [Louis Bliard](https://twitter.com/LBliard) and [Richard Torkar](https://twitter.com/rtorkar) reached out and helped me hammer this section out behind the scenes. The method to follow is due in large part to their efforts. `r emo::ji("handshake")`
+`r emo::ji("wave")` **Heads up**: The brms package is capable of handling a variety of Gaussian process models using the `gp()` function. As we will see throughout this section, this method will depart in important ways from how McElreath fits Gaussian process models with rethinking. Due in large part to these differences, this section baffled me, at first. Happily, fellow enthusiasts [Louis Bliard](https://twitter.com/LBliard) and [Richard Torkar](https://torkar.github.io/) reached out and helped me hammer this section out behind the scenes. The method to follow is due in large part to their efforts. `r emo::ji("handshake")`
 
 The `brms::gp()` function takes a handful of arguments. The first and most important argument, `...`, accepts the names of one or more predictors from the data. When fitting a spatial Gaussian process of this kind, we'll enter in the latitude and longitude data for each of levels of `culture`. This will be an important departure from the text. For his `m13.7`, McElreath directly entered in the `Dmat` distance matrix data into `map2stan()`. In so doing, he defined $D_{ij}$, the matrix of distances between each of the societies. When using brms, we instead *estimate* the distance matrix from the latitude and longitude variables.
 
@@ -1077,7 +1077,7 @@ b13.7 %>%
 
 Let's start with the population parameters. Our intercept is just a touch higher than McElreath's `a` parameter ($1.31, 89\%\ \text{HDI}\ [-0.57, 3.14]$). Happily, our `logpop` slope is almost dead on with McElreath's `bp` parameter.
 
-If you look at the parameter summary using `print()` or `summary()`, you'll see those `sdgp_gplat_adjlon2_adj` and `lscale_gplat_adjlon2_adj` parameters are listed as 'Gaussian Process Terms'. They are different in name and values from McElreath's `etasq` and `rhosq` because brms uses a different parameterization. From the `gp` section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM], we learn the brms parameterization for the Gaussian process follows the form
+If you look at the parameter summary using `print()` or `summary()`, you'll see those `sdgp_gplat_adjlon2_adj` and `lscale_gplat_adjlon2_adj` parameters are listed as 'Gaussian Process Terms'. They are different in name and values from McElreath's `etasq` and `rhosq` because brms uses a different parameterization. From the `gp` section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM], we learn the brms parameterization for the Gaussian process follows the form
 
 $$k(x_{i},x_{j}) = sdgp^2 \exp \big (-||x_i - x_j||^2 / (2 lscale^2) \big ),$$
 
@@ -1351,13 +1351,13 @@ p1 + p2 +
 
 ### Other kinds of "distance".
 
-McElreath briefly mentioned how Gaussian processes can be used to handle covariation resulting form phylogenetic distances. We won't cover it here, but brms is capable of fitting a variety of phylogenetic models. To learn more, check out Bürkner's [-@Bürkner2020Phylogenetic] vignette, [*Estimating phylogenetic multilevel models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html).
+McElreath briefly mentioned how Gaussian processes can be used to handle covariation resulting form phylogenetic distances. We won't cover it here, but brms is capable of fitting a variety of phylogenetic models. To learn more, check out Bürkner's [-@Bürkner2022Phylogenetic] vignette, [*Estimating phylogenetic multilevel models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html).
 
 ## ~~Summary~~ Bonus: Another Berkley-admissions-data-like example. 
 
-[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of himself teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://www.youtube.com/watch?v=rSQ1XMwO_9A&t), he discussed a [-@vanderleeGender2015] paper from van der Lee and Ellemers [published in PNAS](https://www.pnas.org/content/112/40/12349.abstract). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi_{df = 1}^2 = 4.01, p = .045$. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](https://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video.
+[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of himself teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://youtu.be/rSQ1XMwO_9A?t=343), he discussed a [-@vanderleeGender2015] paper from van der Lee and Ellemers [published in PNAS](https://doi.org/10.1073/pnas.1510159112). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi_{df = 1}^2 = 4.01, p = .045$. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](https://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video.
 
-Their data follows the same structure as the Berkeley admissions data. In his lecture, McElreath suggested their $\chi^2$ test is an example of Simpson's paradox, just as with the Berkley data. He wasn't the first person to raise this criticism (see Volker and SteenBeek's [-@volkerNoEvidenceThat2015] [critique](https://www.pnas.org/content/112/51/E7036.full), which McElreath also pointed to in the lecture).
+Their data follows the same structure as the Berkeley admissions data. In his lecture, McElreath suggested their $\chi^2$ test is an example of Simpson's paradox, just as with the Berkley data. He wasn't the first person to raise this criticism (see Volker and SteenBeek's [-@volkerNoEvidenceThat2015] [critique](https://doi.org/10.1073/pnas.1519046112), which McElreath also pointed to in the lecture).
 
 Here are the data:
 
@@ -1408,7 +1408,7 @@ as_draws_df(b13.8) %>%
   summarise(one_sided_Bayesian_p_value = mean(b_male <= 0))
 ```
 
-Pretty small. But recall how Simpson's paradox helped us understand the Berkeley data. [If you need a refresher on Simpson's paradox, [go here](https://solomonkurz.netlify.com/post/individuals-are-not-small-groups-i-simpson-s-paradox/).] Different departments in Berkeley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications.
+Pretty small. But recall how Simpson's paradox helped us understand the Berkeley data. [If you need a refresher on Simpson's paradox, [go here](https://solomonkurz.netlify.app/blog/2019-10-09-individuals-are-not-small-groups-i-simpson-s-paradox/).] Different departments in Berkeley had different acceptance rates AND different ratios of male and female applicants. Similarly, different academic disciplines in the Netherlands might have different `award` rates for funding AND different ratios of male and female applications.
 
 Just like in section 13.2, let's fit two more models. The first model will allow intercepts to vary by discipline. The second model will allow intercepts and the `male` dummy slopes to vary by discipline.
 
