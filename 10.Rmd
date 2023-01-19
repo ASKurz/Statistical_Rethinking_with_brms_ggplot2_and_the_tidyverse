@@ -12,7 +12,7 @@ options(width = 110)
 
 In this chapter, we focus on the two most common types of count models: the binomial and the Poisson.
 
-Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my blog post, [*Robust linear regression with Student's $t$-distribution*](https://solomonkurz.netlify.com/post/robust-linear-regression-with-the-robust-student-s-t-distribution/).
+Side note: For a nice Bayesian way to accommodate outliers in your Gaussian models, check out my blog post, [*Robust linear regression with Student's $t$-distribution*](https://solomonkurz.netlify.app/blog/2019-02-02-robust-linear-regression-with-student-s-t-distribution/).
 
 ## Binomial regression
 
@@ -552,7 +552,7 @@ b10.6 <- add_criterion(b10.6, "loo")
 b10.7 <- add_criterion(b10.7, "loo")
 ```
 
-If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo/loo.pdf) [@loo2020RM]. As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics) [@vehtariUsingLooPackage2020]. Each case in the data gets its own $k$ value and we like it when those $k$'s are low. The makers of the loo package get worried when those $k$'s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
+If you just ape the text and use the WAIC, everything appears fine. But holy smokes look at those nasty warning messages from the `loo()`! One of the frightening but ultimately handy things about working with the PSIS-LOO is that it requires we estimate a Pareto $k$ parameter, which you can learn all about in the `loo-package` section of the [loo reference manual](https://cran.r-project.org/package=loo/loo.pdf) [@loo2022RM]. As it turns out, the Pareto $k$ [can be used as a diagnostic tool](https://cran.r-project.org/package=loo/vignettes/loo2-example.html#plotting-pareto-k-diagnostics) [@vehtariUsingLooPackage2022]. Each case in the data gets its own $k$ value and we like it when those $k$'s are low. The makers of the loo package get worried when those $k$'s exceed 0.7 and as a result, `loo()` spits out a warning message when they do.
 
 First things first, if you explicitly open the loo package, you'll have access to some handy diagnostic functions.
 
@@ -591,7 +591,7 @@ Note our use of the `threshold` argument. Play around with different values to s
 l_b10.6$diagnostics
 ```
 
-The `pareto_k` values can be used to examine cases that are overly-influential on the model parameters, something like a Cook's $D_{i}$. See, for example [this discussion on stackoverflow.com](https://stackoverflow.com/questions/39578834/linear-model-diagnostics-for-bayesian-models-using-rstan/39595436) in which several members of the [Stan team](https://mc-stan.org/) weighed in. The issue is also discussed in @vehtariPracticalBayesianModel2017 and in [this presentation by Aki Vehtari](https://www.youtube.com/watch?v=FUROJM3u5HQ&feature=youtu.be&a=).
+The `pareto_k` values can be used to examine cases that are overly-influential on the model parameters, something like a Cook's $D_{i}$. See, for example [this discussion on stackoverflow.com](https://stackoverflow.com/questions/39578834/linear-model-diagnostics-for-bayesian-models-using-rstan/39595436) in which several members of the [Stan team](https://mc-stan.org/) weighed in. The issue is also discussed in @vehtariPracticalBayesianModel2017 and in [this presentation by Aki Vehtari](https://youtu.be/FUROJM3u5HQ).
 
 Anyway, the implication of all this is these values suggest model `b10.6` isn't a great fit for these data.
 
@@ -801,7 +801,7 @@ pairs(b10.9,
 
 > This empirical example is a famous one in statistical teaching. It is often used to illustrate a phenomenon known as **Simpson's paradox**. Like most paradoxes, there is no violation of logic, just of intuition. And since different people have different intuition, Simpson's paradox means different things to different people. The poor intuition being violated in this case is that a positive association in the entire population should also hold within each department. (p. 309, **emphasis** in the original)
 
-In my field of clinical psychology, Simpson's paradox is an important, if under-appreciated, phenomenon. If you're in the social sciences as well, I highly recommend spending more time thinking about it. To get you started, I blogged about it [here](https://solomonkurz.netlify.com/post/individuals-are-not-small-groups-i-simpson-s-paradox/) and @kievitSimpsonParadoxPsychological2013 wrote a great tutorial paper called [*Simpson's paradox in psychological science: a practical guide*](https://www.frontiersin.org/articles/10.3389/fpsyg.2013.00513/full).
+In my field of clinical psychology, Simpson's paradox is an important, if under-appreciated, phenomenon. If you're in the social sciences as well, I highly recommend spending more time thinking about it. To get you started, I blogged about it [here](https://solomonkurz.netlify.app/blog/2019-10-09-individuals-are-not-small-groups-i-simpson-s-paradox/) and @kievitSimpsonParadoxPsychological2013 wrote a great tutorial paper called [*Simpson's paradox in psychological science: a practical guide*](https://www.frontiersin.org/articles/10.3389/fpsyg.2013.00513/full).
 
 #### Overthinking: WAIC and aggregated binomial models.
 
@@ -1132,7 +1132,7 @@ w %>%
   theme(axis.ticks.y = element_blank())
 ```
 
-Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM], you'll find several weighting schemes.
+Here's our version of Figure 10.9. Recall, to do an "ensemble" posterior prediction in brms, one uses the `pp_average()` function. I know we were just lazy and focused on the WAIC. But let's play around, a bit. Here we'll weight the models based on the LOO by adding a `weights = "loo"` argument to the `pp_average()` function. If you check the corresponding section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM], you'll find several weighting schemes.
 
 ```{r, fig.width = 3.5, fig.height = 3.5}
 nd <-
@@ -1432,7 +1432,7 @@ Now keeping that in mind, recall how McElreath said that though we have $K$ cate
 
 > We also have to pick one of the event types to be the reference type. We'll use the first one. Instead of getting a linear model, that type is assigned a constant value. Then the other types get linear models that contain parameters relative to the reference type. (p. 324)
 
-In his model code (R code 10.57), you'll see he used zero as that constant value. As it turns out, it is common practice to set the score value for the reference category to zero. It's also a common practice to use the first event type as the reference category. Importantly, in his [-@Bürkner2020Parameterization] vignette, [*Parameterization of response distributions in brms*](https://cran.r-project.org/package=brms/vignettes/brms_families.html#ordinal-and-categorical-models), Bürkner clarified the brms default is to use the first response category as the reference and set it to a zero as well. Returning to our tibble, here are what the `p` values for each `income` level are if we set the `score` for `income == 1` to 0 and have each following `score` value increase by 0.5.
+In his model code (R code 10.57), you'll see he used zero as that constant value. As it turns out, it is common practice to set the score value for the reference category to zero. It's also a common practice to use the first event type as the reference category. Importantly, in his [-@Bürkner2022Parameterization] vignette, [*Parameterization of response distributions in brms*](https://cran.r-project.org/package=brms/vignettes/brms_families.html#ordinal-and-categorical-models), Bürkner clarified the brms default is to use the first response category as the reference and set it to a zero as well. Returning to our tibble, here are what the `p` values for each `income` level are if we set the `score` for `income == 1` to 0 and have each following `score` value increase by 0.5.
 
 ```{r}
 tibble(income = 1:3,
@@ -1692,7 +1692,7 @@ rbind(f[, , 1],
 
 ##### The non-linear syntax is the solution.
 
-One of the things that differentiates this ebook with my [-@kurzStatisticalRethinkingSecondEd2020] [translation](https://bookdown.org/content/4857/) of McElreath's [-@mcelreathStatisticalRethinkingBayesian2020] 2nd edition is the non-linear syntax. Virtually all of the models in this book can be handled with what you might call the conventional brms syntax. However, brms offers another very flexible way of specifying models with what Bürkner calls the non-linear syntax. For a detailed introduction, see Bürkner's [-@Bürkner2020Non_linear] vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html). McElreath has peppered his 2nd edition with models that require this non-linear syntax, which means readers of my translation of the 2nd edition get a lot of practice using the non-linear syntax. But for this first edition, McElreath's `m10.16` is the only model requiring the non-linear syntax. In this section, I'll provide a brief introduction.
+One of the things that differentiates this ebook with my [-@kurzStatisticalRethinkingSecondEd2023] [translation](https://bookdown.org/content/4857/) of McElreath's [-@mcelreathStatisticalRethinkingBayesian2020] 2nd edition is the non-linear syntax. Virtually all of the models in this book can be handled with what you might call the conventional brms syntax. However, brms offers another very flexible way of specifying models with what Bürkner calls the non-linear syntax. For a detailed introduction, see Bürkner's [-@Bürkner2022Non_linear] vignette, [*Estimating non-linear models with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html). McElreath has peppered his 2nd edition with models that require this non-linear syntax, which means readers of my translation of the 2nd edition get a lot of practice using the non-linear syntax. But for this first edition, McElreath's `m10.16` is the only model requiring the non-linear syntax. In this section, I'll provide a brief introduction.
 
 First, let's simulate the data from McElreath's R code 10.56 block again.
 
@@ -1888,7 +1888,7 @@ b10.pois <-
       file = "fits/b10.pois")
 ```
 
-Note, the `mvbind()` syntax made `b10.pois` a multivariate Poisson model. Starting with version 2.0.0, brms supports a variety of multivariate models, which you might learn al about in Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b10.pois`.
+Note, the `mvbind()` syntax made `b10.pois` a multivariate Poisson model. Starting with version 2.0.0, brms supports a variety of multivariate models, which you might learn al about in Bürkner's [-@Bürkner2022Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). Anyway, here are the implications of `b10.pois`.
 
 ```{r, fig.height = 2.5, fig.width = 6.5, warning = F}
 # extract the samples
