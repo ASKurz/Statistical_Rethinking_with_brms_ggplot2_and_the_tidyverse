@@ -320,15 +320,15 @@ print(b14.1_mi)
 
 Based on the `print()`/`summary()` information, the main parameters for the models are about the same. However, the plot deepens when we summarize the models with the `posterior::summarise_draws()` method.
 
-```{r}
+```{r, warning = F, message = F}
 library(posterior)
 
+# you can get similar output with `b14.1_mi$fit`
 summarise_draws(b14.1_se, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
 
 summarise_draws(b14.1_mi, mean, sd, ~quantile(.x, probs = c(.025, .975))) %>% 
   mutate_if(is.numeric, round, digits = 2)
-# you can get similar output with `b14.1_mi$fit`
 ```
 
 Again, from `b_Intercept` to `sigma`, the output is about the same. But model `b14.1_mi`, based on the `mi()` syntax, contained posterior summaries for all 50 of the criterion values. The `se()` method gave us similar model result, but no posterior summaries for the 50 criterion values. The rethinking package indexed those additional 50 as `div_est[i]`; with the `mi()` method, brms indexed them as `Yl[i]`--no big deal. So while both brms methods accommodated measurement error, the `mi()` method appears to be the brms analogue to what McElreath did with his model `m14.1` in the text. Thus, it's our `b14.1_mi` model that follows the form
