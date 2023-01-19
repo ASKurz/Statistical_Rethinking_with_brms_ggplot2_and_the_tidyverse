@@ -14,9 +14,9 @@ In this final chapter, there are no models for us to fit and no figures for use 
 
 OMG
 
-I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [RStudio](https://www.rstudio.com) environment. But within RStudio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything, including my scientific projects, this [bookdown](https://bookdown.org) project, and even my academic [webpage](https://solomonkurz.netlify.com) and [blog](https://solomonkurz.netlify.com/post/). Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
+I first started using R in the winter of 2015/2016. Right from the start, I learned how to code from within the [RStudio](https://www.rstudio.com) environment. But within RStudio I was using simple scripts. No longer. I now use [R Notebooks](http://rmarkdown.rstudio.com/r_notebooks.html) for just about everything, including my scientific projects, this [bookdown](https://bookdown.org) project, and even my academic [webpage](https://solomonkurz.netlify.com) and [blog](https://solomonkurz.netlify.app/blog/). Nathan Stephens wrote a nice blog on [*Why I love R Notebooks*](https://rviews.rstudio.com/2017/03/15/why-i-love-r-notebooks/). I agree. This has fundamentally changed my workflow as a scientist. I only wish I'd learned about this before starting my dissertation project. So it goes... 
 
-Do yourself a favor, adopt R Notebooks into your workflow. Do it today. If you prefer to learn with videos, here's a [nice intro](https://www.youtube.com/watch?v=TJmNvfhLCoI&t=195s) by [Kristine Yu](https://twitter.com/linguist_krisyu) and [another one](https://www.youtube.com/watch?v=GG4pgtfDpWY&t=324s) by [JJ Allaire](https://twitter.com/fly_upside_down). Try it out for like one afternoon and you’ll be hooked.
+Do yourself a favor, adopt R Notebooks into your workflow. Do it today. If you prefer to learn with videos, here's a [nice intro](https://youtu.be/TJmNvfhLCoI?t=195) by [Kristine Yu](https://www.krisyu.org/) and [another one](https://youtu.be/GG4pgtfDpWY?t=324) by [JJ Allaire](https://twitter.com/fly_upside_down). Try it out for like one afternoon and you’ll be hooked.
 
 ## Save your model fits
 
@@ -28,7 +28,7 @@ It hasn't been that way, for me.
 
 Most of my data have a complicated multilevel structure and often aren't very well behaved. It's normal for my models to take an hour or several to fit. Once you start measuring your model fit times in hours, you do not want to fit these things more than once. So, it's not enough to document my code in a nice R Notebook file. I need to save my `brm()` fit objects in external files.
 
-Consider this model. It's taken from Bürkner's [-@Bürkner2020Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about three minutes for my personal laptop to fit.
+Consider this model. It's taken from Bürkner's [-@Bürkner2022Multivariate] vignette, [*Estimating multivariate models with brms*](https://cran.r-project.org/package=brms/vignettes/brms_multivariate.html). It took about three minutes for my personal laptop to fit.
 
 ```{r, warning = F, message = F}
 library(brms)
@@ -138,7 +138,7 @@ And if you'd like to remind yourself what the name of that external file was or 
 b15.2$file
 ```
 
-Also, see [Gavin Simpson](https://twitter.com/ucfagls)'s blog post, [*A better way of saving and loading objects in R*](https://www.fromthebottomoftheheap.net/2012/04/01/saving-and-loading-r-objects/), for a discussion on the distinction between `.rda` and `.rds` files.
+Also, see [Gavin Simpson](https://fromthebottomoftheheap.net/)'s blog post, [*A better way of saving and loading objects in R*](https://www.fromthebottomoftheheap.net/2012/04/01/saving-and-loading-r-objects/), for a discussion on the distinction between `.rda` and `.rds` files.
 
 ## Build your models slowly
 
@@ -163,7 +163,7 @@ print(b15.0)
 
 If the chains look good and the summary statistics look like what I'd expect, I'm on good footing to keep building up to the model I really care about. The results from this model, for example, suggest that both criteria were standardized (i.e., intercepts at 0 and $\sigma$'s at 1). If that wasn't what I intended, I'd rather catch it here than spend three minutes fitting the more complicated `b15.1` model, the parameters for which are sufficiently complicated that I may have had trouble telling what scale the data were on.
 
-Note, this is not the same as $p$-hacking [@simmonsFalsepositivePsychologyUndisclosed2011] or wandering aimlessly down the garden of forking paths [@gelmanGardenForkingPaths2013]. We are not chasing the flashiest model to put in a paper. Rather, this is just [good pragmatic data science](https://github.com/stan-dev/stan/wiki/Stan-Best-Practices). If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
+Note, this is not the same as $p$-hacking [@simmonsFalsepositivePsychologyUndisclosed2011] or wandering aimlessly down the garden of forking paths [@gelmanGardenForkingPaths2013]. We are not chasing the flashiest model to put in a paper. Rather, this is just good pragmatic data science. If you start off with a theoretically-justified but complicated model and run into computation problems or produce odd-looking estimates, it won't be clear where things went awry. When you build up, step by step, it's easier to catch data cleaning failures, coding goofs and the like.
 
 So, when I'm working on a project, I fit one or a few simplified models before fitting my complicated model of theoretical interest. This is especially the case when I'm working with model types that are new to me or that I haven't worked with in a while. I document each step in my R Notebook files and I save the fit objects for each in external files. I have caught surprises this way. Hopefully this will help you catch your mistakes, too.
 
@@ -173,7 +173,7 @@ Relatedly, and perhaps even a precursor, you should always plot your data before
 
 ## Use the `0 + Intercept` syntax
 
-We covered this a little in the last couple chapters (e.g., [Section 12.4.3][Focus and multilevel prediction.]), but it's easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it's important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2020RM], we read:
+We covered this a little in the last couple chapters (e.g., [Section 12.4.3][Focus and multilevel prediction.]), but it's easy to miss. If your real-world model has predictors (i.e., isn’t an intercept-only model), it's important to keep track of how you have centered those predictors. When you specify a prior for a brms `Intercept` (i.e., an intercept resulting from the `y ~ x` or `y ~ 1 + x` style of syntax), that prior is applied under the presumption all the predictors are mean centered. In the *Population-level ('fixed') effects* subsection of the *`set_prior`* section of the [brms reference manual](https://cran.r-project.org/package=brms/brms.pdf) [@brms2022RM], we read:
 
 > Note that technically, this prior is set on an intercept that results when internally centering all population-level predictors around zero to improve sampling efficiency. On this centered intercept, specifying a prior is actually much easier and intuitive than on the original intercept, since the former represents the expected response value when all predictors are at their means. To treat the intercept as an ordinary population-level effect and avoid the centering parameterization, use `0 + intercept` on the right-hand side of the model formula. (p. 190)
 
@@ -212,7 +212,7 @@ I've also learned to break up my projects into multiple R Notebook files. If you
 
 Putting all that information in one R Notebook file would be overwhelming. Your workflow might well look different, but hopefully you get the idea. You don't want working files with thousands of lines of code.
 
-And mainly to keep Jenny Bryan from [setting my computer on fire](https://www.tidyverse.org/articles/2017/12/workflow-vs-script/), I'm also getting into the habit of organizing all these interconnected files with help from [RStudio Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), which you can learn even more about from [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html) in *R4DS* @grolemundDataScience2017.
+And mainly to keep Jenny Bryan from [setting my computer on fire](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/), I'm also getting into the habit of organizing all these interconnected files with help from [RStudio Projects](https://support.posit.co/hc/en-us/articles/200526207-Using-Projects), which you can learn even more about from [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html) in *R4DS* @grolemundDataScience2017.
 
 ## Code in public
 
@@ -221,10 +221,10 @@ If you would like to improve the code you write for data-wrangling, modeling, an
 You can do this on any number of mediums, such as
 
 * GitHub (e.g., [here](https://github.com/paul-buerkner/brms)),
-* personal blogs (e.g., [here](https://dilshersinghdhillon.netlify.com/post/multiple_comparison/)),
+* personal blogs (e.g., [here](https://dilshersinghdhillon.netlify.app/post/multiple_comparison/)),
 * the Open Science Framework (e.g., [here](https://osf.io/dpzcb/)),
 * online books (e.g., [here](https://learningstatisticswithr.com/)),
-* full-blown YouTube lectures (e.g., [here](https://www.youtube.com/watch?v=Vz71fglrgy0)),
+* full-blown YouTube lectures (e.g., [here](https://youtu.be/Vz71fglrgy0)),
 * or even in brief Twitter GIFs (e.g., [here](https://twitter.com/GuyProchilo/status/1207766623840604174)).
 
 I've found that just the possibility that others might look at my code makes it more likely I'll slow down, annotate, and try to use more consistent formatting. Hopefully it will benefit you, too.
@@ -258,11 +258,9 @@ If you're not on it, consider joining academic (see the related blog posts by [S
 
 [I'm on twitter](https://twitter.com/SolomonKurz), too.
 
-If you're on facebook and in the social sciences, you might check out the [Bayesian Inference in Psychology](https://www.facebook.com/groups/1249986448367985/) group. It hasn't been terribly active, as of late. But there are a lot of great folks to connect with, there.
-
 I've already mentioned Gelman's blog. [McElreath has one, too](https://elevanth.org/blog/). He posts infrequently, but it's usually pretty good when he does.
 
-Also, do check out the [Stan Forums](https://discourse.mc-stan.org). They have a special [brms tag](https://discourse.mc-stan.org/c/interfaces/brms) there, under which you can find all kinds of hot brms talk.
+Also, do check out the [Stan Forums](https://discourse.mc-stan.org). They have a special [brms tag](https://discourse.mc-stan.org/c/interfaces/brms/36) there, under which you can find all kinds of hot brms talk.
 
 But if you're new to the world of asking for help with your code online, you might acquaint yourself with the notion of a [minimally reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example). In short, a good minimally reproducible example helps others help you. If you fail to do this, prepare for some snark.
 
