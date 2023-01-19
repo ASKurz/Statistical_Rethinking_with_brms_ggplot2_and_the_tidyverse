@@ -663,7 +663,7 @@ p1 + p2 + p3 +
                   theme = theme(plot.background = element_rect(fill = "grey92")))
 ```
 
-If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [-@burknerOrdinalRegressionModels2019] [*Ordinal regression models in psychology: A tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my [-@kurzDoingBayesianData2020] sister project, [*Doing Bayesian data analysis in brms and the tidyverse*](https://bookdown.org/content/3686/), were we model ordinal data with a series of cumulative probit models.
+If you'd like to learn more about using cumulative probabilities to model ordinal data in brms, check out Bürkner and Vuorre's [-@burknerOrdinalRegressionModels2019] [*Ordinal regression models in psychology: A tutorial*](https://psyarxiv.com/x8swp/) and its [repository](https://osf.io/cu8jv/) on the Open Science Framework. Also check out [Chapter 23](https://bookdown.org/content/3686/ordinal-predicted-variable.html) of my [-@kurzDoingBayesianDataAnalysis2023] sister project, [*Doing Bayesian data analysis in brms and the tidyverse*](https://bookdown.org/content/3686/), were we model ordinal data with a series of cumulative probit models.
 
 ### Bonus: Figure 11.3 alternative.
 
@@ -755,7 +755,7 @@ p1 + p2 + p3 +
 
 Finally; now those are plots I can sell in a clinical psychology journal! We did the right thing and used a sophisticated statistical model to treat the data appropriately, but we summarized the results in a way a substantive audience might understand them in.
 
-If your new to making functions with ggplot2 components, check out [Chapter 18](https://ggplot2-book.org/programming.html) of Wickham's [-@wickhamGgplot2ElegantGraphics2016] [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/index.html). He'll walk you through all the steps.
+If your new to making functions with ggplot2 components, check out [Chapter 19](https://ggplot2-book.org/programming.html) of Wickham's [-@wickhamGgplot2ElegantGraphics2016] [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/index.html). He'll walk you through all the steps.
 
 #### Rethinking: Staring into the abyss.
 
@@ -769,7 +769,7 @@ If your new to making functions with ggplot2 components, check out [Chapter 18](
 
 #### Rethinking: Breaking the law.
 
-McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's [-@Bürkner2020Define] vignette, [*Define custom response distributions with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
+McElreath discussed how advances in computing have made it possible for working scientists to define their own data generating models. If you'd like to dive deeper into the topic, check out Bürkner's [-@Bürkner2022Define] vignette, [*Define custom response distributions with brms*](https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html). We'll even make use of it a little further down.
 
 ### Example: Zero-inflated Poisson.
 
@@ -968,7 +968,7 @@ However, the beta density is often defined in terms of $\alpha$ and $\beta$. If 
 
 $$\operatorname{Beta}(y | \alpha, \beta) = \frac{y^{\alpha - 1} (1 - y)^{\beta - 1}}{\text B (\alpha, \beta)},$$
 
-which you can verify in the [*Continuous Distributions on [0, 1]* section](https://mc-stan.org/docs/2_24/functions-reference/continuous-distributions-on-0-1.html) of the [Stan Functions Reference](https://mc-stan.org/docs/2_24/functions-reference/index.html) [@standevelopmentteamStanFunctionsReference2020]. In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the [*Mathematical Functions* chapter](https://mc-stan.org/docs/2_24/functions-reference/math-functions.html) of the Stan Functions Reference. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()` function.
+which you can verify in the [*Continuous Distributions on [0, 1]* section](https://mc-stan.org/docs/functions-reference/continuous-distributions-on-0-1.html) of the [Stan Functions Reference](https://mc-stan.org/docs/functions-reference/) [@standevelopmentteamStanFunctionsReference2022]. In the formula, $\text B$ stands for the Beta function, which computes a normalizing constant, which you can learn about in the [*Mathematical Functions* chapter](https://mc-stan.org/docs/functions-reference/math-functions.html) of the Stan Functions Reference. This is all important to be aware of because when we defined that beta prior for `zi` in the last model, it was using this parameterization. Also, if you look at the base R `dbeta()` function, you'll learn it takes two parameters, `shape1` and `shape2`. Those uncreatively-named parameters are the same $\alpha$ and $\beta$ from the density, above. They do not correspond to the `pbar` and `theta` parameters of McEreath's `rethinking::dbeta2()` function.
 
 McElreath had good reason for using `dbeta2()`. Beta's typical $\alpha$ and $\beta$ parameters aren't the most intuitive to use; the parameters in McElreath's `dbeta2()` are much nicer. But if you're willing to dive deeper, it turns out you can find the mean of a beta distribution in terms of $\alpha$ and $\beta$ like this
 
@@ -1055,7 +1055,7 @@ crossing(pbar  = c(.25, .5, .75),
   facet_grid(kappa ~ mu, labeller = label_parsed)
 ```
 
-If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [Chapter 6](https://bookdown.org/content/3686/inferring-a-binomial-probability-via-exact-mathematical-analysis.html) of my [-@kurzDoingBayesianData2020] ebook [translation of Kruschke's text into tidyverse and brms code](https://bookdown.org/content/3686/).
+If you'd like to see how to make a similar plot in terms of $\alpha$ and $\beta$, see [Chapter 6](https://bookdown.org/content/3686/inferring-a-binomial-probability-via-exact-mathematical-analysis.html) of my [-@kurzDoingBayesianDataAnalysis2023] ebook [translation of Kruschke's text into tidyverse and brms code](https://bookdown.org/content/3686/).
 
 But remember, we're not fitting a beta model. We're using the beta-binomial. "We're going to bind our linear model to $\bar p$, so that changes in predictor variables change the central tendency of the distribution" (p. 348). The statistical model we'll be fitting follows the form
 
@@ -1185,7 +1185,7 @@ lines %>%
   theme(plot.background = element_rect(fill = "grey92"))
 ```
 
-There are other ways to do this. For ideas, check out my blog post, [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.com/post/make-rotated-gaussians-kruschke-style/).
+There are other ways to do this. For ideas, check out my blog post, [*Make rotated Gaussians, Kruschke style*](https://solomonkurz.netlify.app/blog/2018-12-20-make-rotated-gaussians-kruschke-style/).
 
 Before we can do our variant of Figure 11.5.b, we'll need to define a few more custom functions. The `log_lik_beta_binomial2()` and `posterior_predict_beta_binomial2()` functions are required for `brms::predict()` to work with our `family = beta_binomial2` brmfit object. Similarly, `posterior_epred_beta_binomial2()` is required for `brms::fitted()` to work properly. And before all that, we need to throw in a line with the `expose_functions()` function. Just go with it.
 
@@ -1380,7 +1380,7 @@ It turns out there are several ways to parameterize the gamma distribution. When
 
 $$\operatorname{Gamma}(y | \mu, \alpha) = \frac{\left (\frac{\alpha}{\mu} \right )^\alpha}{\Gamma (\alpha)} y^{\alpha - 1} \exp \left (- \frac{\alpha y}{\mu} \right ),$$
 
-where $\mu$ is the mean, $\alpha$ is the shape, and $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you look through Bürkner's [-@Bürkner2020Parameterization] [*Parameterization of response distributions in brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#survival-models), you'll see this is the way the gamma likelihood is parameterized in brms. Now let's finally take a look at the model output for `b11.6`.
+where $\mu$ is the mean, $\alpha$ is the shape, and $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function). If you look through Bürkner's [-@Bürkner2022Parameterization] [*Parameterization of response distributions in brms* vignette](https://cran.r-project.org/web/packages/brms/vignettes/brms_families.html#survival-models), you'll see this is the way the gamma likelihood is parameterized in brms. Now let's finally take a look at the model output for `b11.6`.
 
 ```{r}
 print(b11.6)
