@@ -80,7 +80,7 @@ Now we're ready to make our version of the simple Figure 11.1 histogram of our p
 
 ```{r, fig.width = 2.5, fig.height = 3}
 p1 <-
-  ggplot(data = d, aes(x = response, fill = ..x..)) +
+  ggplot(data = d, aes(x = response, fill = after_stat(x))) +
   geom_histogram(binwidth = 1/4, linewidth = 0) +
   scale_x_continuous(breaks = 1:7) +
   scale_fill_gradient(low  = canva_pal("Green fields")(4)[4],
