@@ -6,7 +6,7 @@ I love McElreath's [*Statistical rethinking* text](http://xcelab.net/rm/statisti
 
 So, this project is an attempt to reexpress the code in McElreath's textbook. His models are re-fit in brms, plots are reproduced or reimagined with ggplot2, and the general data wrangling code now predominantly follows the tidyverse style.
 
-The current version, 1.2.0, is available in HTML only. However, version 1.0.1 is still available as a [PDF version](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/blob/master/recoding_Statistical_Rethinking_1.0.1_PDF_version.pdf). 
+The current version, 1.3.0, is available in HTML only. However, version 1.0.1 is still available as a [PDF version](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/blob/master/recoding_Statistical_Rethinking_1.0.1_PDF_version.pdf). 
 
 This repository contains the code and text behind the [*Statistical rethinking* with brms, ggplot2, and the tidyverse](https://bookdown.org/content/3890)
 project.
