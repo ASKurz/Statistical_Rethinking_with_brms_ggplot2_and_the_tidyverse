@@ -1389,7 +1389,7 @@ print(funding)
 
 Before we model the data, it might help to explore them in a dot plot.
 
-```{r, fig.width = 7.5, fig.height = 3}
+```{r, fig.width = 8, fig.height = 3}
 funding %>% 
   mutate(p = awards / applications) %>% 
   
@@ -1398,11 +1398,12 @@ funding %>%
              shape = 21, stroke = 1/5, color = "#FCF9F0") +
   scale_size_continuous(breaks = c(4, 40, 400), limits = c(1, NA)) +
   scale_fill_manual(values = c("#A65141", "#80A0C7")) +
-  scale_x_continuous("award probability", limits = c(0, .5)) +
+  scale_x_continuous("award probability", breaks = 0:5 / 5,
+                     limits = c(0, 1), expand = expansion(mult = 0.01)) +
   ylab(NULL) +
   theme_pearl_earring(axis.text.y = element_text(hjust = 0),
                       axis.ticks.y = element_blank()) +
-  theme(legend.position = c(.89, .5))
+  theme(legend.position = c(.9, .5))
 ```
 
 The overall award probabilities vary across disciplines, the number of applicants varies within disciplines by gender, and the direction and magnitudes of the award probabilities by gender vary across disciplines. Let's fit a few models to help make sense of all this.
