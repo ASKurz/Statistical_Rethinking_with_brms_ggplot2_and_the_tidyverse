@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>References | Statistical rethinking with brms, ggplot2, and the tidyverse</title>
   <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
-  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.28 and GitBook 2.6.7" />
 
   <meta property="og:title" content="References | Statistical rethinking with brms, ggplot2, and the tidyverse" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
   <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
@@ -24,7 +23,7 @@
 <meta name="author" content="A Solomon Kurz" />
 
 
-<meta name="date" content="2020-10-11" />
+<meta name="date" content="2023-01-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +32,8 @@
   
 <link rel="prev" href="horoscopes-insights.html"/>
 
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -49,22 +49,25 @@
 
 
 
-
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -84,13 +87,13 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -103,7 +106,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -115,6 +118,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 </head>
@@ -129,73 +155,89 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a>
+<ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a>
+<ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-0.9.0."><i class="fa fa-check"></i>Version 0.9.0.</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.0."><i class="fa fa-check"></i>Version 1.0.0.</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.1."><i class="fa fa-check"></i>Version 1.0.1.</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.1.0."><i class="fa fa-check"></i>Version 1.1.0.</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.2.0."><i class="fa fa-check"></i>Version 1.2.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.3.0."><i class="fa fa-check"></i>Version 1.3.0.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#is-this-material-obsolete"><i class="fa fa-check"></i>Is this material obsolete?</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#thank-yous-are-in-order"><i class="fa fa-check"></i>Thank-you’s are in order</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a><ul>
+<li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a>
+<ul>
 <li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#session-info"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html"><i class="fa fa-check"></i><b>2</b> Small Worlds and Large Worlds</a><ul>
-<li class="chapter" data-level="2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#the-garden-of-forking-data"><i class="fa fa-check"></i><b>2.1</b> The garden of forking data</a><ul>
+<li class="chapter" data-level="2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html"><i class="fa fa-check"></i><b>2</b> Small Worlds and Large Worlds</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#the-garden-of-forking-data"><i class="fa fa-check"></i><b>2.1</b> The garden of forking data</a>
+<ul>
 <li class="chapter" data-level="2.1.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#counting-possibilities."><i class="fa fa-check"></i><b>2.1.1</b> Counting possibilities.</a></li>
 <li class="chapter" data-level="2.1.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#using-prior-information."><i class="fa fa-check"></i><b>2.1.2</b> Using prior information.</a></li>
 <li class="chapter" data-level="2.1.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#from-counts-to-probability."><i class="fa fa-check"></i><b>2.1.3</b> From counts to probability.</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#building-a-model"><i class="fa fa-check"></i><b>2.2</b> Building a model</a><ul>
+<li class="chapter" data-level="2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#building-a-model"><i class="fa fa-check"></i><b>2.2</b> Building a model</a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#a-data-story."><i class="fa fa-check"></i><b>2.2.1</b> A data story.</a></li>
 <li class="chapter" data-level="2.2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#bayesian-updating."><i class="fa fa-check"></i><b>2.2.2</b> Bayesian updating.</a></li>
 <li class="chapter" data-level="2.2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#evaluate."><i class="fa fa-check"></i><b>2.2.3</b> Evaluate.</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#components-of-the-model"><i class="fa fa-check"></i><b>2.3</b> Components of the model</a><ul>
+<li class="chapter" data-level="2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#components-of-the-model"><i class="fa fa-check"></i><b>2.3</b> Components of the model</a>
+<ul>
 <li class="chapter" data-level="2.3.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#likelihood."><i class="fa fa-check"></i><b>2.3.1</b> Likelihood.</a></li>
 <li class="chapter" data-level="2.3.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#parameters."><i class="fa fa-check"></i><b>2.3.2</b> Parameters.</a></li>
 <li class="chapter" data-level="2.3.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#prior."><i class="fa fa-check"></i><b>2.3.3</b> Prior.</a></li>
 <li class="chapter" data-level="2.3.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#posterior."><i class="fa fa-check"></i><b>2.3.4</b> Posterior.</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#making-the-model-go"><i class="fa fa-check"></i><b>2.4</b> Making the model go</a><ul>
+<li class="chapter" data-level="2.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#making-the-model-go"><i class="fa fa-check"></i><b>2.4</b> Making the model go</a>
+<ul>
 <li class="chapter" data-level="2.4.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#grid-approximation."><i class="fa fa-check"></i><b>2.4.1</b> Grid approximation.</a></li>
 <li class="chapter" data-level="2.4.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#quadratic-approximation."><i class="fa fa-check"></i><b>2.4.2</b> Quadratic approximation.</a></li>
 <li class="chapter" data-level="2.4.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#markov-chain-monte-carlo."><i class="fa fa-check"></i><b>2.4.3</b> Markov chain Monte Carlo.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#session-info-1"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html"><i class="fa fa-check"></i><b>3</b> Sampling the Imaginary</a><ul>
+<li class="chapter" data-level="3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html"><i class="fa fa-check"></i><b>3</b> Sampling the Imaginary</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-from-a-grid-like-approximate-posterior"><i class="fa fa-check"></i><b>3.1</b> Sampling from a grid-like approximate posterior</a></li>
-<li class="chapter" data-level="3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-summarize"><i class="fa fa-check"></i><b>3.2</b> Sampling to summarize</a><ul>
+<li class="chapter" data-level="3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-summarize"><i class="fa fa-check"></i><b>3.2</b> Sampling to summarize</a>
+<ul>
 <li class="chapter" data-level="3.2.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-boundaries."><i class="fa fa-check"></i><b>3.2.1</b> Intervals of defined boundaries.</a></li>
 <li class="chapter" data-level="3.2.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-mass."><i class="fa fa-check"></i><b>3.2.2</b> Intervals of defined mass.</a></li>
 <li class="chapter" data-level="3.2.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#point-estimates."><i class="fa fa-check"></i><b>3.2.3</b> Point estimates.</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-simulate-prediction"><i class="fa fa-check"></i><b>3.3</b> Sampling to simulate prediction</a><ul>
+<li class="chapter" data-level="3.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-simulate-prediction"><i class="fa fa-check"></i><b>3.3</b> Sampling to simulate prediction</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#dummy-data."><i class="fa fa-check"></i><b>3.3.1</b> Dummy data.</a></li>
 <li class="chapter" data-level="3.3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#model-checking."><i class="fa fa-check"></i><b>3.3.2</b> Model checking.</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#summary-lets-practice-with-brms"><i class="fa fa-check"></i><b>3.4</b> <del>Summary</del> Let’s practice with brms</a></li>
 <li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#session-info-2"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>4</b> Linear Models</a><ul>
-<li class="chapter" data-level="4.1" data-path="linear-models.html"><a href="linear-models.html#why-normal-distributions-are-normal"><i class="fa fa-check"></i><b>4.1</b> Why normal distributions are normal</a><ul>
+<li class="chapter" data-level="4" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>4</b> Linear Models</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="linear-models.html"><a href="linear-models.html#why-normal-distributions-are-normal"><i class="fa fa-check"></i><b>4.1</b> Why normal distributions are normal</a>
+<ul>
 <li class="chapter" data-level="4.1.1" data-path="linear-models.html"><a href="linear-models.html#normal-by-addition."><i class="fa fa-check"></i><b>4.1.1</b> Normal by addition.</a></li>
 <li class="chapter" data-level="4.1.2" data-path="linear-models.html"><a href="linear-models.html#normal-by-multiplication."><i class="fa fa-check"></i><b>4.1.2</b> Normal by multiplication.</a></li>
 <li class="chapter" data-level="4.1.3" data-path="linear-models.html"><a href="linear-models.html#normal-by-log-multiplication."><i class="fa fa-check"></i><b>4.1.3</b> Normal by log-multiplication.</a></li>
 <li class="chapter" data-level="4.1.4" data-path="linear-models.html"><a href="linear-models.html#using-gaussian-distributions."><i class="fa fa-check"></i><b>4.1.4</b> Using Gaussian distributions.</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="linear-models.html"><a href="linear-models.html#a-language-for-describing-models"><i class="fa fa-check"></i><b>4.2</b> A language for describing models</a><ul>
+<li class="chapter" data-level="4.2" data-path="linear-models.html"><a href="linear-models.html#a-language-for-describing-models"><i class="fa fa-check"></i><b>4.2</b> A language for describing models</a>
+<ul>
 <li class="chapter" data-level="4.2.1" data-path="linear-models.html"><a href="linear-models.html#re-describing-the-globe-tossing-model."><i class="fa fa-check"></i><b>4.2.1</b> Re-describing the globe tossing model.</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="linear-models.html"><a href="linear-models.html#a-gaussian-model-of-height"><i class="fa fa-check"></i><b>4.3</b> A Gaussian model of height</a><ul>
+<li class="chapter" data-level="4.3" data-path="linear-models.html"><a href="linear-models.html#a-gaussian-model-of-height"><i class="fa fa-check"></i><b>4.3</b> A Gaussian model of height</a>
+<ul>
 <li class="chapter" data-level="4.3.1" data-path="linear-models.html"><a href="linear-models.html#the-data."><i class="fa fa-check"></i><b>4.3.1</b> The data.</a></li>
 <li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
 <li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
@@ -203,7 +245,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map</code></del> <code>brm()</code>.</a></li>
 <li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map</code></del> <code>brm()</code> fit.</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a><ul>
+<li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a>
+<ul>
 <li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy."><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy.</a></li>
 <li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
 <li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
@@ -211,19 +254,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.5" data-path="linear-models.html"><a href="linear-models.html#polynomial-regression"><i class="fa fa-check"></i><b>4.5</b> Polynomial regression</a></li>
 <li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#session-info-3"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html"><i class="fa fa-check"></i><b>5</b> Multivariate Linear Models</a><ul>
-<li class="chapter" data-level="5.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#spurious-associations"><i class="fa fa-check"></i><b>5.1</b> Spurious associations</a><ul>
+<li class="chapter" data-level="5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html"><i class="fa fa-check"></i><b>5</b> Multivariate Linear Models</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#spurious-associations"><i class="fa fa-check"></i><b>5.1</b> Spurious associations</a>
+<ul>
 <li class="chapter" data-level="5.1.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multivariate-notation."><i class="fa fa-check"></i><b>5.1.1</b> Multivariate notation.</a></li>
 <li class="chapter" data-level="5.1.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#fitting-the-model.-1"><i class="fa fa-check"></i><b>5.1.2</b> Fitting the model.</a></li>
 <li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
-<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a><ul>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a>
+<ul>
 <li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical variables</a><ul>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical variables</a>
+<ul>
 <li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
@@ -232,12 +279,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#ordinary-least-squares-and-lm"><i class="fa fa-check"></i><b>5.5</b> <del>Ordinary least squares and <code>lm()</code></del></a></li>
 <li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#session-info-4"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html"><i class="fa fa-check"></i><b>6</b> Overfitting, Regularization, and Information Criteria</a><ul>
-<li class="chapter" data-level="6.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#the-problem-with-parameters"><i class="fa fa-check"></i><b>6.1</b> The problem with parameters</a><ul>
+<li class="chapter" data-level="6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html"><i class="fa fa-check"></i><b>6</b> Overfitting, Regularization, and Information Criteria</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#the-problem-with-parameters"><i class="fa fa-check"></i><b>6.1</b> The problem with parameters</a>
+<ul>
 <li class="chapter" data-level="6.1.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#more-parameters-always-improve-fit."><i class="fa fa-check"></i><b>6.1.1</b> More parameters always improve fit.</a></li>
 <li class="chapter" data-level="6.1.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#too-few-parameters-hurts-too."><i class="fa fa-check"></i><b>6.1.2</b> Too few parameters hurts, too.</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-theory-and-model-performance"><i class="fa fa-check"></i><b>6.2</b> Information theory and model performance</a><ul>
+<li class="chapter" data-level="6.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-theory-and-model-performance"><i class="fa fa-check"></i><b>6.2</b> Information theory and model performance</a>
+<ul>
 <li class="chapter" data-level="6.2.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#firing-the-weatherperson."><i class="fa fa-check"></i><b>6.2.1</b> Firing the weatherperson.</a></li>
 <li class="chapter" data-level="6.2.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-and-uncertainty."><i class="fa fa-check"></i><b>6.2.2</b> Information and uncertainty.</a></li>
 <li class="chapter" data-level="6.2.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-entropy-to-accuracy."><i class="fa fa-check"></i><b>6.2.3</b> From entropy to accuracy.</a></li>
@@ -245,30 +295,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.2.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-deviance-to-out-of-sample."><i class="fa fa-check"></i><b>6.2.5</b> From deviance to out-of-sample.</a></li>
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#regularization"><i class="fa fa-check"></i><b>6.3</b> Regularization</a></li>
-<li class="chapter" data-level="6.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-criteria"><i class="fa fa-check"></i><b>6.4</b> Information criteria</a><ul>
+<li class="chapter" data-level="6.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-criteria"><i class="fa fa-check"></i><b>6.4</b> Information criteria</a>
+<ul>
 <li class="chapter" data-level="6.4.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic."><i class="fa fa-check"></i><b>6.4.1</b> DIC.</a></li>
 <li class="chapter" data-level="6.4.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#waic."><i class="fa fa-check"></i><b>6.4.2</b> WAIC.</a></li>
 <li class="chapter" data-level="6.4.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic-and-waic-as-estimates-of-deviance."><i class="fa fa-check"></i><b>6.4.3</b> DIC and WAIC as estimates of deviance.</a></li>
 </ul></li>
-<li class="chapter" data-level="6.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#using-information-criteria"><i class="fa fa-check"></i><b>6.5</b> Using information criteria</a><ul>
+<li class="chapter" data-level="6.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#using-information-criteria"><i class="fa fa-check"></i><b>6.5</b> Using information criteria</a>
+<ul>
 <li class="chapter" data-level="6.5.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-comparison."><i class="fa fa-check"></i><b>6.5.1</b> Model comparison.</a></li>
 <li class="chapter" data-level="6.5.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-averaging."><i class="fa fa-check"></i><b>6.5.2</b> Model averaging.</a></li>
 </ul></li>
 <li class="chapter" data-level="6.6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#summary-bonus-r2-talk"><i class="fa fa-check"></i><b>6.6</b> <del>Summary</del> Bonus: <span class="math inline">\(R^2\)</span> talk</a></li>
 <li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#session-info-5"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="interactions.html"><a href="interactions.html"><i class="fa fa-check"></i><b>7</b> Interactions</a><ul>
-<li class="chapter" data-level="7.1" data-path="interactions.html"><a href="interactions.html#building-an-interaction."><i class="fa fa-check"></i><b>7.1</b> Building an interaction.</a><ul>
+<li class="chapter" data-level="7" data-path="interactions.html"><a href="interactions.html"><i class="fa fa-check"></i><b>7</b> Interactions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="interactions.html"><a href="interactions.html#building-an-interaction."><i class="fa fa-check"></i><b>7.1</b> Building an interaction.</a>
+<ul>
 <li class="chapter" data-level="7.1.1" data-path="interactions.html"><a href="interactions.html#adding-a-dummy-variable-doesnt-work."><i class="fa fa-check"></i><b>7.1.1</b> Adding a dummy variable doesn’t work.</a></li>
 <li class="chapter" data-level="7.1.2" data-path="interactions.html"><a href="interactions.html#adding-a-linear-interaction-does-work."><i class="fa fa-check"></i><b>7.1.2</b> Adding a linear interaction does work.</a></li>
 <li class="chapter" data-level="7.1.3" data-path="interactions.html"><a href="interactions.html#plotting-the-interaction."><i class="fa fa-check"></i><b>7.1.3</b> Plotting the interaction.</a></li>
 <li class="chapter" data-level="7.1.4" data-path="interactions.html"><a href="interactions.html#interpreting-an-interaction-estimate."><i class="fa fa-check"></i><b>7.1.4</b> Interpreting an interaction estimate.</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="interactions.html"><a href="interactions.html#symmetry-of-the-linear-interaction."><i class="fa fa-check"></i><b>7.2</b> Symmetry of the linear interaction.</a><ul>
+<li class="chapter" data-level="7.2" data-path="interactions.html"><a href="interactions.html#symmetry-of-the-linear-interaction."><i class="fa fa-check"></i><b>7.2</b> Symmetry of the linear interaction.</a>
+<ul>
 <li class="chapter" data-level="7.2.1" data-path="interactions.html"><a href="interactions.html#buridans-interaction."><i class="fa fa-check"></i><b>7.2.1</b> Buridan’s interaction.</a></li>
 <li class="chapter" data-level="7.2.2" data-path="interactions.html"><a href="interactions.html#africa-depends-upon-ruggedness."><i class="fa fa-check"></i><b>7.2.2</b> Africa depends upon ruggedness.</a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="interactions.html"><a href="interactions.html#continuous-interactions"><i class="fa fa-check"></i><b>7.3</b> Continuous interactions</a><ul>
+<li class="chapter" data-level="7.3" data-path="interactions.html"><a href="interactions.html#continuous-interactions"><i class="fa fa-check"></i><b>7.3</b> Continuous interactions</a>
+<ul>
 <li class="chapter" data-level="7.3.1" data-path="interactions.html"><a href="interactions.html#the-data.-1"><i class="fa fa-check"></i><b>7.3.1</b> The data.</a></li>
 <li class="chapter" data-level="7.3.2" data-path="interactions.html"><a href="interactions.html#the-un-centered-models."><i class="fa fa-check"></i><b>7.3.2</b> The un-centered models.</a></li>
 <li class="chapter" data-level="7.3.3" data-path="interactions.html"><a href="interactions.html#center-and-re-estimate."><i class="fa fa-check"></i><b>7.3.3</b> Center and re-estimate.</a></li>
@@ -278,13 +334,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effectsconditional_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code>/<code>conditional_effects()</code></a></li>
 <li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
-<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a><ul>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a>
+<ul>
 <li class="chapter" data-level="8.2.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#gibbs-sampling."><i class="fa fa-check"></i><b>8.2.1</b> Gibbs sampling.</a></li>
 <li class="chapter" data-level="8.2.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#hamiltonian-monte-carlo."><i class="fa fa-check"></i><b>8.2.2</b> Hamiltonian Monte Carlo.</a></li>
 </ul></li>
-<li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a><ul>
+<li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a>
+<ul>
 <li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
 <li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
 <li class="chapter" data-level="8.3.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#sampling-again-in-parallel."><i class="fa fa-check"></i><b>8.3.3</b> Sampling again, in parallel.</a></li>
@@ -292,7 +351,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.3.5" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#using-the-samples."><i class="fa fa-check"></i><b>8.3.5</b> Using the samples.</a></li>
 <li class="chapter" data-level="8.3.6" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#checking-the-chain."><i class="fa fa-check"></i><b>8.3.6</b> Checking the chain.</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#care-and-feeding-of-your-markov-chain."><i class="fa fa-check"></i><b>8.4</b> Care and feeding of your Markov chain.</a><ul>
+<li class="chapter" data-level="8.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#care-and-feeding-of-your-markov-chain."><i class="fa fa-check"></i><b>8.4</b> Care and feeding of your Markov chain.</a>
+<ul>
 <li class="chapter" data-level="8.4.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-samples-do-you-need"><i class="fa fa-check"></i><b>8.4.1</b> How many samples do you need?</a></li>
 <li class="chapter" data-level="8.4.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-chains-do-you-need"><i class="fa fa-check"></i><b>8.4.2</b> How many chains do you need?</a></li>
 <li class="chapter" data-level="8.4.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#taming-a-wild-chain."><i class="fa fa-check"></i><b>8.4.3</b> Taming a wild chain.</a></li>
@@ -300,89 +360,108 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#session-info-7"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html"><i class="fa fa-check"></i><b>9</b> Big Entropy and the Generalized Linear Model</a><ul>
-<li class="chapter" data-level="9.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#maximum-entropy"><i class="fa fa-check"></i><b>9.1</b> Maximum entropy</a><ul>
+<li class="chapter" data-level="9" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html"><i class="fa fa-check"></i><b>9</b> Big Entropy and the Generalized Linear Model</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#maximum-entropy"><i class="fa fa-check"></i><b>9.1</b> Maximum entropy</a>
+<ul>
 <li class="chapter" data-level="9.1.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#gaussian."><i class="fa fa-check"></i><b>9.1.1</b> Gaussian.</a></li>
 <li class="chapter" data-level="9.1.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#binomial."><i class="fa fa-check"></i><b>9.1.2</b> Binomial.</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a><ul>
+<li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a>
+<ul>
 <li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
 <li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
 <li class="chapter" data-level="9.2.3" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#absolute-and-relative-differences."><i class="fa fa-check"></i><b>9.2.3</b> Absolute and relative differences.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="counting-and-classification.html"><a href="counting-and-classification.html"><i class="fa fa-check"></i><b>10</b> Counting and Classification</a><ul>
-<li class="chapter" data-level="10.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#binomial-regression"><i class="fa fa-check"></i><b>10.1</b> Binomial regression</a><ul>
+<li class="chapter" data-level="10" data-path="counting-and-classification.html"><a href="counting-and-classification.html"><i class="fa fa-check"></i><b>10</b> Counting and Classification</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#binomial-regression"><i class="fa fa-check"></i><b>10.1</b> Binomial regression</a>
+<ul>
 <li class="chapter" data-level="10.1.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#logistic-regression-prosocial-chimpanzees."><i class="fa fa-check"></i><b>10.1.1</b> Logistic regression: Prosocial chimpanzees.</a></li>
 <li class="chapter" data-level="10.1.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-chimpanzees-again-condensed."><i class="fa fa-check"></i><b>10.1.2</b> Aggregated binomial: Chimpanzees again, condensed.</a></li>
 <li class="chapter" data-level="10.1.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-graduate-school-admissions."><i class="fa fa-check"></i><b>10.1.3</b> Aggregated binomial: Graduate school admissions.</a></li>
 <li class="chapter" data-level="10.1.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#fitting-binomial-regressions-with-glm."><i class="fa fa-check"></i><b>10.1.4</b> Fitting binomial regressions with <code>glm()</code>.</a></li>
 </ul></li>
-<li class="chapter" data-level="10.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#poisson-regression"><i class="fa fa-check"></i><b>10.2</b> Poisson regression</a><ul>
+<li class="chapter" data-level="10.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#poisson-regression"><i class="fa fa-check"></i><b>10.2</b> Poisson regression</a>
+<ul>
 <li class="chapter" data-level="10.2.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-oceanic-tool-complexity."><i class="fa fa-check"></i><b>10.2.1</b> Example: Oceanic tool complexity.</a></li>
 <li class="chapter" data-level="10.2.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#mcmc-islands."><i class="fa fa-check"></i><b>10.2.2</b> MCMC islands.</a></li>
 <li class="chapter" data-level="10.2.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-exposure-and-the-offset."><i class="fa fa-check"></i><b>10.2.3</b> Example: Exposure and the offset.</a></li>
 </ul></li>
-<li class="chapter" data-level="10.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#other-count-regressions"><i class="fa fa-check"></i><b>10.3</b> Other count regressions</a><ul>
+<li class="chapter" data-level="10.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#other-count-regressions"><i class="fa fa-check"></i><b>10.3</b> Other count regressions</a>
+<ul>
 <li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
 <li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
 </ul></li>
 <li class="chapter" data-level="10.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#summary"><i class="fa fa-check"></i><b>10.4</b> Summary</a></li>
 <li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html"><i class="fa fa-check"></i><b>11</b> Monsters and Mixtures</a><ul>
-<li class="chapter" data-level="11.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#ordered-categorical-outcomes"><i class="fa fa-check"></i><b>11.1</b> Ordered categorical outcomes</a><ul>
+<li class="chapter" data-level="11" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html"><i class="fa fa-check"></i><b>11</b> Monsters and Mixtures</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#ordered-categorical-outcomes"><i class="fa fa-check"></i><b>11.1</b> Ordered categorical outcomes</a>
+<ul>
 <li class="chapter" data-level="11.1.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-moral-intuition."><i class="fa fa-check"></i><b>11.1.1</b> Example: Moral intuition.</a></li>
 <li class="chapter" data-level="11.1.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#describing-an-ordered-distribution-with-intercepts."><i class="fa fa-check"></i><b>11.1.2</b> Describing an ordered distribution with intercepts.</a></li>
 <li class="chapter" data-level="11.1.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#adding-predictor-variables."><i class="fa fa-check"></i><b>11.1.3</b> Adding predictor variables.</a></li>
 <li class="chapter" data-level="11.1.4" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#bonus-figure-11.3-alternative."><i class="fa fa-check"></i><b>11.1.4</b> Bonus: Figure 11.3 alternative.</a></li>
 </ul></li>
-<li class="chapter" data-level="11.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#zero-inflated-outcomes"><i class="fa fa-check"></i><b>11.2</b> Zero-inflated outcomes</a><ul>
+<li class="chapter" data-level="11.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#zero-inflated-outcomes"><i class="fa fa-check"></i><b>11.2</b> Zero-inflated outcomes</a>
+<ul>
 <li class="chapter" data-level="11.2.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-zero-inflated-poisson."><i class="fa fa-check"></i><b>11.2.1</b> Example: Zero-inflated Poisson.</a></li>
 </ul></li>
-<li class="chapter" data-level="11.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersed-outcomes"><i class="fa fa-check"></i><b>11.3</b> Over-dispersed outcomes</a><ul>
+<li class="chapter" data-level="11.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersed-outcomes"><i class="fa fa-check"></i><b>11.3</b> Over-dispersed outcomes</a>
+<ul>
 <li class="chapter" data-level="11.3.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#beta-binomial."><i class="fa fa-check"></i><b>11.3.1</b> Beta-binomial.</a></li>
 <li class="chapter" data-level="11.3.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#negative-binomial-or-gamma-poisson."><i class="fa fa-check"></i><b>11.3.2</b> Negative-binomial or gamma-Poisson.</a></li>
 <li class="chapter" data-level="11.3.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersion-entropy-and-information-criteria."><i class="fa fa-check"></i><b>11.3.3</b> Over-dispersion, entropy, and information criteria.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#session-info-10"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="multilevel-models.html"><a href="multilevel-models.html"><i class="fa fa-check"></i><b>12</b> Multilevel Models</a><ul>
+<li class="chapter" data-level="12" data-path="multilevel-models.html"><a href="multilevel-models.html"><i class="fa fa-check"></i><b>12</b> Multilevel Models</a>
+<ul>
 <li class="chapter" data-level="12.1" data-path="multilevel-models.html"><a href="multilevel-models.html#example-multilevel-tadpoles"><i class="fa fa-check"></i><b>12.1</b> Example: Multilevel tadpoles</a></li>
-<li class="chapter" data-level="12.2" data-path="multilevel-models.html"><a href="multilevel-models.html#varying-effects-and-the-underfittingoverfitting-trade-off"><i class="fa fa-check"></i><b>12.2</b> Varying effects and the underfitting/overfitting trade-off</a><ul>
+<li class="chapter" data-level="12.2" data-path="multilevel-models.html"><a href="multilevel-models.html#varying-effects-and-the-underfittingoverfitting-trade-off"><i class="fa fa-check"></i><b>12.2</b> Varying effects and the underfitting/overfitting trade-off</a>
+<ul>
 <li class="chapter" data-level="12.2.1" data-path="multilevel-models.html"><a href="multilevel-models.html#the-model.-1"><i class="fa fa-check"></i><b>12.2.1</b> The model.</a></li>
 <li class="chapter" data-level="12.2.2" data-path="multilevel-models.html"><a href="multilevel-models.html#assign-values-to-the-parameters."><i class="fa fa-check"></i><b>12.2.2</b> Assign values to the parameters.</a></li>
 <li class="chapter" data-level="12.2.3" data-path="multilevel-models.html"><a href="multilevel-models.html#sumulate-survivors."><i class="fa fa-check"></i><b>12.2.3</b> Sumulate survivors.</a></li>
 <li class="chapter" data-level="12.2.4" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-no-pooling-estimates."><i class="fa fa-check"></i><b>12.2.4</b> Compute the no-pooling estimates.</a></li>
 <li class="chapter" data-level="12.2.5" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-partial-pooling-estimates."><i class="fa fa-check"></i><b>12.2.5</b> Compute the partial-pooling estimates.</a></li>
 </ul></li>
-<li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a><ul>
+<li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a>
+<ul>
 <li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
 <li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
 <li class="chapter" data-level="12.3.3" data-path="multilevel-models.html"><a href="multilevel-models.html#even-more-clusters."><i class="fa fa-check"></i><b>12.3.3</b> Even more clusters.</a></li>
 </ul></li>
-<li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a><ul>
+<li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a>
+<ul>
 <li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
 <li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
 <li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
 </ul></li>
-<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a><ul>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a>
+<ul>
 <li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables."><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables.</a></li>
-<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsposterior_samples."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::posterior_samples()</code>.</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsas_draws_df."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::as_draws_df()</code>.</a></li>
 <li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef."><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code>.</a></li>
 <li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted."><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code>.</a></li>
 <li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws."><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code>.</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html"><i class="fa fa-check"></i><b>13</b> Adventures in Covariance</a><ul>
-<li class="chapter" data-level="13.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-slopes-by-construction"><i class="fa fa-check"></i><b>13.1</b> Varying slopes by construction</a><ul>
+<li class="chapter" data-level="13" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html"><i class="fa fa-check"></i><b>13</b> Adventures in Covariance</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-slopes-by-construction"><i class="fa fa-check"></i><b>13.1</b> Varying slopes by construction</a>
+<ul>
 <li class="chapter" data-level="13.1.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-the-population."><i class="fa fa-check"></i><b>13.1.1</b> Simulate the population.</a></li>
 <li class="chapter" data-level="13.1.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-observations."><i class="fa fa-check"></i><b>13.1.2</b> Simulate observations.</a></li>
 <li class="chapter" data-level="13.1.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#the-varying-slopes-model."><i class="fa fa-check"></i><b>13.1.3</b> The varying slopes model.</a></li>
 </ul></li>
-<li class="chapter" data-level="13.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-admission-decisions-and-gender"><i class="fa fa-check"></i><b>13.2</b> Example: Admission decisions and gender</a><ul>
+<li class="chapter" data-level="13.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-admission-decisions-and-gender"><i class="fa fa-check"></i><b>13.2</b> Example: Admission decisions and gender</a>
+<ul>
 <li class="chapter" data-level="13.2.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-intercepts."><i class="fa fa-check"></i><b>13.2.1</b> Varying intercepts.</a></li>
 <li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
 <li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
@@ -390,19 +469,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13.2.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#more-slopes."><i class="fa fa-check"></i><b>13.2.5</b> More slopes.</a></li>
 </ul></li>
 <li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
-<li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a><ul>
+<li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a>
+<ul>
 <li class="chapter" data-level="13.4.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-spatial-autocorrelation-in-oceanic-tools."><i class="fa fa-check"></i><b>13.4.1</b> Example: Spatial autocorrelation in Oceanic tools.</a></li>
 <li class="chapter" data-level="13.4.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#other-kinds-of-distance."><i class="fa fa-check"></i><b>13.4.2</b> Other kinds of “distance”.</a></li>
 </ul></li>
-<li class="chapter" data-level="13.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#summary-bonus-another-berkley-admissions-data-like-example."><i class="fa fa-check"></i><b>13.5</b> <del>Summary</del> Bonus: Another Berkley-admissions-data-like example.</a></li>
+<li class="chapter" data-level="13.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#summary-bonus-another-berkeley-admissions-data-like-example."><i class="fa fa-check"></i><b>13.5</b> <del>Summary</del> Bonus: Another Berkeley-admissions-data-like example.</a></li>
 <li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#session-info-12"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html"><i class="fa fa-check"></i><b>14</b> Missing Data and Other Opportunities</a><ul>
-<li class="chapter" data-level="14.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#measurement-error"><i class="fa fa-check"></i><b>14.1</b> Measurement error</a><ul>
+<li class="chapter" data-level="14" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html"><i class="fa fa-check"></i><b>14</b> Missing Data and Other Opportunities</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#measurement-error"><i class="fa fa-check"></i><b>14.1</b> Measurement error</a>
+<ul>
 <li class="chapter" data-level="14.1.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-the-outcome."><i class="fa fa-check"></i><b>14.1.1</b> Error on the outcome.</a></li>
 <li class="chapter" data-level="14.1.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-both-outcome-and-predictor."><i class="fa fa-check"></i><b>14.1.2</b> Error on both outcome and predictor.</a></li>
 </ul></li>
-<li class="chapter" data-level="14.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#missing-data"><i class="fa fa-check"></i><b>14.2</b> Missing data</a><ul>
+<li class="chapter" data-level="14.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#missing-data"><i class="fa fa-check"></i><b>14.2</b> Missing data</a>
+<ul>
 <li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
 <li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
 <li class="chapter" data-level="14.2.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#bonus-mi-can-replace-me"><i class="fa fa-check"></i><b>14.2.3</b> Bonus: <code>mi()</code> can replace <code>me()</code></a></li>
@@ -410,7 +493,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
 <li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html"><i class="fa fa-check"></i><b>15</b> <del>Horoscopes</del> Insights</a><ul>
+<li class="chapter" data-level="15" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html"><i class="fa fa-check"></i><b>15</b> <del>Horoscopes</del> Insights</a>
+<ul>
 <li class="chapter" data-level="15.1" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-r-notebooks"><i class="fa fa-check"></i><b>15.1</b> Use R Notebooks</a></li>
 <li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
 <li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
@@ -443,405 +527,420 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="references" class="section level1 unnumbered hasAnchor">
+<h1>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 
-<div id="refs" class="references">
-<div>
-<p>Agresti, A. (2015). <em>Foundations of linear and generalized linear models</em>. John Wiley &amp; Sons. <a href="https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034">https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034</a></p>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div class="csl-entry">
+Agresti, A. (2015). <em>Foundations of linear and generalized linear models</em>. <span>John Wiley &amp; Sons</span>. <a href="https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034">https://www.wiley.com/en-us/Foundations+of+Linear+and+Generalized+Linear+Models-p-9781118730034</a>
 </div>
-<div>
-<p>Arnold, J. B. (2019). <em>ggthemes: Extra themes, scales and geoms for ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggthemes">https://CRAN.R-project.org/package=ggthemes</a></p>
+<div class="csl-entry">
+Arnold, J. B. (2021). <em><span class="nocase">ggthemes</span>: <span>Extra</span> themes, scales and geoms for <span class="nocase">’ggplot2’</span></em>. <a href="https://CRAN.R-project.org/package=ggthemes">https://CRAN.R-project.org/package=ggthemes</a>
 </div>
-<div>
-<p>Attali, D., &amp; Baker, C. (2019). <em>ggExtra: Add marginal histograms to ’ggplot2’, and more ’ggplot2’ enhancements</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggExtra">https://CRAN.R-project.org/package=ggExtra</a></p>
+<div class="csl-entry">
+Attali, D., &amp; Baker, C. (2022).<em><span class="nocase"> ggExtra</span>: <span>Add</span> marginal histograms to ’<span class="nocase">ggplot2</span>’, and more ’<span class="nocase">ggplot2</span>’ enhancements</em>. <a href="https://CRAN.R-project.org/package=ggExtra">https://CRAN.R-project.org/package=ggExtra</a>
 </div>
-<div>
-<p>Barr, D. J., Levy, R., Scheepers, C., &amp; Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. <em>Journal of Memory and Language</em>, <em>68</em>(3), 255–278. <a href="https://doi.org/10.1016/j.jml.2012.11.001">https://doi.org/10.1016/j.jml.2012.11.001</a></p>
+<div class="csl-entry">
+Barr, D. J., Levy, R., Scheepers, C., &amp; Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: <span>Keep</span> it maximal. <em>Journal of Memory and Language</em>, <em>68</em>(3), 255–278. <a href="https://doi.org/10.1016/j.jml.2012.11.001">https://doi.org/10.1016/j.jml.2012.11.001</a>
 </div>
-<div>
-<p>Bates, D., Maechler, M., Bolker, B., &amp; Walker, S. (2020). <em>lme4: Linear mixed-effects models using Eigen’ and S4</em>. <a href="https://CRAN.R-project.org/package=lme4">https://CRAN.R-project.org/package=lme4</a></p>
+<div class="csl-entry">
+Bates, D., Mächler, M., Bolker, B., &amp; Walker, S. (2015). Fitting linear mixed-effects models using <span class="nocase">lme4</span>. <em>Journal of Statistical Software</em>, <em>67</em>(1), 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>
 </div>
-<div>
-<p>Bates, D., Mächler, M., Bolker, B., &amp; Walker, S. (2015). Fitting linear mixed-effects models using lme4. <em>Journal of Statistical Software</em>, <em>67</em>(1), 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a></p>
+<div class="csl-entry">
+Bates, D., Maechler, M., Bolker, B., &amp; Steven Walker. (2022). <em><span class="nocase">lme4</span>: <span>Linear</span> mixed-effects models using <span>Eigen</span>’ and <span>S4</span></em>. <a href="https://CRAN.R-project.org/package=lme4">https://CRAN.R-project.org/package=lme4</a>
 </div>
-<div>
-<p>Betancourt, M. (2018). <em>Bayes sparse regression</em>. <a href="https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html">https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html</a></p>
+<div class="csl-entry">
+Betancourt, M. (2018). <em>Bayes sparse regression</em>. <a href="https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html">https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html</a>
 </div>
-<div>
-<p><em>Better BibTeX for zotero :: Better BibTeX for zotero</em>. (2020). <a href="https://retorque.re/zotero-better-bibtex/">https://retorque.re/zotero-better-bibtex/</a></p>
+<div class="csl-entry">
+<em><span>BibTeX</span></em>. (2020). <a href="http://www.bibtex.org/">http://www.bibtex.org/</a>
 </div>
-<div>
-<p><em>BibTeX</em>. (2020). <a href="http://www.bibtex.org/">http://www.bibtex.org/</a></p>
+<div class="csl-entry">
+Bickel, P. J., Hammel, E. A., &amp; O’Connell, J. W. (1975). Sex bias in graduate admissions: <span>Data</span> from <span>Berkeley</span>. <em>Science</em>, <em>187</em>(4175), 398–404. <a href="https://doi.org/10.1126/science.187.4175.398">https://doi.org/10.1126/science.187.4175.398</a>
 </div>
-<div>
-<p>Bickel, P. J., Hammel, E. A., &amp; O’Connell, J. W. (1975). Sex bias in graduate admissions: Data from Berkeley. <em>Science</em>, <em>187</em>(4175), 398–404. <a href="https://doi.org/10.1126/science.187.4175.398">https://doi.org/10.1126/science.187.4175.398</a></p>
+<div class="csl-entry">
+Borges, JL. (1941). El jardin de senderos que se bifurcan. <span>Buenos Aires</span>: <span>Sur</span>. <span>Translated</span> by <span>D</span>. <span>A</span>. <span>Yates</span> (1964). In <em>Labyrinths: <span>Selected Stories</span> &amp; <span>Other Writings</span></em> (pp. 19–29). <span>New Directions</span>.
 </div>
-<div>
-<p>Borges, JL. (1941). El jardin de senderos que se bifurcan. Buenos Aires: Sur. Translated by D. A. Yates (1964). In <em>Labyrinths: Selected Stories &amp; Other Writings</em> (pp. 19–29). New Directions.</p>
+<div class="csl-entry">
+Brilleman, S., Crowther, M., Moreno-Betancur, M., Buros Novik, J., &amp; Wolfe, R. (2018). <em>Joint longitudinal and time-to-event models via <span>Stan</span>.</em> <a href="https://github.com/stan-dev/stancon_talks/">https://github.com/stan-dev/stancon_talks/</a>
 </div>
-<div>
-<p>Brilleman, S., Crowther, M., Moreno-Betancur, M., Buros Novik, J., &amp; Wolfe, R. (2018). <em>Joint longitudinal and time-to-event models via Stan.</em> <a href="https://github.com/stan-dev/stancon_talks/">https://github.com/stan-dev/stancon_talks/</a></p>
+<div class="csl-entry">
+Bryan, J., the STAT 545 TAs, &amp; Hester, J. (2020). <em>Happy <span>Git</span> and <span>GitHub</span> for the <span class="nocase">useR</span></em>. <a href="https://happygitwithr.com">https://happygitwithr.com</a>
 </div>
-<div>
-<p>Bryan, J., the STAT 545 TAs, &amp; Hester, J. (2020). <em>Happy Git and GitHub for the useR</em>. <a href="https://happygitwithr.com">https://happygitwithr.com</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022a). <em>Estimating distributional models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html">https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2017). brms: An R package for Bayesian multilevel models using Stan. <em>Journal of Statistical Software</em>, <em>80</em>(1), 1–28. <a href="https://doi.org/10.18637/jss.v080.i01">https://doi.org/10.18637/jss.v080.i01</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022b). <em>Define custom response distributions with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html">https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2018). Advanced Bayesian multilevel modeling with the R package brms. <em>The R Journal</em>, <em>10</em>(1), 395–411. <a href="https://doi.org/10.32614/RJ-2018-017">https://doi.org/10.32614/RJ-2018-017</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022c). <em>Estimating multivariate models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html">https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020a). <em>brms: Bayesian regression models using ’Stan’</em>. <a href="https://CRAN.R-project.org/package=brms">https://CRAN.R-project.org/package=brms</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022d). <em>Estimating non-linear models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html">https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020b). <em>brms reference manual, Version 2.13.5</em>. <a href="https://CRAN.R-project.org/package=brms/brms.pdf">https://CRAN.R-project.org/package=brms/brms.pdf</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022e). <em>Estimating phylogenetic multilevel models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html">https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020c). <em>Handle missing values with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html">https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022f). <em>Handle missing values with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html">https://CRAN.R-project.org/package=brms/vignettes/brms_missings.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020d). <em>Parameterization of response distributions in brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_families.html">https://CRAN.R-project.org/package=brms/vignettes/brms_families.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022g). <em>Parameterization of response distributions in brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_families.html">https://CRAN.R-project.org/package=brms/vignettes/brms_families.html</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020e). <em>Define custom response distributions with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html">https://CRAN.R-project.org/package=brms/vignettes/brms_customfamilies.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2017). <span class="nocase">brms</span>: <span>An R</span> package for <span>Bayesian</span> multilevel models using <span>Stan</span>. <em>Journal of Statistical Software</em>, <em>80</em>(1), 1–28. <a href="https://doi.org/10.18637/jss.v080.i01">https://doi.org/10.18637/jss.v080.i01</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020f). <em>Estimating distributional models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html">https://CRAN.R-project.org/package=brms/vignettes/brms_distreg.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2018). Advanced <span>Bayesian</span> multilevel modeling with the <span>R</span> package brms. <em>The R Journal</em>, <em>10</em>(1), 395–411. <a href="https://doi.org/10.32614/RJ-2018-017">https://doi.org/10.32614/RJ-2018-017</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020g). <em>Estimating multivariate models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html">https://CRAN.R-project.org/package=brms/vignettes/brms_multivariate.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022h). <em><span class="nocase">brms</span> reference manual, <span>Version</span> 2.18.0</em>. <a href="https://CRAN.R-project.org/package=brms/brms.pdf">https://CRAN.R-project.org/package=brms/brms.pdf</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020h). <em>Estimating non-linear models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html">https://CRAN.R-project.org/package=brms/vignettes/brms_nonlinear.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C. (2022i). <em><span class="nocase">brms</span>: <span>Bayesian</span> regression models using ’<span>Stan</span>’</em>. <a href="https://CRAN.R-project.org/package=brms">https://CRAN.R-project.org/package=brms</a>
 </div>
-<div>
-<p>Bürkner, P.-C. (2020i). <em>Estimating phylogenetic multilevel models with brms</em>. <a href="https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html">https://CRAN.R-project.org/package=brms/vignettes/brms_phylogenetics.html</a></p>
+<div class="csl-entry">
+Bürkner, P.-C., Gabry, J., Kay, M., &amp; Vehtari, A. (2022). <em><span class="nocase">posterior</span>: <span>Tools</span> for working with posterior distributions</em>. <a href="https://CRAN.R-project.org/package=posterior">https://CRAN.R-project.org/package=posterior</a>
 </div>
-<div>
-<p>Bürkner, P.-C., Gabry, J., Kay, M., &amp; Vehtari, A. (2020). <em>posterior: Tools for working with posterior distributions</em>. <a href="https://mc-stan.org/posterior">https://mc-stan.org/posterior</a></p>
+<div class="csl-entry">
+Bürkner, P.-C., &amp; Vuorre, M. (2019). Ordinal regression models in psychology: <span>A</span> tutorial. <em>Advances in Methods and Practices in Psychological Science</em>, <em>2</em>(1), 77–101. <a href="https://doi.org/10.1177/2515245918823199">https://doi.org/10.1177/2515245918823199</a>
 </div>
-<div>
-<p>Bürkner, P.-C., &amp; Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. <em>Advances in Methods and Practices in Psychological Science</em>, <em>2</em>(1), 77–101. <a href="https://doi.org/10.1177/2515245918823199">https://doi.org/10.1177/2515245918823199</a></p>
+<div class="csl-entry">
+Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., Brubaker, M., Guo, J., Li, P., &amp; Riddell, A. (2017). Stan: <span>A</span> probabilistic programming language. <em>Journal of Statistical Software</em>, <em>76</em>(1). <a href="https://doi.org/10.18637/jss.v076.i01">https://doi.org/10.18637/jss.v076.i01</a>
 </div>
-<div>
-<p>Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., Brubaker, M., Guo, J., Li, P., &amp; Riddell, A. (2017). Stan: A probabilistic programming language. <em>Journal of Statistical Software</em>, <em>76</em>(1). <a href="https://doi.org/10.18637/jss.v076.i01">https://doi.org/10.18637/jss.v076.i01</a></p>
+<div class="csl-entry">
+Carvalho, C. M., Polson, N. G., &amp; Scott, J. G. (2009). Handling sparsity via the horseshoe. <em>Artificial Intelligence and Statistics</em>, 73–80. <a href="http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf">http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf</a>
 </div>
-<div>
-<p>Carvalho, C. M., Polson, N. G., &amp; Scott, J. G. (2009). Handling sparsity via the horseshoe. <em>Artificial Intelligence and Statistics</em>, 73–80. <a href="http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf">http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf</a></p>
+<div class="csl-entry">
+Casella, G., &amp; George, E. I. (1992). Explaining the <span>Gibbs</span> sampler. <em>The American Statistician</em>, <em>46</em>(3), 167–174. <a href="https://doi.org/10.1080/00031305.1992.10475878">https://doi.org/10.1080/00031305.1992.10475878</a>
 </div>
-<div>
-<p>Casella, G., &amp; George, E. I. (1992). Explaining the Gibbs sampler. <em>The American Statistician</em>, <em>46</em>(3), 167–174. <a href="https://doi.org/10.1080/00031305.1992.10475878">https://doi.org/10.1080/00031305.1992.10475878</a></p>
+<div class="csl-entry">
+Clarke, E., &amp; Sherrill-Mix, S. (2017). <em><span class="nocase">ggbeeswarm</span>: <span>Categorical</span> scatter (violin point) plots</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggbeeswarm">https://CRAN.R-project.org/package=ggbeeswarm</a>
 </div>
-<div>
-<p>Clarke, E., &amp; Sherrill-Mix, S. (2017). <em>ggbeeswarm: Categorical scatter (violin point) plots</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggbeeswarm">https://CRAN.R-project.org/package=ggbeeswarm</a></p>
+<div class="csl-entry">
+Cushman, F., Young, L., &amp; Hauser, M. (2006). The role of conscious reasoning and intuition in moral judgment: <span>Testing</span> three principles of harm. <em>Psychological Science</em>, <em>17</em>(12), 1082–1089. <a href="https://doi.org/10.1111/j.1467-9280.2006.01834.x">https://doi.org/10.1111/j.1467-9280.2006.01834.x</a>
 </div>
-<div>
-<p>Cushman, F., Young, L., &amp; Hauser, M. (2006). The role of conscious reasoning and intuition in moral judgment: Testing three principles of harm. <em>Psychological Science</em>, <em>17</em>(12), 1082–1089. <a href="https://doi.org/10.1111/j.1467-9280.2006.01834.x">https://doi.org/10.1111/j.1467-9280.2006.01834.x</a></p>
+<div class="csl-entry">
+Efron, B., &amp; Morris, C. (1977). Stein’s paradox in statistics. <em>Scientific American</em>, <em>236</em>(5), 119–127. <a href="https://doi.org/10.1038/scientificamerican0577-119">https://doi.org/10.1038/scientificamerican0577-119</a>
 </div>
-<div>
-<p>Efron, B., &amp; Morris, C. (1977). Stein’s paradox in statistics. <em>Scientific American</em>, <em>236</em>(5), 119–127. <a href="https://doi.org/10.1038/scientificamerican0577-119">https://doi.org/10.1038/scientificamerican0577-119</a></p>
+<div class="csl-entry">
+Enders, C. K. (2022). <em>Applied missing data analysis</em> (Second Edition). <span>Guilford Press</span>. <a href="http://www.appliedmissingdata.com/">http://www.appliedmissingdata.com/</a>
 </div>
-<div>
-<p>Enders, C. K. (2010). <em>Applied missing data analysis</em>. Guilford press. <a href="http://www.appliedmissingdata.com/">http://www.appliedmissingdata.com/</a></p>
+<div class="csl-entry">
+Fernández i Marín, X. (2016). <span class="nocase">ggmcmc</span>: <span>Analysis</span> of <span>MCMC</span> samples and <span>Bayesian</span> inference. <em>Journal of Statistical Software</em>, <em>70</em>(9), 1–20. <a href="https://doi.org/10.18637/jss.v070.i09">https://doi.org/10.18637/jss.v070.i09</a>
 </div>
-<div>
-<p>Fernández i Marín, X. (2016). ggmcmc: Analysis of MCMC samples and Bayesian inference. <em>Journal of Statistical Software</em>, <em>70</em>(9), 1–20. <a href="https://doi.org/10.18637/jss.v070.i09">https://doi.org/10.18637/jss.v070.i09</a></p>
+<div class="csl-entry">
+Fernández i Marín, X. (2021). <em><span class="nocase">ggmcmc</span>: <span>Tools</span> for analyzing <span>MCMC</span> simulations from <span>Bayesian</span> inference</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggmcmc">https://CRAN.R-project.org/package=ggmcmc</a>
 </div>
-<div>
-<p>Fernández i Marín, X. (2020). <em>ggmcmc: Tools for analyzing MCMC simulations from Bayesian inference</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggmcmc">https://CRAN.R-project.org/package=ggmcmc</a></p>
+<div class="csl-entry">
+Gabry, J. (2022a). <em><span class="nocase">loo</span> reference manual, <span>Version</span> 2.5.1</em>. <a href="https://CRAN.R-project.org/package=loo/loo.pdf">https://CRAN.R-project.org/package=loo/loo.pdf</a>
 </div>
-<div>
-<p>Gabry, J. (2020a). <em>loo reference manual, Version 2.3.1</em>. <a href="https://CRAN.R-project.org/package=loo/loo.pdf">https://CRAN.R-project.org/package=loo/loo.pdf</a></p>
+<div class="csl-entry">
+Gabry, J. (2022b). <em>Plotting <span>MCMC</span> draws using the bayesplot package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a>
 </div>
-<div>
-<p>Gabry, J. (2020b). <em>Plotting MCMC draws using the bayesplot package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a></p>
+<div class="csl-entry">
+Gabry, J., &amp; Goodrich, B. (2022). <em><span class="nocase">rstanarm</span>: <span>Bayesian</span> applied regression modeling via stan</em> [Manual]. <a href="https://CRAN.R-project.org/package=rstanarm">https://CRAN.R-project.org/package=rstanarm</a>
 </div>
-<div>
-<p>Gabry, J., &amp; Goodrich, B. (2020). <em>rstanarm: Bayesian applied regression modeling via stan</em> [Manual]. <a href="https://CRAN.R-project.org/package=rstanarm">https://CRAN.R-project.org/package=rstanarm</a></p>
+<div class="csl-entry">
+Gabry, J., &amp; Mahr, T. (2022). <em><span class="nocase">bayesplot</span>: <span>Plotting</span> for <span>Bayesian</span> models</em>. <a href="https://CRAN.R-project.org/package=bayesplot">https://CRAN.R-project.org/package=bayesplot</a>
 </div>
-<div>
-<p>Gabry, J., &amp; Mahr, T. (2019). <em>bayesplot: Plotting for Bayesian models</em>. <a href="https://CRAN.R-project.org/package=bayesplot">https://CRAN.R-project.org/package=bayesplot</a></p>
+<div class="csl-entry">
+Gabry, J., &amp; Modrák, M. (2022). <em>Visual <span>MCMC</span> diagnostics using the <span class="nocase">bayesplot</span> package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a>
 </div>
-<div>
-<p>Gabry, J., &amp; Modrák, M. (2020). <em>Visual MCMC diagnostics using the bayesplot package</em>. <a href="https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html">https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html</a></p>
+<div class="csl-entry">
+Gabry, J., Simpson, D., Vehtari, A., Betancourt, M., &amp; Gelman, A. (2019). Visualization in <span>Bayesian</span> workflow. <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em>, <em>182</em>(2), 389–402. <a href="https://doi.org/10.1111/rssa.12378">https://doi.org/10.1111/rssa.12378</a>
 </div>
-<div>
-<p>Gabry, J., Simpson, D., Vehtari, A., Betancourt, M., &amp; Gelman, A. (2019). Visualization in Bayesian workflow. <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em>, <em>182</em>(2), 389–402. <a href="https://doi.org/10.1111/rssa.12378">https://doi.org/10.1111/rssa.12378</a></p>
+<div class="csl-entry">
+Garnier, S. (2021). <em><span class="nocase">viridis</span>: <span>Default</span> color maps from ’matplotlib’</em> [Manual]. <a href="https://CRAN.R-project.org/package=viridis">https://CRAN.R-project.org/package=viridis</a>
 </div>
-<div>
-<p>Garnier, S. (2018). <em>viridis: Default color maps from ’matplotlib’</em> [Manual]. <a href="https://CRAN.R-project.org/package=viridis">https://CRAN.R-project.org/package=viridis</a></p>
+<div class="csl-entry">
+Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., &amp; Rubin, D. B. (2013). <em>Bayesian data analysis</em> (Third Edition). <span>CRC press</span>. <a href="https://stat.columbia.edu/~gelman/book/">https://stat.columbia.edu/~gelman/book/</a>
 </div>
-<div>
-<p>Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., &amp; Rubin, D. B. (2013). <em>Bayesian data analysis</em> (Third Edition). CRC press. <a href="https://stat.columbia.edu/~gelman/book/">https://stat.columbia.edu/~gelman/book/</a></p>
+<div class="csl-entry">
+Gelman, A., Goodrich, B., Gabry, J., &amp; Vehtari, A. (2019). R-squared for <span>Bayesian</span> regression models. <em>The American Statistician</em>, <em>73</em>(3), 307–309. <a href="https://doi.org/10.1080/00031305.2018.1549100">https://doi.org/10.1080/00031305.2018.1549100</a>
 </div>
-<div>
-<p>Gelman, A., Goodrich, B., Gabry, J., &amp; Vehtari, A. (2019). R-squared for Bayesian regression models. <em>The American Statistician</em>, <em>73</em>(3), 307–309. <a href="https://doi.org/10.1080/00031305.2018.1549100">https://doi.org/10.1080/00031305.2018.1549100</a></p>
+<div class="csl-entry">
+Gelman, A., &amp; Loken, E. (2013). <em>The garden of forking paths: <span>Why</span> multiple comparisons can be a problem, even when there is no <span>“fishing expedition”</span> or <span>“p-hacking”</span> and the research hypothesis was posited ahead of time</em>. 17. <a href="https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf">https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf</a>
 </div>
-<div>
-<p>Gelman, A., &amp; Loken, E. (2013). <em>The garden of forking paths: Why multiple comparisons can be a problem, even when there is no “fishing expedition” or “p-hacking” and the research hypothesis was posited ahead of time</em>. 17. <a href="https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf">https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf</a></p>
+<div class="csl-entry">
+Gelman, A., Simpson, D., &amp; Betancourt, M. (2017). The prior can often only be understood in the context of the likelihood. <em>Entropy</em>, <em>19</em>(10, 10), 555. <a href="https://doi.org/10.3390/e19100555">https://doi.org/10.3390/e19100555</a>
 </div>
-<div>
-<p>Gelman, A., Simpson, D., &amp; Betancourt, M. (2017). The prior can often only be understood in the context of the likelihood. <em>Entropy</em>, <em>19</em>(10), 555. <a href="https://doi.org/10.3390/e19100555">https://doi.org/10.3390/e19100555</a></p>
+<div class="csl-entry">
+Geman, S., &amp; Geman, D. (1984). Stochastic relaxation, <span>Gibbs</span> distributions, and the <span>Bayesian</span> restoration of images. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, <em>PAMI-6</em>(6), 721–741. <a href="https://doi.org/10.1109/TPAMI.1984.4767596">https://doi.org/10.1109/TPAMI.1984.4767596</a>
 </div>
-<div>
-<p>Geman, S., &amp; Geman, D. (1984). Stochastic relaxation, Gibbs distributions, and the Bayesian restoration of images. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, <em>PAMI-6</em>(6), 721–741. <a href="https://doi.org/10.1109/TPAMI.1984.4767596">https://doi.org/10.1109/TPAMI.1984.4767596</a></p>
+<div class="csl-entry">
+Gershoff, Elizabeth T. (2013). Spanking and child development: <span>We</span> know enough now to stop hitting our children. <em>Child Development Perspectives</em>, <em>7</em>(3), 133–137. <a href="https://doi.org/10.1111/cdep.12038">https://doi.org/10.1111/cdep.12038</a>
 </div>
-<div>
-<p>Gershoff, E. T. (2013). Spanking and child development: We know enough now to stop hitting our children. <em>Child Development Perspectives</em>, <em>7</em>(3), 133–137. <a href="https://doi.org/10.1111/cdep.12038">https://doi.org/10.1111/cdep.12038</a></p>
+<div class="csl-entry">
+Gershoff, Elizabeth T., &amp; Grogan-Kaylor, A. (2016). Spanking and child outcomes: <span>Old</span> controversies and new meta-analyses. <em>Journal of Family Psychology</em>, <em>30</em>(4), 453. <a href="https://doi.org/10.1037/fam0000191">https://doi.org/10.1037/fam0000191</a>
 </div>
-<div>
-<p>Gershoff, E. T., &amp; Grogan-Kaylor, A. (2016). Spanking and child outcomes: Old controversies and new meta-analyses. <em>Journal of Family Psychology</em>, <em>30</em>(4), 453. <a href="https://doi.org/10.1037/fam0000191">https://doi.org/10.1037/fam0000191</a></p>
+<div class="csl-entry">
+Grafen, A., &amp; Hails, R. (2002). <em>Modern statistics for the life sciences</em>. <span>Oxford University Press</span>. <a href="https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?">https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?</a>
 </div>
-<div>
-<p>Grafen, A., &amp; Hails, R. (2002). <em>Modern statistics for the life sciences</em>. Oxford University Press. <a href="https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?">https://global.oup.com/academic/product/modern-statistics-for-the-life-sciences-9780199252312?</a></p>
+<div class="csl-entry">
+Grantham, N. (2019). <em><span class="nocase">ggdark</span>: <span>Dark</span> mode for ’ggplot2’ themes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggdark">https://CRAN.R-project.org/package=ggdark</a>
 </div>
-<div>
-<p>Grantham, N. (2019). <em>ggdark: Dark mode for ’ggplot2’ themes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ggdark">https://CRAN.R-project.org/package=ggdark</a></p>
+<div class="csl-entry">
+Grolemund, G., &amp; Wickham, H. (2017). <em>R for data science</em>. <span>O’Reilly</span>. <a href="https://r4ds.had.co.nz">https://r4ds.had.co.nz</a>
 </div>
-<div>
-<p>Grolemund, G., &amp; Wickham, H. (2017). <em>R for data science</em>. O’Reilly. <a href="https://r4ds.had.co.nz">https://r4ds.had.co.nz</a></p>
+<div class="csl-entry">
+Hauer, E. (2004). The harm done by tests of significance. <em>Accident Analysis &amp; Prevention</em>, <em>36</em>(3), 495–500. <a href="https://doi.org/10.1016/S0001-4575(03)00036-8">https://doi.org/10.1016/S0001-4575(03)00036-8</a>
 </div>
-<div>
-<p>Healy, K. (2018). <em>Data visualization: A practical introduction</em>. Princeton University Press. <a href="https://socviz.co/">https://socviz.co/</a></p>
+<div class="csl-entry">
+Healy, K. (2018). <em>Data visualization: <span>A</span> practical introduction</em>. <span>Princeton University Press</span>. <a href="https://socviz.co/">https://socviz.co/</a>
 </div>
-<div>
-<p>Henderson, E. (2020). <em>ghibli: Studio ghibli colour palettes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ghibli">https://CRAN.R-project.org/package=ghibli</a></p>
+<div class="csl-entry">
+Henderson, E. (2022). <em><span class="nocase">ghibli</span>: <span>Studio</span> ghibli colour palettes</em> [Manual]. <a href="https://CRAN.R-project.org/package=ghibli">https://CRAN.R-project.org/package=ghibli</a>
 </div>
-<div>
-<p>Henry, L., &amp; Wickham, H. (2020). <em>purrr: Functional programming tools</em>. <a href="https://CRAN.R-project.org/package=purrr">https://CRAN.R-project.org/package=purrr</a></p>
+<div class="csl-entry">
+Henry, L., &amp; Wickham, H. (2020). <em><span class="nocase">purrr</span>: <span>Functional</span> programming tools</em>. <a href="https://CRAN.R-project.org/package=purrr">https://CRAN.R-project.org/package=purrr</a>
 </div>
-<div>
-<p>Hinde, K., &amp; Milligan, L. A. (2011). Primate milk: Proximate mechanisms and ultimate perspectives. <em>Evolutionary Anthropology: Issues, News, and Reviews</em>, <em>20</em>(1), 9–23. <a href="https://doi.org/10.1002/evan.20289">https://doi.org/10.1002/evan.20289</a></p>
+<div class="csl-entry">
+Heyns, E. (2020). <em>Better <span>BibTeX</span> for zotero</em>. <a href="https://retorque.re/zotero-better-bibtex/">https://retorque.re/zotero-better-bibtex/</a>
 </div>
-<div>
-<p>Howell, N. (2001). <em>Demography of the dobe! Kung</em> (2nd Edition). Routledge. <a href="https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490">https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490</a></p>
+<div class="csl-entry">
+Hinde, K., &amp; Milligan, L. A. (2011). Primate milk: <span>Proximate</span> mechanisms and ultimate perspectives. <em>Evolutionary Anthropology: Issues, News, and Reviews</em>, <em>20</em>(1), 9–23. <a href="https://doi.org/10.1002/evan.20289">https://doi.org/10.1002/evan.20289</a>
 </div>
-<div>
-<p>Howell, N. (2010). <em>Life histories of the Dobe! Kung: Food, fatness, and well-being over the life span</em> (Vol. 4). Univ of California Press. <a href="https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung">https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung</a></p>
+<div class="csl-entry">
+Howell, N. (2001). <em>Demography of the dobe! <span>Kung</span></em> (2nd Edition). <span>Routledge</span>. <a href="https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490">https://www.routledge.com/Demography-of-the-Dobe-Kung/Howell/p/book/9780202306490</a>
 </div>
-<div>
-<p>Kahle, D., &amp; Stamey, J. (2017). <em>invgamma: The inverse gamma distribution</em> [Manual]. <a href="https://CRAN.R-project.org/package=invgamma">https://CRAN.R-project.org/package=invgamma</a></p>
+<div class="csl-entry">
+Howell, N. (2010). <em>Life histories of the <span>Dobe</span>! <span>Kung</span>: Food, fatness, and well-being over the life span</em> (Vol. 4). <span>Univ of California Press</span>. <a href="https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung">https://www.ucpress.edu/book/9780520262348/life-histories-of-the-dobe-kung</a>
 </div>
-<div>
-<p>Kay, M. (2020a). <em>Marginal distribution of a single correlation from an LKJ distribution</em>. <a href="https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html">https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html</a></p>
+<div class="csl-entry">
+Kahle, D., &amp; Stamey, J. (2017). <em><span class="nocase">invgamma</span>: <span>The</span> inverse gamma distribution</em> [Manual]. <a href="https://CRAN.R-project.org/package=invgamma">https://CRAN.R-project.org/package=invgamma</a>
 </div>
-<div>
-<p>Kay, M. (2020b). <em>tidybayes: Tidy data and ’geoms’ for Bayesian models</em>. <a href="http://mjskay.github.io/tidybayes">http://mjskay.github.io/tidybayes</a></p>
+<div class="csl-entry">
+Kallioinen, N., Bürkner, P.-C., Paananen, T., &amp; Vehtari, A. (2022). <em><span class="nocase">priorsense</span>: <span>Prior</span> diagnostics and sensitivity analysis</em> [Manual].
 </div>
-<div>
-<p>Kay, M. (2020c). <em>Extracting and visualizing tidy draws from brms models</em>. <a href="https://mjskay.github.io/tidybayes/articles/tidy-brms.html">https://mjskay.github.io/tidybayes/articles/tidy-brms.html</a></p>
+<div class="csl-entry">
+Kallioinen, N., Paananen, T., Bürkner, P.-C., &amp; Vehtari, A. (2021). <em>Detecting and diagnosing prior and likelihood sensitivity with power-scaling</em>. <span>arXiv</span>. <a href="https://doi.org/10.48550/ARXIV.2107.14054">https://doi.org/10.48550/ARXIV.2107.14054</a>
 </div>
-<div>
-<p>Kelley, K., &amp; Preacher, K. J. (2012). On effect size. <em>Psychological Methods</em>, <em>17</em>(2), 137. <a href="https://doi.org/10.1037/a0028086">https://doi.org/10.1037/a0028086</a></p>
+<div class="csl-entry">
+Kay, M. (2021). <em>Extracting and visualizing tidy draws from brms models</em>. <a href="https://mjskay.github.io/tidybayes/articles/tidy-brms.html">https://mjskay.github.io/tidybayes/articles/tidy-brms.html</a>
 </div>
-<div>
-<p>Kievit, R., Frankenhuis, W. E., Waldorp, L., &amp; Borsboom, D. (2013). Simpson’s paradox in psychological science: A practical guide. <em>Frontiers in Psychology</em>, <em>4</em>. <a href="https://doi.org/10.3389/fpsyg.2013.00513">https://doi.org/10.3389/fpsyg.2013.00513</a></p>
+<div class="csl-entry">
+Kay, M. (2020). <em>Marginal distribution of a single correlation from an <span>LKJ</span> distribution</em>. <a href="https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html">https://mjskay.github.io/ggdist/reference/lkjcorr_marginal.html</a>
 </div>
-<div>
-<p>Kline, M. A., &amp; Boyd, R. (2010). Population size predicts technological complexity in Oceania. <em>Proceedings of the Royal Society B: Biological Sciences</em>, <em>277</em>(1693), 2559–2564. <a href="https://doi.org/10.1098/rspb.2010.0452">https://doi.org/10.1098/rspb.2010.0452</a></p>
+<div class="csl-entry">
+Kay, M. (2022). <em><span class="nocase">tidybayes</span>: <span>Tidy</span> data and ’geoms’ for <span>Bayesian</span> models</em>. <a href="https://CRAN.R-project.org/package=tidybayes">https://CRAN.R-project.org/package=tidybayes</a>
 </div>
-<div>
-<p>Kruschke, J. K. (2015). <em>Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan</em>. Academic Press. <a href="https://sites.google.com/site/doingbayesiandataanalysis/">https://sites.google.com/site/doingbayesiandataanalysis/</a></p>
+<div class="csl-entry">
+Kelley, K., &amp; Preacher, K. J. (2012). On effect size. <em>Psychological Methods</em>, <em>17</em>(2), 137. <a href="https://doi.org/10.1037/a0028086">https://doi.org/10.1037/a0028086</a>
 </div>
-<div>
-<p>Kullback, S., &amp; Leibler, R. A. (1951). On information and sufficiency. <em>Annals of Mathematical Statistics</em>, <em>22</em>(1), 79–86. <a href="https://doi.org/10.1214/aoms/1177729694">https://doi.org/10.1214/aoms/1177729694</a></p>
+<div class="csl-entry">
+Kievit, R., Frankenhuis, W. E., Waldorp, L., &amp; Borsboom, D. (2013). Simpson’s paradox in psychological science: A practical guide. <em>Frontiers in Psychology</em>, <em>4</em>. <a href="https://doi.org/10.3389/fpsyg.2013.00513">https://doi.org/10.3389/fpsyg.2013.00513</a>
 </div>
-<div>
-<p>Kurz, A. S. (2020a). <em>Doing Bayesian data analysis in brms and the tidyverse</em> (version 0.3.0). <a href="https://bookdown.org/content/3686/">https://bookdown.org/content/3686/</a></p>
+<div class="csl-entry">
+Kline, M. A., &amp; Boyd, R. (2010). Population size predicts technological complexity in <span>Oceania</span>. <em>Proceedings of the Royal Society B: Biological Sciences</em>, <em>277</em>(1693), 2559–2564. <a href="https://doi.org/10.1098/rspb.2010.0452">https://doi.org/10.1098/rspb.2010.0452</a>
 </div>
-<div>
-<p>Kurz, A. S. (2020b). <em>Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition</em> (version 0.0.3). <a href="https://bookdown.org/content/4857/">https://bookdown.org/content/4857/</a></p>
+<div class="csl-entry">
+Kruschke, J. K. (2015). <em>Doing <span>Bayesian</span> data analysis: <span>A</span> tutorial with <span>R</span>, <span>JAGS</span>, and <span>Stan</span></em>. <span>Academic Press</span>. <a href="https://sites.google.com/site/doingbayesiandataanalysis/">https://sites.google.com/site/doingbayesiandataanalysis/</a>
 </div>
-<div>
-<p>Legler, J., &amp; Roback, P. (2019). <em>Broadening your statistical horizons: Generalized linear models and multilevel models</em>. <a href="https://bookdown.org/roback/bookdown-bysh/">https://bookdown.org/roback/bookdown-bysh/</a></p>
+<div class="csl-entry">
+Kullback, S., &amp; Leibler, R. A. (1951). On information and sufficiency. <em>Annals of Mathematical Statistics</em>, <em>22</em>(1), 79–86. <a href="https://doi.org/10.1214/aoms/1177729694">https://doi.org/10.1214/aoms/1177729694</a>
 </div>
-<div>
-<p>Matejka, J., &amp; Fitzmaurice, G. (2017). <em>Same stats, different graphs: Generating datasets with varied appearance and identical statistics through simulated annealing</em>. <a href="https://www.autodesk.com/research/publications/same-stats-different-graphs">https://www.autodesk.com/research/publications/same-stats-different-graphs</a></p>
+<div class="csl-entry">
+Kurz, A. S. (2023a). <em>Doing <span>Bayesian</span> data analysis in brms and the tidyverse</em> (Version 1.1.0). <a href="https://bookdown.org/content/3686/">https://bookdown.org/content/3686/</a>
 </div>
-<div>
-<p>McElreath, R. (2015). <em>Statistical rethinking: A Bayesian course with examples in R and Stan</em>. CRC press. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a></p>
+<div class="csl-entry">
+Kurz, A. S. (2023b). <em>Statistical <span>Rethinking</span> with brms, <span class="nocase">ggplot2</span>, and the tidyverse: <span>Second Edition</span></em> (version 0.4.0). <a href="https://bookdown.org/content/4857/">https://bookdown.org/content/4857/</a>
 </div>
-<div>
-<p>McElreath, R. (2020a). <em>rethinking R package</em>. <a href="https://xcelab.net/rm/software/">https://xcelab.net/rm/software/</a></p>
+<div class="csl-entry">
+Legler, J., &amp; Roback, P. (2019). <em>Broadening your statistical horizons: <span>Generalized</span> linear models and multilevel models</em>. <a href="https://bookdown.org/roback/bookdown-bysh/">https://bookdown.org/roback/bookdown-bysh/</a>
 </div>
-<div>
-<p>McElreath, R. (2020b). <em>Statistical rethinking: A Bayesian course with examples in R and Stan</em> (Second Edition). CRC Press. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a></p>
+<div class="csl-entry">
+Matejka, J., &amp; Fitzmaurice, G. (2017). <em>Same stats, different graphs: <span>Generating</span> datasets with varied appearance and identical statistics through simulated annealing</em>. <a href="https://www.autodesk.com/research/publications/same-stats-different-graphs">https://www.autodesk.com/research/publications/same-stats-different-graphs</a>
 </div>
-<div>
-<p>McHenry, H. M., &amp; Coffing, K. (2000). Australopithecus to Homo: Transformations in body and mind. <em>Annual Review of Anthropology</em>, <em>29</em>(1), 125–146. <a href="https://doi.org/10.1146/annurev.anthro.29.1.125">https://doi.org/10.1146/annurev.anthro.29.1.125</a></p>
+<div class="csl-entry">
+McElreath, R. (2020a). <em>Statistical rethinking: <span>A Bayesian</span> course with examples in <span>R</span> and <span>Stan</span></em> (Second Edition). <span>CRC Press</span>. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a>
 </div>
-<div>
-<p>Merkle, E. C., &amp; Rosseel, Y. (2018). blavaan: Bayesian structural equation models via parameter expansion. <em>Journal of Statistical Software</em>, <em>85</em>(4), 1–30. <a href="https://doi.org/10.18637/jss.v085.i04">https://doi.org/10.18637/jss.v085.i04</a></p>
+<div class="csl-entry">
+McElreath, R. (2015). <em>Statistical rethinking: <span>A Bayesian</span> course with examples in <span>R</span> and <span>Stan</span></em>. <span>CRC press</span>. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a>
 </div>
-<div>
-<p>Merkle, E. C., Rosseel, Y., &amp; Goodrich, B. (2020). <em>blavaan: Bayesian latent variable analysis</em>. <a href="https://CRAN.R-project.org/package=blavaan">https://CRAN.R-project.org/package=blavaan</a></p>
+<div class="csl-entry">
+McElreath, R. (2020b). <em><span class="nocase">rethinking</span> <span>R</span> package</em>. <a href="https://xcelab.net/rm/software/">https://xcelab.net/rm/software/</a>
 </div>
-<div>
-<p>Müller, K., &amp; Wickham, H. (2020). <em>tibble: Simple data frames</em>. <a href="https://CRAN.R-project.org/package=tibble">https://CRAN.R-project.org/package=tibble</a></p>
+<div class="csl-entry">
+McHenry, H. M., &amp; Coffing, K. (2000). Australopithecus to <span>Homo</span>: <span>Transformations</span> in body and mind. <em>Annual Review of Anthropology</em>, <em>29</em>(1), 125–146. <a href="https://doi.org/10.1146/annurev.anthro.29.1.125">https://doi.org/10.1146/annurev.anthro.29.1.125</a>
 </div>
-<div>
-<p>Navarro, D. (2019). <em>Learning statistics with R</em>. <a href="https://learningstatisticswithr.com">https://learningstatisticswithr.com</a></p>
+<div class="csl-entry">
+Merkle, E. C., Fitzsimmons, E., Uanhoro, J., &amp; Goodrich, B. (2021). Efficient <span>Bayesian</span> structural equation modeling in <span>Stan</span>. <em>Journal of Statistical Software</em>, <em>100</em>(6), 1–22. <a href="https://doi.org/10.18637/jss.v100.i06">https://doi.org/10.18637/jss.v100.i06</a>
 </div>
-<div>
-<p>Navarro, D. J. (2019). Between the devil and the deep blue sea: Tensions between scientific judgement and statistical model selection. <em>Computational Brain &amp; Behavior</em>, <em>2</em>(1), 28–34. <a href="https://doi.org/10.1007/s42113-018-0019-z">https://doi.org/10.1007/s42113-018-0019-z</a></p>
+<div class="csl-entry">
+Merkle, E. C., &amp; Rosseel, Y. (2018). <span class="nocase">blavaan</span>: <span>Bayesian</span> structural equation models via parameter expansion. <em>Journal of Statistical Software</em>, <em>85</em>(4), 1–30. <a href="https://doi.org/10.18637/jss.v085.i04">https://doi.org/10.18637/jss.v085.i04</a>
 </div>
-<div>
-<p>Nowosad, J. (2019). <em>rcartocolor: ’CARTOColors’ palettes</em>. <a href="https://CRAN.R-project.org/package=rcartocolor">https://CRAN.R-project.org/package=rcartocolor</a></p>
+<div class="csl-entry">
+Merkle, E. C., Rosseel, Y., &amp; Goodrich, B. (2022). <em><span class="nocase">blavaan</span>: <span>Bayesian</span> latent variable analysis</em>. <a href="https://CRAN.R-project.org/package=blavaan">https://CRAN.R-project.org/package=blavaan</a>
 </div>
-<div>
-<p>Nunn, N., &amp; Puga, D. (2012). Ruggedness: The blessing of bad geography in Africa. <em>Review of Economics and Statistics</em>, <em>94</em>(1), 20–36. <a href="https://doi.org/10.1162/REST_a_00161">https://doi.org/10.1162/REST_a_00161</a></p>
+<div class="csl-entry">
+Müller, K., &amp; Wickham, H. (2022). <em><span class="nocase">tibble</span>: <span>Simple</span> data frames</em>. <a href="https://CRAN.R-project.org/package=tibble">https://CRAN.R-project.org/package=tibble</a>
 </div>
-<div>
-<p>Pedersen, T. L. (2019). <em>patchwork: The composer of plots</em>. <a href="https://CRAN.R-project.org/package=patchwork">https://CRAN.R-project.org/package=patchwork</a></p>
+<div class="csl-entry">
+Navarro, D. (2019). <em>Learning statistics with <span>R</span></em>. <a href="https://learningstatisticswithr.com">https://learningstatisticswithr.com</a>
 </div>
-<div>
-<p>Peng, R. D. (2019). <em>R programming for data science</em>. <a href="https://bookdown.org/rdpeng/rprogdatascience/">https://bookdown.org/rdpeng/rprogdatascience/</a></p>
+<div class="csl-entry">
+Navarro, D. J. (2019). Between the devil and the deep blue sea: <span>Tensions</span> between scientific judgement and statistical model selection. <em>Computational Brain &amp; Behavior</em>, <em>2</em>(1), 28–34. <a href="https://doi.org/10.1007/s42113-018-0019-z">https://doi.org/10.1007/s42113-018-0019-z</a>
 </div>
-<div>
-<p>Peng, R. D., Kross, S., &amp; Anderson, B. (2017). <em>Mastering software development in {}R{}</em>. <a href="https://github.com/rdpeng/RProgDA">https://github.com/rdpeng/RProgDA</a></p>
+<div class="csl-entry">
+Nicenboim, B., Schad, D., &amp; Vasishth, S. (2022). <em>An introduction to <span>Bayesian</span> data analysis for cognitive science</em>. <a href="https://vasishth.github.io/bayescogsci/book/">https://vasishth.github.io/bayescogsci/book/</a>
 </div>
-<div>
-<p>Ram, K., &amp; Wickham, H. (2018). <em>wesanderson: A Wes Anderson palette generator</em> [Manual]. <a href="https://CRAN.R-project.org/package=wesanderson">https://CRAN.R-project.org/package=wesanderson</a></p>
+<div class="csl-entry">
+Nowosad, J. (2019). <em><span class="nocase">rcartocolor</span>: ’<span>CARTOColors</span>’ palettes</em>. <a href="https://CRAN.R-project.org/package=rcartocolor">https://CRAN.R-project.org/package=rcartocolor</a>
 </div>
-<div>
-<p>R Core Team. (2020). <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a></p>
+<div class="csl-entry">
+Nunn, N., &amp; Puga, D. (2012). Ruggedness: <span>The</span> blessing of bad geography in <span>Africa</span>. <em>Review of Economics and Statistics</em>, <em>94</em>(1), 20–36. <a href="https://doi.org/10.1162/REST_a_00161">https://doi.org/10.1162/REST_a_00161</a>
 </div>
-<div>
-<p>Ripley, B. (2019). <em>MASS: Support functions and datasets for venables and ripley’s MASS</em>. <a href="https://CRAN.R-project.org/package=MASS">https://CRAN.R-project.org/package=MASS</a></p>
+<div class="csl-entry">
+Pedersen, T. L. (2022). <em><span class="nocase">patchwork</span>: <span>The</span> composer of plots</em>. <a href="https://CRAN.R-project.org/package=patchwork">https://CRAN.R-project.org/package=patchwork</a>
 </div>
-<div>
-<p>Robert, C., &amp; Casella, G. (2011). A short history of Markov chain Monte Carlo: Subjective recollections from incomplete data. <em>Statistical Science</em>, <em>26</em>(1), 102–115. <a href="https://arxiv.org/pdf/0808.2902.pdf">https://arxiv.org/pdf/0808.2902.pdf</a></p>
+<div class="csl-entry">
+Peng, R. D. (2022). <em>R programming for data science</em>. <a href="https://bookdown.org/rdpeng/rprogdatascience/">https://bookdown.org/rdpeng/rprogdatascience/</a>
 </div>
-<div>
-<p>Robinson, D., &amp; Hayes, A. (2020). <em>broom: Convert statistical analysis objects into tidy tibbles</em> [Manual]. <a href="https://CRAN.R-project.org/package=broom">https://CRAN.R-project.org/package=broom</a></p>
+<div class="csl-entry">
+Peng, R. D., Kross, S., &amp; Anderson, B. (2017). <em>Mastering software development in {}<span>R</span>{}</em>. <a href="https://github.com/rdpeng/RProgDA">https://github.com/rdpeng/RProgDA</a>
 </div>
-<div>
-<p>Rudis, B. (2020). <em>hrbrthemes: Additional themes, theme components and utilities for ’ggplot2’</em> [Manual]. <a href="https://CRAN.R-project.org/package=hrbrthemes">https://CRAN.R-project.org/package=hrbrthemes</a></p>
+<div class="csl-entry">
+R Core Team. (2022). <em>R: <span>A</span> language and environment for statistical computing</em>. <span>R Foundation for Statistical Computing</span>. <a href="https://www.R-project.org/">https://www.R-project.org/</a>
 </div>
-<div>
-<p>Rudis, B., Ross, N., &amp; Garnier, S. (2018). <em>The viridis color palettes</em>. <a href="https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html">https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html</a></p>
+<div class="csl-entry">
+Ram, K., &amp; Wickham, H. (2018). <em><span class="nocase">wesanderson</span>: <span>A Wes Anderson</span> palette generator</em> [Manual]. <a href="https://CRAN.R-project.org/package=wesanderson">https://CRAN.R-project.org/package=wesanderson</a>
 </div>
-<div>
-<p>Schloerke, B., Crowley, J., Di Cook, Briatte, F., Marbach, M., Thoen, E., Elberg, A., &amp; Larmarange, J. (2020). <em>GGally: Extension to ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=GGally">https://CRAN.R-project.org/package=GGally</a></p>
+<div class="csl-entry">
+Ripley, B. (2022). <em><span>MASS</span>: <span>Support</span> functions and datasets for venables and <span>Ripley</span>’s <span>MASS</span></em>. <a href="https://CRAN.R-project.org/package=MASS">https://CRAN.R-project.org/package=MASS</a>
 </div>
-<div>
-<p>Silk, J. B., Brosnan, S. F., Vonk, J., Henrich, J., Povinelli, D. J., Richardson, A. S., Lambeth, S. P., Mascaro, J., &amp; Schapiro, S. J. (2005). Chimpanzees are indifferent to the welfare of unrelated group members. <em>Nature</em>, <em>437</em>(7063), 1357–1359. <a href="https://doi.org/10.1038/nature04243">https://doi.org/10.1038/nature04243</a></p>
+<div class="csl-entry">
+Robert, C., &amp; Casella, G. (2011). A short history of <span>Markov</span> chain <span>Monte Carlo</span>: <span>Subjective</span> recollections from incomplete data. <em>Statistical Science</em>, <em>26</em>(1), 102–115. <a href="https://arxiv.org/pdf/0808.2902.pdf">https://arxiv.org/pdf/0808.2902.pdf</a>
 </div>
-<div>
-<p>Simmons, J. P., Nelson, L. D., &amp; Simonsohn, U. (2011). False-positive psychology: Undisclosed flexibility in data collection and analysis allows presenting anything as significant. <em>Psychological Science</em>, <em>22</em>(11), 1359–1366. <a href="https://doi.org/10.1177/0956797611417632">https://doi.org/10.1177/0956797611417632</a></p>
+<div class="csl-entry">
+Robinson, D., Hayes, A., &amp; Couch, S. (2022). <em><span class="nocase">broom</span>: <span>Convert</span> statistical objects into tidy tibbles</em> [Manual]. <a href="https://CRAN.R-project.org/package=broom">https://CRAN.R-project.org/package=broom</a>
 </div>
-<div>
-<p>Slowikowski, K. (2020). <em>ggrepel: Automatically position non-overlapping text labels with ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggrepel">https://CRAN.R-project.org/package=ggrepel</a></p>
+<div class="csl-entry">
+Roy Rosenzweig Center for History and New Media. (2020). <em>Zotero</em>. <a href="https://www.zotero.org/">https://www.zotero.org/</a>
 </div>
-<div>
-<p>Stan Development Team. (2020a). <em>Stan functions reference</em>. <a href="https://mc-stan.org/docs/2_24/functions-reference/index.html">https://mc-stan.org/docs/2_24/functions-reference/index.html</a></p>
+<div class="csl-entry">
+Rudis, B. (2020). <em><span class="nocase">hrbrthemes</span>: <span>Additional</span> themes, theme components and utilities for ’Ggplot2’</em> [Manual]. <a href="https://CRAN.R-project.org/package=hrbrthemes">https://CRAN.R-project.org/package=hrbrthemes</a>
 </div>
-<div>
-<p>Stan Development Team. (2020b). <em>RStan: The R interface to Stan</em>. <a href="https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html">https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html</a></p>
+<div class="csl-entry">
+Rudis, B., Ross, N., &amp; Garnier, S. (2018). <em>The viridis color palettes</em>. <a href="https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html">https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html</a>
 </div>
-<div>
-<p>Subramanian, S. V., Kim, R., &amp; Christakis, N. A. (2018). The “average” treatment effect: A construct ripe for retirement. A commentary on Deaton and Cartwright. <em>Social Science &amp; Medicine</em>, <em>210</em>, 77–82. <a href="https://doi.org/10.1016/j.socscimed.2018.04.027">https://doi.org/10.1016/j.socscimed.2018.04.027</a></p>
+<div class="csl-entry">
+Schloerke, B., Crowley, J., Di Cook, Briatte, F., Marbach, M., Thoen, E., Elberg, A., &amp; Larmarange, J. (2021). <em><span>GGally</span>: <span>Extension</span> to <span class="nocase">’ggplot2’</span></em>. <a href="https://CRAN.R-project.org/package=GGally">https://CRAN.R-project.org/package=GGally</a>
 </div>
-<div>
-<p>Thoen, E. (2019). <em>dutchmasters</em> [Manual]. <a href="https://github.com/EdwinTh/dutchmasters">https://github.com/EdwinTh/dutchmasters</a></p>
+<div class="csl-entry">
+Silk, J. B., Brosnan, S. F., Vonk, J., Henrich, J., Povinelli, D. J., Richardson, A. S., Lambeth, S. P., Mascaro, J., &amp; Schapiro, S. J. (2005). Chimpanzees are indifferent to the welfare of unrelated group members. <em>Nature</em>, <em>437</em>(7063, 7063), 1357–1359. <a href="https://doi.org/10.1038/nature04243">https://doi.org/10.1038/nature04243</a>
 </div>
-<div>
-<p>Tufte, E. R. (2001). <em>The visual display of quantitative information</em> (Second Edition). Graphics Press. <a href="https://www.edwardtufte.com/tufte/books_vdqi">https://www.edwardtufte.com/tufte/books_vdqi</a></p>
+<div class="csl-entry">
+Simmons, J. P., Nelson, L. D., &amp; Simonsohn, U. (2011). False-positive psychology: <span>Undisclosed</span> flexibility in data collection and analysis allows presenting anything as significant. <em>Psychological Science</em>, <em>22</em>(11), 1359–1366. <a href="https://doi.org/10.1177/0956797611417632">https://doi.org/10.1177/0956797611417632</a>
 </div>
-<div>
-<p>UNICEF. (2014). <em>Hidden in plain sight: A statistical analysis of violence against children</em>. <a href="https://www.unicef.org/publications/index_74865.html">https://www.unicef.org/publications/index_74865.html</a></p>
+<div class="csl-entry">
+Slowikowski, K. (2022). <em><span class="nocase">ggrepel</span>: <span>Automatically</span> position non-overlapping text labels with <span class="nocase">’ggplot2’</span></em>. <a href="https://CRAN.R-project.org/package=ggrepel">https://CRAN.R-project.org/package=ggrepel</a>
 </div>
-<div>
-<p>Urban Institute. (2020). <em>urbnmapr: State and county maps with Alaska and Hawaii</em>. <a href="https://github.com/UrbanInstitute/urbnmapr">https://github.com/UrbanInstitute/urbnmapr</a></p>
+<div class="csl-entry">
+Stan Development Team. (2023). <em><span>RStan</span>: <span>The R Interface</span> to <span>Stan</span></em>. <a href="https://CRAN.R-project.org/package=rstan/vignettes/rstan.html">https://CRAN.R-project.org/package=rstan/vignettes/rstan.html</a>
 </div>
-<div>
-<p>van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (Second Edition). CRC Press. <a href="https://stefvanbuuren.name/fimd/">https://stefvanbuuren.name/fimd/</a></p>
+<div class="csl-entry">
+Stan Development Team. (2022). <em>Stan functions reference, <span>Version</span> 2.31</em>. <a href="https://mc-stan.org/docs/functions-reference/">https://mc-stan.org/docs/functions-reference/</a>
 </div>
-<div>
-<p>Van der Lee, R., &amp; Ellemers, N. (2015). Gender contributes to personal research funding success in The Netherlands. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(40), 12349–12353. <a href="https://doi.org/10.1073/pnas.1510159112">https://doi.org/10.1073/pnas.1510159112</a></p>
+<div class="csl-entry">
+Subramanian, S. V., Kim, R., &amp; Christakis, N. A. (2018). The <span>“average”</span> treatment effect: <span>A</span> construct ripe for retirement. <span>A</span> commentary on <span>Deaton</span> and <span>Cartwright</span>. <em>Social Science &amp; Medicine</em>, <em>210</em>, 77–82. <a href="https://doi.org/10.1016/j.socscimed.2018.04.027">https://doi.org/10.1016/j.socscimed.2018.04.027</a>
 </div>
-<div>
-<p>Vehtari, A., &amp; Gabry, J. (2020). <em>Using the loo package (version <span class="math inline">\(&gt;\)</span>= 2.0.0)</em>. <a href="https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html\#plotting-pareto-k-diagnostics">https://cran.r-project.org/web/packages/loo/vignettes/loo2-example.html\#plotting-pareto-k-diagnostics</a></p>
+<div class="csl-entry">
+Thoen, E. (2022). <em><span class="nocase">dutchmasters</span></em> [Manual]. <a href="https://github.com/EdwinTh/dutchmasters">https://github.com/EdwinTh/dutchmasters</a>
 </div>
-<div>
-<p>Vehtari, A., &amp; Gabry, J. (2019). <em>Bayesian stacking and pseudo-BMA weights using the loo package</em>. <a href="https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html">https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html</a></p>
+<div class="csl-entry">
+Tufte, E. R. (2001). <em>The visual display of quantitative information</em> (Second Edition). <span>Graphics Press</span>. <a href="https://www.edwardtufte.com/tufte/books_vdqi">https://www.edwardtufte.com/tufte/books_vdqi</a>
 </div>
-<div>
-<p>Vehtari, A., Gabry, J., Magnusson, M., Yao, Y., &amp; Gelman, A. (2019). <em>loo: Efficient leave-one-out cross-validation and WAIC for bayesian models</em>. <a href="https://CRAN.R-project.org/package=loo">https://CRAN.R-project.org/package=loo</a></p>
+<div class="csl-entry">
+UNICEF. (2014). <em>Hidden in plain sight: <span>A</span> statistical analysis of violence against children</em>. <a href="https://www.unicef.org/publications/index_74865.html">https://www.unicef.org/publications/index_74865.html</a>
 </div>
-<div>
-<p>Vehtari, A., Gelman, A., &amp; Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. <em>Statistics and Computing</em>, <em>27</em>(5), 1413–1432. <a href="https://doi.org/10.1007/s11222-016-9696-4">https://doi.org/10.1007/s11222-016-9696-4</a></p>
+<div class="csl-entry">
+van Buuren, S. (2018). <em>Flexible imputation of missing data</em> (Second Edition). <span>CRC Press</span>. <a href="https://stefvanbuuren.name/fimd/">https://stefvanbuuren.name/fimd/</a>
 </div>
-<div>
-<p>Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., &amp; Bürkner, P.-C. (2019). Rank-normalization, folding, and localization: An improved <span class="math inline">\(\widehat{R}\)</span> for assessing convergence of MCMC. <em>arXiv Preprint arXiv:1903.08008</em>. <a href="https://arxiv.org/abs/1903.08008?">https://arxiv.org/abs/1903.08008?</a></p>
+<div class="csl-entry">
+Van der Lee, R., &amp; Ellemers, N. (2015). Gender contributes to personal research funding success in <span>The Netherlands</span>. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(40), 12349–12353. <a href="https://doi.org/10.1073/pnas.1510159112">https://doi.org/10.1073/pnas.1510159112</a>
 </div>
-<div>
-<p>Venables, W. N., &amp; Ripley, B. D. (2002). <em>Modern applied statistics with S</em> (Fourth Edition). Springer. <a href="http://www.stats.ox.ac.uk/pub/MASS4">http://www.stats.ox.ac.uk/pub/MASS4</a></p>
+<div class="csl-entry">
+Vehtari, A., &amp; Gabry, J. (2022a). <em>Using the loo package (<span>Version</span> <span><span class="math inline">\(&gt;\)</span></span>= 2.0.0)</em>. <a href="https://CRAN.R-project.org/package=loo/vignettes/loo2-example.html">https://CRAN.R-project.org/package=loo/vignettes/loo2-example.html</a>
 </div>
-<div>
-<p>Vermeer, J. (1665). <em>Girl with a pearl earring</em>.</p>
+<div class="csl-entry">
+Vehtari, A., &amp; Gabry, J. (2022b, March 23). <em>Bayesian stacking and pseudo-<span>BMA</span> weights using the loo package</em>. <a href="https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html">https://CRAN.R-project.org/package=loo/vignettes/loo2-weights.html</a>
 </div>
-<div>
-<p>Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. <em>Journal of Statistical Software</em>, <em>36</em>(3), 1–48. <a href="https://www.jstatsoft.org/v36/i03/">https://www.jstatsoft.org/v36/i03/</a></p>
+<div class="csl-entry">
+Vehtari, A., Gabry, J., Magnusson, M., Yao, Y., &amp; Gelman, A. (2022). <em><span class="nocase">loo</span>: <span>Efficient</span> leave-one-out cross-validation and <span>WAIC</span> for bayesian models</em>. <a href="https://CRAN.R-project.org/package=loo/">https://CRAN.R-project.org/package=loo/</a>
 </div>
-<div>
-<p>Viechtbauer, W. (2020). <em>metafor: Meta-analysis package for R</em> [Manual]. <a href="https://CRAN.R-project.org/package=metafor">https://CRAN.R-project.org/package=metafor</a></p>
+<div class="csl-entry">
+Vehtari, A., Gelman, A., &amp; Gabry, J. (2017). Practical <span>Bayesian</span> model evaluation using leave-one-out cross-validation and <span>WAIC</span>. <em>Statistics and Computing</em>, <em>27</em>(5), 1413–1432. <a href="https://doi.org/10.1007/s11222-016-9696-4">https://doi.org/10.1007/s11222-016-9696-4</a>
 </div>
-<div>
-<p>Volker, B., &amp; Steenbeek, W. (2015). No evidence that gender contributes to personal research funding success in The Netherlands: A reaction to van der Lee and Ellemers. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(51), E7036–E7037. <a href="https://doi.org/10.1073/pnas.1519046112">https://doi.org/10.1073/pnas.1519046112</a></p>
+<div class="csl-entry">
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., &amp; Bürkner, P.-C. (2021). Rank-normalization, folding, and localization: <span>An</span> improved <span><span class="math inline">\(\widehat{R}\)</span></span> for assessing convergence of <span>MCMC</span> (with <span>Discussion</span>). <em>Bayesian Analysis</em>, <em>16</em>(2), 667–718. <a href="https://doi.org/10.1214/20-BA1221">https://doi.org/10.1214/20-BA1221</a>
 </div>
-<div>
-<p>Vonesh, J. R., &amp; Bolker, B. M. (2005). Compensatory larval responses shift trade-offs associated with predator-induced hatching plasticity. <em>Ecology</em>, <em>86</em>(6), 1580–1591. <a href="https://doi.org/10.1890/04-0535">https://doi.org/10.1890/04-0535</a></p>
+<div class="csl-entry">
+Venables, W. N., &amp; Ripley, B. D. (2002). <em>Modern applied statistics with <span>S</span></em> (Fourth Edition). <span>Springer</span>. <a href="http://www.stats.ox.ac.uk/pub/MASS4">http://www.stats.ox.ac.uk/pub/MASS4</a>
 </div>
-<div>
-<p>Wasserstein, R. L., &amp; Lazar, N. A. (2016). <em>The ASA statement on p-values: Context, process, and purpose</em>. <em>70</em>(2), 129–133. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a></p>
+<div class="csl-entry">
+Vermeer, J. (1665). <em>Girl with a pearl earring</em>.
 </div>
-<div>
-<p>Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory. <em>Journal of Machine Learning Research</em>, <em>11</em>(116), 3571–3594. <a href="http://jmlr.org/papers/v11/watanabe10a.html">http://jmlr.org/papers/v11/watanabe10a.html</a></p>
+<div class="csl-entry">
+Viechtbauer, W. (2010). Conducting meta-analyses in <span>R</span> with the <span class="nocase">metafor</span> package. <em>Journal of Statistical Software</em>, <em>36</em>(3), 1–48. <a href="https://www.jstatsoft.org/v36/i03/">https://www.jstatsoft.org/v36/i03/</a>
 </div>
-<div>
-<p>Wickham, H. (2016). <em>ggplot2: Elegant graphics for data analysis</em>. Springer-Verlag New York. <a href="https://ggplot2-book.org/">https://ggplot2-book.org/</a></p>
+<div class="csl-entry">
+Viechtbauer, W. (2022). <em><span class="nocase">metafor</span>: <span class="nocase">Meta-analysis</span> package for <span>R</span></em> [Manual]. <a href="https://CRAN.R-project.org/package=metafor">https://CRAN.R-project.org/package=metafor</a>
 </div>
-<div>
-<p>Wickham, H. (2019). <em>tidyverse: Easily install and load the ’tidyverse’</em>. <a href="https://CRAN.R-project.org/package=tidyverse">https://CRAN.R-project.org/package=tidyverse</a></p>
+<div class="csl-entry">
+Volker, B., &amp; Steenbeek, W. (2015). No evidence that gender contributes to personal research funding success in <span>The Netherlands</span>: <span>A</span> reaction to van der <span>Lee</span> and <span>Ellemers</span>. <em>Proceedings of the National Academy of Sciences</em>, <em>112</em>(51), E7036–E7037. <a href="https://doi.org/10.1073/pnas.1519046112">https://doi.org/10.1073/pnas.1519046112</a>
 </div>
-<div>
-<p>Wickham, H. (2020). <em>The tidyverse style guide</em>. <a href="https://style.tidyverse.org/">https://style.tidyverse.org/</a></p>
+<div class="csl-entry">
+Vonesh, J. R., &amp; Bolker, B. M. (2005). Compensatory larval responses shift trade-offs associated with predator-induced hatching plasticity. <em>Ecology</em>, <em>86</em>(6), 1580–1591. <a href="https://doi.org/10.1890/04-0535">https://doi.org/10.1890/04-0535</a>
 </div>
-<div>
-<p>Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., … Yutani, H. (2019). Welcome to the tidyverse. <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a></p>
+<div class="csl-entry">
+Walker, K. (2022). <em>Tigris: <span>Load Census TIGER</span>/<span>Line</span> shapefiles</em>. <a href="https://github.com/walkerke/tigris">https://github.com/walkerke/tigris</a>
 </div>
-<div>
-<p>Wickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., &amp; Dunnington, D. (2020). <em>ggplot2: Create elegant data visualisations using the grammar of graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2">https://CRAN.R-project.org/package=ggplot2</a></p>
+<div class="csl-entry">
+Wasserstein, R. L., &amp; Lazar, N. A. (2016). <em>The <span>ASA</span> statement on p-values: <span>Context</span>, process, and purpose</em>. <em>70</em>(2), 129–133. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a>
 </div>
-<div>
-<p>Wickham, H., François, R., Henry, L., &amp; Müller, K. (2020). <em>dplyr: A grammar of data manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a></p>
+<div class="csl-entry">
+Watanabe, S. (2010). Asymptotic equivalence of <span>Bayes</span> cross validation and widely applicable information criterion in singular learning theory. <em>Journal of Machine Learning Research</em>, <em>11</em>(116), 3571–3594. <a href="http://jmlr.org/papers/v11/watanabe10a.html">http://jmlr.org/papers/v11/watanabe10a.html</a>
 </div>
-<div>
-<p>Wilke, C. O. (2019). <em>Fundamentals of data visualization</em>. <a href="https://clauswilke.com/dataviz/">https://clauswilke.com/dataviz/</a></p>
+<div class="csl-entry">
+Wickham, H. (2016). <em><span class="nocase">ggplot2</span>: <span>Elegant</span> graphics for data analysis</em>. <span>Springer-Verlag New York</span>. <a href="https://ggplot2-book.org/">https://ggplot2-book.org/</a>
 </div>
-<div>
-<p>Williams, D. R., Liu, S., Martin, S. R., &amp; Rast, P. (2019). <em>Bayesian multivariate mixed-effects location scale modeling of longitudinal relations among affective traits, states, and physical activity</em>. <a href="https://doi.org/10.31234/osf.io/4kfjp">https://doi.org/10.31234/osf.io/4kfjp</a></p>
+<div class="csl-entry">
+Wickham, H. (2020). <em>The tidyverse style guide</em>. <a href="https://style.tidyverse.org/">https://style.tidyverse.org/</a>
 </div>
-<div>
-<p>Williams, D. R., Rast, P., &amp; Bürkner, P.-C. (2018). <em>Bayesian meta-analysis with weakly informative prior distributions</em>. <a href="https://doi.org/10.31234/osf.io/7tbrm">https://doi.org/10.31234/osf.io/7tbrm</a></p>
+<div class="csl-entry">
+Wickham, H. (2022). <em><span class="nocase">tidyverse</span>: <span>Easily</span> install and load the ’tidyverse’</em>. <a href="https://CRAN.R-project.org/package=tidyverse">https://CRAN.R-project.org/package=tidyverse</a>
 </div>
-<div>
-<p>Winerman, L. (2017). Trends report: Psychologists embrace open science. <em>Monitor on Psychology</em>, <em>48</em>(10). <a href="https://www.apa.org/monitor/2017/11/trends-open-science">https://www.apa.org/monitor/2017/11/trends-open-science</a></p>
+<div class="csl-entry">
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., … Yutani, H. (2019). Welcome to the tidyverse. <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>
 </div>
-<div>
-<p>Xie, Y. (2020). <em>bookdown: Authoring books and technical documents with R Markdown</em>. <a href="https://CRAN.R-project.org/package=bookdown">https://CRAN.R-project.org/package=bookdown</a></p>
+<div class="csl-entry">
+Wickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., &amp; Dunnington, D. (2022). <em><span class="nocase">ggplot2</span>: <span>Create</span> elegant data visualisations using the grammar of graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2">https://CRAN.R-project.org/package=ggplot2</a>
 </div>
-<div>
-<p>Xie, Y., Allaire, J. J., &amp; Grolemund, G. (2020). <em>R markdown: The definitive guide</em>. Chapman and Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown/">https://bookdown.org/yihui/rmarkdown/</a></p>
+<div class="csl-entry">
+Wickham, H., François, R., Henry, L., &amp; Müller, K. (2020). <em><span class="nocase">dplyr</span>: <span>A</span> grammar of data manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a>
 </div>
-<div>
-<p>Yao, Y., Vehtari, A., Simpson, D., Gelman, A., &amp; others. (2018). Using stacking to average Bayesian predictive distributions (with discussion). <em>Bayesian Analysis</em>, <em>13</em>(3), 917–1007. <a href="https://doi.org/10.1214/17-BA1091">https://doi.org/10.1214/17-BA1091</a></p>
+<div class="csl-entry">
+Wilke, C. O. (2019). <em>Fundamentals of data visualization</em>. <a href="https://clauswilke.com/dataviz/">https://clauswilke.com/dataviz/</a>
 </div>
-<div>
-<p><em>Zotero | Your personal research assistant</em>. (2020). <a href="https://www.zotero.org/">https://www.zotero.org/</a></p>
+<div class="csl-entry">
+Williams, Donald R., Martin, S. R., Liu, S., &amp; Rast, P. (2021). Bayesian multivariate mixed-effects location scale modeling of longitudinal relations among affective traits, states, and physical activity. <em>European Journal of Psychological Assessment</em>. <a href="https://doi.org/10.1027/1015-5759/a000624">https://doi.org/10.1027/1015-5759/a000624</a>
+</div>
+<div class="csl-entry">
+Williams, Donald R., Rast, P., &amp; Bürkner, P.-C. (2018). <em>Bayesian meta-analysis with weakly informative prior distributions</em>. <a href="https://doi.org/10.31234/osf.io/7tbrm">https://doi.org/10.31234/osf.io/7tbrm</a>
+</div>
+<div class="csl-entry">
+Winerman, L. (2017). Trends report: <span>Psychologists</span> embrace open science. <em>Monitor on Psychology</em>, <em>48</em>(10). <a href="https://www.apa.org/monitor/2017/11/trends-open-science">https://www.apa.org/monitor/2017/11/trends-open-science</a>
+</div>
+<div class="csl-entry">
+Xie, Y. (2022). <em><span class="nocase">bookdown</span>: <span>Authoring</span> books and technical documents with <span>R Markdown</span></em>. <a href="https://CRAN.R-project.org/package=bookdown">https://CRAN.R-project.org/package=bookdown</a>
+</div>
+<div class="csl-entry">
+Xie, Y., Allaire, J. J., &amp; Grolemund, G. (2020). <em>R markdown: <span>The</span> definitive guide</em>. <span>Chapman and Hall/CRC</span>. <a href="https://bookdown.org/yihui/rmarkdown/">https://bookdown.org/yihui/rmarkdown/</a>
+</div>
+<div class="csl-entry">
+Yao, Y., Vehtari, A., Simpson, D., &amp; Gelman, A. (2018). Using stacking to average <span>Bayesian</span> predictive distributions (with discussion). <em>Bayesian Analysis</em>, <em>13</em>(3), 917–1007. <a href="https://doi.org/10.1214/17-BA1091">https://doi.org/10.1214/17-BA1091</a>
 </div>
 </div>
 </div>
@@ -855,7 +954,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -874,6 +972,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -894,6 +993,10 @@ gitbook.start({
 "text": null
 },
 "download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
@@ -907,7 +1010,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
         src = src.replace(/^https?:/, '');

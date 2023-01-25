@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Page not found | Statistical rethinking with brms, ggplot2, and the tidyverse</title>
+  <meta name="description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="generator" content="bookdown 0.28 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Page not found | Statistical rethinking with brms, ggplot2, and the tidyverse" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  <meta name="github-repo" content="ASKURZ/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Page not found | Statistical rethinking with brms, ggplot2, and the tidyverse" />
+  <meta name="twitter:site" content="@SolomonKurz" />
+  <meta name="twitter:description" content="This project is an attempt to re-express the code in McElreath’s textbook. His models are re-fit in brms, plots are redone with ggplot2, and the general data wrangling code predominantly follows the tidyverse style." />
+  
+
+<meta name="author" content="A Solomon Kurz" />
+
+
+<meta name="date" content="2023-01-25" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>This is a love letter</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-this"><i class="fa fa-check"></i>Why this?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#my-assumptions-about-you"><i class="fa fa-check"></i>My assumptions about you</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#how-to-use-and-understand-this-project"><i class="fa fa-check"></i>How to use and understand this project</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#you-can-do-this-too"><i class="fa fa-check"></i>You can do this, too</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-have-updates"><i class="fa fa-check"></i>We have updates</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-0.9.0."><i class="fa fa-check"></i>Version 0.9.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.0."><i class="fa fa-check"></i>Version 1.0.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.0.1."><i class="fa fa-check"></i>Version 1.0.1.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.1.0."><i class="fa fa-check"></i>Version 1.1.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.2.0."><i class="fa fa-check"></i>Version 1.2.0.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#version-1.3.0."><i class="fa fa-check"></i>Version 1.3.0.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#is-this-material-obsolete"><i class="fa fa-check"></i>Is this material obsolete?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#thank-yous-are-in-order"><i class="fa fa-check"></i>Thank-you’s are in order</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html"><i class="fa fa-check"></i><b>1</b> The Golem of Prague</a>
+<ul>
+<li class="chapter" data-level="" data-path="the-golem-of-prague.html"><a href="the-golem-of-prague.html#session-info"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html"><i class="fa fa-check"></i><b>2</b> Small Worlds and Large Worlds</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#the-garden-of-forking-data"><i class="fa fa-check"></i><b>2.1</b> The garden of forking data</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#counting-possibilities."><i class="fa fa-check"></i><b>2.1.1</b> Counting possibilities.</a></li>
+<li class="chapter" data-level="2.1.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#using-prior-information."><i class="fa fa-check"></i><b>2.1.2</b> Using prior information.</a></li>
+<li class="chapter" data-level="2.1.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#from-counts-to-probability."><i class="fa fa-check"></i><b>2.1.3</b> From counts to probability.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#building-a-model"><i class="fa fa-check"></i><b>2.2</b> Building a model</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#a-data-story."><i class="fa fa-check"></i><b>2.2.1</b> A data story.</a></li>
+<li class="chapter" data-level="2.2.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#bayesian-updating."><i class="fa fa-check"></i><b>2.2.2</b> Bayesian updating.</a></li>
+<li class="chapter" data-level="2.2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#evaluate."><i class="fa fa-check"></i><b>2.2.3</b> Evaluate.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#components-of-the-model"><i class="fa fa-check"></i><b>2.3</b> Components of the model</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#likelihood."><i class="fa fa-check"></i><b>2.3.1</b> Likelihood.</a></li>
+<li class="chapter" data-level="2.3.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#parameters."><i class="fa fa-check"></i><b>2.3.2</b> Parameters.</a></li>
+<li class="chapter" data-level="2.3.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#prior."><i class="fa fa-check"></i><b>2.3.3</b> Prior.</a></li>
+<li class="chapter" data-level="2.3.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#posterior."><i class="fa fa-check"></i><b>2.3.4</b> Posterior.</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#making-the-model-go"><i class="fa fa-check"></i><b>2.4</b> Making the model go</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#grid-approximation."><i class="fa fa-check"></i><b>2.4.1</b> Grid approximation.</a></li>
+<li class="chapter" data-level="2.4.2" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#quadratic-approximation."><i class="fa fa-check"></i><b>2.4.2</b> Quadratic approximation.</a></li>
+<li class="chapter" data-level="2.4.3" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#markov-chain-monte-carlo."><i class="fa fa-check"></i><b>2.4.3</b> Markov chain Monte Carlo.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="small-worlds-and-large-worlds.html"><a href="small-worlds-and-large-worlds.html#session-info-1"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html"><i class="fa fa-check"></i><b>3</b> Sampling the Imaginary</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-from-a-grid-like-approximate-posterior"><i class="fa fa-check"></i><b>3.1</b> Sampling from a grid-like approximate posterior</a></li>
+<li class="chapter" data-level="3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-summarize"><i class="fa fa-check"></i><b>3.2</b> Sampling to summarize</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-boundaries."><i class="fa fa-check"></i><b>3.2.1</b> Intervals of defined boundaries.</a></li>
+<li class="chapter" data-level="3.2.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#intervals-of-defined-mass."><i class="fa fa-check"></i><b>3.2.2</b> Intervals of defined mass.</a></li>
+<li class="chapter" data-level="3.2.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#point-estimates."><i class="fa fa-check"></i><b>3.2.3</b> Point estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#sampling-to-simulate-prediction"><i class="fa fa-check"></i><b>3.3</b> Sampling to simulate prediction</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#dummy-data."><i class="fa fa-check"></i><b>3.3.1</b> Dummy data.</a></li>
+<li class="chapter" data-level="3.3.2" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#model-checking."><i class="fa fa-check"></i><b>3.3.2</b> Model checking.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#summary-lets-practice-with-brms"><i class="fa fa-check"></i><b>3.4</b> <del>Summary</del> Let’s practice with brms</a></li>
+<li class="chapter" data-level="" data-path="sampling-the-imaginary.html"><a href="sampling-the-imaginary.html#session-info-2"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>4</b> Linear Models</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="linear-models.html"><a href="linear-models.html#why-normal-distributions-are-normal"><i class="fa fa-check"></i><b>4.1</b> Why normal distributions are normal</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="linear-models.html"><a href="linear-models.html#normal-by-addition."><i class="fa fa-check"></i><b>4.1.1</b> Normal by addition.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="linear-models.html"><a href="linear-models.html#normal-by-multiplication."><i class="fa fa-check"></i><b>4.1.2</b> Normal by multiplication.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="linear-models.html"><a href="linear-models.html#normal-by-log-multiplication."><i class="fa fa-check"></i><b>4.1.3</b> Normal by log-multiplication.</a></li>
+<li class="chapter" data-level="4.1.4" data-path="linear-models.html"><a href="linear-models.html#using-gaussian-distributions."><i class="fa fa-check"></i><b>4.1.4</b> Using Gaussian distributions.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="linear-models.html"><a href="linear-models.html#a-language-for-describing-models"><i class="fa fa-check"></i><b>4.2</b> A language for describing models</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="linear-models.html"><a href="linear-models.html#re-describing-the-globe-tossing-model."><i class="fa fa-check"></i><b>4.2.1</b> Re-describing the globe tossing model.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="linear-models.html"><a href="linear-models.html#a-gaussian-model-of-height"><i class="fa fa-check"></i><b>4.3</b> A Gaussian model of height</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="linear-models.html"><a href="linear-models.html#the-data."><i class="fa fa-check"></i><b>4.3.1</b> The data.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="linear-models.html"><a href="linear-models.html#the-model."><i class="fa fa-check"></i><b>4.3.2</b> The model.</a></li>
+<li class="chapter" data-level="4.3.3" data-path="linear-models.html"><a href="linear-models.html#grid-approximation-of-the-posterior-distribution."><i class="fa fa-check"></i><b>4.3.3</b> Grid approximation of the posterior distribution.</a></li>
+<li class="chapter" data-level="4.3.4" data-path="linear-models.html"><a href="linear-models.html#sampling-from-the-posterior."><i class="fa fa-check"></i><b>4.3.4</b> Sampling from the posterior.</a></li>
+<li class="chapter" data-level="4.3.5" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model-with-map-brm."><i class="fa fa-check"></i><b>4.3.5</b> Fitting the model with <del><code>map</code></del> <code>brm()</code>.</a></li>
+<li class="chapter" data-level="4.3.6" data-path="linear-models.html"><a href="linear-models.html#sampling-from-a-map-brm-fit."><i class="fa fa-check"></i><b>4.3.6</b> Sampling from a <del><code>map</code></del> <code>brm()</code> fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="linear-models.html"><a href="linear-models.html#adding-a-predictor"><i class="fa fa-check"></i><b>4.4</b> Adding a predictor</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="linear-models.html"><a href="linear-models.html#the-linear-model-strategy."><i class="fa fa-check"></i><b>4.4.1</b> The linear model strategy.</a></li>
+<li class="chapter" data-level="4.4.2" data-path="linear-models.html"><a href="linear-models.html#fitting-the-model."><i class="fa fa-check"></i><b>4.4.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="4.4.3" data-path="linear-models.html"><a href="linear-models.html#interpreting-the-model-fit."><i class="fa fa-check"></i><b>4.4.3</b> Interpreting the model fit.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="linear-models.html"><a href="linear-models.html#polynomial-regression"><i class="fa fa-check"></i><b>4.5</b> Polynomial regression</a></li>
+<li class="chapter" data-level="" data-path="linear-models.html"><a href="linear-models.html#session-info-3"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html"><i class="fa fa-check"></i><b>5</b> Multivariate Linear Models</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#spurious-associations"><i class="fa fa-check"></i><b>5.1</b> Spurious associations</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multivariate-notation."><i class="fa fa-check"></i><b>5.1.1</b> Multivariate notation.</a></li>
+<li class="chapter" data-level="5.1.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#fitting-the-model.-1"><i class="fa fa-check"></i><b>5.1.2</b> Fitting the model.</a></li>
+<li class="chapter" data-level="5.1.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#plotting-multivariate-posteriors."><i class="fa fa-check"></i><b>5.1.3</b> Plotting multivariate posteriors.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#masked-relationship"><i class="fa fa-check"></i><b>5.2</b> Masked relationship</a></li>
+<li class="chapter" data-level="5.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinearity"><i class="fa fa-check"></i><b>5.3</b> Multicollinearity</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-legs."><i class="fa fa-check"></i><b>5.3.1</b> Multicollinear legs.</a></li>
+<li class="chapter" data-level="5.3.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#multicollinear-milk."><i class="fa fa-check"></i><b>5.3.2</b> Multicollinear <code>milk</code>.</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#post-treatment-bias."><i class="fa fa-check"></i><b>5.3.3</b> Post-treatment bias.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#categorical-variables"><i class="fa fa-check"></i><b>5.4</b> Categorical variables</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#binary-categories."><i class="fa fa-check"></i><b>5.4.1</b> Binary categories.</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#many-categories."><i class="fa fa-check"></i><b>5.4.2</b> Many categories.</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#adding-regular-predictor-variables."><i class="fa fa-check"></i><b>5.4.3</b> Adding regular predictor variables.</a></li>
+<li class="chapter" data-level="5.4.4" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#another-approach-unique-intercepts."><i class="fa fa-check"></i><b>5.4.4</b> Another approach: Unique intercepts.</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#ordinary-least-squares-and-lm"><i class="fa fa-check"></i><b>5.5</b> <del>Ordinary least squares and <code>lm()</code></del></a></li>
+<li class="chapter" data-level="" data-path="multivariate-linear-models.html"><a href="multivariate-linear-models.html#session-info-4"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html"><i class="fa fa-check"></i><b>6</b> Overfitting, Regularization, and Information Criteria</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#the-problem-with-parameters"><i class="fa fa-check"></i><b>6.1</b> The problem with parameters</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#more-parameters-always-improve-fit."><i class="fa fa-check"></i><b>6.1.1</b> More parameters always improve fit.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#too-few-parameters-hurts-too."><i class="fa fa-check"></i><b>6.1.2</b> Too few parameters hurts, too.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-theory-and-model-performance"><i class="fa fa-check"></i><b>6.2</b> Information theory and model performance</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#firing-the-weatherperson."><i class="fa fa-check"></i><b>6.2.1</b> Firing the weatherperson.</a></li>
+<li class="chapter" data-level="6.2.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-and-uncertainty."><i class="fa fa-check"></i><b>6.2.2</b> Information and uncertainty.</a></li>
+<li class="chapter" data-level="6.2.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-entropy-to-accuracy."><i class="fa fa-check"></i><b>6.2.3</b> From entropy to accuracy.</a></li>
+<li class="chapter" data-level="6.2.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-divergence-to-deviance."><i class="fa fa-check"></i><b>6.2.4</b> From divergence to deviance.</a></li>
+<li class="chapter" data-level="6.2.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#from-deviance-to-out-of-sample."><i class="fa fa-check"></i><b>6.2.5</b> From deviance to out-of-sample.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#regularization"><i class="fa fa-check"></i><b>6.3</b> Regularization</a></li>
+<li class="chapter" data-level="6.4" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#information-criteria"><i class="fa fa-check"></i><b>6.4</b> Information criteria</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic."><i class="fa fa-check"></i><b>6.4.1</b> DIC.</a></li>
+<li class="chapter" data-level="6.4.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#waic."><i class="fa fa-check"></i><b>6.4.2</b> WAIC.</a></li>
+<li class="chapter" data-level="6.4.3" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#dic-and-waic-as-estimates-of-deviance."><i class="fa fa-check"></i><b>6.4.3</b> DIC and WAIC as estimates of deviance.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#using-information-criteria"><i class="fa fa-check"></i><b>6.5</b> Using information criteria</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-comparison."><i class="fa fa-check"></i><b>6.5.1</b> Model comparison.</a></li>
+<li class="chapter" data-level="6.5.2" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#model-averaging."><i class="fa fa-check"></i><b>6.5.2</b> Model averaging.</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#summary-bonus-r2-talk"><i class="fa fa-check"></i><b>6.6</b> <del>Summary</del> Bonus: <span class="math inline">\(R^2\)</span> talk</a></li>
+<li class="chapter" data-level="" data-path="overfitting-regularization-and-information-criteria.html"><a href="overfitting-regularization-and-information-criteria.html#session-info-5"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="interactions.html"><a href="interactions.html"><i class="fa fa-check"></i><b>7</b> Interactions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="interactions.html"><a href="interactions.html#building-an-interaction."><i class="fa fa-check"></i><b>7.1</b> Building an interaction.</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="interactions.html"><a href="interactions.html#adding-a-dummy-variable-doesnt-work."><i class="fa fa-check"></i><b>7.1.1</b> Adding a dummy variable doesn’t work.</a></li>
+<li class="chapter" data-level="7.1.2" data-path="interactions.html"><a href="interactions.html#adding-a-linear-interaction-does-work."><i class="fa fa-check"></i><b>7.1.2</b> Adding a linear interaction does work.</a></li>
+<li class="chapter" data-level="7.1.3" data-path="interactions.html"><a href="interactions.html#plotting-the-interaction."><i class="fa fa-check"></i><b>7.1.3</b> Plotting the interaction.</a></li>
+<li class="chapter" data-level="7.1.4" data-path="interactions.html"><a href="interactions.html#interpreting-an-interaction-estimate."><i class="fa fa-check"></i><b>7.1.4</b> Interpreting an interaction estimate.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="interactions.html"><a href="interactions.html#symmetry-of-the-linear-interaction."><i class="fa fa-check"></i><b>7.2</b> Symmetry of the linear interaction.</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="interactions.html"><a href="interactions.html#buridans-interaction."><i class="fa fa-check"></i><b>7.2.1</b> Buridan’s interaction.</a></li>
+<li class="chapter" data-level="7.2.2" data-path="interactions.html"><a href="interactions.html#africa-depends-upon-ruggedness."><i class="fa fa-check"></i><b>7.2.2</b> Africa depends upon ruggedness.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="interactions.html"><a href="interactions.html#continuous-interactions"><i class="fa fa-check"></i><b>7.3</b> Continuous interactions</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="interactions.html"><a href="interactions.html#the-data.-1"><i class="fa fa-check"></i><b>7.3.1</b> The data.</a></li>
+<li class="chapter" data-level="7.3.2" data-path="interactions.html"><a href="interactions.html#the-un-centered-models."><i class="fa fa-check"></i><b>7.3.2</b> The un-centered models.</a></li>
+<li class="chapter" data-level="7.3.3" data-path="interactions.html"><a href="interactions.html#center-and-re-estimate."><i class="fa fa-check"></i><b>7.3.3</b> Center and re-estimate.</a></li>
+<li class="chapter" data-level="7.3.4" data-path="interactions.html"><a href="interactions.html#plotting-implied-predictions."><i class="fa fa-check"></i><b>7.3.4</b> Plotting implied predictions.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="interactions.html"><a href="interactions.html#interactions-in-design-formulas"><i class="fa fa-check"></i><b>7.4</b> Interactions in design formulas</a></li>
+<li class="chapter" data-level="7.5" data-path="interactions.html"><a href="interactions.html#summary-bonus-marginal_effectsconditional_effects"><i class="fa fa-check"></i><b>7.5</b> <del>Summary</del> Bonus: <code>marginal_effects()</code>/<code>conditional_effects()</code></a></li>
+<li class="chapter" data-level="" data-path="interactions.html"><a href="interactions.html#session-info-6"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html"><i class="fa fa-check"></i><b>8</b> Markov Chain Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#good-king-markov-and-his-island-kingdom"><i class="fa fa-check"></i><b>8.1</b> Good King Markov and His island kingdom</a></li>
+<li class="chapter" data-level="8.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#markov-chain-monte-carlo-1"><i class="fa fa-check"></i><b>8.2</b> Markov chain Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#gibbs-sampling."><i class="fa fa-check"></i><b>8.2.1</b> Gibbs sampling.</a></li>
+<li class="chapter" data-level="8.2.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#hamiltonian-monte-carlo."><i class="fa fa-check"></i><b>8.2.2</b> Hamiltonian Monte Carlo.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#easy-hmc-map2stan-brm"><i class="fa fa-check"></i><b>8.3</b> Easy HMC: <del>map2stan</del> <code>brm()</code></a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#preparation."><i class="fa fa-check"></i><b>8.3.1</b> Preparation.</a></li>
+<li class="chapter" data-level="8.3.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#estimation."><i class="fa fa-check"></i><b>8.3.2</b> Estimation.</a></li>
+<li class="chapter" data-level="8.3.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#sampling-again-in-parallel."><i class="fa fa-check"></i><b>8.3.3</b> Sampling again, in parallel.</a></li>
+<li class="chapter" data-level="8.3.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#visualization."><i class="fa fa-check"></i><b>8.3.4</b> Visualization.</a></li>
+<li class="chapter" data-level="8.3.5" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#using-the-samples."><i class="fa fa-check"></i><b>8.3.5</b> Using the samples.</a></li>
+<li class="chapter" data-level="8.3.6" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#checking-the-chain."><i class="fa fa-check"></i><b>8.3.6</b> Checking the chain.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#care-and-feeding-of-your-markov-chain."><i class="fa fa-check"></i><b>8.4</b> Care and feeding of your Markov chain.</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-samples-do-you-need"><i class="fa fa-check"></i><b>8.4.1</b> How many samples do you need?</a></li>
+<li class="chapter" data-level="8.4.2" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#how-many-chains-do-you-need"><i class="fa fa-check"></i><b>8.4.2</b> How many chains do you need?</a></li>
+<li class="chapter" data-level="8.4.3" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#taming-a-wild-chain."><i class="fa fa-check"></i><b>8.4.3</b> Taming a wild chain.</a></li>
+<li class="chapter" data-level="8.4.4" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#non-identifiable-parameters."><i class="fa fa-check"></i><b>8.4.4</b> Non-identifiable parameters.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="markov-chain-monte-carlo.html"><a href="markov-chain-monte-carlo.html#session-info-7"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html"><i class="fa fa-check"></i><b>9</b> Big Entropy and the Generalized Linear Model</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#maximum-entropy"><i class="fa fa-check"></i><b>9.1</b> Maximum entropy</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#gaussian."><i class="fa fa-check"></i><b>9.1.1</b> Gaussian.</a></li>
+<li class="chapter" data-level="9.1.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#binomial."><i class="fa fa-check"></i><b>9.1.2</b> Binomial.</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#generalized-linear-models"><i class="fa fa-check"></i><b>9.2</b> Generalized linear models</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#meet-the-family."><i class="fa fa-check"></i><b>9.2.1</b> Meet the family.</a></li>
+<li class="chapter" data-level="9.2.2" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#linking-linear-models-to-distributions."><i class="fa fa-check"></i><b>9.2.2</b> Linking linear models to distributions.</a></li>
+<li class="chapter" data-level="9.2.3" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#absolute-and-relative-differences."><i class="fa fa-check"></i><b>9.2.3</b> Absolute and relative differences.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="big-entropy-and-the-generalized-linear-model.html"><a href="big-entropy-and-the-generalized-linear-model.html#session-info-8"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="counting-and-classification.html"><a href="counting-and-classification.html"><i class="fa fa-check"></i><b>10</b> Counting and Classification</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#binomial-regression"><i class="fa fa-check"></i><b>10.1</b> Binomial regression</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#logistic-regression-prosocial-chimpanzees."><i class="fa fa-check"></i><b>10.1.1</b> Logistic regression: Prosocial chimpanzees.</a></li>
+<li class="chapter" data-level="10.1.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-chimpanzees-again-condensed."><i class="fa fa-check"></i><b>10.1.2</b> Aggregated binomial: Chimpanzees again, condensed.</a></li>
+<li class="chapter" data-level="10.1.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#aggregated-binomial-graduate-school-admissions."><i class="fa fa-check"></i><b>10.1.3</b> Aggregated binomial: Graduate school admissions.</a></li>
+<li class="chapter" data-level="10.1.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#fitting-binomial-regressions-with-glm."><i class="fa fa-check"></i><b>10.1.4</b> Fitting binomial regressions with <code>glm()</code>.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#poisson-regression"><i class="fa fa-check"></i><b>10.2</b> Poisson regression</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-oceanic-tool-complexity."><i class="fa fa-check"></i><b>10.2.1</b> Example: Oceanic tool complexity.</a></li>
+<li class="chapter" data-level="10.2.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#mcmc-islands."><i class="fa fa-check"></i><b>10.2.2</b> MCMC islands.</a></li>
+<li class="chapter" data-level="10.2.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#example-exposure-and-the-offset."><i class="fa fa-check"></i><b>10.2.3</b> Example: Exposure and the offset.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="counting-and-classification.html"><a href="counting-and-classification.html#other-count-regressions"><i class="fa fa-check"></i><b>10.3</b> Other count regressions</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="counting-and-classification.html"><a href="counting-and-classification.html#multinomial."><i class="fa fa-check"></i><b>10.3.1</b> Multinomial.</a></li>
+<li class="chapter" data-level="10.3.2" data-path="counting-and-classification.html"><a href="counting-and-classification.html#geometric."><i class="fa fa-check"></i><b>10.3.2</b> Geometric.</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="counting-and-classification.html"><a href="counting-and-classification.html#summary"><i class="fa fa-check"></i><b>10.4</b> Summary</a></li>
+<li class="chapter" data-level="" data-path="counting-and-classification.html"><a href="counting-and-classification.html#session-info-9"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html"><i class="fa fa-check"></i><b>11</b> Monsters and Mixtures</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#ordered-categorical-outcomes"><i class="fa fa-check"></i><b>11.1</b> Ordered categorical outcomes</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-moral-intuition."><i class="fa fa-check"></i><b>11.1.1</b> Example: Moral intuition.</a></li>
+<li class="chapter" data-level="11.1.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#describing-an-ordered-distribution-with-intercepts."><i class="fa fa-check"></i><b>11.1.2</b> Describing an ordered distribution with intercepts.</a></li>
+<li class="chapter" data-level="11.1.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#adding-predictor-variables."><i class="fa fa-check"></i><b>11.1.3</b> Adding predictor variables.</a></li>
+<li class="chapter" data-level="11.1.4" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#bonus-figure-11.3-alternative."><i class="fa fa-check"></i><b>11.1.4</b> Bonus: Figure 11.3 alternative.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#zero-inflated-outcomes"><i class="fa fa-check"></i><b>11.2</b> Zero-inflated outcomes</a>
+<ul>
+<li class="chapter" data-level="11.2.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#example-zero-inflated-poisson."><i class="fa fa-check"></i><b>11.2.1</b> Example: Zero-inflated Poisson.</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersed-outcomes"><i class="fa fa-check"></i><b>11.3</b> Over-dispersed outcomes</a>
+<ul>
+<li class="chapter" data-level="11.3.1" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#beta-binomial."><i class="fa fa-check"></i><b>11.3.1</b> Beta-binomial.</a></li>
+<li class="chapter" data-level="11.3.2" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#negative-binomial-or-gamma-poisson."><i class="fa fa-check"></i><b>11.3.2</b> Negative-binomial or gamma-Poisson.</a></li>
+<li class="chapter" data-level="11.3.3" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#over-dispersion-entropy-and-information-criteria."><i class="fa fa-check"></i><b>11.3.3</b> Over-dispersion, entropy, and information criteria.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="monsters-and-mixtures.html"><a href="monsters-and-mixtures.html#session-info-10"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="multilevel-models.html"><a href="multilevel-models.html"><i class="fa fa-check"></i><b>12</b> Multilevel Models</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="multilevel-models.html"><a href="multilevel-models.html#example-multilevel-tadpoles"><i class="fa fa-check"></i><b>12.1</b> Example: Multilevel tadpoles</a></li>
+<li class="chapter" data-level="12.2" data-path="multilevel-models.html"><a href="multilevel-models.html#varying-effects-and-the-underfittingoverfitting-trade-off"><i class="fa fa-check"></i><b>12.2</b> Varying effects and the underfitting/overfitting trade-off</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="multilevel-models.html"><a href="multilevel-models.html#the-model.-1"><i class="fa fa-check"></i><b>12.2.1</b> The model.</a></li>
+<li class="chapter" data-level="12.2.2" data-path="multilevel-models.html"><a href="multilevel-models.html#assign-values-to-the-parameters."><i class="fa fa-check"></i><b>12.2.2</b> Assign values to the parameters.</a></li>
+<li class="chapter" data-level="12.2.3" data-path="multilevel-models.html"><a href="multilevel-models.html#sumulate-survivors."><i class="fa fa-check"></i><b>12.2.3</b> Sumulate survivors.</a></li>
+<li class="chapter" data-level="12.2.4" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-no-pooling-estimates."><i class="fa fa-check"></i><b>12.2.4</b> Compute the no-pooling estimates.</a></li>
+<li class="chapter" data-level="12.2.5" data-path="multilevel-models.html"><a href="multilevel-models.html#compute-the-partial-pooling-estimates."><i class="fa fa-check"></i><b>12.2.5</b> Compute the partial-pooling estimates.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="multilevel-models.html"><a href="multilevel-models.html#more-than-one-type-of-cluster"><i class="fa fa-check"></i><b>12.3</b> More than one type of cluster</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-chimpanzees."><i class="fa fa-check"></i><b>12.3.1</b> Multilevel chimpanzees.</a></li>
+<li class="chapter" data-level="12.3.2" data-path="multilevel-models.html"><a href="multilevel-models.html#two-types-of-cluster."><i class="fa fa-check"></i><b>12.3.2</b> Two types of cluster.</a></li>
+<li class="chapter" data-level="12.3.3" data-path="multilevel-models.html"><a href="multilevel-models.html#even-more-clusters."><i class="fa fa-check"></i><b>12.3.3</b> Even more clusters.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="multilevel-models.html"><a href="multilevel-models.html#multilevel-posterior-predictions"><i class="fa fa-check"></i><b>12.4</b> Multilevel posterior predictions</a>
+<ul>
+<li class="chapter" data-level="12.4.1" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-same-clusters."><i class="fa fa-check"></i><b>12.4.1</b> Posterior prediction for same clusters.</a></li>
+<li class="chapter" data-level="12.4.2" data-path="multilevel-models.html"><a href="multilevel-models.html#posterior-prediction-for-new-clusters."><i class="fa fa-check"></i><b>12.4.2</b> Posterior prediction for new clusters.</a></li>
+<li class="chapter" data-level="12.4.3" data-path="multilevel-models.html"><a href="multilevel-models.html#focus-and-multilevel-prediction."><i class="fa fa-check"></i><b>12.4.3</b> Focus and multilevel prediction.</a></li>
+</ul></li>
+<li class="chapter" data-level="12.5" data-path="multilevel-models.html"><a href="multilevel-models.html#summary-bonus-put-your-random-effects-to-work"><i class="fa fa-check"></i><b>12.5</b> <del>Summary</del> Bonus: Put your random effects to work</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="multilevel-models.html"><a href="multilevel-models.html#intercepts-only-models-with-one-or-two-grouping-variables."><i class="fa fa-check"></i><b>12.5.1</b> Intercepts-only models with one or two grouping variables.</a></li>
+<li class="chapter" data-level="12.5.2" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsas_draws_df."><i class="fa fa-check"></i><b>12.5.2</b> <code>brms::as_draws_df()</code>.</a></li>
+<li class="chapter" data-level="12.5.3" data-path="multilevel-models.html"><a href="multilevel-models.html#brmscoef."><i class="fa fa-check"></i><b>12.5.3</b> <code>brms::coef()</code>.</a></li>
+<li class="chapter" data-level="12.5.4" data-path="multilevel-models.html"><a href="multilevel-models.html#brmsfitted."><i class="fa fa-check"></i><b>12.5.4</b> <code>brms::fitted()</code>.</a></li>
+<li class="chapter" data-level="12.5.5" data-path="multilevel-models.html"><a href="multilevel-models.html#tidybayesspread_draws."><i class="fa fa-check"></i><b>12.5.5</b> <code>tidybayes::spread_draws()</code>.</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="multilevel-models.html"><a href="multilevel-models.html#session-info-11"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html"><i class="fa fa-check"></i><b>13</b> Adventures in Covariance</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-slopes-by-construction"><i class="fa fa-check"></i><b>13.1</b> Varying slopes by construction</a>
+<ul>
+<li class="chapter" data-level="13.1.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-the-population."><i class="fa fa-check"></i><b>13.1.1</b> Simulate the population.</a></li>
+<li class="chapter" data-level="13.1.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#simulate-observations."><i class="fa fa-check"></i><b>13.1.2</b> Simulate observations.</a></li>
+<li class="chapter" data-level="13.1.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#the-varying-slopes-model."><i class="fa fa-check"></i><b>13.1.3</b> The varying slopes model.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-admission-decisions-and-gender"><i class="fa fa-check"></i><b>13.2</b> Example: Admission decisions and gender</a>
+<ul>
+<li class="chapter" data-level="13.2.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-intercepts."><i class="fa fa-check"></i><b>13.2.1</b> Varying intercepts.</a></li>
+<li class="chapter" data-level="13.2.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#varying-effects-of-being-male."><i class="fa fa-check"></i><b>13.2.2</b> Varying effects of being <code>male</code>.</a></li>
+<li class="chapter" data-level="13.2.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#shrinkage."><i class="fa fa-check"></i><b>13.2.3</b> Shrinkage.</a></li>
+<li class="chapter" data-level="13.2.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#model-comparison.-1"><i class="fa fa-check"></i><b>13.2.4</b> Model comparison.</a></li>
+<li class="chapter" data-level="13.2.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#more-slopes."><i class="fa fa-check"></i><b>13.2.5</b> More slopes.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-cross-classified-chimpanzees-with-varying-slopes"><i class="fa fa-check"></i><b>13.3</b> Example: Cross-classified <code>chimpanzees</code> with varying slopes</a></li>
+<li class="chapter" data-level="13.4" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#continuous-categories-and-the-gaussian-process"><i class="fa fa-check"></i><b>13.4</b> Continuous categories and the Gaussian process</a>
+<ul>
+<li class="chapter" data-level="13.4.1" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#example-spatial-autocorrelation-in-oceanic-tools."><i class="fa fa-check"></i><b>13.4.1</b> Example: Spatial autocorrelation in Oceanic tools.</a></li>
+<li class="chapter" data-level="13.4.2" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#other-kinds-of-distance."><i class="fa fa-check"></i><b>13.4.2</b> Other kinds of “distance”.</a></li>
+</ul></li>
+<li class="chapter" data-level="13.5" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#summary-bonus-another-berkeley-admissions-data-like-example."><i class="fa fa-check"></i><b>13.5</b> <del>Summary</del> Bonus: Another Berkeley-admissions-data-like example.</a></li>
+<li class="chapter" data-level="" data-path="adventures-in-covariance.html"><a href="adventures-in-covariance.html#session-info-12"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html"><i class="fa fa-check"></i><b>14</b> Missing Data and Other Opportunities</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#measurement-error"><i class="fa fa-check"></i><b>14.1</b> Measurement error</a>
+<ul>
+<li class="chapter" data-level="14.1.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-the-outcome."><i class="fa fa-check"></i><b>14.1.1</b> Error on the outcome.</a></li>
+<li class="chapter" data-level="14.1.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#error-on-both-outcome-and-predictor."><i class="fa fa-check"></i><b>14.1.2</b> Error on both outcome and predictor.</a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#missing-data"><i class="fa fa-check"></i><b>14.2</b> Missing data</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#imputing-neocortex"><i class="fa fa-check"></i><b>14.2.1</b> Imputing <code>neocortex</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#improving-the-imputation-model"><i class="fa fa-check"></i><b>14.2.2</b> Improving the imputation model</a></li>
+<li class="chapter" data-level="14.2.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#bonus-mi-can-replace-me"><i class="fa fa-check"></i><b>14.2.3</b> Bonus: <code>mi()</code> can replace <code>me()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#summary-bonus-meta-analysis"><i class="fa fa-check"></i><b>14.3</b> <del>Summary</del> Bonus: Meta-analysis</a></li>
+<li class="chapter" data-level="" data-path="missing-data-and-other-opportunities.html"><a href="missing-data-and-other-opportunities.html#session-info-13"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html"><i class="fa fa-check"></i><b>15</b> <del>Horoscopes</del> Insights</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-r-notebooks"><i class="fa fa-check"></i><b>15.1</b> Use R Notebooks</a></li>
+<li class="chapter" data-level="15.2" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#save-your-model-fits"><i class="fa fa-check"></i><b>15.2</b> Save your model fits</a></li>
+<li class="chapter" data-level="15.3" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#build-your-models-slowly"><i class="fa fa-check"></i><b>15.3</b> Build your models slowly</a></li>
+<li class="chapter" data-level="15.4" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#look-at-your-data"><i class="fa fa-check"></i><b>15.4</b> Look at your data</a></li>
+<li class="chapter" data-level="15.5" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#use-the-0-intercept-syntax"><i class="fa fa-check"></i><b>15.5</b> Use the <code>0 + Intercept</code> syntax</a></li>
+<li class="chapter" data-level="15.6" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-workflow"><i class="fa fa-check"></i><b>15.6</b> Annotate your workflow</a></li>
+<li class="chapter" data-level="15.7" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#annotate-your-code"><i class="fa fa-check"></i><b>15.7</b> Annotate your code</a></li>
+<li class="chapter" data-level="15.8" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#break-up-your-workflow"><i class="fa fa-check"></i><b>15.8</b> Break up your workflow</a></li>
+<li class="chapter" data-level="15.9" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#code-in-public"><i class="fa fa-check"></i><b>15.9</b> Code in public</a></li>
+<li class="chapter" data-level="15.10" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#read-gelmans-blog"><i class="fa fa-check"></i><b>15.10</b> Read Gelman’s blog</a></li>
+<li class="chapter" data-level="15.11" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#check-out-other-social-media-too"><i class="fa fa-check"></i><b>15.11</b> Check out other social media, too</a></li>
+<li class="chapter" data-level="15.12" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#parting-wisdom"><i class="fa fa-check"></i><b>15.12</b> Parting wisdom</a></li>
+<li class="chapter" data-level="" data-path="horoscopes-insights.html"><a href="horoscopes-insights.html#session-info-14"><i class="fa fa-check"></i>Session info</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><em>Statistical rethinking</em> with brms, ggplot2, and the tidyverse</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="page-not-found" class="section level1">
+<h1>Page not found</h1>
+<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
+<p>You may want to try searching to find the page's new location, or use
+the table of contents to find the page you are looking for.</p>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

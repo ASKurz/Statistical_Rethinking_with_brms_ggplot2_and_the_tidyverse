@@ -1,6 +1,6 @@
 --- 
 title: "*Statistical rethinking* with brms, ggplot2, and the tidyverse"
-subtitle: "version 1.2.0"
+subtitle: "version 1.3.0"
 author: ["A Solomon Kurz"]
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -33,7 +33,7 @@ This project is an attempt to reexpress the code in McElreath's textbook. His mo
 
 I'm not a statistician and I have no formal background in computer science. Though I benefited from a suite of statistics courses in grad school, a large portion of my training has been outside of the classroom, working with messy real-world data, and searching online for help. One of the great resources I happened on was [idre, the UCLA Institute for Digital Education](https://stats.idre.ucla.edu), which offers an online portfolio of [richly annotated textbook examples](https://stats.idre.ucla.edu/other/examples/). Their online tutorials are among the earliest inspirations for this project. We need more resources like them.
 
-With that in mind, one of the strengths of McElreath's text is its thorough integration with the [rethinking package](https://github.com/rmcelreath/rethinking) [@R-rethinking]. The rethinking package is a part of the R ecosystem, which is great because R is free and open source [@R-base]. McElreath has made the source code for rethinking [publicly available](https://github.com/rmcelreath/rethinking), too. Since he completed his text, [many other packages have been developed](https://www.youtube.com/watch?v=pKZLJPrZLhU&t=29073s&frags=pl%2Cwn) to help users of the R ecosystem interface with [Stan](https://mc-stan.org/) [@carpenterStanProbabilisticProgramming2017]. Of those alternative packages, I think Bürkner's [brms](https://github.com/paul-buerkner/brms) is the best for general-purpose Bayesian data analysis. Its flexible, uses reasonably-approachable syntax, has sensible defaults, and offers a vast array of post-processing convenience functions. And brms has only gotten [better over time](https://github.com/paul-buerkner/brms/blob/master/NEWS.md). Yet at the time I released the first version of this ebook, there were no textbooks on the market that highlight the brms package, which seemed like an evil worth correcting.
+With that in mind, one of the strengths of McElreath's text is its thorough integration with the [rethinking package](https://github.com/rmcelreath/rethinking) [@R-rethinking]. The rethinking package is a part of the R ecosystem, which is great because R is free and open source [@R-base]. McElreath has made the source code for rethinking [publicly available](https://github.com/rmcelreath/rethinking), too. Since he completed his text, [many other packages have been developed](https://www.youtube.com/watch?v=pKZLJPrZLhU&t=29073s&frags=pl%2Cwn) to help users of the R ecosystem interface with [Stan](https://mc-stan.org/) [@carpenterStanProbabilisticProgramming2017]. Of those alternative packages, I think Bürkner's [brms](https://github.com/paul-buerkner/brms) is the best for general-purpose Bayesian data analysis. Its flexible, uses reasonably-approachable syntax, has sensible defaults, and offers a vast array of post-processing convenience functions. And brms has only gotten [better over time](https://github.com/paul-buerkner/brms/blob/master/NEWS.md). Yet at the time I released the first version of this ebook, there were no textbooks on the market that highlight the brms package, which seemed like an evil worth correcting. Though for a noteworthy new contribution, see @nicenboim2022introduction.
 
 In addition, McElreath's data wrangling code is based in the base R style and he made most of his figures with base R plots. Though there are benefits to sticking close to base R functions (e.g., less dependencies leading to a lower likelihood that your code will break in the future), there are downsides. [For beginners, base R functions can be difficult both to learn and to read](http://varianceexplained.org/r/teach-tidyverse/). Happily, in recent years Hadley Wickham and others have been developing a group of packages collectively called the [tidyverse](https://www.tidyverse.org/). These tidyverse packages, such as [dplyr](https://dplyr.tidyverse.org) [@R-dplyr] and [purrr](https://purrr.tidyverse.org) [@R-purrr], were developed according to an [underlying philosophy](https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html) and they are designed to work together coherently and seamlessly. Though [not all](https://github.com/matloff/TidyverseSkeptic) within the R community share this opinion, I am among those who think the tidyverse style of coding is generally [easier to learn and sufficiently powerful](http://varianceexplained.org/r/teach-tidyverse/) that these packages can accommodate the bulk of your wrangling data needs. I also find tidyverse-style syntax easier to read. And of course, the widely-used [ggplot2 package](https://ggplot2.tidyverse.org) is part of the tidyverse, too.
 
@@ -41,7 +41,7 @@ To be clear, students can get a great education in both Bayesian statistics and 
 
 ## My assumptions about you {-}
 
-If you're looking at this project, I'm guessing you're either a graduate student, a post-graduate academic or a researcher of some sort, which suggests you have at least a 101-level foundation in statistics. If you're rusty, consider checking out the free text books by [Legler and Roback](https://bookdown.org/roback/bookdown-bysh/) [-@leglerBroadeningYourStatistical2019] or [Navarro](https://learningstatisticswithr.com/) [-@navarroLearningStatistics2019] before diving into *Statistical rethinking*. I'm also assuming you understand the rudiments of R and have at least a vague idea about what the tidyverse is. If you're totally new to R, consider starting with Peng's [-@pengProgrammingDataScience2019] [*R programming for data science*](https://bookdown.org/rdpeng/rprogdatascience/). For an introduction to the tidyvese-style of data analysis, the best source I've found is Grolemund and Wickham's [-@grolemundDataScience2017] [*R for data science*](http://r4ds.had.co.nz) (*R4DS*), which I extensively link to throughout this project.
+If you're looking at this project, I'm guessing you're either a graduate student, a post-graduate academic or a researcher of some sort, which suggests you have at least a 101-level foundation in statistics. If you're rusty, consider checking out the free text books by [Legler and Roback](https://bookdown.org/roback/bookdown-bysh/) [-@leglerBroadeningYourStatistical2019] or [Navarro](https://learningstatisticswithr.com/) [-@navarroLearningStatistics2019] before diving into *Statistical rethinking*. I'm also assuming you understand the rudiments of R and have at least a vague idea about what the tidyverse is. If you're totally new to R, consider starting with Peng's [-@pengProgrammingDataScience2022] [*R programming for data science*](https://bookdown.org/rdpeng/rprogdatascience/). For an introduction to the tidyvese-style of data analysis, the best source I've found is Grolemund and Wickham's [-@grolemundDataScience2017] [*R for data science*](http://r4ds.had.co.nz) (*R4DS*), which I extensively link to throughout this project.
 
 That said, you do not need to be totally fluent in statistics or R. Otherwise why would you need this project, anyway? IMO, the most important things are curiosity, a willingness to try, and persistent tinkering. I love this stuff. Hopefully you will, too. 
 
@@ -100,9 +100,9 @@ greater emphasis on functions from the [tidybayes package](https://mjskay.github
 
 In May 5, 2019 came the 1.0.1 version, which finally added a [PDF version](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/blob/master/recoding_Statistical_Rethinking_1.0.1_PDF_version.pdf) of the book. Other noteworthy changes included:
 
-* Major revisions to the LaTeX syntax underlying many of the in-text equations (e.g., dropping the "eqnarray" environment for "align*")
-* Adjusting some of the image syntax
-* Updating the reference for the Bayesian $R^2$ [@gelmanRsquaredBayesianRegression2019]
+* major revisions to the LaTeX syntax underlying many of the in-text equations (e.g., dropping the "eqnarray" environment for "align*"),
+* adjusting some of the image syntax, and
+* Updating the reference for the Bayesian $R^2$ [@gelmanRsquaredBayesianRegression2019].
 
 ### Version 1.1.0. {-}
 
@@ -111,31 +111,37 @@ In March 1, 2020 came the 1.1.0 version. Noteworthy changes were:
 * substantial expansions to Sections [10.3.1][Multinomial.] (multinomial regression) and [11.3.2][Negative-binomial or gamma-Poisson.] (negative binomial regression),
 * the addition of a new section in Chapter 15 ([15.9][Code in public]) encouraging others to code in public,
 * refitting all models with the current official version of brms, version 2.12.0,
-* discussions ([Section 8.3.2][Estimation.]) on the new `Bulk_ESS` and `Tail_ESS` summaries of HMC effective sample size [@vehtariRanknormalizationFoldingLocalization2019],
+* discussions ([Section 8.3.2][Estimation.]) on the new `Bulk_ESS` and `Tail_ESS` summaries of HMC effective sample size [@vehtariRanknormalizationFoldingLocalization2021],
 * saving all fits as external files in the new [GitHub fits folder](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/tree/master/fits), primarily with the `file` argument,
 * extensive use of the [patchwork package](https://patchwork.data-imaginist.com/) [@R-patchwork] for combining ggplots,
 * improving/updating some of the tidyverse code (e.g., using `tidyr::crossing()`),
 * updates to the `brms::custom_family()`-related code in [Section 11.3.1][Beta-binomial.] to match brms 2.11.0 updates,
 * replacing the depreciated `brms::marginal_effects()` with `brms::conditional_effects()` (see [issue #735](https://github.com/paul-buerkner/brms/issues/735)), 
-* replacing the depreciated `brms::stanplot()` with `brms::mcmc_plot()`,
-* increased the plot resolution with `fig.retina = 2.5`,
-* refreshed hyperlinks, and
-* various typo corrections.
+* replacing the depreciated `brms::stanplot()` with `brms::mcmc_plot()`, and
+* increased the plot resolution with `fig.retina = 2.5`.
 
 ### Version 1.2.0. {-}
 
-Welcome to version 1.2.0! Noteworthy changes include:
+I released the 1.2.0 version in October 11, 2020. Noteworthy changes included:
 
 * the correct solution to the first multinomial model in [Section 10.16][Explicit multinomial models.];
 * a coherent workflow for the Gaussian process model from [Section 13.4][Example: Spatial autocorrelation in Oceanic tools.];
 * corrections to some of the post-processing workflows for the measurement-error models in [Section 14.1][Measurement error];
-* refitting all models with the current official version of brms, version 2.13.5;
-* improved in-text citations and reference sections using [BibTex](http://www.bibtex.org/) [@BibTeX2020], [Better BibTeX](https://github.com/retorquere/zotero-better-bibtex) [@BetterBibTeXZotero2020], and [zotero](https://www.zotero.org/) [@ZoteroYourPersonal2020]; and
+* refitting all models with the current official version of brms, version 2.13.5; and
+* improved in-text citations and reference sections using [BibTex](http://www.bibtex.org/) [@BibTeX2020], [Better BibTeX](https://github.com/retorquere/zotero-better-bibtex) [@BetterBibTeXZotero2020], and [zotero](https://www.zotero.org/) [@ZoteroYourPersonal2020].
+
+### Version 1.3.0. {-}
+
+Welcome to version 1.3.0! Noteworthy changes include:
+
+* replacing my incorrect use of `tidyr::expand()` with a more appropriate `tidyr::expand_grid()` workflow, thanks to insights from [Desislava Petkova](https://github.com/dipetkov);
+* adopting the new `linewidth` argument for several **ggplot2** geoms (see [here](https://www.tidyverse.org/blog/2022/08/ggplot2-3-4-0-size-to-linewidth/));
+* refitting all models with the current official version of brms (2.18.0); and
 * minor prose, hyperlink, and code edits throughout.
 
 ## Is this material obsolete? {-}
 
-The first edition of McElreath's text now has a successor, *Statistical rethinking: A Bayesian course with examples in R and Stan: Second Edition* [@mcelreathStatisticalRethinkingBayesian2020]. Though the second edition kept a lot of the content from the first, it is a substantial revision and expansion. The book is longer and wildly ambitious in its scope. To be blunt, I believe McElreath moved to quickly in his revision and I suspect many applied readers might need to reference the first edition from time to time to time just to keep up with the content of the second. If McElreath ever releases a third edition, I hope he finds a happy compromise between the first two. So in the meantime, I believe there's a place for both first and second editions of his text. Accordingly, I believe this ebook should not be considered outdated relative to my [ebook](https://bookdown.org/content/4857/) translation of the second edition [@kurzStatisticalRethinkingSecondEd2020]. Use whatever you find helpful.
+The first edition of McElreath's text now has a successor, *Statistical rethinking: A Bayesian course with examples in R and Stan: Second Edition* [@mcelreathStatisticalRethinkingBayesian2020]. Though the second edition kept a lot of the content from the first, it is a substantial revision and expansion. The book is longer and wildly ambitious in its scope. To be blunt, I believe McElreath moved to quickly in his revision and I suspect many applied readers might need to reference the first edition from time to time to time just to keep up with the content of the second. If McElreath ever releases a third edition, I hope he finds a happy compromise between the first two. So in the meantime, I believe there's a place for both first and second editions of his text. Accordingly, I believe this ebook should not be considered outdated relative to my [ebook](https://bookdown.org/content/4857/) translation of the second edition [@kurzStatisticalRethinkingSecondEd2023]. Use whatever you find helpful.
 
 ## Thank-you's are in order {-}
 
@@ -154,6 +160,7 @@ Before we move on, I'd like to thank the following for their helpful contributio
 * Federico Marini ([\@federicomarini](https://github.com/federicomarini)),
 * Stijn Masschelein ([\@stijnmasschelein](https://github.com/stijnmasschelein)), 
 * JungSu Oh ([\@js-oh](https://github.com/js-oh)),
+* Desislava Petkova ([\@dipetkov](https://github.com/dipetkov))
 * Colin Quirk ([\@colinquirk](https://github.com/colinquirk)), 
 * Rishi Sadhir ([\@RishiSadhir](https://github.com/RishiSadhir)),
 * Jon Spring ([\@jonspring](https://github.com/jonspring)),
