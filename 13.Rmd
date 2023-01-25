@@ -1389,7 +1389,7 @@ print(funding)
 
 Before we model the data, it might help to explore them in a dot plot.
 
-```{r, fig.width = 6, fig.height = 3}
+```{r, fig.width = 7.5, fig.height = 3}
 funding %>% 
   mutate(p = awards / applications) %>% 
   
@@ -1402,12 +1402,10 @@ funding %>%
   ylab(NULL) +
   theme_pearl_earring(axis.text.y = element_text(hjust = 0),
                       axis.ticks.y = element_blank()) +
-  theme(legend.position = c(.9, .8))
+  theme(legend.position = c(.89, .5))
 ```
 
-The overall award probabilities vary across disciplines, the number of applicants varies within disciplines by gender, and the direction and magnitudes of the award probabilities by gender vary across disciplines.
-
-Let's fit a few models.
+The overall award probabilities vary across disciplines, the number of applicants varies within disciplines by gender, and the direction and magnitudes of the award probabilities by gender vary across disciplines. Let's fit a few models to help make sense of all this.
 
 First, we'll fit an analogue to the initial van der Lee and Ellemers $\chi^2$ test. Since we’re Bayesian modelers, we'll use a simple logistic regression, using `male` (dummy coded 0 = female, 1 = male) to predict admission (i.e., `awards`).
 
