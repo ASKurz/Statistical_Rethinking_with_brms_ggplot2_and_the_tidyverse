@@ -1355,7 +1355,12 @@ McElreath briefly mentioned how Gaussian processes can be used to handle covaria
 
 ## ~~Summary~~ Bonus: Another Berkley-admissions-data-like example. 
 
-[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of himself teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of [lecture 13 from week 7](https://youtu.be/rSQ1XMwO_9A?t=343), he discussed a [-@vanderleeGender2015] paper from van der Lee and Ellemers [published in PNAS](https://doi.org/10.1073/pnas.1510159112). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi_{df = 1}^2 = 4.01, p = .045$. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](https://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video.
+[McElreath uploaded recordings](https://www.youtube.com/channel/UCNJK6_DZvcMqNSzQdEkzvzA/playlists) of himself teaching out of his text for a graduate course during the 2017/2018 fall semester. In the beginning of lecture 13 from week 7 (see below), he discussed a [-@vanderleeGender2015] paper from van der Lee and Ellemers [published in PNAS](https://doi.org/10.1073/pnas.1510159112). Their paper suggested male researchers were more likely than female researchers to get research funding in the Netherlands. In their initial analysis (p. 12350) they provided a simple $\chi^2$ test to test the null hypothesis there was no difference in success for male versus female researchers, for which they reported $\chi_{df = 1}^2 = 4.01, p = .045$. Happily, van der Lee and Ellemers provided their data values in their supplemental material (i.e., [Table S1.](https://www.pnas.org/content/suppl/2015/09/16/1510159112.DCSupplemental/pnas.201510159SI.pdf)), which McElreath also displayed in his video.
+
+```{r, echo = F}
+vembedr::embed_url("https://youtu.be/rSQ1XMwO_9A?t=343") %>%
+  vembedr::use_align("center")
+```
 
 Their data follows the same structure as the Berkeley admissions data. In his lecture, McElreath suggested their $\chi^2$ test is an example of Simpson's paradox, just as with the Berkley data. He wasn't the first person to raise this criticism (see Volker and SteenBeek's [-@volkerNoEvidenceThat2015] [critique](https://doi.org/10.1073/pnas.1519046112), which McElreath also pointed to in the lecture).
 
@@ -1374,9 +1379,33 @@ funding <-
     rejects      = c(61, 29, 109, 30, 49, 7, 197, 134, 159, 49, 93, 61, 118, 108, 360, 362, 199, 231) %>% as.integer(),
     male         = ifelse(gender == "f", 0, 1) %>% as.integer()
   )
-
-funding
 ```
+
+The data set is small enough that we can view it all at once.
+
+```{r}
+print(funding)
+```
+
+Before we model the data, it might help to explore them in a dot plot.
+
+```{r, fig.width = 6, fig.height = 3}
+funding %>% 
+  mutate(p = awards / applications) %>% 
+  
+  ggplot(aes(x = p, y = reorder(discipline, p))) +
+  geom_point(aes(fill = gender, size = applications),
+             shape = 21, stroke = 1/5, color = "#FCF9F0") +
+  scale_size_continuous(breaks = c(4, 40, 400), limits = c(1, NA)) +
+  scale_fill_manual(values = c("#A65141", "#80A0C7")) +
+  scale_x_continuous("award probability", limits = c(0, .5)) +
+  ylab(NULL) +
+  theme_pearl_earring(axis.text.y = element_text(hjust = 0),
+                      axis.ticks.y = element_blank()) +
+  theme(legend.position = c(.9, .8))
+```
+
+The overall award probabilities vary across disciplines, the number of applicants varies within disciplines by gender, and the direction and magnitudes of the award probabilities by gender vary across disciplines.
 
 Let's fit a few models.
 
