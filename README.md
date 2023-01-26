@@ -1,6 +1,6 @@
 # *Statistical rethinking* with brms, ggplot2, and the tidyverse
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4080013.svg)](https://doi.org/10.5281/zenodo.4080013)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7570233.svg)](https://doi.org/10.5281/zenodo.7570233)
 
 I love McElreath's [*Statistical rethinking* text](http://xcelab.net/rm/statistical-rethinking/). However, I've come to prefer using Bürkner’s [brms package](https://github.com/paul-buerkner/brms) when doing Bayesian regression in R. [It's just spectacular](https://andrewgelman.com/2017/01/10/r-packages-interfacing-stan-brms/). I also prefer plotting with Wickham's [ggplot2](https://cran.r-project.org/package=ggplot2), and using [tidyverse](https://www.tidyverse.org)-style syntax (which you might learn about [here](https://style.tidyverse.org) or [here](https://r4ds.had.co.nz/transform.html)).
 
