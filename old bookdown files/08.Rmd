@@ -1,0 +1,738 @@
+
+```{r, echo = F, cache = F}
+knitr::opts_chunk$set(fig.retina = 2.5)
+options(width = 100)
+```
+
+# Markov Chain Monte Carlo
+
+"This chapter introduces one of the more marvelous examples of how [Fortuna](https://en.wikipedia.org/wiki/Rota_Fortunae#/media/File:Lydgate-siege-troy-wheel-fortune-detail.jpg) and [Minerva](https://en.wikipedia.org/wiki/Minerva#/media/File:Minerva-Vedder-Highsmith-detail-1.jpeg) cooperate: the estimation of posterior probability distributions using a stochastic process known as Markov chain Monte Carlo (MCMC) estimation" [@mcelreathStatisticalRethinkingBayesian2015, p. 241]. Though we've been using MCMC via the brms package for chapters, now, this chapter should clarify some of the questions you might have about the details.
+
+## Good King Markov and His island kingdom
+
+Here we simulate King Markov's journey. In this version of the code, we've added `set.seed()`, which helps make the exact results reproducible.
+
+```{r, warning = F, message = F}
+library(tidyverse)
+
+set.seed(8)
+
+num_weeks <- 1e5
+positions <- rep(0, num_weeks)
+current   <- 10
+for (i in 1:num_weeks) {
+  # record current position
+  positions[i] <- current
+  # flip coin to generate proposal
+  proposal <- current + sample(c(-1, 1), size = 1)
+  # now make sure he loops around the archipelago
+  if (proposal < 1) proposal <- 10
+  if (proposal > 10) proposal <- 1
+  # move?
+  prob_move <- proposal / current
+  current   <- ifelse(runif(1) < prob_move, proposal, current)
+}
+```
+
+In this chapter, we'll borrow a theme, `theme_ipsum()`, from the [hrbrthemes package](https://cran.r-project.org/package=hrbrthemes) [@R-hrbrthemes].
+
+```{r, warning = F, message = F}
+# install.packages("hrbrthemes", dependencies = T)
+# macOS users may need to install XQuartz, too (https://www.xquartz.org/)
+library(hrbrthemes)
+```
+
+```{r, warning = F, message = F, echo = F, results = "hide"}
+# it appears this is necessary for `theme_ipsum()` to work when rendering to PDF
+# see https://github.com/hrbrmstr/hrbrthemes/issues/2
+# and also https://github.com/wch/extrafont
+
+library(extrafont)
+
+font_import()
+loadfonts()
+hrbrthemes::import_roboto_condensed() 
+```
+
+Figure 8.2.a.
+
+```{r, fig.width = 5.5, fig.height = 4.75, warning = F, message = F}
+library(tidyverse)
+
+tibble(week   = 1:1e5,
+       island = positions) %>%
+
+  ggplot(aes(x = week, y = island)) +
+  geom_point(shape = 1) +
+  scale_x_continuous(breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
+  coord_cartesian(xlim = c(0, 100)) +
+  labs(title    = "Behold: The Metropolis algorithm in action!",
+       subtitle = "The dots show the king's path over the first 100 weeks.") +
+  theme_ipsum()
+```
+
+Figure 8.2.b.
+
+```{r, fig.width = 5.5, fig.height = 4.75}
+tibble(week   = 1:1e5,
+       island = positions) %>%
+  mutate(island = factor(island)) %>%
+
+  ggplot(aes(x = island)) +
+  geom_bar() +
+  labs(title    = "Old Metropolis shines in the long run.",
+       subtitle = "Sure enough, the time the king spent on each island was\nproportional to its population size.") +
+  theme_ipsum()
+```
+
+## Markov chain Monte Carlo
+
+"The metropolis algorithm is the grandparent of several different strategies for getting samples from unknown posterior distributions" (p. 245). If you're interested, @robertShortHistoryMarkov2011 wrote a [good historical overview of MCMC](https://arxiv.org/pdf/0808.2902.pdf).
+
+### Gibbs sampling.
+
+The Gibbs sampler [@gemanStochasticRelaxationGibbs1984; @casellaExplainingGibbsSampler1992] uses *conjugate* pairs (i.e., pairs of priors and likelihoods that have analytic solutions for the posterior of an individual parameter) to efficiently sample from the posterior. Gibbs was the workhorse algorithm during the rise of Bayesian computation in the 1990s. However, it's limited in that (a) you might not want to use conjugate priors and (b) it can be quite inefficient with complex hierarchical models, which we'll be fitting soon.
+
+We will not be using the Gibbs sampler in this project. It's available for use in R. For an extensive applied introduction, check out Kruschke's [-@kruschkeDoingBayesianData2015] [text](https://sites.google.com/site/doingbayesiandataanalysis/).
+
+### Hamiltonian Monte Carlo.
+
+Hamiltonian Monte Carlo (HMC) is more computationally costly and more efficient than Gibbs at sampling from the posterior. It needs fewer samples, especially when fitting models with many parameters. To learn more about how HMC works, check out McElreath's [lecture on the topic from January 2019](https://youtu.be/v-j0UmWf3Us) or one of these lectures ([here](https://youtu.be/jUSZboSq1zg), [here](https://youtu.be/_fnDz2Bz3h8), or [here](https://youtu.be/pHsuIaPbNbY)) by Michael Betancourt.
+
+## Easy HMC: ~~map2stan~~ `brm()`
+
+Much like McElreath's rethinking package, brms provides a convenient interface to HMC via Stan. Other packages providing Stan interfaces include [rstanarm](https://mc-stan.org/rstanarm/) [@R-rstanarm; @rstanarm2018] and [blavaan](https://ecmerkle.github.io/blavaan/) [@R-blavaan; @blavaan2021; @Merkle2018blavaan]. I'm not aware of any up-to-date comparisons across the packages. If you're ever inclined to make one, [let the rest of us know](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues)!
+
+Here we load the `rugged` data.
+
+```{r, message = F}
+library(rethinking)
+data(rugged)
+d <- rugged
+```
+
+Switch from rethinking to brms.
+
+```{r, message = F, warning = F}
+detach(package:rethinking)
+library(brms)
+rm(rugged)
+```
+
+It takes just a sec to do a little data manipulation. 
+
+```{r}
+d <- 
+  d %>%
+  mutate(log_gdp = log(rgdppc_2000))
+
+dd <-
+  d %>%
+  drop_na(rgdppc_2000)
+```
+
+In the context of this chapter, it doesn't make sense to translate McElreath's m8.1 `map()` code to `brm()` code. Below, we'll just go directly to the `brm()` variant of his `m8.1stan`.
+
+### Preparation.
+
+When working with brms, you don't need to do the data processing McElreath did on pages 248 and 249. If you wanted to, however, here's how you might do it within the tidyverse.
+
+```{r, eval = F}
+dd.trim <-
+  dd %>%
+  select(log_gdp, rugged, cont_africa)
+
+str(dd.trim)
+```
+
+### Estimation.
+
+Finally, we get to work that sweet HMC via `brms::brm()`.
+
+```{r b8.1}
+b8.1 <-
+  brm(data = dd, 
+      family = gaussian,
+      log_gdp ~ 1 + rugged + cont_africa + rugged:cont_africa,
+      prior = c(prior(normal(0, 100), class = Intercept),
+                prior(normal(0, 10), class = b),
+                prior(cauchy(0, 2), class = sigma)),
+      seed = 8,
+      file = "fits/b08.01")
+```
+
+Now we have officially ditched the uniform distribution for $\sigma$. Never again! Here's the posterior.
+
+```{r}
+print(b8.1)
+```
+
+Do note a couple things: If you look closely at the summary information at the top, you'll see that the `brm()` function defaults to `chains = 4`. If you check the manual, you'll see it also defaults to `cores = 1`, as well as `iter = 2000` and `warmup = 1000`. Also of note, McElreath's `rethinking::precis()` returns highest posterior density intervals (HPDIs) when summarizing `map2stan()` models. Not so with brms. If you want HPDIs, you'll have to use the convenience functions from the tidybayes package. Here's an example.
+
+```{r, warning = F, message = F}
+library(tidybayes)
+
+post <- as_draws_df(b8.1)
+
+post %>% 
+  select(b_Intercept:sigma) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  mean_hdi(value, .width = .89)  # note our rare use of 89% intervals
+```
+
+There's one more important difference in our brms summary output compared to McElreath's `rethinking::precis()` output. In the text we learn `precis()` returns `n_eff` values for each parameter. Earlier versions of brms used to have a direct analogue named `Eff.Sample`. Both were estimates of the effective number of samples (a.k.a. the effective sample size) for each parameter. As with typical sample size, the more the merrier. Starting with version 2.10.0, brms now returns two columns: `Bulk_ESS` and `Tail_ESS`. These originate from a [-@vehtariRanknormalizationFoldingLocalization2021] [paper](https://doi.org/10.1214/20-BA1221) by Stan-team all-stars Vehtari, Gelman, Simpson, Carpenter, and Bürkner. From their paper, we read:
+
+> If you plan to report quantile estimates or posterior intervals, we strongly suggest assessing the convergence of the chains for these quantiles. In Section 4.3 we show that convergence of Markov chains is not uniform across the parameter space and propose diagnostics and effective sample sizes specifically for extreme quantiles. This is *different* from the standard ESS estimate (which we refer to as the "bulk-ESS"), which mainly assesses how well the centre of the distribution is resolved. Instead, these "tail-ESS" measures allow the user to estimate the MCSE for interval estimates. (p. 5, *emphasis* in the original)
+
+For more technical details, see the paper. In short, `Bulk_ESS` in the output from brms 2.10.0+ is what was previously referred to as `Eff.Sample` in earlier versions. It's also what corresponds to what McElreath calls `n_eff`. This indexed the number of effective samples in 'the center of the' posterior distribution (i.e., the posterior mean or median). But since we also care about uncertainty in our parameters, we care about stability in the 95% intervals and such. The new `Tail_ESS` in brms output allows us to gauge the effective sample size for those intervals.
+
+### Sampling again, in parallel.
+
+Here we sample in parallel by adding `cores = 4`.
+
+```{r b8.1b}
+b8.1b <- 
+  update(b8.1, 
+         cores = 4,
+         seed = 8,
+         file = "fits/b08.01b")
+```
+
+This model sampled so fast that it really didn't matter if we sampled in parallel or not. It will for others.
+
+```{r}
+print(b8.1b)
+```
+
+### Visualization.
+
+Unlike the way rethinking's `extract.samples()` yields a list, brms's `as_draws_df()` returns a data frame.
+
+```{r}
+post <- as_draws_df(b8.1)
+str(post)
+```
+
+Though we won't be doing so in this ebook, you could instead use the `as_draws()` or `as_draws_list()` functions if you really wanted your posterior draws in a list format.
+
+As with McElreath's rethinking, brms allows users to put the `post` data frame or the brmsfit object directly in `pairs()`.
+
+```{r, fig.width = 6, fig.height = 5}
+pairs(b8.1,
+      off_diag_args = list(size = 1/5, alpha = 1/5))
+```
+
+Another nice way to customize your pairs plot is with the [GGally package](https://cran.r-project.org/package=GGally).
+
+```{r, message = F}
+library(GGally)
+```
+
+```{r, fig.width = 7, fig.height = 6, message = F, warning = F}
+post %>%
+  select(b_Intercept:sigma) %>%
+  ggpairs()
+```
+
+Since `GGally::ggpairs()` returns a ggplot2 object, you can customize it as you please.
+
+```{r, fig.width = 7, fig.height = 6, message = F, warning = F}
+my_upper <- function(data, mapping, ...) {
+  
+  # get the x and y data to use the other code
+  x <- eval_data_col(data, mapping$x)
+  y <- eval_data_col(data, mapping$y)
+  
+  r  <- unname(cor.test(x, y)$estimate)
+  rt <- format(r, digits = 2)[1]
+  tt <- as.character(rt)
+  
+  # plot the cor value
+  ggally_text(
+    label = tt, 
+    mapping = aes(),
+    size = 4,
+    color = "grey20") +
+    theme_void() 
+}
+
+my_diag <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) + 
+    geom_density(fill = "grey50") +
+    theme_ipsum()
+}
+
+my_lower <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) + 
+    geom_point(shape = 1, size = 1/2, alpha = 1/6) +
+    theme_ipsum()
+  }
+
+post %>%
+  select(b_Intercept:sigma) %>%
+
+  ggpairs(upper = list(continuous = my_upper),
+          diag  = list(continuous = my_diag),
+          lower = list(continuous = my_lower)) +
+  labs(subtitle = "My custom pairs plot") +
+  theme(strip.text = element_text(size = 8))
+```
+
+For more ideas on customizing a `ggpairs()` plot, go [here](https://ggobi.github.io/ggally/articles/ggpairs.html).
+
+### Using the samples.
+
+Older versions of brms allowed users to include information criteria as a part of the model summary by adding `loo = T` and/or `waic = T` in the `summary()` function (e.g., `summary(b8.1, loo = T, waic = T)`. However, this is no longer the case. E.g.,
+
+```{r}
+summary(b8.1, loo = T, waic = T)
+```
+
+Although R didn't bark at us for adding `loo = T, waic = T`, they didn't do anything. Nowadays, if you want that information, you'll have to use the `waic()` and/or `loo()` functions.
+
+```{r}
+waic(b8.1)
+(l_b8.1 <- loo(b8.1))
+```
+
+The recommended workflow since brms version 2.8.0 is to save the information criteria information with your `brm()` fit objects with the `add_criterion()` function.
+
+```{r}
+b8.1 <- add_criterion(b8.1, c("waic", "loo"))
+```
+
+You retrieve that information by subsetting the fit object.
+
+```{r}
+b8.1$criteria$waic
+b8.1$criteria$loo
+```
+
+In response to the brms version 2.8.0 update, which itself accommodated updates to the loo package and both of which occurred years after McElreath published the first edition of his text, we've been bantering on about the $\text{elpd}$ and its relation to the WAIC and the LOO since [Chapter 6][Information criteria]. This is a fine place to go into some detail.
+
+The `elpd` values returned by `loo()` and `waic()` are the expected log pointwise predictive density for new data. It follows the formula
+
+$$\text{elpd} = \sum_{i = 1}^n \int p_t (\tilde y_i) \log p (\tilde y_i | y) d \tilde y_i,$$
+
+> where $p_t (\tilde y_i)$ is the distribution representing the true data-generating process for $\tilde y_i$. The $p_t (\tilde y_i)$'s are unknown, and we will use cross-validation or WAIC to approximate. In a regression, these distributions are also implicitly conditioned on any predictors in the model. [@vehtariPracticalBayesianModel2017, p. 2].
+
+Later in the paper, we learn the `elpd_loo` (i.e., the Bayesian LOO estimate of out-of-sample predictive fit) is defined as
+
+$$\text{elpd}_\text{loo} = \sum_{i = 1}^n \log p (y_i | y - _i),$$
+
+where
+
+$$p (y_i | y - _i) = \int p (y_i | \theta) p (\theta | y - _i) d \theta$$
+
+"is the leave-one-out predictive density given the data without the $i$th data point" (p. 3). And recall, you can convert the $\text{elpd}$ to the conventional information criteria metric by multiplying it by -2.
+
+To learn more about the $\text{elpd}$, read the rest of the paper and the [other works referenced by the loo package team](https://cran.r-project.org/package=loo). And if you prefer watching video lectures to reading technical papers, check out Vehtari's [*Model assessment, selection and averaging*](https://youtu.be/Re-2yVd0Mqk).
+
+### Checking the chain.
+
+Using `plot()` for a `brm()` fit returns both density and trace lots for the parameters.
+
+```{r, fig.width = 8, fig.height = 6}
+plot(b8.1, widths = c(2, 3))
+```
+
+The [bayesplot](https://cran.r-project.org/package=bayesplot) package allows a little more control. Here, we use bayesplot's `mcmc_trace()` to show only trace plots with our custom theme. Note that `mcmc_trace()` works with data frames, not brmfit objects.
+
+```{r, fig.width = 8, fig.height = 4, message = F, warning = F}
+library(bayesplot)
+
+post <- as_draws_df(b8.1)
+
+mcmc_trace(post, 
+           pars = vars(b_Intercept:sigma),
+           facet_args = list(ncol = 3), 
+           size = 0.15) +
+  scale_color_ipsum() +
+  labs(title = "My custom trace plots") +
+  theme_ipsum() +
+  theme(legend.position = c(.95, .2))
+```
+
+The bayesplot package offers a variety of diagnostic plots. Here we make autocorrelation plots for all model parameters, one for each HMC chain.
+
+```{r, fig.width = 8, fig.height = 4.5}
+mcmc_acf(post, 
+         pars = vars(b_Intercept:sigma),
+         lags = 5) +
+  scale_color_ipsum() +
+  theme_ipsum()
+```
+
+That's just what we like to see--nice L-shaped autocorrelation plots. Those are the kinds of shapes you'd expect when you have reasonably large effective samples.
+
+Before we move on, there's an important difference between the trace plots McElreath showed in the text and the ones we just made. McElreath's trace plots include the warmup iterations. Ours did not. That's why his $x$-axis values ranged from 1 to 2,000 and ours only ranged from 1 to 1,000. To my knowledge, neither the `brms::plot()` nor the `bayesplot::mcmc_trace()` functions support including warmups in their trace plots. One quick way to get them is with the [ggmcmc package](https://cran.rstudio.com/package=ggmcmc) [@R-ggmcmc; @fernandezGGMCMCAnalysisofMCMC2016].
+
+```{r, message = F, warning = F}
+library(ggmcmc)
+```
+
+The ggmcmc package has a variety of convenience functions for working with MCMC chains. The `ggs()` function extracts the posterior draws, including `warmup`, and arranges them in a tidy tibble.
+
+```{r, warning = F, message = F}
+ggs(b8.1) %>% 
+  str()
+```
+
+With this in hand, we can now include those warmup draws in our trace plots. Here's how to do so without convenience functions like `bayesplot::mcmc_trace()`.
+
+```{r, fig.width = 8, fig.height = 4}
+ggs(b8.1) %>%
+  filter(Parameter != "lprior") %>% 
+  mutate(chain = factor(Chain)) %>% 
+  
+  ggplot(aes(x = Iteration, y = value)) +
+  # this marks off the warmups
+  annotate(geom = "rect", 
+           xmin = 0, xmax = 1000, ymin = -Inf, ymax = Inf,
+           fill = "grey80", alpha = 1/2, linewidth = 0) +
+  geom_line(aes(color = chain),
+            linewidth = 0.15) +
+  scale_color_ipsum() +
+  labs(title = "My custom trace plots with warmups via ggmcmc::ggs()",
+       x = NULL, y = NULL) +
+  theme_ipsum() +
+  theme(legend.position = c(.95, .2)) +
+  facet_wrap(~Parameter, scales = "free_y")
+```
+
+Following brms defaults, we won't include warmup iterations in the trace plots for other models in this book. A nice thing about plots that do contain them, though, is they reveal how quickly our HMC chains transition away from their start values into the posterior. To get a better sense of this, let's make those trace plots once more, but this time zooming in on the first 100 iterations.
+
+```{r, fig.width = 8, fig.height = 4}
+ggs(b8.1) %>%
+  filter(Parameter != "lprior") %>% 
+  mutate(chain = factor(Chain)) %>% 
+  
+  ggplot(aes(x = Iteration, y = value)) +
+  # this marks off the warmups
+  annotate(geom = "rect", 
+           xmin = 0, xmax = 1000, ymin = -Inf, ymax = Inf,
+           fill = "grey80", alpha = 1/2, linewidth = 0) +
+  geom_line(aes(color = chain),
+            linewidth = 0.5) +
+  scale_color_ipsum() +
+  labs(title = "My custom trace plots with warmups via ggmcmc::ggs()",
+       x = NULL, y = NULL) +
+  coord_cartesian(xlim = c(1, 100)) +
+  theme_ipsum() +
+  theme(legend.position = c(.95, .2)) +
+  facet_wrap(~Parameter, scales = "free_y")
+```
+
+For each parameter, the all four chains had moved away from their starting values to converge on the marginal posteriors by the 50^th^ iteration or so.
+
+#### Overthinking: Raw Stan model code.
+
+The `stancode()` function works in brms much like it does in rethinking.
+
+```{r}
+brms::stancode(b8.1)
+```
+
+You can also get that information with `b8.1$model` or `b8.1$fit@stanmodel`.
+
+## Care and feeding of your Markov chain.
+
+> Markov chain Monte Carlo is a highly technical and usually automated procedure. Most people who use it don't really understand what it is doing. That's okay, up to a point. Science requires division of labor, and if every one of us had to write our own Markov chains from scratch, a lot less research would get done in the aggregate. (p. 255)
+
+But if you do want to learn more about HMC, McElreath has some nice introductory lectures on the topic (see [here](https://youtu.be/v-j0UmWf3Us) and [here](https://youtu.be/BWEtS3HuU5A)). To dive even deeper, [Michael Betancourt]( https://betanalpha.github.io/) from the Stan team has given many lectures on the topic (e.g., [here](https://youtu.be/_fnDz2Bz3h8) and [here](https://youtu.be/jUSZboSq1zg)).
+
+### How many samples do you need?
+
+The brms defaults for `iter` and `warmup` match those of McElreath's rethinking.
+
+> If all you want are posterior means, it doesn't take many samples at all to get very good estimates. Even a couple hundred samples will do. But if you care about the exact shape in the extreme tails of the posterior, the 99th percentile or so, then you'll need many many more. So there is no universally useful number of samples to aim for. In most typical regression applications, you can get a very good estimate of the posterior mean with as few as 200 effective samples. And if the posterior is approximately Gaussian, then all you need in addition is a good estimate of the variance, which can be had with one order of magnitude more, in most cases. For highly skewed posteriors, you'll have to think more about which region of the distribution interests you. (p. 255)
+
+And remember, with changes from brms version 2.10.0, we now have both `Bulk_ESS` and `Tail_ESS` to consult when thinking about the effective sample size.
+
+### How many chains do you need?
+
+"Using 3 or 4 chains is conventional, and quite often more than enough to reassure us that the sampling is working properly" (p. 257).
+
+#### Convergence diagnostics.
+
+Times have changed. In the text, we read:
+
+> The default diagnostic output from Stan includes two metrics, `n_eff` and `Rhat`. The first is a measure of the effective number of samples. The second is the Gelman-Rubin convergence diagnostic, $\widehat R$. When `n_eff` is much lower than the actual number of iterations (minus warmup) of your chains, it means the chains are inefficient, but possibly still okay. When `Rhat` is above 1.00, it usually indicates that the chain has not yet converged, and probably you shouldn’t trust the samples. If you draw more iterations, it could be fine, or it could never converge. See the [Stan user manual](https://mc-stan.org/users/documentation/index.html) for more details. It's important however not to rely too much on these diagnostics. Like all heuristics, there are cases in which they provide poor advice. (p. 257)
+
+We've already covered how brms has expanded the traditional notion of effective samples (i.e., `n_eff`) to `Bulk_ESS` and `Tail_ESS`. Times are changing for the $\widehat R$, too. As it turns out, the Stan team has found some deficiencies with the $\widehat R$, for which they've made recommendations that will be implemented in the Stan ecosystem sometime soon (see [here](https://discourse.mc-stan.org/t/new-r-hat-and-ess/8165) for a related thread on the Stan Forums). In the meantime, you can read all about it in @vehtariRanknormalizationFoldingLocalization2021 and in one of Dan Simpson's [blog posts](https://statmodeling.stat.columbia.edu/2019/03/19/maybe-its-time-to-let-the-old-ways-die-or-we-broke-r-hat-so-now-we-have-to-fix-it/).
+
+For more on these topics, you might also check out Gabry and Modrák's [-@gabryVisualMCMCDiagnostics2022] vignette, [*Visual MCMC diagnostics using the bayesplot package*](https://CRAN.R-project.org/package=bayesplot/vignettes/plotting-mcmc-draws.html).
+
+### Taming a wild chain.
+
+As with rethinking, brms can take data in the form of a list. Recall however, that in order to specify starting values, you need to specify a list of lists with an `init` argument rather than with `start`.
+
+```{r b8.2}
+b8.2 <-
+  brm(data = list(y = c(-1, 1)), 
+      family = gaussian,
+      y ~ 1,
+      prior = c(prior(uniform(-1e10, 1e10), class = Intercept),
+                prior(uniform(0, 1e10), class = sigma, ub = 1e10)),
+      init = list(list(Intercept = 0, sigma = 1),
+                  list(Intercept = 0, sigma = 1)),
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8,
+      file = "fits/b08.02")
+```
+
+Those were some silly flat priors. Check the damage.
+
+```{r, message = F, fig.width = 6.5, fig.height = 2.75}
+post <- as_draws_df(b8.2)
+
+mcmc_trace(post,
+           pars = vars(b_Intercept:sigma),
+           size = 0.25) +
+  labs(title = "My version of Figure 8.5.a.",
+       subtitle = "These trace plots do not look like the fuzzy caterpillars we usually hope for.") +
+  scale_color_ipsum() +
+  theme_ipsum() +
+  theme(legend.direction = "horizontal",
+        legend.position = c(.85, 1.5))
+```
+
+Let's peek at the summary.
+
+```{r}
+print(b8.2)
+```
+
+Holy smokes, those parameters are a mess! Plus we got nasty warning messages, too. Watch our reasonable priors save the day.
+
+```{r b8.3}
+b8.3 <-
+  brm(data = list(y = c(-1, 1)), 
+      family = gaussian,
+      y ~ 1,
+      prior = c(prior(normal(0, 10), class = Intercept),
+                prior(cauchy(0, 1), class = sigma)),
+      init = list(list(Intercept = 0, sigma = 1),
+                  list(Intercept = 0, sigma = 1)),
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8,
+      file = "fits/b08.03")
+```
+
+```{r}
+print(b8.3)
+```
+
+As in the text, no more warning signs and no more silly estimates. The trace plots look great, too.
+
+```{r, message = F, fig.width = 6.5, fig.height = 2.75}
+post <- as_draws_df(b8.3)
+
+mcmc_trace(post,
+           pars = vars(b_Intercept:sigma),
+           size = 0.25) +
+  labs(title = "My version of Figure 8.5.b",
+       subtitle = "Oh man. This looks so much better.") +
+  scale_color_ipsum() +
+  theme_ipsum() +
+  theme(legend.direction = "horizontal",
+        legend.position = c(.85, 1.5))
+```
+
+Now behold our version of Figure 8.6.
+
+```{r, fig.height = 4.5, fig.width = 7.25, warning = F}
+# left
+p1 <-
+  post %>%
+  select(b_Intercept) %>%
+  
+  ggplot(aes(x = b_Intercept)) +
+  stat_density(geom = "line") +
+  geom_line(data = data.frame(x = seq(from = min(post$b_Intercept),
+                                      to = max(post$b_Intercept),
+                                      length.out = 50)),
+            aes(x = x, y = dnorm(x = x, mean = 0, sd = 10)),
+            color = ipsum_pal()(1), linetype = 2) +
+  theme_ipsum()
+
+# right
+p2 <-
+  post %>%
+  select(sigma) %>%
+  
+  ggplot(aes(x = sigma)) +
+  stat_density(geom = "line") +
+  geom_line(data = data.frame(x = seq(from = 0,
+                                      to = max(post$sigma),
+                                      length.out = 50)),
+            aes(x = x, y = dcauchy(x = x, location = 0, scale = 1)*2),
+            color = ipsum_pal()(2)[2], linetype = 2) +
+  coord_cartesian(xlim = c(0, 10)) +
+  ylab(NULL) +
+  theme_ipsum()
+
+# combine the two
+library(patchwork)
+
+p1 + p2 + plot_annotation(title = "Prior (dashed) and posterior (solid) distributions for the\nmodel with weakly-informative priors, b8.3",
+                          theme = theme_ipsum())
+```  
+
+#### Overthinking: Cauchy distribution.
+
+Behold the beautiful Cauchy probability density:
+
+$$p(x|x_0, \gamma) = \left ( \pi \gamma \left [ 1 + \left ( \frac{x - x_0}{\gamma} \right ) ^2 \right ] \right ) ^{-1}.$$
+
+The Cauchy has no mean and variance, but $x_0$ is the location and $\gamma$ is the scale. Here's our version of the simulation. Note our use of the `cummean()` function.
+
+```{r, fig.height = 3, fig.width = 4}
+n <- 1e4
+
+set.seed(8)
+tibble(y     = rcauchy(n, location = 0, scale = 5),
+       mu    = cummean(y),
+       index = 1:n) %>% 
+  
+  ggplot(aes(x = index, y = mu)) +
+  geom_line() +
+  theme_ipsum()
+```
+
+The whole thing is quite remarkable. Just for kicks, here we do it again with nine simulations.
+
+```{r, fig.height = 5, fig.width = 8}
+n <- 1e4
+
+set.seed(8)
+tibble(a = rcauchy(n, location = 0, scale = 5),
+       b = rcauchy(n, location = 0, scale = 5),
+       c = rcauchy(n, location = 0, scale = 5),
+       d = rcauchy(n, location = 0, scale = 5),
+       e = rcauchy(n, location = 0, scale = 5),
+       f = rcauchy(n, location = 0, scale = 5),
+       g = rcauchy(n, location = 0, scale = 5),
+       h = rcauchy(n, location = 0, scale = 5),
+       i = rcauchy(n, location = 0, scale = 5)) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  mutate(mu = cummean(value)) %>% 
+  ungroup() %>% 
+  mutate(index = rep(1:n, times = 9)) %>% 
+
+  ggplot(aes(x = index, y = mu)) +
+  geom_line(aes(color = key)) +
+  scale_color_manual(values = ipsum_pal()(9)) +
+  scale_x_continuous(breaks = c(0, 5000, 10000)) +
+  theme_ipsum() +
+  theme(legend.position = "none") +
+  facet_wrap(~key, ncol = 3, scales = "free")
+```
+
+### Non-identifiable parameters.
+
+It appears that the [only way](https://github.com/ASKurz/Statistical_Rethinking_with_brms_ggplot2_and_the_tidyverse/issues/3) to get a brms version of McElreath's `m8.4` and `m8.5` is to augment the data. In addition to the Gaussian `y` vector, we'll add two constants to the data, `intercept_1 = 1` and `intercept_2 = 1`.
+
+```{r}
+set.seed(8)
+y <- rnorm(100, mean = 0, sd = 1)
+```
+
+```{r b8.4}
+b8.4 <-
+  brm(data = list(y           = y,
+                  intercept_1 = 1,
+                  intercept_2 = 1), 
+      family = gaussian,
+      y ~ 0 + intercept_1 + intercept_2,
+      prior = c(prior(uniform(-1e10, 1e10), class = b),
+                prior(cauchy(0, 1), class = sigma)),
+      init = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
+                  list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8,
+      file = "fits/b08.04")
+```
+
+Our model results don't perfectly mirror McElreath's, but they're identical in spirit.
+
+```{r}
+print(b8.4)
+```
+
+Note the frightening warning message. Those results are a mess! Let's try again.
+
+```{r b8.5}
+b8.5 <-
+  brm(data = list(y           = y,
+                  intercept_1 = 1,
+                  intercept_2 = 1),
+      family = gaussian,
+      y ~ 0 + intercept_1 + intercept_2,
+      prior = c(prior(normal(0, 10), class = b),
+                prior(cauchy(0, 1), class = sigma)),
+      init = list(list(intercept_1 = 0, intercept_2 = 0, sigma = 1),
+                  list(intercept_1 = 0, intercept_2 = 0, sigma = 1)),
+      iter = 4000, warmup = 1000, chains = 2,
+      seed = 8,
+      file = "fits/b08.05")
+```
+
+```{r}
+print(b8.5)
+```
+
+Much better. For our version of Figure 8.7, we'll make the trace plots for the two models separately and combine them with patchwork.
+
+```{r, fig.width = 7, fig.height = 6, warning = F, message = F}
+post <- as_draws_df(b8.4)
+
+p1 <-
+  mcmc_trace(post,
+             pars = vars(b_intercept_1:sigma),
+             size = 0.25,
+             facet_args = c(ncol = 1)) +
+  scale_color_ipsum() +
+  labs(subtitle = "flat priors") +
+  theme_ipsum() +
+  theme(legend.position = "none",
+        strip.text = element_text(size = 10))
+
+post <- as_draws_df(b8.5)
+
+p2 <-
+  mcmc_trace(post,
+             pars = vars(b_intercept_1:sigma),
+             size = 0.25,
+             facet_args = c(ncol = 1)) +
+  scale_color_ipsum() +
+  labs(subtitle = "weakly-informative priors") +
+  theme_ipsum() +
+  theme(legend.position = "none",
+        strip.text = element_text(size = 10))
+
+p1 + p2 + plot_annotation(title = "Prior strength matters",
+                          theme = theme_ipsum())
+```
+
+The central message in the text, default to weakly-regularizing priors, holds for brms just as it does in rethinking. For more on the topic, see the [recommendations from the Stan team](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations). If you want to dive deeper, check out [Simpson's post on Gelman's blog](https://statmodeling.stat.columbia.edu/2017/09/05/never-total-eclipse-prior/) and their corresponding [-@gelmanPriorCanOften2017] paper with Betancourt, [*The prior can often only be understood in the context of the likelihood*](https://doi.org/10.3390/e19100555)
+
+## Session info {-}
+
+```{r}
+sessionInfo()
+```
+
+```{r, echo = F}
+rm(i, num_weeks, positions, current, proposal, prob_move, d, dd, b8.1, b8.1b, post, my_upper, my_diag, my_lower, l_b8.1, b8.2, b8.3, n, y, b8.4, b8.5, p1, p2)
+```
+
+```{r, echo = F, message = F, warning = F, results = "hide"}
+ggplot2::theme_set(ggplot2::theme_grey())
+bayesplot::color_scheme_set("blue")
+pacman::p_unload(pacman::p_loaded(), character.only = TRUE)
+```
+
